@@ -56,7 +56,6 @@
 "$(EPOCROOT)epoc32\data\z\resource\apps\mobbler\next.png"-			"!:\resource\apps\mobbler\next.png"
 "$(EPOCROOT)epoc32\data\z\resource\apps\mobbler\pound.png"-			"!:\resource\apps\mobbler\pound.png"
 "$(EPOCROOT)epoc32\data\z\resource\apps\mobbler\lastfm.png"-		"!:\resource\apps\mobbler\lastfm.png"
-"$(EPOCROOT)epoc32\data\z\resource\apps\mobbler\mobbler_gfx.mbm"-	"c:\resource\apps\mobbler\mobbler_gfx.mbm"
 "$(EPOCROOT)epoc32\data\z\resource\apps\mobbler.mif"-				"!:\resource\apps\mobbler.mif"
 
 ; the language localization files
