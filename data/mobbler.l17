@@ -1,0 +1,111 @@
+/*
+mobbler.l17 - Hungarian
+
+mobbler, a last.fm mobile scrobbler for Symbian smartphones.
+Copyright (C) 2008  Michael Coffey
+
+
+http://code.google.com/p/mobbler
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+*/
+
+rls_string STR_mobbler_mobbler "mobbler"
+rls_string STR_mobbler_connect "Kapcsolódás a last.fm-hez"
+rls_string STR_mobbler_disconnect "Szétkapcsolás"
+rls_string STR_mobbler_about "Névjegy"
+rls_string STR_mobbler_exit "Kilépés (feltöltés megállítása)"
+rls_string STR_mobbler_username "felhasználónév"
+rls_string STR_mobbler_password "jelszó"
+rls_string STR_mobbler_connecting "Kapcsolódás a last.fm-hez..."
+rls_string STR_mobbler_about_text1 "mobbler "
+rls_string STR_mobbler_about_text2 "\n\nby Michael Coffey\n\ncode.google.com/p/mobbler"
+rls_string STR_mobbler_note_connected "Kapcsolódva a last.fm-hez!"
+rls_string STR_mobbler_note_banned "a mobbler letiltva! Kérjük jelezd a hibát a code.google.com/p/mobbler oldalon."
+rls_string STR_mobbler_note_bad_auth "Hibás jelszó!"
+rls_string STR_mobbler_note_bad_time "A telefonod órája nincs szinkronban a tényleges idővel. Kérjük ellenőrizd az idő és az időzóna beállításokat."
+rls_string STR_mobbler_note_bad_session "A last.fm session-öd lejárt."
+rls_string STR_mobbler_note_lastfm_error "Hiba a last.fm-mel."
+rls_string STR_mobbler_note_comms_error "Hiba az adatkapcsolattal."
+rls_string STR_mobbler_error_no_track "There is no current track"
+rls_string STR_mobbler_error_no_radio_track "There is no current radio track"
+rls_string STR_mobbler_status_online "számok feltöltése"
+rls_string STR_mobbler_status_online_s "%d szám feltöltve"
+rls_string STR_mobbler_status_online_p "%d szám feltöltve"
+rls_string STR_mobbler_status_offline "számok tárolása"
+rls_string STR_mobbler_status_offline_s "%d szám tárolva"
+rls_string STR_mobbler_status_offline_p "%d szám tárolva"
+rls_string STR_mobbler_status_connecting "kapcsolódás"
+rls_string STR_mobbler_status_banned "a mobbler letiltva"
+rls_string STR_mobbler_status_bad_auth "hibás jelszó"
+rls_string STR_mobbler_status_bad_time "hibás idő"
+rls_string STR_mobbler_status_bad_session "máshol már be vagy bejelentkezve"
+rls_string STR_mobbler_status_lastfm_error "last.fm hiba"
+rls_string STR_mobbler_status_comms_error "kommunikációs hiba"
+rls_string STR_mobbler_details "Részletek megadása"
+rls_string STR_mobbler_current_track "most játszott szám"
+rls_string STR_mobbler_love_track "Love this track?"
+rls_string STR_mobbler_ban_track "Ban this track?"
+rls_string STR_mobbler_similar_tracks "Similar tracks"
+rls_string STR_mobbler_album_info "Album Info"
+rls_string STR_mobbler_artist_info "Artist Info"
+rls_string STR_mobbler_similar_artists "Similar Artists"
+rls_string STR_mobbler_artist_events "Artists Events"
+rls_string STR_mobbler_user_events "Your events"
+rls_string STR_mobbler_history "előzmények"
+rls_string STR_mobbler_status "státusz"
+rls_string STR_mobbler_data "adat"
+rls_string STR_mobbler_radio_start "Start a new station"
+rls_string STR_mobbler_radio_artist "Artist"
+rls_string STR_mobbler_radio_enter_artist "Enter an artist"
+rls_string STR_mobbler_radio_tag "Tag"
+rls_string STR_mobbler_radio_enter_tag "Enter a tag"
+rls_string STR_mobbler_radio_user "User"
+rls_string STR_mobbler_radio_enter_user "Enter a user"
+rls_string STR_mobbler_radio_recommendations "Recommended"
+rls_string STR_mobbler_radio_personal "Personal"
+rls_string STR_mobbler_radio_loved "Loved Tracks"
+rls_string STR_mobbler_radio_neighbourhood "Neighbourhood"
+rls_string STR_mobbler_radio_playlist "My Playlist"
+rls_string STR_mobbler_radio_buffering "Buffering"
+rls_string STR_mobbler_note_bad_station "You are not allowed to listen to this radio station."
+rls_string STR_mobbler_note_no_tracks "There are no more tracks to play on this radio station."
+rls_string STR_mobbler_buy "Buy"
+rls_string STR_mobbler_buy_amazon "Search for the current track on the Mobbler Amazon aStore?"
+rls_string STR_mobbler_share "Share"
+rls_string STR_mobbler_biography "Bio"
+rls_string STR_mobbler_events "Events"
+rls_string STR_mobbler_ban "Ban"
+rls_string STR_mobbler_tags "Tags"
+rls_string STR_mobbler_charts "Charts"
+rls_string STR_mobbler_friends "Friends"
+rls_string STR_mobbler_idle "Idle"
+rls_string STR_mobbler_title "Title"
+rls_string STR_mobbler_album "Album"
+rls_string STR_mobbler_artist "Artist"
+rls_string STR_mobbler_check_for_updates "Check for updates"
+rls_string STR_mobbler_update "There is a new version of Mobbler avaliable.  Download and intall now?"
+rls_string STR_mobbler_no_update "You have the latest version of Mobbler."
+rls_string STR_mobbler_scrobbled_queued "%d scrobbled - %d queued"
+rls_string STR_mobbler_go_online "Switch to online mode"
+rls_string STR_mobbler_go_offline "Switch to offline mode"
+rls_string STR_mobbler_state_online "Online"
+rls_string STR_mobbler_state_offline "Offline"	
+rls_string STR_mobbler_state_connecting "Connecting"
+rls_string STR_mobbler_state_handshaking "Handshaking"	
+rls_string STR_mobbler_state_selecting_station "Selecting Station"
+rls_string STR_mobbler_state_fetching_playlist "Fetching Playlist"
+rls_string STR_mobbler_state_checking_for_updates "Checking Updates"
+

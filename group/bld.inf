@@ -1,0 +1,51 @@
+/*
+bld.inf
+
+mobbler, a last.fm mobile scrobbler for Symbian smartphones.
+Copyright (C) 2008  Michael Coffey
+
+http://code.google.com/p/mobbler
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+*/
+
+PRJ_PLATFORMS
+WINSCW GCCE
+
+PRJ_MMPFILES
+// application icon makefile
+gnumakefile icons.mk
+
+// projects
+mobbler.mmp
+..\musicappobserver\group\musicappobserver.mmp
+
+PRJ_EXPORTS
+// music player ecom plugin interface
+..\inc\mobblermusicapp.h	mobbler\mobblermusicapp.h
+
+// mobbler_gfx
+..\gfx\icon_track.png										z:\resource\apps\mobbler\icon_track.png
+..\gfx\speaker_low.png										z:\resource\apps\mobbler\speaker_low.png
+..\gfx\speaker_high.png											z:\resource\apps\mobbler\speaker_high.png
+..\gfx\scrobble.png											z:\resource\apps\mobbler\scrobble.png
+..\gfx\ban27.png											z:\resource\apps\mobbler\ban.png
+..\gfx\love27.png											z:\resource\apps\mobbler\love.png
+..\gfx\next27.png											z:\resource\apps\mobbler\next.png
+..\gfx\play27.png											z:\resource\apps\mobbler\play.png
+..\gfx\bag27.png										z:\resource\apps\mobbler\pound.png
+..\gfx\stopp27.png											z:\resource\apps\mobbler\stop.png
+..\gfx\lastfm_badges\lastfm_red_small.png				z:\resource\apps\mobbler\lastfm.png
+

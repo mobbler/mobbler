@@ -1,0 +1,467 @@
+/*
+mobbler.rss
+
+mobbler, a last.fm mobile scrobbler for Symbian smartphones.
+Copyright (C) 2008  Michael Coffey
+
+http://code.google.com/p/mobbler
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+*/
+
+NAME MOBB
+
+#include <eikon.rh>
+#include <avkon.rsg>
+#include <avkon.rh>
+#include <appinfo.rh>
+#include "mobbler.hrh"
+#include "mobbler.loc"
+#include <startupitem.rh>
+
+CHARACTER_SET UTF8
+
+RESOURCE RSS_SIGNATURE
+	{
+	}
+
+RESOURCE TBUF
+	{
+	buf = STR_mobbler_mobbler;
+	}
+
+RESOURCE EIK_APP_INFO
+	{
+	cba = R_AVKON_SOFTKEYS_OPTIONS_BACK;
+	}
+
+RESOURCE LOCALISABLE_APP_INFO r_localisable_app_info
+	{
+	short_caption = STR_mobbler_mobbler;
+	caption_and_icon = 
+	CAPTION_AND_ICON_INFO
+		{
+		caption = STR_mobbler_mobbler;
+
+		number_of_icons = 1;
+		icon_file = "\\resource\\apps\\mobbler.mif";
+		};
+	}
+
+RESOURCE DIALOG r_mobbler_friends_list_dialog
+	{
+	flags = EAknDialogSelectionList;
+	buttons = R_AVKON_SOFTKEYS_OPTIONS_BACK;
+	items =
+		{
+		DLG_LINE
+			{
+			type = EAknCtSingleGraphicListBox;
+			id = ESelectionListControl;
+			control = LISTBOX
+				{
+				flags = EAknListBoxSelectionList;
+				};
+			}
+		};
+	}
+
+RESOURCE DIALOG r_mobbler_radio_progress_note
+    {
+    flags = EAknProgressNoteFlags;
+    buttons = R_AVKON_SOFTKEYS_CANCEL;
+    items =
+        {
+        DLG_LINE
+            {
+            type = EAknCtNote;
+            id = EMobblerProgressNoteId;
+            control = AVKON_NOTE
+                {
+                layout = EProgressLayout;
+                singular_label = STR_mobbler_radio_buffering;
+                };
+            }
+        };
+    }
+
+RESOURCE AVKON_VIEW r_mobbler_setting_item_list_view
+	{
+	cba = R_AVKON_SOFTKEYS_OK_EMPTY;
+	toolbar = 0;
+	}
+	
+RESOURCE AVKON_VIEW r_mobbler_status_view
+	{
+	cba = R_AVKON_SOFTKEYS_OPTIONS_BACK;
+	menubar = r_mobbler_status_options_menu;
+	toolbar = 0;
+	}
+
+RESOURCE MENU_BAR r_mobbler_status_options_menu
+	{
+	titles =
+		{
+		MENU_TITLE
+			{
+			menu_pane = r_mobbler_status_menu_pane;
+			}
+		};
+	}
+	
+RESOURCE MENU_PANE r_mobbler_status_menu_pane
+	{
+	items =
+		{
+		MENU_ITEM
+			{
+			command = EMobblerCommandRadio;
+			txt = STR_mobbler_radio_start;
+			cascade = r_radio_submenu_pane;
+			},
+		MENU_ITEM
+			{
+			command = EMobblerCommandOnline;
+			txt = STR_mobbler_go_online;
+			},
+		MENU_ITEM
+			{
+			command = EMobblerCommandOffline;
+			txt = STR_mobbler_go_offline;
+			},
+		MENU_ITEM
+			{
+			command = EMobblerCommandCheckForUpdates;
+			txt = STR_mobbler_check_for_updates;
+			},
+		MENU_ITEM
+			{
+			command = EMobblerCommandEditSettings;
+			txt = STR_mobbler_details;
+			},
+
+		MENU_ITEM
+			{
+			command = EMobblerCommandAbout;
+			txt = STR_mobbler_about;
+			},
+		MENU_ITEM
+			{
+			command = EAknSoftkeyExit;
+			txt = STR_mobbler_exit;
+			}
+		};
+	}
+	
+RESOURCE MENU_PANE r_radio_submenu_pane
+	{
+	items =
+		{
+		MENU_ITEM
+			{
+			command = EMobblerCommandRadioArtist;
+			txt = STR_mobbler_radio_artist;
+			},
+		MENU_ITEM
+			{
+			command = EMobblerCommandRadioTag;
+			txt = STR_mobbler_radio_tag;
+			},
+		MENU_ITEM
+			{
+			command = EMobblerCommandRadioUser;
+			txt = STR_mobbler_radio_user;
+			},
+		MENU_ITEM
+			{
+			command = EMobblerCommandRadioPersonal;
+			txt = STR_mobbler_radio_personal;
+			},
+		MENU_ITEM
+			{
+			command = EMobblerCommandRadioRecommedations;
+			txt = STR_mobbler_radio_recommendations;
+			},
+		MENU_ITEM
+			{
+			command = EMobblerCommandRadioLoved;
+			txt = STR_mobbler_radio_loved;
+			},
+		MENU_ITEM
+			{
+			command = EMobblerCommandRadioNeighbourhood;
+			txt = STR_mobbler_radio_neighbourhood;
+			},
+		MENU_ITEM
+			{
+			command = EMobblerCommandRadioMyPlaylist;
+			txt = STR_mobbler_radio_playlist;
+			}
+		};
+	}
+
+RESOURCE DIALOG r_artist_dialog
+	{
+	flags = EGeneralQueryFlags;
+	buttons = R_AVKON_SOFTKEYS_OK_CANCEL;
+	items=
+		{
+		DLG_LINE
+			{
+			type = EAknCtQuery;
+			id = EMobblerArtistQuery;
+			control= AVKON_DATA_QUERY
+				{
+				layout = EDataLayout;
+				control = EDWIN
+					{
+					flags= EEikEdwinNoHorizScrolling | EEikEdwinResizable;
+					maxlength = 50;
+					width = 4;
+					lines = 1;
+					};
+				};
+			}
+		};
+	}
+	
+RESOURCE DIALOG r_tag_dialog
+	{
+	flags = EGeneralQueryFlags;
+	buttons = R_AVKON_SOFTKEYS_OK_CANCEL;
+	items=
+		{
+		DLG_LINE
+			{
+			type = EAknCtQuery;
+			id = EMobblerTagQuery;
+			control= AVKON_DATA_QUERY
+				{
+				layout = EDataLayout;
+				control = EDWIN
+					{
+					flags= EEikEdwinNoHorizScrolling | EEikEdwinResizable;
+					maxlength = 250;
+					width = 4;
+					lines = 1;
+					};
+				};
+			}
+		};
+	}
+
+RESOURCE DIALOG r_user_dialog
+	{
+	flags = EGeneralQueryFlags;
+	buttons = R_AVKON_SOFTKEYS_OK_CANCEL;
+	items=
+		{
+		DLG_LINE
+			{
+			type = EAknCtQuery;
+			id = EMobblerUserQuery;
+			control= AVKON_DATA_QUERY
+				{
+				layout = EDataLayout;
+				control = EDWIN
+					{
+					flags= EEikEdwinNoHorizScrolling | EEikEdwinResizable;
+					maxlength = 250;
+					width = 4;
+					lines = 1;
+					};
+				};
+			}
+		};
+	}
+	
+RESOURCE STATUS_PANE_APP_MODEL r_mobbler_status_pane
+	{
+	panes =
+		{
+		SPANE_PANE
+			{
+			id = EEikStatusPaneUidTitle;
+			type = EAknCtTitlePane;
+			resource = r_mobbler_title_resource;
+			}
+		};
+	}
+	
+RESOURCE TITLE_PANE r_mobbler_title_resource
+	{
+	txt = STR_mobbler_mobbler;
+	}
+	
+RESOURCE AVKON_SETTING_ITEM_LIST r_mobbler_setting_item_list
+	{
+	title = STR_mobbler_details;
+	items =
+		{
+		AVKON_SETTING_ITEM
+			{
+			name = STR_mobbler_username;
+			identifier = EMobblerSettingItemListViewUsername;
+			setting_page_resource = r_mobbler_setting_page_username;
+			},
+		AVKON_SETTING_ITEM
+			{
+			name = STR_mobbler_password;
+			identifier = EMobblerSettingItemListViewPassword;
+			setting_page_resource = r_mobbler_setting_page_password;
+			}
+		};
+	}
+	
+RESOURCE AVKON_SETTING_PAGE r_mobbler_setting_page_username
+	{
+	label = "";
+	type = EEikCtEdwin;
+	editor_resource_id = r_mobbler_setting_page_resource_id_username;
+	}
+	
+RESOURCE EDWIN r_mobbler_setting_page_resource_id_username
+	{
+	maxlength = 30;
+	default_case = EAknEditorTextCase;
+	allowed_case_modes = EAknEditorAllCaseModes;
+	numeric_keymap = EAknEditorStandardNumberModeKeymap;
+	default_input_mode = EAknEditorTextInputMode;
+	allowed_input_modes = EAknEditorTextInputMode | EAknEditorNumericInputMode | EAknEditorSecretAlphaInputMode | EAknEditorKatakanaInputMode | EAknEditorFullWidthTextInputMode | EAknEditorFullWidthNumericInputMode | EAknEditorFullWidthKatakanaInputMode | EAknEditorHiraganaKanjiInputMode | EAknEditorHalfWidthTextInputMode;
+	}
+	
+RESOURCE AVKON_SETTING_PAGE r_mobbler_setting_page_password
+	{
+	label = STR_mobbler_password;
+	type = EEikCtSecretEd;
+	editor_resource_id = r_mobbler_setting_page_resource_id_password;
+	}
+	
+RESOURCE SECRETED r_mobbler_setting_page_resource_id_password
+	{
+	num_letters = 30;
+	}
+	
+RESOURCE DIALOG r_mobbler_connecting_dialog
+	{
+	flags = EAknWaitNoteFlags;
+	buttons = R_AVKON_SOFTKEYS_CANCEL;
+	items =
+		{
+		DLG_LINE
+			{
+			type = EAknCtNote;
+			id = EMobblerSettingItemListViewConnectingDialog;
+			control = AVKON_NOTE
+				{
+				layout = EWaitLayout;
+				singular_label = STR_mobbler_connecting;
+				animation = R_QGN_GRAF_WAIT_BAR_ANIM;
+				};
+			}
+		};
+	}
+	
+RESOURCE DIALOG r_mobbler_query_dialog
+    {
+    flags = EGeneralQueryFlags;
+    buttons = R_AVKON_SOFTKEYS_YES_NO;
+    items =
+        {
+        DLG_LINE
+            {
+            type = EAknCtQuery;
+            id = EMobblerQuery;
+            
+            control = AVKON_CONFIRMATION_QUERY
+                {
+                layout = EConfirmationQueryLayout;
+                animation = R_QGN_NOTE_QUERY_ANIM;   
+                };
+            }
+        };
+    }
+	
+RESOURCE TBUF r_mobbler_setting_item_list_username {buf = "";}
+
+RESOURCE TBUF32 r_about_dialog_title { buf = STR_mobbler_about; }
+RESOURCE TBUF r_mobbler_about_text1 { buf = STR_mobbler_about_text1; }
+RESOURCE TBUF r_mobbler_about_text2 { buf = STR_mobbler_about_text2; }
+
+RESOURCE TBUF r_mobbler_username	{buf = STR_mobbler_username;}
+
+RESOURCE TBUF r_mobbler_note_banned	{buf = STR_mobbler_note_banned;}
+RESOURCE TBUF r_mobbler_note_bad_auth	{buf = STR_mobbler_note_bad_auth;}
+RESOURCE TBUF r_mobbler_note_bad_time	{buf = STR_mobbler_note_bad_time;}
+RESOURCE TBUF r_mobbler_note_bad_session	{buf = STR_mobbler_note_bad_session;}
+RESOURCE TBUF r_mobbler_note_lastfm_error	{buf = STR_mobbler_note_lastfm_error;}
+RESOURCE TBUF r_mobbler_note_comms_error	{buf = STR_mobbler_note_comms_error;}
+RESOURCE TBUF r_mobbler_note_connected	{buf = STR_mobbler_note_connected;}
+
+RESOURCE TBUF r_mobbler_status_online	{buf = STR_mobbler_status_online;}
+RESOURCE TBUF r_mobbler_status_online_s	{buf = STR_mobbler_status_online_s;}
+RESOURCE TBUF r_mobbler_status_online_p	{buf = STR_mobbler_status_online_p;}
+
+RESOURCE TBUF r_mobbler_status_offline	{buf = STR_mobbler_status_offline;}
+RESOURCE TBUF r_mobbler_status_offline_s	{buf = STR_mobbler_status_offline_s;}
+RESOURCE TBUF r_mobbler_status_offline_p	{buf = STR_mobbler_status_offline_p;}
+
+RESOURCE TBUF r_mobbler_status_connecting	{buf = STR_mobbler_status_connecting;}
+RESOURCE TBUF r_mobbler_status_banned	{buf = STR_mobbler_status_banned;}
+RESOURCE TBUF r_mobbler_status_bad_auth	{buf = STR_mobbler_status_bad_auth;}
+RESOURCE TBUF r_mobbler_status_bad_time	{buf = STR_mobbler_status_bad_time;}
+RESOURCE TBUF r_mobbler_status_bad_session	{buf = STR_mobbler_status_bad_session;}
+RESOURCE TBUF r_mobbler_status_lastfm_error	{buf = STR_mobbler_status_lastfm_error;}
+RESOURCE TBUF r_mobbler_status_comms_error	{buf = STR_mobbler_status_comms_error;}
+RESOURCE TBUF r_mobbler_love_track			{buf = STR_mobbler_love_track;}
+RESOURCE TBUF r_mobbler_ban_track			{buf = STR_mobbler_ban_track;}
+RESOURCE TBUF r_mobbler_current_track			{buf = STR_mobbler_current_track;}
+RESOURCE TBUF r_mobbler_buy_amazon				{buf = STR_mobbler_buy_amazon;}
+
+RESOURCE TBUF r_mobbler_note_bad_station			{buf = STR_mobbler_note_bad_station;}
+RESOURCE TBUF r_mobbler_note_no_tracks				{buf = STR_mobbler_note_no_tracks;}
+
+RESOURCE TBUF r_mobbler_music_player				{buf = STR_mobbler_music_player;}
+RESOURCE TBUF r_mobbler_idle						{buf = STR_mobbler_idle;}
+
+RESOURCE TBUF r_mobbler_title						{buf = STR_mobbler_title;}
+RESOURCE TBUF r_mobbler_album						{buf = STR_mobbler_album;}
+RESOURCE TBUF r_mobbler_artist						{buf = STR_mobbler_artist;}
+
+RESOURCE TBUF r_mobbler_radio_enter_artist			{buf = STR_mobbler_radio_enter_artist;}
+RESOURCE TBUF r_mobbler_radio_enter_tag				{buf = STR_mobbler_radio_enter_tag;}
+RESOURCE TBUF r_mobbler_radio_enter_user			{buf = STR_mobbler_radio_enter_user;}
+
+RESOURCE TBUF r_mobbler_error_no_track				{buf = STR_mobbler_error_no_track;}
+RESOURCE TBUF r_mobbler_error_no_radio_track		{buf = STR_mobbler_error_no_radio_track;}
+
+RESOURCE TBUF r_mobbler_update						{buf = STR_mobbler_update;}
+RESOURCE TBUF r_mobbler_no_update						{buf = STR_mobbler_no_update;}
+
+RESOURCE TBUF r_mobbler_scrobbled_queued						{buf = STR_mobbler_scrobbled_queued;}
+
+RESOURCE TBUF r_mobbler_go_online						{buf = STR_mobbler_go_online;}
+RESOURCE TBUF r_mobbler_go_offline						{buf = STR_mobbler_go_offline;}
+
+RESOURCE TBUF r_mobbler_state_online						{buf = STR_mobbler_state_online;}
+RESOURCE TBUF r_mobbler_state_offline						{buf = STR_mobbler_state_offline;}	
+RESOURCE TBUF r_mobbler_state_connecting					{buf = STR_mobbler_state_connecting;}
+RESOURCE TBUF r_mobbler_state_handshaking					{buf = STR_mobbler_state_handshaking;}	
+RESOURCE TBUF r_mobbler_state_selecting_station				{buf = STR_mobbler_state_selecting_station;}
+RESOURCE TBUF r_mobbler_state_fetching_playlist				{buf = STR_mobbler_state_fetching_playlist;}
+RESOURCE TBUF r_mobbler_state_checking_for_updates			{buf = STR_mobbler_state_checking_for_updates;}
+	
+   
+// End of File

@@ -1,0 +1,111 @@
+/*
+mobbler.l37 - Arabic
+
+mobbler, a last.fm mobile scrobbler for Symbian smartphones.
+Copyright (C) 2008  Michael Coffey
+
+
+http://code.google.com/p/mobbler
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+*/
+
+rls_string STR_mobbler_mobbler "موبلر"
+rls_string STR_mobbler_connect "اتصل بلاست.إف إم"
+rls_string STR_mobbler_disconnect "افصل"
+rls_string STR_mobbler_about "حول"
+rls_string STR_mobbler_exit "أخرج (توقّف عن الإبلاغ)"
+rls_string STR_mobbler_username "اسم المستخدم"
+rls_string STR_mobbler_password "كلمة السر"
+rls_string STR_mobbler_connecting "يتصل بلاست.إف إم..."
+rls_string STR_mobbler_about_text1 "موبلر "
+rls_string STR_mobbler_about_text2 "\n\nكتبه مايكل موفي\n\nعرّبه أحمد فرغل\n\ncode.google.com/p/mobbler"
+rls_string STR_mobbler_note_connected "تم الاتصال بلاست.إف إم!"
+rls_string STR_mobbler_note_banned "تم منع موبلر!  أبلغنا على العنوان التالي code.google.com/p/mobbler."
+rls_string STR_mobbler_note_bad_auth "كلمة السر التي أدخلتها غير صحيحة."
+rls_string STR_mobbler_note_bad_time "الوقت على هاتفك غير سليم. رجاءً تأكد من صحة الوقت والمنظقة الزمنية في تطبيق الساعة."
+rls_string STR_mobbler_note_bad_session "انتهت جلسة لاست.إف إم"
+rls_string STR_mobbler_note_lastfm_error "هناك مشكلة في لاست.إف إم."
+rls_string STR_mobbler_note_comms_error "هناك خطأ في اتصال البيانات."
+rls_string STR_mobbler_error_no_track "There is no current track"
+rls_string STR_mobbler_error_no_radio_track "There is no current radio track"
+rls_string STR_mobbler_status_online "يبلغ عن المقطوعات"
+rls_string STR_mobbler_status_online_s "تم الإبلاغ عن المقطوعة"
+rls_string STR_mobbler_status_online_p "تم الإبلاغ عن %d مقطوعات"
+rls_string STR_mobbler_status_offline "يصفّ المقطوعات"
+rls_string STR_mobbler_status_offline_s "تم صفّ مقطوعة واحدة"
+rls_string STR_mobbler_status_offline_p "تم صفّ %d مقطوعات"
+rls_string STR_mobbler_status_connecting "يتصل"
+rls_string STR_mobbler_status_banned "موبلر ممنوع"
+rls_string STR_mobbler_status_bad_auth "كلمة سر خاطئة"
+rls_string STR_mobbler_status_bad_time "الوقت غير سليم"
+rls_string STR_mobbler_status_bad_session "متصل من مكان آخر"
+rls_string STR_mobbler_status_lastfm_error "خطأ في لاست.إف إم"
+rls_string STR_mobbler_status_comms_error "خطأ comms"
+rls_string STR_mobbler_details "أدخِل تفاصيل"
+rls_string STR_mobbler_current_track "المقطوعة الحالية"
+rls_string STR_mobbler_love_track "Love this track?"
+rls_string STR_mobbler_ban_track "Ban this track?"
+rls_string STR_mobbler_similar_tracks "Similar tracks"
+rls_string STR_mobbler_album_info "Album Info"
+rls_string STR_mobbler_artist_info "Artist Info"
+rls_string STR_mobbler_similar_artists "Similar Artists"
+rls_string STR_mobbler_artist_events "Artists Events"
+rls_string STR_mobbler_user_events "Your events"
+rls_string STR_mobbler_history "تاريخ"
+rls_string STR_mobbler_status "الحالة"
+rls_string STR_mobbler_data "بيانات"
+rls_string STR_mobbler_radio_start "Start a new station"
+rls_string STR_mobbler_radio_artist "Artist"
+rls_string STR_mobbler_radio_enter_artist "Enter an artist"
+rls_string STR_mobbler_radio_tag "Tag"
+rls_string STR_mobbler_radio_enter_tag "Enter a tag"
+rls_string STR_mobbler_radio_user "User"
+rls_string STR_mobbler_radio_enter_user "Enter a user"
+rls_string STR_mobbler_radio_recommendations "Recommended"
+rls_string STR_mobbler_radio_personal "Personal"
+rls_string STR_mobbler_radio_loved "Loved Tracks"
+rls_string STR_mobbler_radio_neighbourhood "Neighbourhood"
+rls_string STR_mobbler_radio_playlist "My Playlist"
+rls_string STR_mobbler_radio_buffering "Buffering"
+rls_string STR_mobbler_note_bad_station "You are not allowed to listen to this radio station."
+rls_string STR_mobbler_note_no_tracks "There are no more tracks to play on this radio station."
+rls_string STR_mobbler_buy "Buy"
+rls_string STR_mobbler_buy_amazon "Search for the current track on the Mobbler Amazon aStore?"
+rls_string STR_mobbler_share "Share"
+rls_string STR_mobbler_biography "Bio"
+rls_string STR_mobbler_events "Events"
+rls_string STR_mobbler_ban "Ban"
+rls_string STR_mobbler_tags "Tags"
+rls_string STR_mobbler_charts "Charts"
+rls_string STR_mobbler_friends "Friends"
+rls_string STR_mobbler_idle "Idle"
+rls_string STR_mobbler_title "Title"
+rls_string STR_mobbler_album "Album"
+rls_string STR_mobbler_artist "Artist"
+rls_string STR_mobbler_check_for_updates "Check for updates"
+rls_string STR_mobbler_update "There is a new version of Mobbler avaliable.  Download and intall now?"
+rls_string STR_mobbler_no_update "You have the latest version of Mobbler."
+rls_string STR_mobbler_scrobbled_queued "%d scrobbled - %d queued"
+rls_string STR_mobbler_go_online "Switch to online mode"
+rls_string STR_mobbler_go_offline "Switch to offline mode"
+rls_string STR_mobbler_state_online "Online"
+rls_string STR_mobbler_state_offline "Offline"	
+rls_string STR_mobbler_state_connecting "Connecting"
+rls_string STR_mobbler_state_handshaking "Handshaking"	
+rls_string STR_mobbler_state_selecting_station "Selecting Station"
+rls_string STR_mobbler_state_fetching_playlist "Fetching Playlist"
+rls_string STR_mobbler_state_checking_for_updates "Checking Updates"
+

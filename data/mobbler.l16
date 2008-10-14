@@ -1,0 +1,111 @@
+/*
+mobbler.l16 - Russian
+
+mobbler, a last.fm mobile scrobbler for Symbian smartphones.
+Copyright (C) 2008  Michael Coffey
+
+
+http://code.google.com/p/mobbler
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+*/
+
+rls_string STR_mobbler_mobbler "mobbler"
+rls_string STR_mobbler_connect "Подключиться к last.fm"
+rls_string STR_mobbler_disconnect "Отключиться (кешировать треки)"
+rls_string STR_mobbler_about "О программе"
+rls_string STR_mobbler_exit "Выход (прекратить скробблинг)"
+rls_string STR_mobbler_username "Пользователь"
+rls_string STR_mobbler_password "Пароль"
+rls_string STR_mobbler_connecting "Соединение с last.fm..."
+rls_string STR_mobbler_about_text1 "mobbler 0.2.4"
+rls_string STR_mobbler_about_text2 "\n\nАвтор Michael Coffey\n\nПеревод www.asarkisov.com\n\ncode.google.com/p/mobbler"
+rls_string STR_mobbler_note_connected "Подключён к last.fm!"
+rls_string STR_mobbler_note_banned "mobbler был забанен!  Пожалуйста, добавьте issue на code.google.com/p/mobbler/issues/list."
+rls_string STR_mobbler_note_bad_auth "Введён неверный пароль."
+rls_string STR_mobbler_note_bad_time "Время на Вашем устройстве слишком отлечается от действительного. Пожалуйста, проверьте настройки времени и временной зоны в Вашем устройстве."
+rls_string STR_mobbler_note_bad_session "Сеанс работы с last.fm недействителен."
+rls_string STR_mobbler_note_lastfm_error "Проблема с last.fm."
+rls_string STR_mobbler_note_comms_error "Проблема с Вашим подключением к internet."
+rls_string STR_mobbler_error_no_track "There is no current track"
+rls_string STR_mobbler_error_no_radio_track "There is no current radio track"
+rls_string STR_mobbler_status_online "треки скробблятся"
+rls_string STR_mobbler_status_online_s "%d трек заскробблен"
+rls_string STR_mobbler_status_online_p "%d треков заскробленно"
+rls_string STR_mobbler_status_offline "треки кешируются"
+rls_string STR_mobbler_status_offline_s "%d трек в очереди"
+rls_string STR_mobbler_status_offline_p "%d треков в очереди"
+rls_string STR_mobbler_status_connecting "подключение"
+rls_string STR_mobbler_status_banned "mobbler забанен"
+rls_string STR_mobbler_status_bad_auth "неверный пароль"
+rls_string STR_mobbler_status_bad_time "неправильное время"
+rls_string STR_mobbler_status_bad_session "подключён с другого клиента"
+rls_string STR_mobbler_status_lastfm_error "ошибка last.fm"
+rls_string STR_mobbler_status_comms_error "ошибка соединения"
+rls_string STR_mobbler_details "Введите детали"
+rls_string STR_mobbler_current_track "текущий трек"
+rls_string STR_mobbler_love_track "Love this track?"
+rls_string STR_mobbler_ban_track "Ban this track?"
+rls_string STR_mobbler_similar_tracks "Similar tracks"
+rls_string STR_mobbler_album_info "Album Info"
+rls_string STR_mobbler_artist_info "Artist Info"
+rls_string STR_mobbler_similar_artists "Похожие исполнители"
+rls_string STR_mobbler_artist_events "Artists Events"
+rls_string STR_mobbler_user_events "Your events"
+rls_string STR_mobbler_history "история"
+rls_string STR_mobbler_status "статус"
+rls_string STR_mobbler_data "данные"
+rls_string STR_mobbler_radio_start "Подключиться к станции"
+rls_string STR_mobbler_radio_artist "Исполнитель"
+rls_string STR_mobbler_radio_enter_artist "Введите имя исполнителя"
+rls_string STR_mobbler_radio_tag "Тэг"
+rls_string STR_mobbler_radio_enter_tag "Введите имя пользователя"
+rls_string STR_mobbler_radio_user "Пользователь"
+rls_string STR_mobbler_radio_enter_user "Enter a user"
+rls_string STR_mobbler_radio_recommendations "Рекомендованное"
+rls_string STR_mobbler_radio_personal "Личное"
+rls_string STR_mobbler_radio_loved "Любимые композиции"
+rls_string STR_mobbler_radio_neighbourhood "Соседи"
+rls_string STR_mobbler_radio_playlist "Мой playlist"
+rls_string STR_mobbler_radio_buffering "Buffering"
+rls_string STR_mobbler_note_bad_station "Вы не допущены к прослушиванию этой радиостанции."
+rls_string STR_mobbler_note_no_tracks "На этой радиостанции больше нет композиций для воспроизведения."
+rls_string STR_mobbler_buy "Купить"
+rls_string STR_mobbler_buy_amazon "Search for the current track on the Mobbler Amazon aStore?"
+rls_string STR_mobbler_share "Поделиться"
+rls_string STR_mobbler_biography "Биография"
+rls_string STR_mobbler_events "События"
+rls_string STR_mobbler_ban "Бан"
+rls_string STR_mobbler_tags "Тэги"
+rls_string STR_mobbler_charts "Чарты"
+rls_string STR_mobbler_friends "Друзья"
+rls_string STR_mobbler_idle "Бездействие"
+rls_string STR_mobbler_title "Название"
+rls_string STR_mobbler_album "Альбом"
+rls_string STR_mobbler_artist "Исполнитель"
+rls_string STR_mobbler_check_for_updates "Check for updates"
+rls_string STR_mobbler_update "There is a new version of Mobbler avaliable.  Download and intall now?"
+rls_string STR_mobbler_no_update "You have the latest version of Mobbler."
+rls_string STR_mobbler_scrobbled_queued "%d scrobbled - %d queued"
+rls_string STR_mobbler_go_online "Switch to online mode"
+rls_string STR_mobbler_go_offline "Switch to offline mode"
+rls_string STR_mobbler_state_online "Online"
+rls_string STR_mobbler_state_offline "Offline"	
+rls_string STR_mobbler_state_connecting "Connecting"
+rls_string STR_mobbler_state_handshaking "Handshaking"	
+rls_string STR_mobbler_state_selecting_station "Selecting Station"
+rls_string STR_mobbler_state_fetching_playlist "Fetching Playlist"
+rls_string STR_mobbler_state_checking_for_updates "Checking Updates"
+

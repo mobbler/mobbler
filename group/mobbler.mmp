@@ -1,0 +1,127 @@
+/*
+mobbler.mmp
+
+mobbler, a last.fm mobile scrobbler for Symbian smartphones.
+Copyright (C) 2008  Michael Coffey
+
+http://code.google.com/p/mobbler
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+*/
+
+TARGET			mobbler.exe
+TARGETTYPE		exe
+UID				0x100039CE 0xA0007648
+
+LANG 01 02 03 04 05 06 08 09 13 16 17 18 25 27 31 34 37 54 67 68 78
+
+SOURCEPATH	..\src
+USERINCLUDE	..\inc
+SYSTEMINCLUDE	 \epoc32\include \epoc32\include\mmf\plugin
+
+SOURCE		mobbler.cpp
+SOURCE		mobblerApplication.cpp
+SOURCE		mobblerAppUi.cpp
+SOURCE		mobblerDocument.cpp
+
+SOURCE		mobblermusiclistener.cpp
+SOURCE		mobblernowplayingcallback.cpp
+
+SOURCE		mobblerlastfmconnection.cpp
+SOURCE		mobblerparser.cpp
+
+SOURCE		mobblerradioplayer.cpp
+SOURCE		mobblerradioplaylist.cpp
+
+SOURCE		mobblersettingitemlistsettings.cpp
+SOURCE		mobblersettingitemlistview.cpp
+SOURCE		mobblersettingitemlist.cpp
+
+SOURCE		mobblerstatusview.cpp
+SOURCE		mobblerstatuscontrol.cpp
+
+SOURCE		mobblertrack.cpp
+SOURCE		mobblerutility.cpp
+SOURCE		mobblerbitmap.cpp
+SOURCE		mobblertransaction.cpp
+SOURCE		mobblerwebservicesquery.cpp
+
+SOURCE		mobblerlastfmerror.cpp
+
+SOURCE		mobblerstring.cpp
+SOURCE		mobblertimeout.cpp
+SOURCE		mobblermarquee.cpp
+
+LIBRARY		euser.lib
+LIBRARY		esock.lib 
+LIBRARY		apparc.lib
+LIBRARY		cone.lib
+LIBRARY		eikcore.lib
+LIBRARY		avkon.lib
+LIBRARY		commonengine.lib
+LIBRARY		efsrv.lib 
+LIBRARY		estor.lib
+LIBRARY		aknnotify.lib
+LIBRARY		http.lib
+LIBRARY		bafl.lib
+LIBRARY		inetprotutil.lib 
+LIBRARY		hash.lib 
+LIBRARY		charconv.lib 
+LIBRARY		eikctl.lib 
+LIBRARY		eikcoctl.lib
+LIBRARY		ws32.lib 
+LIBRARY		apgrfx.lib 
+LIBRARY		commdb.lib 
+LIBRARY		mediaclientaudiostream.lib 
+LIBRARY		aknskins.lib
+LIBRARY		aknskinsrv.lib
+LIBRARY		aknswallpaperutils.lib
+LIBRARY		fbscli.lib 
+LIBRARY		imageconversion.lib 
+LIBRARY		conarc.lib 
+LIBRARY		hal.lib 
+LIBRARY		bitmaptransforms.lib 
+LIBRARY		RemConCoreApi.lib
+LIBRARY		RemConInterfaceBase.lib
+LIBRARY		senxml.lib 
+LIBRARY		ecom.lib
+LIBRARY		eikdlg.lib
+LIBRARY		bitgdi.lib
+LIBRARY		gdi.lib
+LIBRARY		cmmanager.lib
+
+#ifndef WINS
+LIBRARY		browserlauncher.lib
+#endif
+
+VENDORID	0
+SECUREID	0xA0007648
+
+CAPABILITY	NetworkServices ReadUserData
+
+EPOCSTACKSIZE 0x14000
+EPOCHEAPSIZE  0x100000 0x200000
+
+START RESOURCE	..\data\mobbler.rss
+HEADER
+TARGET mobbler
+TARGETPATH resource\apps
+END //RESOURCE
+
+START RESOURCE	..\data\mobbler_reg.rss
+TARGET mobbler_reg
+TARGETPATH 	  \private\10003a3f\apps
+END //RESOURCE
+

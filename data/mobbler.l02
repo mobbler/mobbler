@@ -1,0 +1,111 @@
+/*
+mobbler.l02 - French
+
+mobbler, a last.fm mobile scrobbler for Symbian smartphones.
+Copyright (C) 2008  Michael Coffey
+
+
+http://code.google.com/p/mobbler
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+*/
+
+rls_string STR_mobbler_mobbler "mobbler"
+rls_string STR_mobbler_connect "Connexion à last.fm"
+rls_string STR_mobbler_disconnect "Déconnexion"
+rls_string STR_mobbler_about "À Propos"
+rls_string STR_mobbler_exit "Quitter (Arrêt du scrobbling)"
+rls_string STR_mobbler_username "Nom d'utilisateur"
+rls_string STR_mobbler_password "Mot de Passe"
+rls_string STR_mobbler_connecting "Connexion en cours à last.fm..."
+rls_string STR_mobbler_about_text1 "mobbler "
+rls_string STR_mobbler_about_text2 "\n\nPar Michael Coffey\n\ncode.google.com/p/mobbler"
+rls_string STR_mobbler_note_connected "Connecté à last.fm!"
+rls_string STR_mobbler_note_banned "mobbler a été arrêté! Merci de référencer votre erreur sur le site : code.google.com/p/mobbler."
+rls_string STR_mobbler_note_bad_auth "Votre Mot de passe est incorrect."
+rls_string STR_mobbler_note_bad_time "L’horloge de votre mobile est décalée par rapport à l’horloge actuelle du serveur. Merci de vérifier les réglages de l’horloge et du fuseau horaire de votre appareil."
+rls_string STR_mobbler_note_bad_session "Votre session avec last.fm est invalidée."
+rls_string STR_mobbler_note_lastfm_error "Il y a un problème sur last.fm."
+rls_string STR_mobbler_note_comms_error "Il y une erreur de transfert de données."
+rls_string STR_mobbler_error_no_track "There is no current track"
+rls_string STR_mobbler_error_no_radio_track "There is no current radio track"
+rls_string STR_mobbler_status_online "scrobbling des pistes"
+rls_string STR_mobbler_status_online_s "%d piste scrobblée"
+rls_string STR_mobbler_status_online_p "%d pistes scrobblées"
+rls_string STR_mobbler_status_offline "Ajout de pistes en fin liste"
+rls_string STR_mobbler_status_offline_s "%d Piste ajoutée en fin de liste"
+rls_string STR_mobbler_status_offline_p "%d Pistes ajoutées en fin de liste"
+rls_string STR_mobbler_status_connecting "Connexion en cours"
+rls_string STR_mobbler_status_banned "mobbler est interdit"
+rls_string STR_mobbler_status_bad_auth "Mot de Passe incorrect"
+rls_string STR_mobbler_status_bad_time "Temps incorrect"
+rls_string STR_mobbler_status_bad_session "Déjà connecté avec une autre session"
+rls_string STR_mobbler_status_lastfm_error "Erreur last.fm"
+rls_string STR_mobbler_status_comms_error "Erreur de Communication"
+rls_string STR_mobbler_details "Entrer les détails"
+rls_string STR_mobbler_current_track "Piste actuelle"
+rls_string STR_mobbler_love_track "Love this track?"
+rls_string STR_mobbler_ban_track "Ban this track?"
+rls_string STR_mobbler_similar_tracks "Similar tracks"
+rls_string STR_mobbler_album_info "Album Info"
+rls_string STR_mobbler_artist_info "Artist Info"
+rls_string STR_mobbler_similar_artists "Artistes similaires"
+rls_string STR_mobbler_artist_events "Artists Events"
+rls_string STR_mobbler_user_events "Your events"
+rls_string STR_mobbler_history "Historique"
+rls_string STR_mobbler_status "Statut"
+rls_string STR_mobbler_data "Données"
+rls_string STR_mobbler_radio_start "Chercher une station"
+rls_string STR_mobbler_radio_artist "Artiste"
+rls_string STR_mobbler_radio_enter_artist "Entrez un Artiste"
+rls_string STR_mobbler_radio_tag "Tag"
+rls_string STR_mobbler_radio_enter_tag "Entrez un Tag"
+rls_string STR_mobbler_radio_user "Utilisateur"
+rls_string STR_mobbler_radio_enter_user "Entrez un nom d’utilisateur"
+rls_string STR_mobbler_radio_recommendations "Recommandations"
+rls_string STR_mobbler_radio_personal "Bibliothèque"
+rls_string STR_mobbler_radio_loved "Morceaux préférés"
+rls_string STR_mobbler_radio_neighbourhood "Voisins"
+rls_string STR_mobbler_radio_playlist "Ma Playlist"
+rls_string STR_mobbler_radio_buffering "Buffering"
+rls_string STR_mobbler_note_bad_station "Vous n’êtes pas autorisé à écouter cette station."
+rls_string STR_mobbler_note_no_tracks "Il n’y a plus aucun morceau à jouer pour cette station."
+rls_string STR_mobbler_buy "Acheter"
+rls_string STR_mobbler_buy_amazon "Search for the current track on the Mobbler Amazon aStore?"
+rls_string STR_mobbler_share "Partager"
+rls_string STR_mobbler_biography "Biographie"
+rls_string STR_mobbler_events "Concerts"
+rls_string STR_mobbler_ban "Bannir"
+rls_string STR_mobbler_tags "Tags"
+rls_string STR_mobbler_charts "Charts"
+rls_string STR_mobbler_friends "Amis"
+rls_string STR_mobbler_idle "Inactif"
+rls_string STR_mobbler_title "Titre"
+rls_string STR_mobbler_album "Album"
+rls_string STR_mobbler_artist "Artiste"
+rls_string STR_mobbler_check_for_updates "Check for updates"
+rls_string STR_mobbler_update "There is a new version of Mobbler avaliable.  Download and intall now?"
+rls_string STR_mobbler_no_update "You have the latest version of Mobbler."
+rls_string STR_mobbler_scrobbled_queued "%d scrobbled - %d queued"
+rls_string STR_mobbler_go_online "Switch to online mode"
+rls_string STR_mobbler_go_offline "Switch to offline mode"
+rls_string STR_mobbler_state_online "Online"
+rls_string STR_mobbler_state_offline "Offline"	
+rls_string STR_mobbler_state_connecting "Connecting"
+rls_string STR_mobbler_state_handshaking "Handshaking"	
+rls_string STR_mobbler_state_selecting_station "Selecting Station"
+rls_string STR_mobbler_state_fetching_playlist "Fetching Playlist"
+rls_string STR_mobbler_state_checking_for_updates "Checking Updates"
+

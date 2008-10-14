@@ -1,0 +1,111 @@
+/*
+mobbler.l05 - Italian
+
+mobbler, a last.fm mobile scrobbler for Symbian smartphones.
+Copyright (C) 2008  Michael Coffey
+
+
+http://code.google.com/p/mobbler
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+*/
+
+rls_string STR_mobbler_mobbler "mobbler"
+rls_string STR_mobbler_connect "Connetti a last.fm"
+rls_string STR_mobbler_disconnect "Disconnetti"
+rls_string STR_mobbler_about "Informazioni su"
+rls_string STR_mobbler_exit "Esci (termina lo scrobbling)"
+rls_string STR_mobbler_username "nome utente"
+rls_string STR_mobbler_password "password"
+rls_string STR_mobbler_connecting "Connessione a last.fm..."
+rls_string STR_mobbler_about_text1 "mobbler "
+rls_string STR_mobbler_about_text2 "\n\nby Michael Coffey\n\nTraduzione by <Alessandro Ferrari aka MrGorefest>\n\ncode.google.com/p/mobbler"
+rls_string STR_mobbler_note_connected "Connesso a last.fm!"
+rls_string STR_mobbler_note_banned "mobbler è stato bloccato!  Per favore segnala il problema a code.google.com/p/mobbler."
+rls_string STR_mobbler_note_bad_auth "La tua password è incorretta."
+rls_string STR_mobbler_note_bad_time "L'orario del tuo telefono si discosta molto da quello attuale.  Per favore controlla l'ora e il fuso orario nel tuo telefono."
+rls_string STR_mobbler_note_bad_session "La tua sessione con Last.fm è scaduta."
+rls_string STR_mobbler_note_lastfm_error "Ci sono problemi con last.fm."
+rls_string STR_mobbler_note_comms_error "C'è un problema con la tua connessione dati."
+rls_string STR_mobbler_error_no_track "There is no current track"
+rls_string STR_mobbler_error_no_radio_track "There is no current radio track"
+rls_string STR_mobbler_status_online "scrobbling dei brani"
+rls_string STR_mobbler_status_online_s "%d brano scrobbled"
+rls_string STR_mobbler_status_online_p "%d brani scrobbled"
+rls_string STR_mobbler_status_offline "brani in coda"
+rls_string STR_mobbler_status_offline_s "%d brano messo in coda"
+rls_string STR_mobbler_status_offline_p "%d brani messi in coda"
+rls_string STR_mobbler_status_connecting "connessione"
+rls_string STR_mobbler_status_banned "mobbler è bloccato"
+rls_string STR_mobbler_status_bad_auth "password errata"
+rls_string STR_mobbler_status_bad_time "orario non corretto"
+rls_string STR_mobbler_status_bad_session "connesso altrove"
+rls_string STR_mobbler_status_lastfm_error "errore di last.fm"
+rls_string STR_mobbler_status_comms_error "errore di comunicazione"
+rls_string STR_mobbler_details "Inserire i dettagli"
+rls_string STR_mobbler_current_track "brano corrente"
+rls_string STR_mobbler_love_track "Love this track?"
+rls_string STR_mobbler_ban_track "Ban this track?"
+rls_string STR_mobbler_similar_tracks "Similar tracks"
+rls_string STR_mobbler_album_info "Album Info"
+rls_string STR_mobbler_artist_info "Artist Info"
+rls_string STR_mobbler_similar_artists "Artisti Simili"
+rls_string STR_mobbler_artist_events "Artists Events"
+rls_string STR_mobbler_user_events "Your events"
+rls_string STR_mobbler_history "cronologia"
+rls_string STR_mobbler_status "stato"
+rls_string STR_mobbler_data "dati"
+rls_string STR_mobbler_radio_start "Avvia una nuova stazione"
+rls_string STR_mobbler_radio_artist "Artista"
+rls_string STR_mobbler_radio_enter_artist "Inserisci un artista"
+rls_string STR_mobbler_radio_tag "Tag"
+rls_string STR_mobbler_radio_enter_tag "Inserisci un Tag"
+rls_string STR_mobbler_radio_user "Utente"
+rls_string STR_mobbler_radio_enter_user "Inserisci un Utente"
+rls_string STR_mobbler_radio_recommendations "Raccomandati"
+rls_string STR_mobbler_radio_personal "Personale"
+rls_string STR_mobbler_radio_loved "Brani preferiti"
+rls_string STR_mobbler_radio_neighbourhood "Vicini"
+rls_string STR_mobbler_radio_playlist "Mia Playlist"
+rls_string STR_mobbler_radio_buffering "Buffering"
+rls_string STR_mobbler_note_bad_station "Non ti è permesso ascoltare questa stazione radio."
+rls_string STR_mobbler_note_no_tracks "Non ci sono più brani da suonare in questa stazione radio."
+rls_string STR_mobbler_buy "Compra"
+rls_string STR_mobbler_buy_amazon "Search for the current track on the Mobbler Amazon aStore?"
+rls_string STR_mobbler_share "Condividi"
+rls_string STR_mobbler_biography "Biografia"
+rls_string STR_mobbler_events "Eventi"
+rls_string STR_mobbler_ban "Ban"
+rls_string STR_mobbler_tags "Tags"
+rls_string STR_mobbler_charts "Classifiche"
+rls_string STR_mobbler_friends "Amici"
+rls_string STR_mobbler_idle "Inattivo"
+rls_string STR_mobbler_title "Titolo"
+rls_string STR_mobbler_album "Album"
+rls_string STR_mobbler_artist "Artista"
+rls_string STR_mobbler_check_for_updates "Check for updates"
+rls_string STR_mobbler_update "There is a new version of Mobbler avaliable.  Download and intall now?"
+rls_string STR_mobbler_no_update "You have the latest version of Mobbler."
+rls_string STR_mobbler_scrobbled_queued "%d scrobbled - %d queued"
+rls_string STR_mobbler_go_online "Switch to online mode"
+rls_string STR_mobbler_go_offline "Switch to offline mode"
+rls_string STR_mobbler_state_online "Online"
+rls_string STR_mobbler_state_offline "Offline"	
+rls_string STR_mobbler_state_connecting "Connecting"
+rls_string STR_mobbler_state_handshaking "Handshaking"	
+rls_string STR_mobbler_state_selecting_station "Selecting Station"
+rls_string STR_mobbler_state_fetching_playlist "Fetching Playlist"
+rls_string STR_mobbler_state_checking_for_updates "Checking Updates"
+

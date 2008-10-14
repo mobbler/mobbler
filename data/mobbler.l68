@@ -1,0 +1,111 @@
+/*
+mobbler.l68 - Lithuanian
+
+mobbler, a last.fm mobile scrobbler for Symbian smartphones.
+Copyright (C) 2008  Michael Coffey
+
+
+http://code.google.com/p/mobbler
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+*/
+
+rls_string STR_mobbler_mobbler "mobbler"
+rls_string STR_mobbler_connect "Jungtis prie last.fm"
+rls_string STR_mobbler_disconnect "Atsijungti"
+rls_string STR_mobbler_about "Apie"
+rls_string STR_mobbler_exit "Išeiti (baigti įrašinėjimą)"
+rls_string STR_mobbler_username "vartotojo vardas"
+rls_string STR_mobbler_password "slaptažodis"
+rls_string STR_mobbler_connecting "Jungiamasi prie last.fm..."
+rls_string STR_mobbler_about_text1 "mobbler "
+rls_string STR_mobbler_about_text2 "\n\nby Michael Coffey\n\ncode.google.com/p/mobbler"
+rls_string STR_mobbler_note_connected "Prisijungta last.fm!"
+rls_string STR_mobbler_note_banned "mobbler uždraustas! Rašykite apie problemą į code.google.com/p/mobbler."
+rls_string STR_mobbler_note_bad_auth "Slaptažodis neteisingas."
+rls_string STR_mobbler_note_bad_time "Jūsų telefono laikas netinkamas. Prašome tikrinti nustatymus."
+rls_string STR_mobbler_note_bad_session "Sesija su last.fm klaidinga!"
+rls_string STR_mobbler_note_lastfm_error "Yra problemų su last.fm."
+rls_string STR_mobbler_note_comms_error "Klaida su jūsų prisijungimu prie GPRS/EDGE/3G/WLAN tinklo."
+rls_string STR_mobbler_error_no_track "There is no current track"
+rls_string STR_mobbler_error_no_radio_track "There is no current radio track"
+rls_string STR_mobbler_status_online "dainos įrašinėjimos"
+rls_string STR_mobbler_status_online_s "%d daina įrašyta"
+rls_string STR_mobbler_status_online_p "%d dainų įrašyta"
+rls_string STR_mobbler_status_offline "dainos eilėje"
+rls_string STR_mobbler_status_offline_s "%d daina eilėje"
+rls_string STR_mobbler_status_offline_p "%d dainos eilėje"
+rls_string STR_mobbler_status_connecting "jungiamasi"
+rls_string STR_mobbler_status_banned "mobbler uždraustas"
+rls_string STR_mobbler_status_bad_auth "slaptažodis neteisingas"
+rls_string STR_mobbler_status_bad_time "laikas neteisingas"
+rls_string STR_mobbler_status_bad_session "klaida su sesija"
+rls_string STR_mobbler_status_lastfm_error "last.fm klaida"
+rls_string STR_mobbler_status_comms_error "ryšio klaida"
+rls_string STR_mobbler_details "Įvesk detales"
+rls_string STR_mobbler_current_track "dabartinė daina"
+rls_string STR_mobbler_love_track "Love this track?"
+rls_string STR_mobbler_ban_track "Ban this track?"
+rls_string STR_mobbler_similar_tracks "Similar tracks"
+rls_string STR_mobbler_album_info "Album Info"
+rls_string STR_mobbler_artist_info "Artist Info"
+rls_string STR_mobbler_similar_artists "Similar Artists"
+rls_string STR_mobbler_artist_events "Artists Events"
+rls_string STR_mobbler_user_events "Your events"
+rls_string STR_mobbler_history "istorija"
+rls_string STR_mobbler_status "statusas"
+rls_string STR_mobbler_data "data"
+rls_string STR_mobbler_radio_start "Start a new station"
+rls_string STR_mobbler_radio_artist "Artist"
+rls_string STR_mobbler_radio_enter_artist "Enter an artist"
+rls_string STR_mobbler_radio_tag "Tag"
+rls_string STR_mobbler_radio_enter_tag "Enter a tag"
+rls_string STR_mobbler_radio_user "User"
+rls_string STR_mobbler_radio_enter_user "Enter a user"
+rls_string STR_mobbler_radio_recommendations "Recommended"
+rls_string STR_mobbler_radio_personal "Personal"
+rls_string STR_mobbler_radio_loved "Loved Tracks"
+rls_string STR_mobbler_radio_neighbourhood "Neighbourhood"
+rls_string STR_mobbler_radio_playlist "My Playlist"
+rls_string STR_mobbler_radio_buffering "Buffering"
+rls_string STR_mobbler_note_bad_station "You are not allowed to listen to this radio station."
+rls_string STR_mobbler_note_no_tracks "There are no more tracks to play on this radio station."
+rls_string STR_mobbler_buy "Buy"
+rls_string STR_mobbler_buy_amazon "Search for the current track on the Mobbler Amazon aStore?"
+rls_string STR_mobbler_share "Share"
+rls_string STR_mobbler_biography "Bio"
+rls_string STR_mobbler_events "Events"
+rls_string STR_mobbler_ban "Ban"
+rls_string STR_mobbler_tags "Tags"
+rls_string STR_mobbler_charts "Charts"
+rls_string STR_mobbler_friends "Friends"
+rls_string STR_mobbler_idle "Idle"
+rls_string STR_mobbler_title "Title"
+rls_string STR_mobbler_album "Album"
+rls_string STR_mobbler_artist "Artist"
+rls_string STR_mobbler_check_for_updates "Check for updates"
+rls_string STR_mobbler_update "There is a new version of Mobbler avaliable.  Download and intall now?"
+rls_string STR_mobbler_no_update "You have the latest version of Mobbler."
+rls_string STR_mobbler_scrobbled_queued "%d scrobbled - %d queued"
+rls_string STR_mobbler_go_online "Switch to online mode"
+rls_string STR_mobbler_go_offline "Switch to offline mode"
+rls_string STR_mobbler_state_online "Online"
+rls_string STR_mobbler_state_offline "Offline"	
+rls_string STR_mobbler_state_connecting "Connecting"
+rls_string STR_mobbler_state_handshaking "Handshaking"	
+rls_string STR_mobbler_state_selecting_station "Selecting Station"
+rls_string STR_mobbler_state_fetching_playlist "Fetching Playlist"
+rls_string STR_mobbler_state_checking_for_updates "Checking Updates"
+

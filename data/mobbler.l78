@@ -1,0 +1,111 @@
+/*
+mobbler.l78 - Romanian
+
+mobbler, a last.fm mobile scrobbler for Symbian smartphones.
+Copyright (C) 2008  Michael Coffey
+
+
+http://code.google.com/p/mobbler
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+*/
+
+rls_string STR_mobbler_mobbler "mobbler"
+rls_string STR_mobbler_connect "Conectare la last.fm"
+rls_string STR_mobbler_disconnect "Deconectare"
+rls_string STR_mobbler_about "Despre"
+rls_string STR_mobbler_exit "Iesire"
+rls_string STR_mobbler_username "utilizator"
+rls_string STR_mobbler_password "parola"
+rls_string STR_mobbler_connecting "Conectare la last.fm..."
+rls_string STR_mobbler_about_text1 "mobbler "
+rls_string STR_mobbler_about_text2 "\n\nby Michael Coffey\n\nTranslation by Lucian Piros\n\ncode.google.com/p/mobbler"
+rls_string STR_mobbler_note_connected "Conectat la last.fm!"
+rls_string STR_mobbler_note_banned "Accessul la aplicatia mobbler a fost restrictionat!  Va rugam sa contactati code.google.com/p/mobbler."
+rls_string STR_mobbler_note_bad_auth "Parola dumeavoastra este incorecta."
+rls_string STR_mobbler_note_bad_time "Setarile dumneavoastra de ceas sunt incorecte. Va rugam verificati setarile de ceas si fusul orar."
+rls_string STR_mobbler_note_bad_session "Sesiunea dumneavoastra cu last.fm este invalida."
+rls_string STR_mobbler_note_lastfm_error "A fost detectata o problema cu last.fm."
+rls_string STR_mobbler_note_comms_error "Exista o problema la conexiunea dumneavoastra de date."
+rls_string STR_mobbler_error_no_track "There is no current track"
+rls_string STR_mobbler_error_no_radio_track "There is no current radio track"
+rls_string STR_mobbler_status_online "Descarcare informatii piese"
+rls_string STR_mobbler_status_online_s "Informatiile despre piesa %d au fost descarcate"
+rls_string STR_mobbler_status_online_p "Informatiile despre %d piese au fost descarcate"
+rls_string STR_mobbler_status_offline "Interogare piese"
+rls_string STR_mobbler_status_offline_s "Piesa %d a fost interogata"
+rls_string STR_mobbler_status_offline_p "%d piese au fost interogate"
+rls_string STR_mobbler_status_connecting "connectare"
+rls_string STR_mobbler_status_banned "accesul la mobbler este restrictionat"
+rls_string STR_mobbler_status_bad_auth "parola incorecta"
+rls_string STR_mobbler_status_bad_time "setari ceas incorecte"
+rls_string STR_mobbler_status_bad_session "conectat pe un alt terminal"
+rls_string STR_mobbler_status_lastfm_error "eroare last.fm"
+rls_string STR_mobbler_status_comms_error "eroare la comunicare"
+rls_string STR_mobbler_details "Introduceti detalii"
+rls_string STR_mobbler_current_track "piesa curenta"
+rls_string STR_mobbler_love_track "Love this track?"
+rls_string STR_mobbler_ban_track "Ban this track?"
+rls_string STR_mobbler_similar_tracks "Similar tracks"
+rls_string STR_mobbler_album_info "Album Info"
+rls_string STR_mobbler_artist_info "Artist Info"
+rls_string STR_mobbler_similar_artists "Artisti similari"
+rls_string STR_mobbler_artist_events "Artists Events"
+rls_string STR_mobbler_user_events "Your events"
+rls_string STR_mobbler_history "istorie"
+rls_string STR_mobbler_status "status"
+rls_string STR_mobbler_data "data"
+rls_string STR_mobbler_radio_start "Deschide statie noua"
+rls_string STR_mobbler_radio_artist "Artist"
+rls_string STR_mobbler_radio_enter_artist "Adaugare artist"
+rls_string STR_mobbler_radio_tag "Tag"
+rls_string STR_mobbler_radio_enter_tag "Introdu un tag"
+rls_string STR_mobbler_radio_user "Utilizator"
+rls_string STR_mobbler_radio_enter_user "Adaugare utilizator"
+rls_string STR_mobbler_radio_recommendations "Recomanadat"
+rls_string STR_mobbler_radio_personal "Personal"
+rls_string STR_mobbler_radio_loved "Piesa indragita"
+rls_string STR_mobbler_radio_neighbourhood "Vecini"
+rls_string STR_mobbler_radio_playlist "Playlistul meu"
+rls_string STR_mobbler_radio_buffering "Buffering"
+rls_string STR_mobbler_note_bad_station "Nu sunteti autorizat sa asculati acest post de radio."
+rls_string STR_mobbler_note_no_tracks "Ati ascultat toate piesele de pe acest post de radio."
+rls_string STR_mobbler_buy "Cumpara"
+rls_string STR_mobbler_buy_amazon "Search for the current track on the Mobbler Amazon aStore?"
+rls_string STR_mobbler_share "Distribuie"
+rls_string STR_mobbler_biography "Biografie"
+rls_string STR_mobbler_events "Evenimente"
+rls_string STR_mobbler_ban "Ban"
+rls_string STR_mobbler_tags "Taguri"
+rls_string STR_mobbler_charts "Charturi"
+rls_string STR_mobbler_friends "Prieteni"
+rls_string STR_mobbler_idle "Idle"
+rls_string STR_mobbler_title "Titlu"
+rls_string STR_mobbler_album "Album"
+rls_string STR_mobbler_artist "Artist"
+rls_string STR_mobbler_check_for_updates "Check for updates"
+rls_string STR_mobbler_update "There is a new version of Mobbler avaliable.  Download and intall now?"
+rls_string STR_mobbler_no_update "You have the latest version of Mobbler."
+rls_string STR_mobbler_scrobbled_queued "%d scrobbled - %d queued"
+rls_string STR_mobbler_go_online "Switch to online mode"
+rls_string STR_mobbler_go_offline "Switch to offline mode"
+rls_string STR_mobbler_state_online "Online"
+rls_string STR_mobbler_state_offline "Offline"	
+rls_string STR_mobbler_state_connecting "Connecting"
+rls_string STR_mobbler_state_handshaking "Handshaking"	
+rls_string STR_mobbler_state_selecting_station "Selecting Station"
+rls_string STR_mobbler_state_fetching_playlist "Fetching Playlist"
+rls_string STR_mobbler_state_checking_for_updates "Checking Updates"
+
