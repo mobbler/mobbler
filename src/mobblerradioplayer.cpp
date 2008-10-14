@@ -179,61 +179,69 @@ CMobblerTrack* CMobblerRadioPlayer::CurrentTrack()
 
 void CMobblerRadioPlayer::WriteL(const TDesC8& aData, TInt aTotalDataSize)
 	{
-	(*iPlaylist)[iCurrentTrack]->SetDataSize(aTotalDataSize);
-	(*iPlaylist)[iCurrentTrack]->BufferAdded(aData.Length());
-	             
-	iRadioPlaying = ETrue;
-	
-	iBuffer.AppendL(aData.AllocLC());
-	CleanupStack::Pop(); // aData.AllocLC()
-	
-	iTrackDownloading = ETrue;
-	
-	TBool bufferedEnough(EFalse);
-	
-	if ((*iPlaylist)[iCurrentTrack]->DataSize() == 1)
+	if (iPlaylist && iPlaylist->Count() > iCurrentTrack && iCurrentTrack >= 0)
 		{
-		TInt byteRate = (*iPlaylist)[iCurrentTrack]->DataSize() / (*iPlaylist)[iCurrentTrack]->TrackLength().Int();
-		TInt buffered = (*iPlaylist)[iCurrentTrack]->Buffered() - iBufferOffset;
-		TInt secondsBuffered = buffered / byteRate;
+		// There is a playlist and the current track indexes a track in it
 		
-		// either buffered amount of time or the track has finished downloading
-		bufferedEnough = secondsBuffered >= KBufferSizeInSeconds || (*iPlaylist)[iCurrentTrack]->Buffered() == (*iPlaylist)[iCurrentTrack]->DataSize();
-		}
-	else
-		{
-		bufferedEnough = iBuffer.Count() >= KBufferSizeInPackets;
-		}
-	
-	if ((iOpen && !iPlaying) && bufferedEnough)
-		{
-		// start playing the track
-		iPlaying = ETrue;
-
-		iMdaAudioOutputStream->WriteL(*iBuffer[0]); 
-		iWriting = ETrue;
+		(*iPlaylist)[iCurrentTrack]->SetDataSize(aTotalDataSize);
+		(*iPlaylist)[iCurrentTrack]->BufferAdded(aData.Length());
+		             
+		iRadioPlaying = ETrue;
 		
-		CMobblerTrack* track = (*iPlaylist)[iCurrentTrack];
+		iBuffer.AppendL(aData.AllocLC());
+		CleanupStack::Pop(); // aData.AllocLC()
 		
-		if (track->StartTimeUTC() == Time::NullTTime())
+		iTrackDownloading = ETrue;
+		
+		TBool bufferedEnough(EFalse);
+		
+		if ((*iPlaylist)[iCurrentTrack]->DataSize() != 1)
 			{
-			// we haven't set the start time for this track yet
-			// so this must be the first time we are writing data
-			// to the output stream.  Set the start time now.
-			TTime now;
-			now.UniversalTime();
-			track->SetStartTimeUTC(now);
+			TInt byteRate = (*iPlaylist)[iCurrentTrack]->DataSize() / (*iPlaylist)[iCurrentTrack]->TrackLength().Int();
+			TInt buffered = (*iPlaylist)[iCurrentTrack]->Buffered() - iBufferOffset;
+			
+			if (byteRate != 0)
+				{
+				TInt secondsBuffered = buffered / byteRate;
+				
+				// either buffered amount of time or the track has finished downloading
+				bufferedEnough = secondsBuffered >= KBufferSizeInSeconds || (*iPlaylist)[iCurrentTrack]->Buffered() == (*iPlaylist)[iCurrentTrack]->DataSize();
+				}
+			}
+		else
+			{
+			bufferedEnough = iBuffer.Count() >= KBufferSizeInPackets;
 			}
 		
-		iLastFMConnection.TrackStartedL(track);
-		}
-	else if ((iOpen && iPlaying) && !iWriting)
-		{
-		// we are already playing so write some more stuff to the buffer
-		iMdaAudioOutputStream->WriteL(*iBuffer[0]); 
-		iWriting = ETrue;
-		}
+		if ((iOpen && !iPlaying) && bufferedEnough)
+			{
+			// start playing the track
+			iPlaying = ETrue;
 	
+			iMdaAudioOutputStream->WriteL(*iBuffer[0]); 
+			iWriting = ETrue;
+			
+			CMobblerTrack* track = (*iPlaylist)[iCurrentTrack];
+			
+			if (track->StartTimeUTC() == Time::NullTTime())
+				{
+				// we haven't set the start time for this track yet
+				// so this must be the first time we are writing data
+				// to the output stream.  Set the start time now.
+				TTime now;
+				now.UniversalTime();
+				track->SetStartTimeUTC(now);
+				}
+			
+			iLastFMConnection.TrackStartedL(track);
+			}
+		else if ((iOpen && iPlaying) && !iWriting)
+			{
+			// we are already playing so write some more stuff to the buffer
+			iMdaAudioOutputStream->WriteL(*iBuffer[0]); 
+			iWriting = ETrue;
+			}
+		}
 	static_cast<CMobblerAppUi*>(CEikonEnv::Static()->AppUi())->StatusDrawDeferred();
 	}
 
