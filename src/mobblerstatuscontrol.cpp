@@ -82,6 +82,8 @@ const TRgb KRgbProgressBarBuffer(0xAF, 0xBE, 0xCC, 0xFF);
 const TRgb KRgbProgressBarPlayback(0xD5, 0x10, 0x07, 0xFF);
 const TRgb KRgbTransparent(0x00, 0x00, 0x00, 0x00);
 
+const TUid KMusicAppUID = {0x102072C3};
+
 CMobblerStatusControl* CMobblerStatusControl::NewL(const TRect& aRect, const CMobblerAppUi& aAppUi)
 	{
 	CMobblerStatusControl* self = new(ELeave) CMobblerStatusControl(aAppUi);
@@ -123,6 +125,15 @@ void CMobblerStatusControl::ConstructL(const TRect& aRect)
     
     iMobblerVolumeTimeout = CMobblerTimeout::NewL(2000000);
     iMobblerMarquee = CMobblerMarquee::NewL();
+	
+	CFbsBitmap* musicAppIcon(NULL);
+    CFbsBitmap* musicAppIconMask(NULL);
+    AknsUtils::CreateAppIconLC(AknsUtils::SkinInstance(), KMusicAppUID,  EAknsAppIconTypeContext, musicAppIcon, musicAppIconMask);
+    CleanupStack::Pop(2);
+    TSize size(100, 100);
+    AknIconUtils::SetSize(musicAppIcon, size, EAspectRatioPreserved);
+    AknIconUtils::SetSize(musicAppIconMask, size, EAspectRatioPreserved);
+    iMobblerBitmapMusicAppIcon = CMobblerBitmap::NewL(*this, musicAppIcon, musicAppIconMask);
 	}
 
 void CMobblerStatusControl::ChangePaneTextL(const TDesC& aText) const
@@ -316,6 +327,8 @@ CMobblerStatusControl::~CMobblerStatusControl()
 	delete iMobblerBitmapScrobble;
 	delete iMobblerBitmapTrackIcon;
 	
+	delete iMobblerBitmapMusicAppIcon;
+	
 	delete iInterfaceSelector;
 	
 	delete iResTextScrobbledQueuedFormat;
@@ -379,17 +392,18 @@ void CMobblerStatusControl::Draw(const TRect& /*aRect*/) const
 			{
 			// This is a radio song so display the name of the current radio station
 			iStateText.Copy(iAppUi.RadioPlayer()->Station().String());
+			
+			if (iAppUi.CurrentTrack()->AlbumArt() && iAppUi.CurrentTrack()->AlbumArt()->Bitmap())
+				{
+				// the current track has album art and it has finished loading
+				albumArt = iAppUi.CurrentTrack()->AlbumArt();
+				}
 			}
 		else
 			{
 			// This is a music player track
 			iStateText.Copy(iAppUi.MusicAppNameL());
-			}
-		
-		if (iAppUi.CurrentTrack()->AlbumArt() && iAppUi.CurrentTrack()->AlbumArt()->Bitmap())
-			{
-			// the current track has album art and it has finished loading
-			albumArt = iAppUi.CurrentTrack()->AlbumArt();
+			albumArt = iMobblerBitmapMusicAppIcon;
 			}
 	
 		FormatTrackDetails(iTrackDetailsText, iAppUi.CurrentTrack()->Artist().String(), iAppUi.CurrentTrack()->Title().String());

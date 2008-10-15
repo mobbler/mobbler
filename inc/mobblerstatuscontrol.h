@@ -110,6 +110,7 @@ private:
 	CMobblerBitmap* iMobblerBitmapSpeakerHigh;
 	CMobblerBitmap* iMobblerBitmapScrobble;
 	CMobblerBitmap* iMobblerBitmapTrackIcon;
+	CMobblerBitmap* iMobblerBitmapMusicAppIcon;
 	
 	// media buttons
 	CRemConInterfaceSelector* iInterfaceSelector;

@@ -39,6 +39,8 @@ public:
 class CMobblerBitmap : public CActive
 	{
 public:
+
+	static CMobblerBitmap* NewL(MMobblerBitmapObserver& aObserver, CFbsBitmap* iBitmap, CFbsBitmap* iMask);
 	static CMobblerBitmap* NewL(MMobblerBitmapObserver& aObserver, const TDesC& aFileName, const TUid aImageType = KNullUid);
 	static CMobblerBitmap* NewL(MMobblerBitmapObserver& aObserver, const TDesC8& aData, const TUid aImageType = KNullUid);
 	~CMobblerBitmap();
@@ -51,7 +53,9 @@ public:
 private:
 	void ConstructL(const TDesC& aFileName, const TUid aFileUid);
 	void ConstructL(const TDesC8& aData, const TUid aFileUid);
+	void ConstructL();
 	CMobblerBitmap(MMobblerBitmapObserver& aObserver);
+	CMobblerBitmap(MMobblerBitmapObserver& aObserver, CFbsBitmap* iBitmap, CFbsBitmap* iMask);
 	
 private:
 	void RunL();

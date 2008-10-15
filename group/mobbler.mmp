@@ -100,7 +100,7 @@ LIBRARY		ecom.lib
 LIBRARY		eikdlg.lib
 LIBRARY		bitgdi.lib
 LIBRARY		gdi.lib
-LIBRARY		cmmanager.lib
+LIBRARY		aknicon.lib
 
 #ifndef WINS
 LIBRARY		browserlauncher.lib

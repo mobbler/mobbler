@@ -127,9 +127,6 @@ CMobblerLastFMConnection::CMobblerLastFMConnection()
 
 CMobblerLastFMConnection::~CMobblerLastFMConnection()
 	{
-	iCmManager.Close();
-	iDestinations.Close();
-	
 	Cancel();
 	
 	if (iCurrentTrack)
@@ -193,8 +190,6 @@ CMobblerLastFMConnection::~CMobblerLastFMConnection()
 
 void CMobblerLastFMConnection::ConstructL(const TDesC& aUsername, const TDesC& aPassword)
 	{
-	iCmManager.OpenL();
-	
 	SetDetailsL(aUsername, aPassword);
 	LoadTrackQueueL();
 	
@@ -402,9 +397,6 @@ void CMobblerLastFMConnection::RunL()
 	{
 	if (iStatus.Int() == KErrNone)
 		{
-		iCmManager.Close();
-		iDestinations.Close();
-			
 		User::LeaveIfError(iConnection.GetIntSetting(_L("IAP\\Id"), iIap));
 		SaveSettingsL();
 		

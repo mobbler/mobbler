@@ -25,6 +25,15 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <imageconversion.h>
 
+CMobblerBitmap* CMobblerBitmap::NewL(MMobblerBitmapObserver& aObserver, CFbsBitmap* aBitmap, CFbsBitmap* aMask)
+	{
+	CMobblerBitmap* self = new(ELeave) CMobblerBitmap(aObserver, aBitmap, aMask);
+	CleanupStack::PushL(self);
+	self->ConstructL();
+	CleanupStack::Pop(self);
+	return self;
+	}
+
 CMobblerBitmap* CMobblerBitmap::NewL(MMobblerBitmapObserver& aObserver, const TDesC& aFileName, const TUid aFileUid)
 	{
 	CMobblerBitmap* self = new(ELeave) CMobblerBitmap(aObserver);
@@ -41,6 +50,12 @@ CMobblerBitmap* CMobblerBitmap::NewL(MMobblerBitmapObserver& aObserver, const TD
 	self->ConstructL(aData, aFileUid);
 	CleanupStack::Pop(self);
 	return self;
+	}
+
+CMobblerBitmap::CMobblerBitmap(MMobblerBitmapObserver& aObserver, CFbsBitmap* aBitmap, CFbsBitmap* aMask)
+	:CActive(EPriorityNormal), iObserver(aObserver), iBitmapLoaded(ETrue), iBitmap(aBitmap), iMask(aMask)
+	{
+	//CActiveScheduler::Add(this);
 	}
 
 CMobblerBitmap::CMobblerBitmap(MMobblerBitmapObserver& aObserver)
@@ -150,6 +165,10 @@ void CMobblerBitmap::ConstructL(const TDesC8& aData, const TUid aFileUid)
 	SetActive();
 	}
 	
+void CMobblerBitmap::ConstructL()
+	{
+	}
+
 void CMobblerBitmap::RunL()
 	{
 	delete iImageDecoder;

@@ -214,12 +214,6 @@ private:
 	TState iState;
 	
 	CMobblerTrack* iDownloadingTrack;
-	
-	// connection starting stuff
-	RCmManager iCmManager;
-	RArray<TUint32> iDestinations;
-	TUint32 iCurrentDestination;
-	TUint32 iCurrentConnectionMethod;
 	};
 
 #endif // __MOBBLERLASTFMCONNECTION_H__
