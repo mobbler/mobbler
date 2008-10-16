@@ -1,4 +1,4 @@
-/*
+﻿/*
 mobbler.rss
 
 mobbler, a last.fm mobile scrobbler for Symbian smartphones.
@@ -406,34 +406,15 @@ RESOURCE TBUF r_mobbler_note_banned	{buf = STR_mobbler_note_banned;}
 RESOURCE TBUF r_mobbler_note_bad_auth	{buf = STR_mobbler_note_bad_auth;}
 RESOURCE TBUF r_mobbler_note_bad_time	{buf = STR_mobbler_note_bad_time;}
 RESOURCE TBUF r_mobbler_note_bad_session	{buf = STR_mobbler_note_bad_session;}
-RESOURCE TBUF r_mobbler_note_lastfm_error	{buf = STR_mobbler_note_lastfm_error;}
 RESOURCE TBUF r_mobbler_note_comms_error	{buf = STR_mobbler_note_comms_error;}
-RESOURCE TBUF r_mobbler_note_connected	{buf = STR_mobbler_note_connected;}
 
-RESOURCE TBUF r_mobbler_status_online	{buf = STR_mobbler_status_online;}
-RESOURCE TBUF r_mobbler_status_online_s	{buf = STR_mobbler_status_online_s;}
-RESOURCE TBUF r_mobbler_status_online_p	{buf = STR_mobbler_status_online_p;}
-
-RESOURCE TBUF r_mobbler_status_offline	{buf = STR_mobbler_status_offline;}
-RESOURCE TBUF r_mobbler_status_offline_s	{buf = STR_mobbler_status_offline_s;}
-RESOURCE TBUF r_mobbler_status_offline_p	{buf = STR_mobbler_status_offline_p;}
-
-RESOURCE TBUF r_mobbler_status_connecting	{buf = STR_mobbler_status_connecting;}
-RESOURCE TBUF r_mobbler_status_banned	{buf = STR_mobbler_status_banned;}
-RESOURCE TBUF r_mobbler_status_bad_auth	{buf = STR_mobbler_status_bad_auth;}
-RESOURCE TBUF r_mobbler_status_bad_time	{buf = STR_mobbler_status_bad_time;}
-RESOURCE TBUF r_mobbler_status_bad_session	{buf = STR_mobbler_status_bad_session;}
-RESOURCE TBUF r_mobbler_status_lastfm_error	{buf = STR_mobbler_status_lastfm_error;}
-RESOURCE TBUF r_mobbler_status_comms_error	{buf = STR_mobbler_status_comms_error;}
 RESOURCE TBUF r_mobbler_love_track			{buf = STR_mobbler_love_track;}
 RESOURCE TBUF r_mobbler_ban_track			{buf = STR_mobbler_ban_track;}
-RESOURCE TBUF r_mobbler_current_track			{buf = STR_mobbler_current_track;}
 RESOURCE TBUF r_mobbler_buy_amazon				{buf = STR_mobbler_buy_amazon;}
 
 RESOURCE TBUF r_mobbler_note_bad_station			{buf = STR_mobbler_note_bad_station;}
 RESOURCE TBUF r_mobbler_note_no_tracks				{buf = STR_mobbler_note_no_tracks;}
 
-RESOURCE TBUF r_mobbler_music_player				{buf = STR_mobbler_music_player;}
 RESOURCE TBUF r_mobbler_idle						{buf = STR_mobbler_idle;}
 
 RESOURCE TBUF r_mobbler_title						{buf = STR_mobbler_title;}

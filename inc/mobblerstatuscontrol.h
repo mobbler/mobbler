@@ -47,6 +47,28 @@ class CMobblerMarquee;
 
 class CMobblerStatusControl : public CCoeControl, public MMobblerBitmapObserver, public MRemConCoreApiTargetObserver
 	{
+private:
+	class CMobblerPaneTextCallback : public CActive
+		{
+	public:
+		static void ExecuteLD(const CMobblerStatusControl& aStatusControl, const TDesC& aText);
+		
+	private:
+		CMobblerPaneTextCallback(const CMobblerStatusControl& aStatusControl);
+		void ConstructL(const TDesC& aText);
+		
+		~CMobblerPaneTextCallback();
+	private: // from CActive
+		void RunL();
+		void DoCancel();
+		
+		
+		
+	private:
+		const CMobblerStatusControl& iStatusControl;
+		HBufC* iText;
+		};
+	
 public:
 	static CMobblerStatusControl* NewL(const TRect& aRect, const CMobblerAppUi& aAppUi);
 	~CMobblerStatusControl();
@@ -83,6 +105,7 @@ private:
 	void MrccatoCommand(TRemConCoreApiOperationId aOperationId, TRemConCoreApiButtonAction aButtonAct);
 	
 	void ChangePaneTextL(const TDesC& aText) const;
+	void DoChangePaneTextL(const TDesC& aText) const;
 	
 private: // from CCoeControl
 	void HandleResourceChange(TInt aType);

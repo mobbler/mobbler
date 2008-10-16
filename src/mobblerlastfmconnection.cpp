@@ -700,7 +700,7 @@ TInt CMobblerLastFMConnection::RadioStartL(TRadioStation aRadioStation, const TD
 			case ETag:
 				radioURL->Des().AppendFormat(KRadioStationTag, &aRadioText);
 				break;
-			sdefault:
+			default:
 				break;
 			}
 		

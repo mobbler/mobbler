@@ -84,6 +84,45 @@ const TRgb KRgbTransparent(0x00, 0x00, 0x00, 0x00);
 
 const TUid KMusicAppUID = {0x102072C3};
 
+void CMobblerStatusControl::CMobblerPaneTextCallback::ExecuteLD(const CMobblerStatusControl& aStatusControl, const TDesC& aText)
+	{
+	CMobblerPaneTextCallback* self = new(ELeave) CMobblerPaneTextCallback(aStatusControl);
+	CleanupStack::PushL(self);
+	self->ConstructL(aText);
+	CleanupStack::Pop(self);
+	}
+
+void CMobblerStatusControl::CMobblerPaneTextCallback::ConstructL(const TDesC& aText)
+	{
+	iText = aText.AllocL();
+	
+	TRequestStatus* status = &iStatus;
+	User::RequestComplete(status, KErrNone);
+	SetActive();
+	}
+
+void CMobblerStatusControl::CMobblerPaneTextCallback::RunL()
+	{
+	iStatusControl.DoChangePaneTextL(*iText);
+	delete this;
+	}
+	
+void CMobblerStatusControl::CMobblerPaneTextCallback::DoCancel()
+	{
+	// nothing to cancel
+	}
+
+CMobblerStatusControl::CMobblerPaneTextCallback::CMobblerPaneTextCallback(const CMobblerStatusControl& aStatusControl)
+	:CActive(EPriorityStandard), iStatusControl(aStatusControl)
+	{
+	CActiveScheduler::Add(this);
+	}
+
+CMobblerStatusControl::CMobblerPaneTextCallback::~CMobblerPaneTextCallback()
+	{
+	delete iText;
+	}
+
 CMobblerStatusControl* CMobblerStatusControl::NewL(const TRect& aRect, const CMobblerAppUi& aAppUi)
 	{
 	CMobblerStatusControl* self = new(ELeave) CMobblerStatusControl(aAppUi);
@@ -129,14 +168,18 @@ void CMobblerStatusControl::ConstructL(const TRect& aRect)
 	CFbsBitmap* musicAppIcon(NULL);
     CFbsBitmap* musicAppIconMask(NULL);
     AknsUtils::CreateAppIconLC(AknsUtils::SkinInstance(), KMusicAppUID,  EAknsAppIconTypeContext, musicAppIcon, musicAppIconMask);
+    TSize size(200, 200);
+    AknIconUtils::SetSize(musicAppIcon, size, EAspectRatioNotPreserved);
     CleanupStack::Pop(2);
-    TSize size(100, 100);
-    AknIconUtils::SetSize(musicAppIcon, size, EAspectRatioPreserved);
-    AknIconUtils::SetSize(musicAppIconMask, size, EAspectRatioPreserved);
     iMobblerBitmapMusicAppIcon = CMobblerBitmap::NewL(*this, musicAppIcon, musicAppIconMask);
 	}
 
 void CMobblerStatusControl::ChangePaneTextL(const TDesC& aText) const
+	{
+	CMobblerStatusControl::CMobblerPaneTextCallback::ExecuteLD(*this, aText);
+	}
+
+void CMobblerStatusControl::DoChangePaneTextL(const TDesC& aText) const
 	{
 	if (static_cast<CAknNaviLabel*>(iNaviLabelDecorator->DecoratedControl())->Text()->Compare(aText) != 0)
 		{
@@ -554,7 +597,7 @@ void CMobblerStatusControl::DrawMobblerBitmap(const CMobblerBitmap* aMobblerBitm
 			{
 			if (aMobblerBitmap->Mask())
 				{
-				iBackBufferContext->DrawBitmapMasked(aRect, aMobblerBitmap->Bitmap(), TRect(TPoint(0, 0), aMobblerBitmap->Bitmap()->SizeInPixels()), aMobblerBitmap->Mask(), EFalse);
+				iBackBufferContext->DrawBitmapMasked(aRect, aMobblerBitmap->Bitmap(), TRect(TPoint(0, 0), aMobblerBitmap->SizeInPixels()), aMobblerBitmap->Mask(), EFalse);
 				}
 			else
 				{

@@ -27,7 +27,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <e32base.h>
 #include <s32file.h>
 
-#include <mobblerbitmap.h>
+#include "mobblerbitmap.h"
 
 class CMobblerString;
 

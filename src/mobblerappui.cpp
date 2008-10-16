@@ -35,6 +35,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <stringloader.h>
 #include <aknquerydialog.h> 
 #include <apgcli.h> 
+#include <aknsutils.h>
 
 #include <browserlauncher.h>
 #include <browseroverriddensettings.h> 
@@ -62,6 +63,8 @@ const TUid KBrowserUid = {0x10008D39};
 void CMobblerAppUi::ConstructL()
 	{
 	BaseConstructL(EAknEnableSkin);
+	
+	AknsUtils::InitSkinSupportL();
 	
 	// Create view object
 	iSettingView = CMobblerSettingItemListView::NewL();
