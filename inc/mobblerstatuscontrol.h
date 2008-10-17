@@ -134,6 +134,7 @@ private:
 	CMobblerBitmap* iMobblerBitmapScrobble;
 	CMobblerBitmap* iMobblerBitmapTrackIcon;
 	CMobblerBitmap* iMobblerBitmapMusicAppIcon;
+	CMobblerBitmap* iMobblerBitmapAppIcon;
 	
 	// media buttons
 	CRemConInterfaceSelector* iInterfaceSelector;

@@ -83,6 +83,7 @@ const TRgb KRgbProgressBarPlayback(0xD5, 0x10, 0x07, 0xFF);
 const TRgb KRgbTransparent(0x00, 0x00, 0x00, 0x00);
 
 const TUid KMusicAppUID = {0x102072C3};
+const TUid KMobblerUID = {0xA0007648};
 
 void CMobblerStatusControl::CMobblerPaneTextCallback::ExecuteLD(const CMobblerStatusControl& aStatusControl, const TDesC& aText)
 	{
@@ -165,13 +166,6 @@ void CMobblerStatusControl::ConstructL(const TRect& aRect)
     iMobblerVolumeTimeout = CMobblerTimeout::NewL(2000000);
     iMobblerMarquee = CMobblerMarquee::NewL();
 	
-	CFbsBitmap* musicAppIcon(NULL);
-    CFbsBitmap* musicAppIconMask(NULL);
-    AknsUtils::CreateAppIconLC(AknsUtils::SkinInstance(), KMusicAppUID,  EAknsAppIconTypeContext, musicAppIcon, musicAppIconMask);
-    TSize size(200, 200);
-    AknIconUtils::SetSize(musicAppIcon, size, EAspectRatioNotPreserved);
-    CleanupStack::Pop(2);
-    iMobblerBitmapMusicAppIcon = CMobblerBitmap::NewL(*this, musicAppIcon, musicAppIconMask);
 	}
 
 void CMobblerStatusControl::ChangePaneTextL(const TDesC& aText) const
@@ -203,6 +197,20 @@ void CMobblerStatusControl::LoadGraphicsL()
 	iMobblerBitmapSpeakerHigh = CMobblerBitmap::NewL(*this, KPngSpeakerHigh, KImageTypePNGUid);
 	iMobblerBitmapScrobble = CMobblerBitmap::NewL(*this, KPngScrobble, KImageTypePNGUid);
 	iMobblerBitmapTrackIcon = CMobblerBitmap::NewL(*this, KPngTrackIcon, KImageTypePNGUid);
+    
+	// Load the Music Player icon to display when a music player track is playing
+	CFbsBitmap* musicAppIcon(NULL);
+    CFbsBitmap* musicAppIconMask(NULL);
+    AknsUtils::CreateAppIconLC(AknsUtils::SkinInstance(), KMusicAppUID,  EAknsAppIconTypeContext, musicAppIcon, musicAppIconMask);
+    iMobblerBitmapMusicAppIcon = CMobblerBitmap::NewL(*this, musicAppIcon, musicAppIconMask);
+    CleanupStack::Pop(2);
+    
+    // Load the Mobbler icon to display when a music player track is playing
+    CFbsBitmap* appIcon(NULL);
+    CFbsBitmap* appIconMask(NULL);
+    AknsUtils::CreateAppIconLC(AknsUtils::SkinInstance(), KMobblerUID,  EAknsAppIconTypeContext, appIcon, appIconMask);
+    iMobblerBitmapAppIcon = CMobblerBitmap::NewL(*this, appIcon, appIconMask);
+    CleanupStack::Pop(2);
 	}
 
 void CMobblerStatusControl::LoadResourceFileTextL()
@@ -237,28 +245,37 @@ void CMobblerStatusControl::SetPositions()
 		iPointControls = 			TPoint(Rect().Width() - iMobblerBitmapLastFM->SizeInPixels().iWidth - (KTextRectHeight / 2), iRectAlbumArt.iBr.iY - (3 * iMobblerBitmapPound->SizeInPixels().iHeight) - 4);
 		iPointLastFM = 				TPoint(Rect().Width() - iMobblerBitmapLastFM->SizeInPixels().iWidth -  (KTextRectHeight / 2), iRectAlbumArt.iTl.iY + 4);
 		
-		iRectTrackDetailsText = 		TRect(TPoint(KTextRectHeight / 2 + iMobblerBitmapTrackIcon->SizeInPixels().iWidth, iRectAlbumArt.iBr.iY + KTextRectHeight), TSize(Rect().Width() - KTextRectHeight - iMobblerBitmapTrackIcon->SizeInPixels().iWidth, KTextRectHeight));
+		iRectTrackDetailsText = 		TRect(TPoint(KTextRectHeight / 2 + iMobblerBitmapTrackIcon->SizeInPixels().iWidth, iRectAlbumArt.iBr.iY + (KTextRectHeight / 2)), TSize(Rect().Width() - KTextRectHeight - iMobblerBitmapTrackIcon->SizeInPixels().iWidth, KTextRectHeight));
 		iRectScrobbledQueuedText = 		TRect(TPoint(KTextRectHeight / 2 + iMobblerBitmapTrackIcon->SizeInPixels().iWidth, Rect().Height() - ((3 * KTextRectHeight) / 2)), TSize(Rect().Width() - KTextRectHeight, KTextRectHeight));
 		iRectProgressBar = 				TRect(TPoint(KTextRectHeight / 2, (iRectTrackDetailsText.iTl.iY + iRectScrobbledQueuedText.iTl.iY) / 2 ), TSize(Rect().Width() - KTextRectHeight, KTextRectHeight));
 		}
 	else
 		{
-		// TODO: Landscape graphics positions
-		TInt albumArtDimension = Rect().Height() - ((5 * KTextRectHeight) / 2);
+		// Landscape graphics positions
+		TInt albumArtDimension = Min(Rect().Height() - ((3 * KTextRectHeight) / 2), Rect().Width() - (2 * KTextRectHeight) - (3 * iMobblerBitmapPlay->SizeInPixels().iWidth) - iMobblerBitmapLastFM->SizeInPixels().iWidth);
 		
 		iRectAlbumArt =				TRect(TPoint(KTextRectHeight / 2, KTextRectHeight / 2), TSize(albumArtDimension, albumArtDimension));
-		iRectProgressBar =			TRect(TPoint(KTextRectHeight / 2, Rect().Height() - ((3 * KTextRectHeight) / 2)), TSize(Rect().Width() - KTextRectHeight, KTextRectHeight));
+		iRectProgressBar =			TRect(TPoint(KTextRectHeight / 2, Rect().Height() - ((3 * KTextRectHeight) / 2)), TSize(albumArtDimension, KTextRectHeight));
 		
-		iPointControls =			TPoint(Rect().Width() - (3 * iMobblerBitmapPlay->SizeInPixels().iWidth) - (KTextRectHeight / 2), KTextRectHeight / 2);
-		iPointLastFM = 				TPoint(albumArtDimension + KTextRectHeight, (KTextRectHeight / 2));
+		iPointLastFM =				TPoint(albumArtDimension + ((3 * KTextRectHeight) / 2) + (3 * iMobblerBitmapPlay->SizeInPixels().iWidth), KTextRectHeight / 2);
+		iPointControls = 			TPoint(albumArtDimension + KTextRectHeight, KTextRectHeight / 2);
 		
-		//iRectTrackDetailsText = TRect(TPoint(, ), TSize(Rect().Width() - albumArtDimension - KTextRectHeight, KTextRectHeight));
-		//iRectScrobbledQueuedText
+		iRectTrackDetailsText = 		TRect(TPoint(KTextRectHeight / 2 + iMobblerBitmapTrackIcon->SizeInPixels().iWidth, iRectAlbumArt.iBr.iY + (KTextRectHeight / 2)), TSize(Rect().Width() - KTextRectHeight - iMobblerBitmapTrackIcon->SizeInPixels().iWidth, KTextRectHeight));
+		iRectScrobbledQueuedText = 		TRect(TPoint(KTextRectHeight / 2 + iMobblerBitmapTrackIcon->SizeInPixels().iWidth, Rect().Height() - ((3 * KTextRectHeight) / 2)), TSize(Rect().Width() - KTextRectHeight, KTextRectHeight));
 		
-		//albumArtDimension
-			
-		//iRectTrackDetailsText =		TRect((KTextRectHeight / 2) + (7 * iMobblerFont->WidthZeroInPixels()), Rect().Height() - (1 * KTextRectHeight), Rect().Width() - ((KTextRectHeight / 2) + (7 * iMobblerFont->WidthZeroInPixels())), Rect().Height());
-		//iRectScrobbledQueuedText =	TRect(iMobblerBitmapNoCover->SizeInPixels().iWidth + KTextRectHeight, Rect().Height() - KTextRectHeight, Rect().Width() - (KTextRectHeight / 2), Rect().Height());
+		iRectProgressBar = 				TRect(TPoint(albumArtDimension + KTextRectHeight, iRectAlbumArt.iBr.iY - KTextRectHeight), TSize(Rect().Width() -((3 * KTextRectHeight) / 2) - albumArtDimension, KTextRectHeight));
+		}
+	
+	// Set the size of the application icons to be the same as the rect we will draw them to.
+	// They don't seem to like being drawn at a different size
+	if (iMobblerBitmapMusicAppIcon)
+		{
+		AknIconUtils::SetSize(iMobblerBitmapMusicAppIcon->Bitmap(), iRectAlbumArt.Size(), EAspectRatioNotPreserved);
+		}
+	
+	if (iMobblerBitmapAppIcon)
+		{
+		AknIconUtils::SetSize(iMobblerBitmapAppIcon->Bitmap(), iRectAlbumArt.Size(), EAspectRatioNotPreserved);
 		}
 	}
 
@@ -369,6 +386,7 @@ CMobblerStatusControl::~CMobblerStatusControl()
 	delete iMobblerBitmapSpeakerHigh;
 	delete iMobblerBitmapScrobble;
 	delete iMobblerBitmapTrackIcon;
+	delete iMobblerBitmapAppIcon;
 	
 	delete iMobblerBitmapMusicAppIcon;
 	
@@ -423,7 +441,7 @@ void CMobblerStatusControl::Draw(const TRect& /*aRect*/) const
 	TInt bufferTotal(1);
 	TInt bufferPosition(0);
 	
-	const CMobblerBitmap* albumArt(NULL);
+	const CMobblerBitmap* albumArt(iMobblerBitmapAppIcon);
 	
 	TBool love(EFalse);
 			
