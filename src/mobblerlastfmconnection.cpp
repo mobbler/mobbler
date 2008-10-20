@@ -1073,6 +1073,7 @@ void CMobblerLastFMConnection::HandleHandshakeErrorL(CMobblerLastFMError* aError
 			DoSetModeL(EOnline);
 			NotifyConnectCompleteL();
 			ChangeState(ENone);
+			DoSubmitL();
 			}
 		}
 	else
