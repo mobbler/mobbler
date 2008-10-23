@@ -1,7 +1,7 @@
 /*
 musicappobserver.h
 
-mobbler, a last.fm mobile scrobbler for Symbian smartphones.
+Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
 Copyright (C) 2008  Michael Coffey
 
 http://code.google.com/p/mobbler
@@ -25,8 +25,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #define __MUSICAPPOBSERVER_H__
 
 #include <e32base.h>
-#include <mplayerremotecontrol.h>
 #include <mobbler\mobblermusicapp.h>
+#include <mplayerremotecontrol.h>
 
 class CMobblerMusicAppObserver : public CMobblerMusicApp, public MMPlayerPlaybackObserver, public MMPlayerCommandObserver
 	{
@@ -62,6 +62,7 @@ private: // from MMPlayerPlaybackObserver
 private:
 	MMPlayerRemoteControl* iEngine;
 	MMobblerMusicAppObserver* iObserver;
+	TApaAppCaption iName;
 	};
 
 #endif // __MUSICAPPOBSERVER_H__

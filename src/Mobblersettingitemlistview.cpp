@@ -1,7 +1,7 @@
 /*
 mobblersettingitemlistview.cpp
 
-mobbler, a last.fm mobile scrobbler for Symbian smartphones.
+Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
 Copyright (C) 2008  Michael Coffey
 
 http://code.google.com/p/mobbler
@@ -21,21 +21,21 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-#include <aknviewappui.h>
-#include <eikmenub.h>
-#include <avkon.hrh>
 #include <akncontext.h>
+#include <aknprogressdialog.h>
 #include <akntitle.h>
-#include <stringloader.h>
+#include <aknviewappui.h>
+#include <avkon.hrh>
+#include <eikmenub.h>
 #include <barsread.h>
 #include <eikbtgpc.h>
 #include <mobbler.rsg>
-#include <aknprogressdialog.h>
+#include <stringloader.h>
 
 #include "mobbler.hrh"
-#include "mobblersettingitemlistview.h"
-#include "mobblersettingitemlist.h"
 #include "mobblerappui.h"
+#include "mobblersettingitemlist.h"
+#include "mobblersettingitemlistview.h"
 
 CMobblerSettingItemListView* CMobblerSettingItemListView::NewL()
 	{
@@ -72,10 +72,17 @@ TUid CMobblerSettingItemListView::Id() const
 void CMobblerSettingItemListView::HandleCommandL(TInt aCommand)
 	{
 	// let the app ui handle the event
-	if (aCommand == EAknSoftkeyOk || aCommand == EAknSoftkeyBack)
+	if (aCommand == EAknSoftkeyOk)
 		{
-		// switch back to the status view
+		// save and set details then switch back to the status view
+		iMobblerSettingItemList->SaveSettingValuesL();
 		static_cast<CMobblerAppUi*>(AppUi())->SetDetailsL(iSettings->Username(), iSettings->Password());
+		AppUi()->ActivateLocalViewL(TUid::Uid(0xA0007CA8));
+		}
+	else if (aCommand == EAknSoftkeyCancel)
+		{
+		// reset the details then switch back to the status view
+		iMobblerSettingItemList->LoadSettingValuesL(*iSettings);
 		AppUi()->ActivateLocalViewL(TUid::Uid(0xA0007CA8));
 		}
 	else
@@ -102,7 +109,6 @@ void CMobblerSettingItemListView::DoDeactivate()
 	{
 	if (iMobblerSettingItemList)
 		{
-		iMobblerSettingItemList->SaveSettingValuesL();
 		AppUi()->RemoveFromStack(iMobblerSettingItemList);
 		delete iMobblerSettingItemList;
 		iMobblerSettingItemList = NULL;

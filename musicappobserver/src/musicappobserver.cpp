@@ -1,7 +1,7 @@
 /*
 musicappobserver.cpp
 
-mobbler, a last.fm mobile scrobbler for Symbian smartphones.
+Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
 Copyright (C) 2008  Michael Coffey
 
 http://code.google.com/p/mobbler
@@ -21,8 +21,12 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
+#include <apaid.h>
+#include <apgcli.h>
 #include <ecom/implementationproxy.h>
 #include "musicappobserver.h"
+
+const TUid KMusicAppUID = {0x102072C3};
 
 const TImplementationProxy ImplementationTable[] =
     {
@@ -56,6 +60,17 @@ void CMobblerMusicAppObserver::ConstructL()
 	iEngine->RegisterObserver(this);
 	iEngine->RegisterCommandObserver(this);
 #endif
+
+	RApaLsSession apaLsSession;
+	User::LeaveIfError(apaLsSession.Connect());
+	CleanupClosePushL(apaLsSession);
+
+	TApaAppInfo info;
+	User::LeaveIfError(apaLsSession.GetAppInfo(info, KMusicAppUID));
+	CleanupStack::PopAndDestroy(); // apaLsSession
+
+	// The caption is the app's name (e.g. EN: "Music player" or FI: "Soitin")
+	iName = info.iCaption;
 	}
 	
 CMobblerMusicAppObserver::~CMobblerMusicAppObserver()
@@ -99,7 +114,7 @@ void CMobblerMusicAppObserver::PlaybackModeChanged(TBool /*aRandom*/, TMPlayerRe
 	{
 	}
 	
-void CMobblerMusicAppObserver::PlayerUidChanged(TInt /*aPlayerUid*/ )
+void CMobblerMusicAppObserver::PlayerUidChanged(TInt /*aPlayerUid*/)
 	{
 	}
 	
@@ -109,7 +124,7 @@ void CMobblerMusicAppObserver::VolumeChanged(TInt /*aVolume*/)
 
 HBufC* CMobblerMusicAppObserver::NameL()
 	{
-	return _L("Music Player").AllocL();
+	return iName.AllocL();
 	}
 
 TMPlayerRemoteControlState CMobblerMusicAppObserver::PlayerState()

@@ -111,9 +111,9 @@ void CMobblerStatusView::DynInitMenuPaneL(TInt aResourceId, CEikMenuPane* aMenuP
 		aMenuPane->ItemAndPos(EMobblerCommandRadioLoved, index)->SetIconMaskL(iRadioLovedBitmap->Mask());
 		aMenuPane->ItemAndPos(EMobblerCommandRadioLoved, index)->SetBitmapsOwnedExternally(ETrue);
 		
-		aMenuPane->ItemAndPos(EMobblerCommandRadioRecommedations, index)->SetIconBitmapL(iRadioRecommendedBitmap->Bitmap());
-		aMenuPane->ItemAndPos(EMobblerCommandRadioRecommedations, index)->SetIconMaskL(iRadioRecommendedBitmap->Mask());
-		aMenuPane->ItemAndPos(EMobblerCommandRadioRecommedations, index)->SetBitmapsOwnedExternally(ETrue);
+		aMenuPane->ItemAndPos(EMobblerCommandRadioRecommendations, index)->SetIconBitmapL(iRadioRecommendedBitmap->Bitmap());
+		aMenuPane->ItemAndPos(EMobblerCommandRadioRecommendations, index)->SetIconMaskL(iRadioRecommendedBitmap->Mask());
+		aMenuPane->ItemAndPos(EMobblerCommandRadioRecommendations, index)->SetBitmapsOwnedExternally(ETrue);
 		}*/
 	}
 
@@ -134,14 +134,16 @@ void CMobblerStatusView::DoActivateL(const TVwsViewId& /*aPrevViewId*/, TUid /*a
 		{
 		iMobblerStatusControl = CMobblerStatusControl::NewL(ClientRect(), *static_cast<CMobblerAppUi*>(AppUi()));
 		iMobblerStatusControl->SetMopParent(AppUi());
-		iMobblerStatusControl->ActivateL();
-		AppUi()->AddToStackL(*this, iMobblerStatusControl);
 		}
-	else
-		{
-		iMobblerStatusControl->ActivateL();
-		AppUi()->AddToStackL(*this, iMobblerStatusControl);
-		}
+	iMobblerStatusControl->ActivateL();
+	AppUi()->AddToStackL(*this, iMobblerStatusControl);
+
+	// Change the Back softkey to Hide
+	TInt pos = Cba()->PositionById(EAknSoftkeyBack);
+	Cba()->RemoveCommandFromStack(pos, EAknSoftkeyBack);
+	HBufC* HideText = iEikonEnv->AllocReadResourceLC(R_MOBBLER_SOFTKEY_HIDE);
+	Cba()->SetCommandL(pos, EAknSoftkeyBack, *HideText);
+	CleanupStack::PopAndDestroy(HideText);
 	}
 
 void CMobblerStatusView::DoDeactivate()

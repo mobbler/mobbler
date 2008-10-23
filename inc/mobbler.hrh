@@ -1,7 +1,7 @@
 /*
 mobbler.hrh
 
-mobbler, a last.fm mobile scrobbler for Symbian smartphones.
+Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
 Copyright (C) 2008  Michael Coffey
 
 http://code.google.com/p/mobbler
@@ -26,20 +26,33 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 enum TMobblerSettingItemListViewCommands
 	{
-	EMobblerCommandOnline = 0x6000,
-	EMobblerCommandOffline,
+	EMobblerCommandOffline = 0x6000,
 	EMobblerCommandEditSettings,
 	EMobblerCommandAbout,
 	EMobblerCommandBuy,
 	
-	// these commands are avaliable once connected
 	EMobblerCommandUser,
+	EMobblerCommandTrack,
+	EMobblerCommandRadio,
+	
+	// IMPORTANT! New commands that WON'T connect to Last.fm go BEFORE here!
+	// IMPORTANT! New commands that WILL connect to Last.fm go AFTER here!
+	//
+	// There's no point going online to Last.fm if no user details are entered.
+	// The following commands will try to connect to Last.fm, but will only be 
+	// executed in CMobblerAppUi::HandleCommandL() if and only if the user has
+	// already stored their Last.fm username and password. Otherwise an error
+	// note is shown.
+
+	EMobblerCommandOnline = 0x7000,
+
+
+	// these commands are avaliable once connected
 	EMobblerCommandUserEvents,
 	EMobblerCommandUserFriends,
 	
 	// most of these commands are avaliable
 	// when a track is playing
-	EMobblerCommandTrack,
 	EMobblerCommandTrackLove,
 	EMobblerCommandTrackBan,
 	EMobblerCommandTrackSimilar,
@@ -48,11 +61,10 @@ enum TMobblerSettingItemListViewCommands
 	EMobblerCommandArtistSimilar,
 	EMobblerCommandAlbumInfo,
 	
-	EMobblerCommandRadio,
 	EMobblerCommandRadioArtist,
 	EMobblerCommandRadioTag,
 	EMobblerCommandRadioUser,
-	EMobblerCommandRadioRecommedations,
+	EMobblerCommandRadioRecommendations,
 	EMobblerCommandRadioPersonal,
 	EMobblerCommandRadioLoved,
 	EMobblerCommandRadioNeighbourhood,

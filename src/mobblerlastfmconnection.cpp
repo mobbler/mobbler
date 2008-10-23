@@ -1,7 +1,7 @@
 /*
 mobblerlastfmconnection.cpp
 
-mobbler, a last.fm mobile scrobbler for Symbian smartphones.
+Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
 Copyright (C) 2008  Michael Coffey
 
 http://code.google.com/p/mobbler
@@ -26,9 +26,13 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 // included all the http headers as it was a bit of a pain finding out which ones were needed
 // they should probably be cleared up at some point
+#include <chttpformencoder.h>
+#include <cmconnectionmethod.h> 
+#include <cmconnectionmethoddef.h> 
+#include <cmdestination.h> 
+#include <cmmanager.h> 
+#include <commdbconnpref.h>
 #include <http/mhttpdatasupplier.h> 
-#include <httpstringconstants.h>
-#include <http/mhttpdatasupplier.h>
 #include <http/mhttpfilter.h>
 #include <http/mhttpfilterbase.h>
 #include <http/mhttptransactioncallback.h>
@@ -48,35 +52,27 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <http/thttpfilterregistration.h>
 #include <http/thttphdrfielditer.h>
 #include <http/thttphdrval.h>
-#include <chttpformencoder.h>
-
-#include <cmmanager.h> 
-#include <cmdestination.h> 
-#include <cmconnectionmethod.h> 
-#include <cmconnectionmethoddef.h> 
-
-#include <commdbconnpref.h>
-
+#include <httpstringconstants.h>
 #include <s32file.h>
 
+#include "coemain.h"
+#include "mobblerappui.h"
 #include "mobblerlastfmconnection.h"
 #include "mobblerlastfmconnectionobserver.h"
-#include "mobblertrack.h"
-#include "mobblerutility.h"
-#include "mobblerradioplayer.h"
-#include "coemain.h"
 #include "mobblerparser.h"
+#include "mobblerradioplayer.h"
 #include "mobblerradioplaylist.h"
-#include "mobblerwebservicesquery.h"
-#include "mobblertransaction.h"
-#include "mobblerwebservicesobserver.h"
 #include "mobblerstring.h"
-#include "mobblerappui.h"
+#include "mobblertrack.h"
+#include "mobblertransaction.h"
+#include "mobblerutility.h"
+#include "mobblerwebservicesobserver.h"
+#include "mobblerwebservicesquery.h"
 
-// the scheme of the last.fm handshake
+// the scheme of the Last.fm handshake
 _LIT8(KScheme, "http");
 
-// the last.fm URL to send the handshake to
+// the Last.fm URL to send the handshake to
 _LIT8(KScrobbleHost, "post.audioscrobbler.com");
 _LIT8(KWebServicesHost, "ws.audioscrobbler.com");
 
@@ -104,10 +100,10 @@ _LIT8(KLatesverFileLocation, "http://www.mobbler.co.uk/latestver.xml");
 _LIT(KTracksFile, "c:track_queue.dat");
 _LIT(KStateFile, "c:state.dat");
 
-// The granurarity of the buffers that responses from last.fm are read into
+// The granularity of the buffers that responses from Last.fm are read into
 const TInt KBufferGranularity(256);
 
-// last.fm can accept up to this many track in one submission
+// Last.fm can accept up to this many track in one submission
 const TInt KMaxSubmitTracks(50);
 
 CMobblerLastFMConnection* CMobblerLastFMConnection::NewL(const TDesC& aUsername, const TDesC& aPassword)
@@ -289,7 +285,7 @@ void CMobblerLastFMConnection::NotifyConnectCompleteL()
 
 void CMobblerLastFMConnection::NotifyLastFMErrorL(CMobblerLastFMError& aError)
 	{
-	// notify all observers that last.fm returned
+	// notify all observers that Last.fm returned
 	
 	const TInt KObserverCount(iObservers.Count());
 	for (TInt i (0) ; i < KObserverCount; ++i)
@@ -311,7 +307,7 @@ void CMobblerLastFMConnection::NotifyCommsErrorL(const TDesC& aTransaction, cons
 
 void CMobblerLastFMConnection::NotifyTrackSubmittedL(const CMobblerTrack& aTrack)
 	{
-	// notify all observers that a track has been sucessfully submitted to last.fm
+	// notify all observers that a track has been sucessfully submitted to Last.fm
 	const TInt KObserverCount(iObservers.Count());
 	for (TInt i (0) ; i < KObserverCount; ++i)
 		{
@@ -409,7 +405,7 @@ void CMobblerLastFMConnection::RunL()
 		TInt connPtr = REINTERPRET_CAST(TInt, &iConnection);
 		connInfo.SetPropertyL(strP.StringF(HTTP::EHttpSocketConnection, RHTTPSession::GetTable()), THTTPHdrVal(connPtr));
 		
-		// Handshake with last.fm
+		// Handshake with Last.fm
 		ChangeState(EHandshaking);
 		HandshakeL();
 		RadioHandshakeL();
@@ -862,17 +858,17 @@ void CMobblerLastFMConnection::DoNowPlayingL()
 		
 		if (iMode == EOnline && iNowPlayingURL)
 			{
-			// We must be in online mode and have recieved the now playing URL and session ID from last.fm
+			// We must be in online mode and have recieved the now playing URL and session ID from Last.fm
 			// before we try to submit and tracks
 			
-			// create the from that will be sent to last.fm
+			// create the from that will be sent to Last.fm
 			CHTTPFormEncoder* nowPlayingForm = CHTTPFormEncoder::NewL();
 			CleanupStack::PushL(nowPlayingForm);
 			
 			nowPlayingForm->AddFieldL(_L8("s"), *iSessionID);
 			nowPlayingForm->AddFieldL(_L8("a"), iCurrentTrack->Artist().String8());
 			nowPlayingForm->AddFieldL(_L8("t"), iCurrentTrack->Title().String8());
-			nowPlayingForm->AddFieldL(_L8("b"), KNullDesC8);
+			nowPlayingForm->AddFieldL(_L8("b"), iCurrentTrack->Album().String8());
 			TBuf8<10> trackLength;
 			trackLength.AppendNum(iCurrentTrack->TrackLength().Int());
 			nowPlayingForm->AddFieldL(_L8("l"), trackLength);
@@ -927,8 +923,8 @@ void CMobblerLastFMConnection::TrackStoppedL()
 			User::LeaveIfError(now.SecondsFrom(iCurrentTrack->StartTimeUTC(), listenedFor));
 			}
 		
-		// Test if the track passes last.fm's scrobble rules
-		if ( ((listenedFor.Int() * 2) >= iCurrentTrack->TrackLength().Int()	// They have listend to over half the track in one go
+		// Test if the track passes Last.fm's scrobble rules
+		if ( ((listenedFor.Int() * 2) >= iCurrentTrack->TrackLength().Int()	// They have listened to over half the track in one go
 				|| listenedFor.Int() >= 240)								// or more than 4 minutes.
 				&& iCurrentTrack->TrackLength().Int() >= 30					// the track length is over 30 seconds.
 				&& iCurrentTrack->Artist().String().Length() > 0 )					// must have an artist name	
@@ -1006,6 +1002,7 @@ TBool CMobblerLastFMConnection::DoSubmitL()
 				
 				submitForm->AddFieldL(a, iTrackQueue[ii]->Artist().String8());
 				submitForm->AddFieldL(t, iTrackQueue[ii]->Title().String8());
+				submitForm->AddFieldL(b, iTrackQueue[ii]->Album().String8());
 				
 				TTimeIntervalSeconds unixTimeStamp;
 				TTime epoch(TDateTime(1970, EJanuary, 0, 0, 0, 0, 0));
@@ -1041,7 +1038,6 @@ TBool CMobblerLastFMConnection::DoSubmitL()
 				trackLength.AppendNum(iTrackQueue[ii]->TrackLength().Int());
 				submitForm->AddFieldL(l, trackLength);
 				
-				submitForm->AddFieldL(b, KNullDesC8);
 				submitForm->AddFieldL(n, KNullDesC8);
 				submitForm->AddFieldL(m, KNullDesC8);
 				}

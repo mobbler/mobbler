@@ -1,7 +1,7 @@
 /*
 mobblersettingitemlist.cpp
 
-mobbler, a last.fm mobile scrobbler for Symbian smartphones.
+Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
 Copyright (C) 2008  Michael Coffey
 
 http://code.google.com/p/mobbler
@@ -21,33 +21,29 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
+#include <aknappui.h>
+#include <AknTextSettingPage.h>
+#include <aknviewappui.h>
 #include <avkon.hrh>
 #include <avkon.rsg>
-#include <eikmenup.h>
-#include <aknappui.h>
-#include <eikcmobs.h>
 #include <barsread.h>
-#include <stringloader.h>
-#include <gdi.h>
+#include <eikappui.h>
+#include <eikcmobs.h>
 #include <eikedwin.h>
 #include <eikenv.h>
+#include <eikmenup.h>
 #include <eikseced.h>
-#include <eikappui.h>
-#include <aknviewappui.h>
-#include <mobbler.rsg>
-
-#include <stringloader.h> 
+#include <gdi.h>
 #include <mobbler.rsg>
 #include <s32file.h>
+#include <stringloader.h> 
 
+#include "coemain.h"
+#include "mobbler.hrh"
 #include "mobblersettingitemlist.h"
 #include "mobblersettingitemlistsettings.h"
-#include "mobbler.hrh"
 #include "mobblersettingitemlistview.h"
 #include "mobblerutility.h"
-#include "coemain.h"
-
-_LIT(KSettingsFile, "c:settings.ini");
 
 CMobblerSettingItemList::CMobblerSettingItemList(CMobblerSettingItemListSettings& aSettings, MEikCommandObserver* aCommandObserver)
 	:iSettings(aSettings), iCommandObserver(aCommandObserver)
@@ -66,6 +62,7 @@ CAknSettingItem* CMobblerSettingItemList::CreateSettingItemL(TInt aId)
 		case EMobblerSettingItemListViewUsername:
 			{		
 			CAknTextSettingItem* item = new(ELeave) CAknTextSettingItem(aId, iSettings.Username());
+			item->SetSettingPageFlags(CAknTextSettingPage::EPredictiveTextEntryPermitted);
 			return item;
 			}
 		case EMobblerSettingItemListViewPassword:
@@ -82,7 +79,6 @@ void CMobblerSettingItemList::EditItemL(TInt aIndex, TBool aCalledFromMenu)
 	{
 	CAknSettingItemList::EditItemL(aIndex, aCalledFromMenu);
 	(*SettingItemArray())[aIndex]->StoreL();
-	SaveSettingValuesL();
 	}
 
 void CMobblerSettingItemList::HandleResourceChange(TInt aType)

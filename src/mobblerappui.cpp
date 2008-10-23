@@ -21,37 +21,36 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-#include <avkon.hrh>
-#include <aknmessagequerydialog.h>
-#include <aknqueryvaluetext.h> 
-#include <aknnotewrappers.h>
-#include <w32std.h> 
-#include <aknnavi.h> 
-#include <akntitle.h> 
-#include <aknnavilabel.h> 
 #include <akncontext.h> 
+#include <aknmessagequerydialog.h>
 #include <aknnavi.h> 
 #include <aknnavide.h> 
-#include <stringloader.h>
+#include <aknnavilabel.h> 
+#include <aknnotewrappers.h>
 #include <aknquerydialog.h> 
-#include <apgcli.h> 
+#include <aknqueryvaluetext.h> 
 #include <aknsutils.h>
-
+#include <akntitle.h> 
+#include <apgcli.h> 
+#include <avkon.hrh>
+#include <bautils.h> 
 #include <browserlauncher.h>
 #include <browseroverriddensettings.h> 
-
 #include <mobbler.rsg>
+#include <stringloader.h>
+#include <w32std.h> 
+
 #include "mobbler.hrh"
 #include "mobblerapplication.h"
 #include "mobblerappui.h"
+#include "mobblerlastfmconnectionobserver.h"
+#include "mobblermusiclistener.h"
+#include "mobblerradioplayer.h"
 #include "mobblersettingitemlistview.h"
 #include "mobblerstatusview.h"
-#include "mobblermusiclistener.h"
-#include "mobblertrack.h"
-#include "mobblerradioplayer.h"
-#include "mobblerlastfmconnectionobserver.h"
-#include "mobblerutility.h"
 #include "mobblerstring.h"
+#include "mobblertrack.h"
+#include "mobblerutility.h"
 
 _LIT(KVersionNumberDisplay,		"0.3.1");
 const TVersion version(0, 3, 1);
@@ -151,7 +150,23 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 	TBuf<250> tag;
 	TBuf<250> artist;
 	TBuf<250> user;
-	
+
+	// Don't bother going online to Last.fm if no user details entered
+	if (aCommand >= EMobblerCommandOnline)
+		{
+		if (BaflUtils::FileExists(CCoeEnv::Static()->FsSession(), KSettingsFile)
+			== EFalse)
+			{
+			CAknInformationNote* note = new (ELeave) CAknInformationNote(EFalse);
+			HBufC* errorText = StringLoader::LoadLC(R_MOBBLER_NOTE_NO_DETAILS);
+			note->ExecuteLD(*errorText);
+			CleanupStack::PopAndDestroy(errorText);
+
+			// bail from the function
+			return;
+			}
+		}
+
 	switch (aCommand)
 		{
 		case EAknSoftkeyExit:
@@ -175,7 +190,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 			if (error == KErrNotReady)
 				{
 				// Ask if they would like to go online
-				HBufC* goOnlineText = iEikonEnv->AllocReadResourceLC(R_MOBBLER_GO_ONLINE);
+				HBufC* goOnlineText = iEikonEnv->AllocReadResourceLC(R_MOBBLER_ASK_GO_ONLINE);
 				
 				CAknQueryDialog* dlg = CAknQueryDialog::NewL();
 				TBool goOnline(dlg->ExecuteLD(R_MOBBLER_QUERY_DIALOG, *goOnlineText));
@@ -208,8 +223,8 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 			HBufC* title = iEikonEnv->AllocReadResourceLC(R_ABOUT_DIALOG_TITLE);
 			CAknMessageQueryDialog* dlg = new(ELeave) CAknMessageQueryDialog();
 			
-			// initialize the dialog
-			dlg->PrepareLC(R_AVKON_MESSAGE_QUERY_DIALOG);
+			// initialise the dialog
+			dlg->PrepareLC(R_MOBBLER_ABOUT_BOX);
 			dlg->QueryHeading()->SetTextL(*title);
 			dlg->SetMessageTextL(*msg);
 			
@@ -319,7 +334,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 				}
 
 			break;
-		case EMobblerCommandRadioRecommedations:
+		case EMobblerCommandRadioRecommendations:
 			RadioStartL(CMobblerLastFMConnection::ERecommendations, KNullDesC8);
 			break;
 		case EMobblerCommandRadioPersonal:
@@ -411,7 +426,7 @@ void CMobblerAppUi::RadioStartL(CMobblerLastFMConnection::TRadioStation aRadioSt
 	if (error == KErrNotReady)
 		{
 		// Ask if they would like to go online
-		HBufC* goOnlineText = iEikonEnv->AllocReadResourceLC(R_MOBBLER_GO_ONLINE);
+		HBufC* goOnlineText = iEikonEnv->AllocReadResourceLC(R_MOBBLER_ASK_GO_ONLINE);
 		
 		CAknQueryDialog* dlg = CAknQueryDialog::NewL();
 		TBool goOnline(dlg->ExecuteLD(R_MOBBLER_QUERY_DIALOG, *goOnlineText));

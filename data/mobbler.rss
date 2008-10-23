@@ -1,7 +1,7 @@
 ﻿/*
 mobbler.rss
 
-mobbler, a last.fm mobile scrobbler for Symbian smartphones.
+Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
 Copyright (C) 2008  Michael Coffey
 
 http://code.google.com/p/mobbler
@@ -23,13 +23,13 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 NAME MOBB
 
-#include <eikon.rh>
-#include <avkon.rsg>
-#include <avkon.rh>
 #include <appinfo.rh>
+#include <avkon.rh>
+#include <avkon.rsg>
+#include <eikon.rh>
+#include <startupitem.rh>
 #include "mobbler.hrh"
 #include "mobbler.loc"
-#include <startupitem.rh>
 
 CHARACTER_SET UTF8
 
@@ -99,7 +99,7 @@ RESOURCE DIALOG r_mobbler_radio_progress_note
 
 RESOURCE AVKON_VIEW r_mobbler_setting_item_list_view
 	{
-	cba = R_AVKON_SOFTKEYS_OK_EMPTY;
+	cba = R_AVKON_SOFTKEYS_OK_CANCEL;
 	toolbar = 0;
 	}
 	
@@ -191,7 +191,7 @@ RESOURCE MENU_PANE r_radio_submenu_pane
 			},
 		MENU_ITEM
 			{
-			command = EMobblerCommandRadioRecommedations;
+			command = EMobblerCommandRadioRecommendations;
 			txt = STR_mobbler_radio_recommendations;
 			},
 		MENU_ITEM
@@ -393,7 +393,34 @@ RESOURCE DIALOG r_mobbler_query_dialog
             }
         };
     }
-	
+
+RESOURCE DIALOG r_mobbler_about_box
+	{
+	flags = EEikDialogFlagNoDrag | EEikDialogFlagCbaButtons | EEikDialogFlagWait;
+	buttons = R_AVKON_SOFTKEYS_OK_EMPTY;
+	items =
+		{
+		DLG_LINE
+			{
+			type = EAknCtPopupHeadingPane;
+			id = EAknMessageQueryHeaderId;
+			control = AVKON_HEADING
+				{
+				headinglayout = R_AVKON_LIST_HEADING_PANE_POPUPS;
+				};
+			},
+		DLG_LINE
+			{
+			type = EAknCtMessageQuery;
+			id = EAknMessageQueryContentId;
+			control = AVKON_MESSAGE_QUERY
+				{
+				message = "";
+				};
+			}
+		};
+	}
+
 RESOURCE TBUF r_mobbler_setting_item_list_username {buf = "";}
 
 RESOURCE TBUF32 r_about_dialog_title { buf = STR_mobbler_about; }
@@ -407,6 +434,7 @@ RESOURCE TBUF r_mobbler_note_bad_auth	{buf = STR_mobbler_note_bad_auth;}
 RESOURCE TBUF r_mobbler_note_bad_time	{buf = STR_mobbler_note_bad_time;}
 RESOURCE TBUF r_mobbler_note_bad_session	{buf = STR_mobbler_note_bad_session;}
 RESOURCE TBUF r_mobbler_note_comms_error	{buf = STR_mobbler_note_comms_error;}
+RESOURCE TBUF r_mobbler_note_no_details		{buf = STR_mobbler_note_no_details;}
 
 RESOURCE TBUF r_mobbler_love_track			{buf = STR_mobbler_love_track;}
 RESOURCE TBUF r_mobbler_ban_track			{buf = STR_mobbler_ban_track;}
@@ -433,6 +461,7 @@ RESOURCE TBUF r_mobbler_no_update						{buf = STR_mobbler_no_update;}
 
 RESOURCE TBUF r_mobbler_scrobbled_queued						{buf = STR_mobbler_scrobbled_queued;}
 
+RESOURCE TBUF r_mobbler_ask_go_online						{buf = STR_mobbler_ask_go_online;}
 RESOURCE TBUF r_mobbler_go_online						{buf = STR_mobbler_go_online;}
 RESOURCE TBUF r_mobbler_go_offline						{buf = STR_mobbler_go_offline;}
 
@@ -443,6 +472,8 @@ RESOURCE TBUF r_mobbler_state_handshaking					{buf = STR_mobbler_state_handshaki
 RESOURCE TBUF r_mobbler_state_selecting_station				{buf = STR_mobbler_state_selecting_station;}
 RESOURCE TBUF r_mobbler_state_fetching_playlist				{buf = STR_mobbler_state_fetching_playlist;}
 RESOURCE TBUF r_mobbler_state_checking_for_updates			{buf = STR_mobbler_state_checking_for_updates;}
-	
-   
+
+RESOURCE TBUF r_mobbler_softkey_hide					{buf = STR_mobbler_softkey_hide;}
+
+
 // End of File

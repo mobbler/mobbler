@@ -36,6 +36,8 @@ SOURCE		musicappobserver.cpp
 
 RESOURCE	..\data\musicappobserver.rss
 
+LIBRARY		apgrfx.lib
+LIBRARY		apparc.lib
 LIBRARY		euser.lib
 
 #ifndef WINS

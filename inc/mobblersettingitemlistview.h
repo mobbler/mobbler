@@ -30,6 +30,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "mobblersettingitemlistsettings.h"
 
+_LIT(KSettingsFile, "c:settings.ini");
+
 class CMobblerSettingItemList;
 
 class CMobblerSettingItemListView : public CAknView
