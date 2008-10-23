@@ -1,7 +1,7 @@
 /*
 mobblerappui.cpp
 
-mobbler, a last.fm mobile scrobbler for Symbian smartphones.
+Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
 Copyright (C) 2008  Michael Coffey
 
 http://code.google.com/p/mobbler
@@ -53,8 +53,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "mobblerutility.h"
 #include "mobblerstring.h"
 
-_LIT(KVersionNumberDisplay,		"0.3.0");
-const TVersion version(0, 3, 0);
+_LIT(KVersionNumberDisplay,		"0.3.1");
+const TVersion version(0, 3, 1);
 
 _LIT(KSearchURL, "http://astore.amazon.co.uk/mobbler-21/search/203-4425999-4423160?node=25&keywords=%S&x=0&y=0&preview=");
 

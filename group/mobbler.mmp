@@ -121,6 +121,7 @@ TARGETPATH resource\apps
 END //RESOURCE
 
 START RESOURCE	..\data\mobbler_reg.rss
+LANG 01
 TARGET mobbler_reg
 TARGETPATH 	  \private\10003a3f\apps
 END //RESOURCE

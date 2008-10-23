@@ -25,7 +25,7 @@
 &EN, FR, GE, SP, IT, SW, NO, FI, PO, RU, HU, DU, CS, PL, ZH, AF, AR, EL, LV, LT, RO
 
 ; Header
-#{"Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler"}, (0xA0007648), 0, 3, 0
+#{"Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler"}, (0xA0007648), 0, 3, 1
 
 ;Localised vendor names
 %{"Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey"}
@@ -84,29 +84,7 @@
 }-"!:\resource\apps\mobbler.rsc"
 
 ; The application registration file
-{
-"$(EPOCROOT)epoc32\data\z\private\10003a3f\apps\mobbler_reg.r01"
-"$(EPOCROOT)epoc32\data\z\private\10003a3f\apps\mobbler_reg.r02"
-"$(EPOCROOT)epoc32\data\z\private\10003a3f\apps\mobbler_reg.r03"
-"$(EPOCROOT)epoc32\data\z\private\10003a3f\apps\mobbler_reg.r04"
-"$(EPOCROOT)epoc32\data\z\private\10003a3f\apps\mobbler_reg.r05"
-"$(EPOCROOT)epoc32\data\z\private\10003a3f\apps\mobbler_reg.r06"
-"$(EPOCROOT)epoc32\data\z\private\10003a3f\apps\mobbler_reg.r08"
-"$(EPOCROOT)epoc32\data\z\private\10003a3f\apps\mobbler_reg.r09"
-"$(EPOCROOT)epoc32\data\z\private\10003a3f\apps\mobbler_reg.r13"
-"$(EPOCROOT)epoc32\data\z\private\10003a3f\apps\mobbler_reg.r16"
-"$(EPOCROOT)epoc32\data\z\private\10003a3f\apps\mobbler_reg.r17"
-"$(EPOCROOT)epoc32\data\z\private\10003a3f\apps\mobbler_reg.r18"
-"$(EPOCROOT)epoc32\data\z\private\10003a3f\apps\mobbler_reg.r25"
-"$(EPOCROOT)epoc32\data\z\private\10003a3f\apps\mobbler_reg.r27"
-"$(EPOCROOT)epoc32\data\z\private\10003a3f\apps\mobbler_reg.r31"
-"$(EPOCROOT)epoc32\data\z\private\10003a3f\apps\mobbler_reg.r34"
-"$(EPOCROOT)epoc32\data\z\private\10003a3f\apps\mobbler_reg.r37"
-"$(EPOCROOT)epoc32\data\z\private\10003a3f\apps\mobbler_reg.r54"
-"$(EPOCROOT)epoc32\data\z\private\10003a3f\apps\mobbler_reg.r67"
-"$(EPOCROOT)epoc32\data\z\private\10003a3f\apps\mobbler_reg.r68"
-"$(EPOCROOT)epoc32\data\z\private\10003a3f\apps\mobbler_reg.r78"
-}-"!:\private\10003a3f\import\apps\mobbler_reg.rsc"
+"$(EPOCROOT)epoc32\data\z\private\10003a3f\apps\mobbler_reg.r01"-"!:\private\10003a3f\import\apps\mobbler_reg.rsc"
 
 ; backup and restore
 ".\backup_registration.xml"-"!:\private\A0007648\backup_registration.xml"
