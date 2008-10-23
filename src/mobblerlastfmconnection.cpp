@@ -359,8 +359,16 @@ void CMobblerLastFMConnection::SetModeL(TMode aMode)
 	{
 	if (aMode == EOnline)
 		{
-		// we are in offline mode and are moving to online mode
-		ConnectL();
+		// We are being asked to switch to online mode
+		
+		if (iMode != EOnline &&
+				iState != EConnecting && iState != EHandshaking)
+			{
+			// We are not already in online mode and we are neither
+			// connecting nor handshaking, so start the connecting process
+			
+			ConnectL();
+			}
 		}
 	else if (aMode == EOffline)
 		{
@@ -490,6 +498,10 @@ TInt CMobblerLastFMConnection::CheckForUpdatesL()
 		iUpdateTransaction = CMobblerTransaction::NewL(iHTTPSession, uriParser, *this);
 		ChangeState(EUpdates);
 		}
+	else if (iState != EConnecting && iState != EHandshaking)
+		{
+		error = KErrBadHandle;
+		}
 	else
 		{
 		error = KErrNotReady;
@@ -551,6 +563,10 @@ TInt CMobblerLastFMConnection::TrackBanL(const CMobblerTrack& aTrack)
 		
 		CleanupStack::PopAndDestroy(2, uri);
 		}
+	else if (iState != EConnecting && iState != EHandshaking)
+		{
+		error = KErrBadHandle;
+		}
 	else
 		{
 		error = KErrNotReady;
@@ -592,6 +608,10 @@ TInt CMobblerLastFMConnection::UserGetFriendsL(const TDesC8& aUsername, MWebServ
 		iBanTrackTransaction->SetWebServicesObserver(aObserver);
 		
 		CleanupStack::PopAndDestroy(2, query);
+		}
+	else if (iState != EConnecting && iState != EHandshaking)
+		{
+		error = KErrBadHandle;
 		}
 	else
 		{
@@ -720,6 +740,10 @@ TInt CMobblerLastFMConnection::RadioStartL(TRadioStation aRadioStation, const TD
 		ChangeState(ERadioSelect);
 		
 		CleanupStack::PopAndDestroy(5, path);
+		}
+	else if (iState != EConnecting && iState != EHandshaking)
+		{
+		error = KErrBadHandle;
 		}
 	else
 		{

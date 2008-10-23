@@ -187,7 +187,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 			
 			TInt error = iLastFMConnection->CheckForUpdatesL();
 			
-			if (error == KErrNotReady)
+			if (error == KErrBadHandle)
 				{
 				// Ask if they would like to go online
 				HBufC* goOnlineText = iEikonEnv->AllocReadResourceLC(R_MOBBLER_ASK_GO_ONLINE);
@@ -203,6 +203,10 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 					iLastFMConnection->SetModeL(CMobblerLastFMConnection::EOnline);
 					iCheckForUpdates = ETrue;
 					}
+				}
+			else if (error == KErrNotReady)
+				{
+				iCheckForUpdates = ETrue;
 				}
 			
 			break;
@@ -423,7 +427,9 @@ void CMobblerAppUi::RadioStartL(CMobblerLastFMConnection::TRadioStation aRadioSt
 	{
 	TInt error = iRadioPlayer->StartL(aRadioStation, aRadioOption);
 	
-	if (error == KErrNotReady)
+	TBool startStationOnConnectCompleteCallback(EFalse);
+	
+	if (error == KErrBadHandle)
 		{
 		// Ask if they would like to go online
 		HBufC* goOnlineText = iEikonEnv->AllocReadResourceLC(R_MOBBLER_ASK_GO_ONLINE);
@@ -435,12 +441,24 @@ void CMobblerAppUi::RadioStartL(CMobblerLastFMConnection::TRadioStation aRadioSt
 		
 		if (goOnline)
 			{
-			// send the web services API call
-			iLastFMConnection->SetModeL(CMobblerLastFMConnection::EOnline);
-			iRadioStation = aRadioStation;
-			delete iRadioOption;
-			iRadioOption = aRadioOption.AllocL();
+			// Send the web services API call
+			iLastFMConnection->SetModeL(CMobblerLastFMConnection::EOnline);		
+			
+			startStationOnConnectCompleteCallback = ETrue;
 			}
+		}
+	else if (error == KErrNotReady)
+		{
+		startStationOnConnectCompleteCallback = ETrue;
+		}
+			
+	if (startStationOnConnectCompleteCallback)
+		{
+		// Setting these mean that the radio station selected 
+		// will be started in HandleConnectCompleteL()
+		iRadioStation = aRadioStation;
+		delete iRadioOption;
+		iRadioOption = aRadioOption.AllocL();
 		}
 	}
 
