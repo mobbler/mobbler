@@ -21,39 +21,8 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-#include <stringpool.h>
-#include <uricommon.h> 
-
-// included all the http headers as it was a bit of a pain finding out which ones were needed
-// they should probably be cleared up at some point
 #include <chttpformencoder.h>
-#include <cmconnectionmethod.h> 
-#include <cmconnectionmethoddef.h> 
-#include <cmdestination.h> 
-#include <cmmanager.h> 
-#include <commdbconnpref.h>
-#include <http/mhttpdatasupplier.h> 
-#include <http/mhttpfilter.h>
-#include <http/mhttpfilterbase.h>
-#include <http/mhttptransactioncallback.h>
-#include <http/rhttpconnectioninfo.h>
-#include <http/rhttpfiltercollection.h>
-#include <http/rhttpheaders.h>
-#include <http/rhttpmessage.h>
-#include <http/rhttppropertyset.h>
-#include <http/rhttprequest.h>
-#include <http/rhttpresponse.h>
-#include <http/rhttpsession.h>
-#include <http/rhttptransaction.h>
-#include <http/rhttptransactionpropertyset.h>
-#include <http/thttpevent.h>
-#include <http/thttpfilterhandle.h>
-#include <http/thttpfilteriterator.h>
-#include <http/thttpfilterregistration.h>
-#include <http/thttphdrfielditer.h>
-#include <http/thttphdrval.h>
 #include <httpstringconstants.h>
-#include <s32file.h>
 
 #include "coemain.h"
 #include "mobblerappui.h"
@@ -573,7 +542,7 @@ TInt CMobblerLastFMConnection::TrackBanL(const CMobblerTrack& aTrack)
 	return error; 
 	}
 
-TInt CMobblerLastFMConnection::UserGetFriendsL(const TDesC8& aUsername, MWebServicesObserver& aObserver)
+TInt CMobblerLastFMConnection::UserGetFriendsL(const TDesC8& /*aUsername*/, MWebServicesObserver& /*aObserver*/)
 	{
 	/*
 	TInt error(KErrNone);

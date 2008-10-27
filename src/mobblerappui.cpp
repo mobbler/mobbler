@@ -170,6 +170,8 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 	switch (aCommand)
 		{
 		case EAknSoftkeyExit:
+			/// Check if scrobblable first and save queue
+			iLastFMConnection->TrackStoppedL();
 			Exit();
 			break;
 		case EEikCmdExit:
@@ -244,8 +246,8 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 			
 			if (track)
 				{
-				// There is a track playing so open the browser with the amazon link 
-				// ask if the user want to open the full amazon site
+				// There is a track playing so open the browser with the Amazon link.
+				// Ask if the user wants to open the full Amazon site.
 				
 				CAknQueryDialog* dlg = CAknQueryDialog::NewL();
 				HBufC* buyAmazon = iEikonEnv->AllocReadResourceLC(R_MOBBLER_BUY_AMAZON);
@@ -480,7 +482,7 @@ void CMobblerAppUi::RadioStartL(CMobblerLastFMConnection::TRadioStation aRadioSt
 		}
 	}
 
-void CMobblerAppUi::WebServicesResponseL(const TDesC8& aXML)
+void CMobblerAppUi::WebServicesResponseL(const TDesC8& /*aXML*/)
 	{
 	//CMobblerParser::ParseArtistGetInfoL(aXML);
 	}
