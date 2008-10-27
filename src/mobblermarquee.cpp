@@ -61,7 +61,7 @@ void CMobblerMarquee::Start(const TDesC& aText, TInt aInitialOffset, TInt aTextW
 		
 		iTimer->Cancel();
 		
-		if (iTextWidth > iDisplayWidth)
+		if (iTextWidth + aInitialOffset > iDisplayWidth)
 			{
 			TCallBack callBack(CallBack, this);
 			iTimer->Start(KDelay, KInterval, callBack);

@@ -768,6 +768,12 @@ TKeyResponse CMobblerStatusControl::OfferKeyEventL(const TKeyEvent& aKeyEvent, T
 			const_cast<CMobblerAppUi&>(iAppUi).HandleCommandL(EMobblerCommandBuy);
 			response = EKeyWasConsumed;
 			break;
+		case '1':
+			const_cast<CMobblerAppUi&>(iAppUi).HandleCommandL(EMobblerCommandArtistGetInfo);
+			response = EKeyWasConsumed;
+			break;
+		default:
+			break;
 		}
 	
 	DrawDeferred();

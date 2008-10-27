@@ -41,6 +41,9 @@ public:
 	
 	void SetNameL(const TDesC8& aName);
 	const CMobblerString& Name() const;
+	
+	void SetSkips(TInt aSkips);
+	TInt Skips() const;
 
 private:
 	CMobblerRadioPlaylist();
@@ -49,6 +52,7 @@ private:
 private:
 	RPointerArray<CMobblerTrack> iPlaylist;
 	CMobblerString* iName;
+	TInt iSkips;
 	};
 
 #endif // __MOBBLERRADIOPLAYLIST_H__

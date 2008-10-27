@@ -105,11 +105,9 @@ private:
 	TBool iOpen;
 	TBool iPlaying;
 	TBool iAlreadyOpened;
-	
-	TBool iWriting;
+
 	TBool iTrackDownloading;
 	
-	TBool iRadioPlaying;
 	TInt iBufferOffset;
 
 	CMdaAudioOutputStream* iMdaAudioOutputStream;

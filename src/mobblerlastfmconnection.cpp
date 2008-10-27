@@ -161,9 +161,10 @@ CMobblerLastFMConnection::~CMobblerLastFMConnection()
 	delete iSubmitTransaction;
 	delete iRadioSelectStationTransaction;
 	delete iRadioPlaylistTransaction;
-	delete iLoveTrackTransaction;
-	delete iBanTrackTransaction;
+	delete iTrackLoveTransaction;
+	delete iTrackBanTransaction;
 	delete iUpdateTransaction;
+	delete iArtistGetInfoTransaction;
 	
 	delete iUsername;
 	delete iPassword;
@@ -529,8 +530,8 @@ void CMobblerLastFMConnection::DoTrackLoveL()
 		
 		CHTTPFormEncoder* form = query->GetFormLC();
 		
-		delete iLoveTrackTransaction;
-		iLoveTrackTransaction = CMobblerTransaction::NewL(iHTTPSession, uri->Uri(), *this, form);
+		delete iTrackLoveTransaction;
+		iTrackLoveTransaction = CMobblerTransaction::NewL(iHTTPSession, uri->Uri(), *this, form);
 		CleanupStack::Pop(form);
 		
 		CleanupStack::PopAndDestroy(2, uri);
@@ -557,8 +558,8 @@ TInt CMobblerLastFMConnection::TrackBanL(const CMobblerTrack& aTrack)
 		
 		CHTTPFormEncoder* form = query->GetFormLC();
 		
-		delete iBanTrackTransaction;
-		iBanTrackTransaction = CMobblerTransaction::NewL(iHTTPSession, uri->Uri(), *this, form);
+		delete iTrackBanTransaction;
+		iTrackBanTransaction = CMobblerTransaction::NewL(iHTTPSession, uri->Uri(), *this, form);
 		CleanupStack::Pop(form);
 		
 		CleanupStack::PopAndDestroy(2, uri);
@@ -577,6 +578,7 @@ TInt CMobblerLastFMConnection::TrackBanL(const CMobblerTrack& aTrack)
 
 TInt CMobblerLastFMConnection::UserGetFriendsL(const TDesC8& aUsername, MWebServicesObserver& aObserver)
 	{
+	/*
 	TInt error(KErrNone);
 	
 	if (iMode == EOnline)
@@ -603,9 +605,9 @@ TInt CMobblerLastFMConnection::UserGetFriendsL(const TDesC8& aUsername, MWebServ
 		uri->SetComponentL(*query->GetQueryLC(), EUriQuery);
 		CleanupStack::PopAndDestroy(); // query->GetQueryLC()
 		
-		delete iBanTrackTransaction;
-		iBanTrackTransaction = CMobblerTransaction::NewL(iHTTPSession, uri->Uri(), *this);
-		iBanTrackTransaction->SetWebServicesObserver(aObserver);
+		delete iTrackBanTransaction;
+		iTrackTransaction = CMobblerTransaction::NewL(iHTTPSession, uri->Uri(), *this);
+		iTrackTransaction->SetWebServicesObserver(aObserver);
 		
 		CleanupStack::PopAndDestroy(2, query);
 		}
@@ -617,8 +619,45 @@ TInt CMobblerLastFMConnection::UserGetFriendsL(const TDesC8& aUsername, MWebServ
 		{
 		error = KErrNotReady;
 		}
+		
+	return error;
+	*/
+	
+	return KErrNone;
+	}
+
+TInt CMobblerLastFMConnection::ArtistGetInfoL(const CMobblerTrack& aTrack, MWebServicesObserver& aObserver)
+	{
+	TInt error(KErrNone);
+	
+	if (iMode == EOnline)
+		{		
+		CUri8* uri = CUri8::NewL();
+		CleanupStack::PushL(uri);
+		
+		uri->SetComponentL(KScheme, EUriScheme);
+		uri->SetComponentL(KWebServicesHost, EUriHost);
+		uri->SetComponentL(_L8("/2.0/"), EUriPath);
+		
+		CMobblerWebServicesQuery* query = CMobblerWebServicesQuery::NewLC(_L8("artist.getinfo"));
+		query->AddFieldL(_L8("artist"), aTrack.Artist().String8());
+		
+		CHTTPFormEncoder* form = query->GetFormLC();
+		
+		delete iArtistGetInfoTransaction;
+		iArtistGetInfoTransaction = CMobblerTransaction::NewL(iHTTPSession, uri->Uri(), *this, form);
+		iArtistGetInfoTransaction->SetWebServicesObserver(aObserver);
+		CleanupStack::Pop(form);
+		
+		CleanupStack::PopAndDestroy(2, uri);
+		}
+	else
+		{
+		error = KErrNotReady;
+		}
 	
 	return error;
+	
 	}
 
 void CMobblerLastFMConnection::RadioHandshakeL()
@@ -845,12 +884,14 @@ void CMobblerLastFMConnection::Disconnect()
 	iSubmitTransaction = NULL;
 	delete iWebServicesHandshakeTransaction;
 	iWebServicesHandshakeTransaction = NULL;
-	delete iLoveTrackTransaction;
-	iLoveTrackTransaction = NULL;
-	delete iBanTrackTransaction;
-	iBanTrackTransaction = NULL;
+	delete iTrackLoveTransaction;
+	iTrackLoveTransaction = NULL;
+	delete iTrackLoveTransaction;
+	iTrackLoveTransaction = NULL;
 	delete iUpdateTransaction;
 	iUpdateTransaction = NULL;
+	delete iArtistGetInfoTransaction;
+	iArtistGetInfoTransaction = NULL;
 	
 	iRadioAudioTransaction.Close();
 	
@@ -1248,7 +1289,7 @@ void CMobblerLastFMConnection::TransactionResponseL(CMobblerTransaction* aTransa
 			DoSubmitL();
 			}
 		}
-	else if (aTransaction == iLoveTrackTransaction)
+	else if (aTransaction == iTrackLoveTransaction)
 		{
 		iLovedTrackQueue[0]->Release();
 		iLovedTrackQueue.Remove(0);

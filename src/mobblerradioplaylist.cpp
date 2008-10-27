@@ -81,3 +81,15 @@ const CMobblerString& CMobblerRadioPlaylist::Name() const
 	return *iName;
 	}
 
+void CMobblerRadioPlaylist::SetSkips(TInt aSkips)
+	{
+	iSkips = aSkips;
+	}
+
+TInt CMobblerRadioPlaylist::Skips() const
+	{
+	return iSkips;
+	}
+
+
+

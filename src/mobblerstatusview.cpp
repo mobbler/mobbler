@@ -82,39 +82,7 @@ void CMobblerStatusView::DynInitMenuPaneL(TInt aResourceId, CEikMenuPane* aMenuP
 			{
 			aMenuPane->SetItemDimmed(EMobblerCommandOffline, ETrue);
 			}
-		
-		//TInt index(KErrNotFound);
-		//aMenuPane->ItemAndPos(EMobblerCommandRadio, index)->CreateIconL(iRadioBitmap->Bitmap(), iRadioBitmap->Mask());
-		//aMenuPane->ItemAndPos(EMobblerCommandRadio, index)->SetBitmapsOwnedExternally(ETrue);
 		}
-	/*
-	else if (R_RADIO_SUBMENU_PANE == aResourceId)
-		{
-		TInt index(KErrNotFound);
-		aMenuPane->ItemAndPos(EMobblerCommandRadioLoved, index)->SetIconBitmapL(iRadioLovedBitmap->Bitmap());
-		aMenuPane->ItemAndPos(EMobblerCommandRadioLoved, index)->SetIconMaskL(iRadioLovedBitmap->Mask());
-		aMenuPane->ItemAndPos(EMobblerCommandRadioLoved, index)->SetBitmapsOwnedExternally(ETrue);
-		
-		aMenuPane->ItemAndPos(EMobblerCommandRadioPersonal, index)->SetIconBitmapL(iRadioPersonalBitmap->Bitmap());
-		aMenuPane->ItemAndPos(EMobblerCommandRadioPersonal, index)->SetIconMaskL(iRadioPersonalBitmap->Mask());
-		aMenuPane->ItemAndPos(EMobblerCommandRadioPersonal, index)->SetBitmapsOwnedExternally(ETrue);
-		
-		aMenuPane->ItemAndPos(EMobblerCommandRadioNeighbourhood, index)->SetIconBitmapL(iRadioNeighboursBitmap->Bitmap());
-		aMenuPane->ItemAndPos(EMobblerCommandRadioNeighbourhood, index)->SetIconMaskL(iRadioNeighboursBitmap->Mask());
-		aMenuPane->ItemAndPos(EMobblerCommandRadioNeighbourhood, index)->SetBitmapsOwnedExternally(ETrue);
-		
-		aMenuPane->ItemAndPos(EMobblerCommandRadioMyPlaylist, index)->SetIconBitmapL(iRadioPlaylistBitmap->Bitmap());
-		aMenuPane->ItemAndPos(EMobblerCommandRadioMyPlaylist, index)->SetIconMaskL(iRadioPlaylistBitmap->Mask());
-		aMenuPane->ItemAndPos(EMobblerCommandRadioMyPlaylist, index)->SetBitmapsOwnedExternally(ETrue);
-		
-		aMenuPane->ItemAndPos(EMobblerCommandRadioLoved, index)->SetIconBitmapL(iRadioLovedBitmap->Bitmap());
-		aMenuPane->ItemAndPos(EMobblerCommandRadioLoved, index)->SetIconMaskL(iRadioLovedBitmap->Mask());
-		aMenuPane->ItemAndPos(EMobblerCommandRadioLoved, index)->SetBitmapsOwnedExternally(ETrue);
-		
-		aMenuPane->ItemAndPos(EMobblerCommandRadioRecommendations, index)->SetIconBitmapL(iRadioRecommendedBitmap->Bitmap());
-		aMenuPane->ItemAndPos(EMobblerCommandRadioRecommendations, index)->SetIconMaskL(iRadioRecommendedBitmap->Mask());
-		aMenuPane->ItemAndPos(EMobblerCommandRadioRecommendations, index)->SetBitmapsOwnedExternally(ETrue);
-		}*/
 	}
 
 TUid CMobblerStatusView::Id() const
@@ -186,41 +154,7 @@ void CMobblerStatusView::SetupStatusPaneL()
 		CleanupStack::PopAndDestroy();
 		}		
 	}
-/*
-void CMobblerStatusView::ExecuteConnectingDialogLD(const TDesC* aOverrideText)
-	{
-	iConnectingDialog = new (ELeave) CAknWaitDialog(reinterpret_cast<CEikDialog**>(&iConnectingDialog), ETrue);
-	
-	if ( aOverrideText != NULL )
-		{
-		iConnectingDialog->SetTextL( *aOverrideText );
-		}
-	iConnectingDialog->ExecuteLD(R_MOBBLER_CONNECTING_DIALOG);
-	}
 
-void CMobblerStatusView::RemoveConnectingDialogL()
-	{
-	if ( iConnectingDialog != NULL )
-		{
-		iConnectingDialog->SetCallback( NULL );
-		iConnectingDialog->ProcessFinishedL();    // deletes the dialog
-		iConnectingDialog = NULL;
-		}
-	}
-
-void CMobblerStatusView::SetConnectingDialogCallbackL(MProgressDialogCallback* aCallback)
-	{
-	if ( iConnectingDialog != NULL )
-		{
-		iConnectingDialog->SetCallback(aCallback);
-		}
-	}
-
-void CMobblerStatusView::SetDialogToNull()
-	{
-	iConnectingDialog = NULL;
-	}
-*/
 void CMobblerStatusView::DrawDeferred() const
 	{
 	if (iMobblerStatusControl)

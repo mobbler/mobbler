@@ -60,6 +60,7 @@ _LIT8(KElementSession, "session");
 _LIT8(KElementKey, "key");
 _LIT8(KElementRadioAuth, "trackauth");
 _LIT8(KElementError, "error");
+_LIT8(KElementLink, "link");
 
 _LIT8(KUpdateVersionMajor,		"major");
 _LIT8(KUpdateVersionMinor,		"minor");
@@ -311,6 +312,13 @@ CMobblerLastFMError* CMobblerParser::ParseRadioPlaylistL(const TDesC8& aXML, CMo
 	HBufC8* radioName = DecodeURIStringLC(domFragment->AsElement().Element(KElementTitle)->Content());
 	playlist->SetNameL(*radioName);
 	CleanupStack::PopAndDestroy();
+	
+	HBufC8* skipsText = DecodeURIStringLC(domFragment->AsElement().Element(KElementLink)->Content());
+	TLex8 lex8(*skipsText);
+	TInt skips(0);
+	lex8.Val(skips);
+	playlist->SetSkips(skips);
+	CleanupStack::PopAndDestroy(skipsText);
 	
 	RPointerArray<CSenElement>& tracks = domFragment->AsElement().Element(KElementTrackList)->ElementsL();
 	

@@ -56,7 +56,7 @@ enum TMobblerSettingItemListViewCommands
 	EMobblerCommandTrackLove,
 	EMobblerCommandTrackBan,
 	EMobblerCommandTrackSimilar,
-	EMobblerCommandArtistInfo,
+	EMobblerCommandArtistGetInfo,
 	EMobblerCommandArtistEvents,
 	EMobblerCommandArtistSimilar,
 	EMobblerCommandAlbumInfo,

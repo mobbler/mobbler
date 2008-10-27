@@ -418,6 +418,25 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 				}
 			
 			break;
+		case EMobblerCommandArtistGetInfo:
+			// you should only be able to ban radio tracks
+			currentTrack = iRadioPlayer->CurrentTrack();
+			
+			if (currentTrack)
+				{
+				// send the web services API call
+				iLastFMConnection->ArtistGetInfoL(*currentTrack, *this);
+				}
+			else
+				{
+				// There is no current track so tell the user they are being silly
+				CAknInformationNote* note = new (ELeave) CAknInformationNote(EFalse);
+				HBufC* text = iEikonEnv->AllocReadResourceLC(R_MOBBLER_ERROR_NO_TRACK);
+				note->ExecuteLD(*text);
+				CleanupStack::PopAndDestroy(text);
+				}
+			
+			break;
 		default:
 			break;
 		}
@@ -460,6 +479,11 @@ void CMobblerAppUi::RadioStartL(CMobblerLastFMConnection::TRadioStation aRadioSt
 		delete iRadioOption;
 		iRadioOption = aRadioOption.AllocL();
 		}
+	}
+
+void CMobblerAppUi::WebServicesResponseL(const TDesC8& aXML)
+	{
+	//CMobblerParser::ParseArtistGetInfoL(aXML);
 	}
 
 CMobblerLastFMConnection::TMode CMobblerAppUi::Mode() const

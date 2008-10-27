@@ -100,6 +100,7 @@ public:
 	// Web services APIs
 	TInt UserGetFriendsL(const TDesC8& aUser, MWebServicesObserver& aObserver);
 	TInt TrackBanL(const CMobblerTrack& aTrack);
+	TInt ArtistGetInfoL(const CMobblerTrack& aTrack, MWebServicesObserver& aObserver);
 	
 	// Observing
 	void AddObserverL(MMobblerLastFMConnectionObserver* aObserver);
@@ -177,9 +178,10 @@ private:
 	CMobblerTransaction* iRadioAlbumArtTransaction;
 	CMobblerTransaction* iNowPlayingTransaction;
 	CMobblerTransaction* iSubmitTransaction;
-	CMobblerTransaction* iLoveTrackTransaction;
-	CMobblerTransaction* iBanTrackTransaction;
+	CMobblerTransaction* iTrackLoveTransaction;
+	CMobblerTransaction* iTrackBanTransaction;
 	CMobblerTransaction* iUpdateTransaction;
+	CMobblerTransaction* iArtistGetInfoTransaction;
 	
 	RHTTPTransaction iRadioAudioTransaction;
 	

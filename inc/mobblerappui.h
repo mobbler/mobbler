@@ -29,6 +29,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "mobblerlastfmconnection.h"
 #include "mobblerlastfmconnectionobserver.h"
+#include "mobblerwebservicesobserver.h"
+
 
 class CMobblerSettingItemListView;
 class CMobblerMusicAppListener;
@@ -40,7 +42,8 @@ class CMobblerTrack;
 class CBrowserLauncher;
 
 class CMobblerAppUi : public CAknViewAppUi,
-						public MMobblerLastFMConnectionObserver
+						public MMobblerLastFMConnectionObserver,
+						public MWebServicesObserver
 	{
 public:
 
@@ -80,6 +83,9 @@ private:
 	
 	void RadioStartL(CMobblerLastFMConnection::TRadioStation aRadioStation, const TDesC8& aRadioOption);
 
+private: // from MWebServicesObserver
+	void WebServicesResponseL(const TDesC8& aXML);
+	
 private:
 	// the view classes
 	CMobblerSettingItemListView* iSettingView;

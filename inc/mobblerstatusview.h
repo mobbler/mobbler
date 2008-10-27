@@ -43,14 +43,7 @@ public:
 	TUid Id() const;
 	void HandleCommandL(TInt aCommand);
 	
-	//void ExecuteConnectingDialogLD(const TDesC* aOverrideText = NULL);
-	//void RemoveConnectingDialogL();
-
-	//void SetConnectingDialogCallbackL(MProgressDialogCallback* aCallback);
-	//void SetDialogToNull();
-	
 	void DrawDeferred() const;
-	//void UpdateVolume() const;
 	
 private:
 	CMobblerStatusView();        
@@ -71,13 +64,6 @@ private:
 private:
 	CAknWaitDialog* iConnectingDialog;
 	CMobblerStatusControl* iMobblerStatusControl;
-	
-	//CMobblerBitmap* iRadioBitmap;
-	//CMobblerBitmap* iRadioLovedBitmap;
-	//CMobblerBitmap* iRadioPlaylistBitmap;
-	//CMobblerBitmap* iRadioRecommendedBitmap;
-	//CMobblerBitmap* iRadioPersonalBitmap;
-	//CMobblerBitmap* iRadioNeighboursBitmap;
 	};
 
 #endif // __MOBBLERSTATUSVIEW_H__
