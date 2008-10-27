@@ -472,9 +472,10 @@ void CMobblerStatusControl::Draw(const TRect& /*aRect*/) const
 		FormatTime(iPlaybackLeftText, iAppUi.CurrentTrack()->TrackLength().Int() - iAppUi.CurrentTrack()->PlaybackPosition().Int());
 		
 		playbackTotal = iAppUi.CurrentTrack()->TrackLength().Int();
-		playbackPosition = iAppUi.CurrentTrack()->PlaybackPosition().Int();
-		bufferPosition = iAppUi.CurrentTrack()->Buffered();
+		playbackPosition = Min(iAppUi.CurrentTrack()->PlaybackPosition().Int(), playbackTotal);
+		
 		bufferTotal = iAppUi.CurrentTrack()->DataSize();
+		bufferPosition = Min(iAppUi.CurrentTrack()->Buffered(), bufferTotal);
 		}
 	else
 		{

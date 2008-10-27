@@ -74,7 +74,9 @@ void CMobblerStatusView::DynInitMenuPaneL(TInt aResourceId, CEikMenuPane* aMenuP
 	{
 	if (aResourceId == R_MOBBLER_STATUS_MENU_PANE)
 		{
-		if (static_cast<CMobblerAppUi*>(AppUi())->Mode() == CMobblerLastFMConnection::EOnline)
+		if (static_cast<CMobblerAppUi*>(AppUi())->Mode() == CMobblerLastFMConnection::EOnline ||
+				static_cast<CMobblerAppUi*>(AppUi())->State() == CMobblerLastFMConnection::EConnecting ||
+				static_cast<CMobblerAppUi*>(AppUi())->State() == CMobblerLastFMConnection::EHandshaking)
 			{
 			aMenuPane->SetItemDimmed(EMobblerCommandOnline, ETrue);
 			}

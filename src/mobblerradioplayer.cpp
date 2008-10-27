@@ -146,6 +146,9 @@ void CMobblerRadioPlayer::Stop()
 
 void CMobblerRadioPlayer::DoStop()
 	{
+	// Try to submit the last played track
+	SubmitCurrentTrackL();
+	
 	// Stop the audio output stream
 	iMdaAudioOutputStream->Stop();
 	iBuffer.ResetAndDestroy();
@@ -160,9 +163,6 @@ void CMobblerRadioPlayer::DoStop()
 	
 	// Stop downloading the mp3
 	iLastFMConnection.RadioStop();
-	
-	// Try to submit the last played track
-	SubmitCurrentTrackL();
 	
 	static_cast<CMobblerAppUi*>(CEikonEnv::Static()->AppUi())->StatusDrawDeferred();
 	}
@@ -300,7 +300,10 @@ void CMobblerRadioPlayer::MaoscBufferCopied(TInt /*aError*/, const TDesC8& /*aBu
 
 void CMobblerRadioPlayer::SubmitCurrentTrackL()
 	{
-	iLastFMConnection.TrackStoppedL();
+	if (iTrackDownloading || iPlaying)
+		{
+		iLastFMConnection.TrackStoppedL();
+		}
 	}
 
 void CMobblerRadioPlayer::MaoscPlayComplete(TInt aError)

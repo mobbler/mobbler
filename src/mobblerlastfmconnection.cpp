@@ -207,7 +207,7 @@ void CMobblerLastFMConnection::LoadSettingsL()
 		CleanupClosePushL(readStream);
 		
 		TInt8 mode = readStream.ReadInt8L();
-		iIap = readStream.ReadInt32L();
+		TInt iap = readStream.ReadInt32L();
 		
 		// future proofing
 		delete HBufC8::NewL(readStream, KMaxTInt);
@@ -234,7 +234,7 @@ void CMobblerLastFMConnection::SaveSettingsL()
 		CleanupClosePushL(writeStream);
 			
 		writeStream.WriteInt8L(iMode);
-		writeStream.WriteInt32L(iIap);
+		writeStream.WriteInt32L(0);
 		
 		// future proofing
 		writeStream << KNullDesC8;
@@ -373,9 +373,6 @@ void CMobblerLastFMConnection::SetModeL(TMode aMode)
 		}
 	else if (aMode == EOffline)
 		{
-		// We are going offline so forget the IAP so that
-		// it can be changed the next time the user connects
-		iIap = 0;
 		DoSetModeL(aMode);
 		SaveSettingsL();
 		Disconnect();
@@ -402,7 +399,7 @@ void CMobblerLastFMConnection::RunL()
 	{
 	if (iStatus.Int() == KErrNone)
 		{
-		User::LeaveIfError(iConnection.GetIntSetting(_L("IAP\\Id"), iIap));
+		//User::LeaveIfError(iConnection.GetIntSetting(_L("IAP\\Id"), iIap));
 		SaveSettingsL();
 		
 		iHTTPSession.Close();
@@ -860,6 +857,8 @@ void CMobblerLastFMConnection::RequestMp3L(CMobblerTrack* aTrack)
 
 void CMobblerLastFMConnection::Disconnect()
 	{
+	Cancel();
+	
 	ChangeState(ENone);
 	
 	if (iRadioPlayer)
@@ -1142,6 +1141,9 @@ void CMobblerLastFMConnection::HandleHandshakeErrorL(CMobblerLastFMError* aError
 		// There was an error with one of the handshakes
 		NotifyLastFMErrorL(*aError);
 		ChangeState(ENone);
+		iWebServicesHandshakeTransaction->Cancel();
+		iHandshakeTransaction->Cancel();
+		iRadioHandshakeTransaction->Cancel();
 		}
 	}
 		

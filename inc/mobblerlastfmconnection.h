@@ -167,8 +167,6 @@ private:
 	RHTTPSession iHTTPSession;
 	RSocketServ iSocketServ;
 	RConnection iConnection;
-		
-	TUint32 iIap;
 	
 	CMobblerTransaction* iHandshakeTransaction;
 	CMobblerTransaction* iRadioHandshakeTransaction;

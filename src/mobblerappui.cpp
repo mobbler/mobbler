@@ -419,8 +419,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 			
 			break;
 		case EMobblerCommandArtistGetInfo:
-			// you should only be able to ban radio tracks
-			currentTrack = iRadioPlayer->CurrentTrack();
+			currentTrack = CurrentTrack();
 			
 			if (currentTrack)
 				{
