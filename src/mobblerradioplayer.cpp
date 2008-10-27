@@ -284,7 +284,6 @@ void CMobblerRadioPlayer::MaoscBufferCopied(TInt /*aError*/, const TDesC8& /*aBu
 	else if (!iTrackDownloading)
 		{
 		// The track has finished downloading and finished playing
-		iPlaying = EFalse;
 		iBufferOffset = (*iPlaylist)[iCurrentTrack]->Buffered();
 		NextTrackL();
 		}
