@@ -378,14 +378,6 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 						}
 					}
 				}
-			else
-				{
-				// There is no current track so tell the user that they are being silly
-				CAknInformationNote* note = new (ELeave) CAknInformationNote(EFalse);
-				HBufC* text = iEikonEnv->AllocReadResourceLC(R_MOBBLER_ERROR_NO_TRACK);
-				note->ExecuteLD(*text);
-				CleanupStack::PopAndDestroy(text);
-				}
 			
 			break;
 		case EMobblerCommandTrackBan:
@@ -410,14 +402,6 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 					iRadioPlayer->NextTrackL();
 					}
 				}
-			else
-				{
-				// There is no current radio track so tell the user they are being silly
-				CAknInformationNote* note = new (ELeave) CAknInformationNote(EFalse);
-				HBufC* text = iEikonEnv->AllocReadResourceLC(R_MOBBLER_ERROR_NO_RADIO_TRACK);
-				note->ExecuteLD(*text);
-				CleanupStack::PopAndDestroy(text);
-				}
 			
 			break;
 		case EMobblerCommandArtistGetInfo:
@@ -427,14 +411,6 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 				{
 				// send the web services API call
 				iLastFMConnection->ArtistGetInfoL(*currentTrack, *this);
-				}
-			else
-				{
-				// There is no current track so tell the user they are being silly
-				CAknInformationNote* note = new (ELeave) CAknInformationNote(EFalse);
-				HBufC* text = iEikonEnv->AllocReadResourceLC(R_MOBBLER_ERROR_NO_TRACK);
-				note->ExecuteLD(*text);
-				CleanupStack::PopAndDestroy(text);
 				}
 			
 			break;
