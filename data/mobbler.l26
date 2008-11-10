@@ -1,0 +1,114 @@
+﻿/*
+mobbler.l26 - Slovak
+
+Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
+Copyright (C) 2008  Michael Coffey
+
+
+http://code.google.com/p/mobbler
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+*/
+
+rls_string STR_mobbler_mobbler "Mobbler"
+rls_string STR_mobbler_connect "Pripojiť k Last.fm"
+rls_string STR_mobbler_disconnect "Odpojiť"
+rls_string STR_mobbler_about "O aplikácii"
+rls_string STR_mobbler_exit "Ukončiť (zastaví skroblovanie)"
+rls_string STR_mobbler_username "Meno"
+rls_string STR_mobbler_password "Heslo"
+rls_string STR_mobbler_connecting "Pripájam k Last.fm"
+rls_string STR_mobbler_about_text1 "Mobbler "
+rls_string STR_mobbler_about_text2 "\n\nby Michael Coffey\n\npreložil PaliKE\n\ncode.google.com/p/mobbler"
+rls_string STR_mobbler_note_connected "Pripojené k Last.fm."
+rls_string STR_mobbler_note_banned "Mobbler bol zakázaný! Nahlás to prosím na code.google.com/p/mobbler."
+rls_string STR_mobbler_note_bad_auth "Nesprávne heslo."
+rls_string STR_mobbler_note_bad_time "Čas na telefóne je príliš odlišný od aktuálneho času. Skontroluj nastavenie času a časovej zóny v aplikácii hodín."
+rls_string STR_mobbler_note_bad_session "Spojenie s Last.fm je už neplatné"
+rls_string STR_mobbler_note_lastfm_error "Problém na strane Last.fm"
+rls_string STR_mobbler_note_comms_error "Chyba tvojho pripojenia"
+rls_string STR_mobbler_note_no_details "Najprv vypíš podrobnosti"
+rls_string STR_mobbler_error_no_track "Žiadna aktuálna skladba"
+rls_string STR_mobbler_error_no_radio_track "Žiadna aktuálna skladba na rádiu"
+rls_string STR_mobbler_status_online "skroblujem skladbu"
+rls_string STR_mobbler_status_online_s "%d skladba skroblovaná"
+rls_string STR_mobbler_status_online_p "skroblované skladby: %d"
+rls_string STR_mobbler_status_offline "zaraďovanie skladieb do fronty"
+rls_string STR_mobbler_status_offline_s "%d skladba vo fronte"
+rls_string STR_mobbler_status_offline_p "skladby vo fronte: %d"
+rls_string STR_mobbler_status_connecting "pripájanie"
+rls_string STR_mobbler_status_banned "Mobbler je zakázaný"
+rls_string STR_mobbler_status_bad_auth "nesprávne heslo"
+rls_string STR_mobbler_status_bad_time "nesprávny čas"
+rls_string STR_mobbler_status_bad_session "prihlásený na inom zariadení"
+rls_string STR_mobbler_status_lastfm_error "chyba na Last.fm"
+rls_string STR_mobbler_status_comms_error "chyba komunikácie"
+rls_string STR_mobbler_details "Zadaj podrobnosti"
+rls_string STR_mobbler_current_track "Aktuálna skladba"
+rls_string STR_mobbler_love_track "Pridať do obľúbených?"
+rls_string STR_mobbler_ban_track "Zakázať skladbu?"
+rls_string STR_mobbler_similar_tracks "Podobné skladby"
+rls_string STR_mobbler_album_info "Info o albume"
+rls_string STR_mobbler_artist_info "Info o interpretovi"
+rls_string STR_mobbler_similar_artists "Podobní interpreti"
+rls_string STR_mobbler_artist_events "Udalosti interpreta"
+rls_string STR_mobbler_user_events "Tvoje udalosti"
+rls_string STR_mobbler_history "história"
+rls_string STR_mobbler_status "stav"
+rls_string STR_mobbler_data "dáta"
+rls_string STR_mobbler_radio_start "Spustiť novú stanicu"
+rls_string STR_mobbler_radio_artist "Podľa interpreta"
+rls_string STR_mobbler_radio_enter_artist "Zadaj interpreta"
+rls_string STR_mobbler_radio_tag "Podľa tagu"
+rls_string STR_mobbler_radio_enter_tag "Zadaj tag"
+rls_string STR_mobbler_radio_user "Používateľská"
+rls_string STR_mobbler_radio_enter_user "Zadaj používateľa"
+rls_string STR_mobbler_radio_recommendations "Odporúčané pre mňa"
+rls_string STR_mobbler_radio_personal "Moje osobné"
+rls_string STR_mobbler_radio_loved "Obľúbené skladby"
+rls_string STR_mobbler_radio_neighbourhood "Susedia"
+rls_string STR_mobbler_radio_playlist "Môj playlist"
+rls_string STR_mobbler_radio_buffering "Načítavanie"
+rls_string STR_mobbler_note_bad_station "Na počúvanie tohto rádia nemáš povolenie"
+rls_string STR_mobbler_note_no_tracks "Na tejto rádio stanici už nie sú ďalšie skladby"
+rls_string STR_mobbler_buy "Kúpiť"
+rls_string STR_mobbler_buy_amazon "Hľadať túto skladbu v obchode Mobbler Amazon aStore?"
+rls_string STR_mobbler_share "Zdieľané"
+rls_string STR_mobbler_biography "Životopis"
+rls_string STR_mobbler_events "Udalosti"
+rls_string STR_mobbler_ban "Zakázané"
+rls_string STR_mobbler_tags "Tagy"
+rls_string STR_mobbler_charts "Rebríčky"
+rls_string STR_mobbler_friends "Priatelia"
+rls_string STR_mobbler_idle "Nečinný"
+rls_string STR_mobbler_title "Názov"
+rls_string STR_mobbler_album "Album"
+rls_string STR_mobbler_artist "Interpret"
+rls_string STR_mobbler_check_for_updates "Zistiť aktualizácie"
+rls_string STR_mobbler_update "K dispozícii je nová verzia Mobblera. Stiahnuť a nainštalovať?"
+rls_string STR_mobbler_no_update "Momentálne máš najnovšiu verziu Mobblera"
+rls_string STR_mobbler_scrobbled_queued "%d skrobblované - %d vo fronte"
+rls_string STR_mobbler_ask_go_online "Prepnúť do online režimu?"
+rls_string STR_mobbler_go_online "Prepnúť do online režimu"
+rls_string STR_mobbler_go_offline "Prepnúť do offline režimu"
+rls_string STR_mobbler_state_online "Online"
+rls_string STR_mobbler_state_offline "Offline"  
+rls_string STR_mobbler_state_connecting "Pripájanie"
+rls_string STR_mobbler_state_handshaking "Prihlasovanie"        
+rls_string STR_mobbler_state_selecting_station "Výber stanice"
+rls_string STR_mobbler_state_fetching_playlist "Nastavovanie playlistu"
+rls_string STR_mobbler_state_checking_for_updates "Zisťovanie aktualizácií"
+rls_string STR_mobbler_softkey_hide "Skryť"
+

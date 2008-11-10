@@ -22,19 +22,19 @@
 ;
 
 ;Languages
-&EN, FR, GE, SP, IT, SW, NO, FI, PO, RU, HU, DU, CS, PL, ZH, AF, AR, EL, LV, LT, RO
+&EN, FR, GE, SP, IT, SW, NO, FI, PO, RU, HU, DU, CS, SK, PL, ZH, AF, AR, EL, LV, LT, RO
 
 ; Header
-#{"Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler"}, (0xA0007648), 0, 3, 1
+#{"Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler"}, (0xA0007648), 0, 3, 1
 
 ;Localised vendor names
-%{"Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey"}
+%{"Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey"}
 
 ;Unique vendor name
 :"Coffey"
 
 ;Supports Series 60 v 3.0
-[0x101F7961], 0, 0, 0, {"Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID"}
+[0x101F7961], 0, 0, 0, {"Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID"}
 
 ; The Mobbler application
 "$(EPOCROOT)epoc32\release\$(PLATFORM)\$(TARGET)\mobbler.exe"-"!:\sys\bin\mobbler.exe"
@@ -73,6 +73,7 @@
 "$(EPOCROOT)epoc32\data\z\resource\apps\mobbler.r17"
 "$(EPOCROOT)epoc32\data\z\resource\apps\mobbler.r18"
 "$(EPOCROOT)epoc32\data\z\resource\apps\mobbler.r25"
+"$(EPOCROOT)epoc32\data\z\resource\apps\mobbler.r26"
 "$(EPOCROOT)epoc32\data\z\resource\apps\mobbler.r27"
 "$(EPOCROOT)epoc32\data\z\resource\apps\mobbler.r31"
 "$(EPOCROOT)epoc32\data\z\resource\apps\mobbler.r34"
