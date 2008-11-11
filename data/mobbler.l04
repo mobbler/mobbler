@@ -1,7 +1,7 @@
 ﻿/*
 mobbler.l04 - Spanish
 
-mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
+Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
 Copyright (C) 2008  Michael Coffey
 
 
@@ -34,7 +34,7 @@ rls_string STR_mobbler_about_text1 "Mobbler "
 rls_string STR_mobbler_about_text2 "\n\npor Michael Coffey\n\ncode.google.com/p/mobbler"
 rls_string STR_mobbler_note_connected "Has conectado con Last.fm!"
 rls_string STR_mobbler_note_banned "Mobbler ha sido baneado. Abre una incidencia en code.google.com/p/mobbler."
-rls_string STR_mobbler_note_bad_auth "El password es inccorrecto."
+rls_string STR_mobbler_note_bad_auth "El password es inccorrecto"
 rls_string STR_mobbler_note_bad_time "La hora del móvil difiere de la hora real. Comprueba la hora y zona horaria del móvil."
 rls_string STR_mobbler_note_bad_session "Tu sesión con Last.fm no es válida"
 rls_string STR_mobbler_note_lastfm_error "Problemas con Last.fm"
@@ -105,8 +105,8 @@ rls_string STR_mobbler_go_online "Cambiar a modo online"
 rls_string STR_mobbler_go_offline "Cambiar a modo offline"
 rls_string STR_mobbler_state_online "Online"
 rls_string STR_mobbler_state_offline "Offline"	
-rls_string STR_mobbler_state_connecting "Conectando..."
-rls_string STR_mobbler_state_handshaking "Validando..."	
+rls_string STR_mobbler_state_connecting "Conectando"
+rls_string STR_mobbler_state_handshaking "Validando"	
 rls_string STR_mobbler_state_selecting_station "Sintonizando"
 rls_string STR_mobbler_state_fetching_playlist "Recuperando"
 rls_string STR_mobbler_state_checking_for_updates "Buscando actualizaciones"

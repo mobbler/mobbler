@@ -1,7 +1,7 @@
 ﻿/*
 mobbler.l03 - German
 
-mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
+Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
 Copyright (C) 2008  Michael Coffey
 
 
@@ -37,11 +37,11 @@ rls_string STR_mobbler_note_banned "Mobbler wurde gesperrt! Melde das Problem bi
 rls_string STR_mobbler_note_bad_auth "Dein Passwort ist inkorrekt"
 rls_string STR_mobbler_note_bad_time "Die Uhrzeit auf dem Handy unterscheidet sich drastisch von der tatsächlichen Uhrzeit. Bitte kontrolliere Uhrzeit und Zeitzone im Gerät."
 rls_string STR_mobbler_note_bad_session "Deine Last.fm-Session wurde für ungültig erklärt"
-rls_string STR_mobbler_note_lastfm_error "Es liegt ein Problem mit Last.fm vor."
+rls_string STR_mobbler_note_lastfm_error "Es liegt ein Problem mit Last.fm vor"
 rls_string STR_mobbler_note_comms_error "Es gibt ein Problem mit Deiner Datenverbindung"
 rls_string STR_mobbler_note_no_details "Bitte zuerst Benutzerdaten eingeben!"
-rls_string STR_mobbler_error_no_track "Es wird gerade kein Titel gespielt."
-rls_string STR_mobbler_error_no_radio_track "Es wird gerade kein Radiotitel gespielt."
+rls_string STR_mobbler_error_no_track "Es wird gerade kein Titel gespielt"
+rls_string STR_mobbler_error_no_radio_track "Es wird gerade kein Radiotitel gespielt"
 rls_string STR_mobbler_status_online "Titel scrobbeln"
 rls_string STR_mobbler_status_online_s "%d Titel gescrobbelt"
 rls_string STR_mobbler_status_online_p "%d Titel gescrobbelt"
@@ -81,8 +81,8 @@ rls_string STR_mobbler_radio_loved "Meine Lieblingslieder"
 rls_string STR_mobbler_radio_neighbourhood "Meine Nachbarn"
 rls_string STR_mobbler_radio_playlist "Meine Playlist"
 rls_string STR_mobbler_radio_buffering "Zwischenspeichern"
-rls_string STR_mobbler_note_bad_station "Diese Station steht nur Abonnenten zur Verfügung."
-rls_string STR_mobbler_note_no_tracks "Keine weiteren Titel für diese Radiostation."
+rls_string STR_mobbler_note_bad_station "Diese Station steht nur Abonnenten zur Verfügung"
+rls_string STR_mobbler_note_no_tracks "Keine weiteren Titel für diese Radiostation"
 rls_string STR_mobbler_buy "Kaufen"
 rls_string STR_mobbler_buy_amazon "Den aktuellen Titel im Mobbler Amazon aStore suchen?"
 rls_string STR_mobbler_share "Empfehlen"
@@ -92,7 +92,7 @@ rls_string STR_mobbler_ban "Ban"
 rls_string STR_mobbler_tags "Tags"
 rls_string STR_mobbler_charts "Charts"
 rls_string STR_mobbler_friends "Freunde"
-rls_string STR_mobbler_idle "bereit"
+rls_string STR_mobbler_idle "Bereit"
 rls_string STR_mobbler_title "Titel"
 rls_string STR_mobbler_album "Album"
 rls_string STR_mobbler_artist "Künstler"
