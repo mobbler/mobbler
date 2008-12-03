@@ -119,6 +119,8 @@ private: // from CCoeControl
 	void SizeChanged();
 	void Draw(const TRect& aRect) const;
 	TKeyResponse OfferKeyEventL(const TKeyEvent& aKeyEvent, TEventCode aType);
+	void HandlePointerEventL(const TPointerEvent& aPointerEvent);
+
 	
 private:
 	const CMobblerAppUi& iAppUi;
@@ -190,10 +192,18 @@ private:
 	TRect iRectScrobbledQueuedText;
 	TRect iRectProgressBar;
 	
+	TPoint iPointBuy;
+	TPoint iPointLove;
+	TPoint iPointBan;
+	TPoint iPointSkip;
+	TPoint iPointPlayStop;
+	
 	const CFont* iMobblerFont;
 	
 	CMobblerTimeout* iMobblerVolumeTimeout;
 	CMobblerMarquee* iMobblerMarquee;
+	
+	TPointerEvent iLastPointerEvent;
 
 #ifdef _DEBUG
 	TBool iAlbumNameInMarquee;

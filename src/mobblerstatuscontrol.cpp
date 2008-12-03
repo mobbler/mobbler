@@ -255,20 +255,40 @@ void CMobblerStatusControl::SetPositions()
 	{
 	// The height of the text bars
 	const TInt KTextRectHeight(iMobblerFont->HeightInPixels() + iMobblerFont->DescentInPixels() + 2);
+	
+	TSize size = Size();
 		
 	// Check if the device is in portrait or landscape mode
 	if (Size().iWidth <= (Size().iHeight * 11) / 10)
 		{
 		// Portrait graphics positions
-		TInt albumArtDimension = Rect().Width() - iMobblerBitmapLastFM->SizeInPixels().iWidth - ((3 * KTextRectHeight) / 2);
 		
-		iRectAlbumArt = 			TRect(TPoint(KTextRectHeight / 2, KTextRectHeight / 2), TSize(albumArtDimension, albumArtDimension));
-		iPointControls = 			TPoint(Rect().Width() - iMobblerBitmapLastFM->SizeInPixels().iWidth - (KTextRectHeight / 2), iRectAlbumArt.iBr.iY - (3 * iMobblerBitmapPound->SizeInPixels().iHeight) - 4);
-		iPointLastFM = 				TPoint(Rect().Width() - iMobblerBitmapLastFM->SizeInPixels().iWidth -  (KTextRectHeight / 2), iRectAlbumArt.iTl.iY + 4);
-		
-		iRectTrackDetailsText = 		TRect(TPoint(KTextRectHeight / 2 + iMobblerBitmapTrackIcon->SizeInPixels().iWidth, iRectAlbumArt.iBr.iY + (KTextRectHeight / 2)), TSize(Rect().Width() - KTextRectHeight - iMobblerBitmapTrackIcon->SizeInPixels().iWidth, KTextRectHeight));
-		iRectScrobbledQueuedText = 		TRect(TPoint(KTextRectHeight / 2 + iMobblerBitmapTrackIcon->SizeInPixels().iWidth, Rect().Height() - ((3 * KTextRectHeight) / 2)), TSize(Rect().Width() - KTextRectHeight, KTextRectHeight));
-		iRectProgressBar = 				TRect(TPoint(KTextRectHeight / 2, (iRectTrackDetailsText.iTl.iY + iRectScrobbledQueuedText.iTl.iY) / 2 ), TSize(Rect().Width() - KTextRectHeight, KTextRectHeight));
+		if (Size().iWidth <= (Size().iHeight * 13) / 16)
+			{
+			// 5th edition
+			TInt albumArtDimension = Rect().Width() - (4 * KTextRectHeight);
+								
+			iRectAlbumArt = 			TRect(TPoint(2 * KTextRectHeight, KTextRectHeight / 2), TSize(albumArtDimension, albumArtDimension));
+			iPointControls = 			TPoint(Rect().Width() / 2, iRectAlbumArt.iBr.iY + (KTextRectHeight / 2));
+			iPointLastFM = 				TPoint(iRectAlbumArt.iTl.iX, iRectAlbumArt.iBr.iY + (KTextRectHeight / 2));
+					
+			iRectTrackDetailsText = 		TRect(TPoint(KTextRectHeight / 2 + iMobblerBitmapTrackIcon->SizeInPixels().iWidth, (3 * albumArtDimension) / 2), TSize(Rect().Width() - KTextRectHeight - iMobblerBitmapTrackIcon->SizeInPixels().iWidth, KTextRectHeight));
+			iRectScrobbledQueuedText = 		TRect(TPoint(KTextRectHeight / 2 + iMobblerBitmapTrackIcon->SizeInPixels().iWidth, Rect().Height() - ((3 * KTextRectHeight) / 2)), TSize(Rect().Width() - KTextRectHeight, KTextRectHeight));
+			iRectProgressBar = 				TRect(TPoint(KTextRectHeight / 2, (iRectTrackDetailsText.iTl.iY + iRectScrobbledQueuedText.iTl.iY) / 2 ), TSize(Rect().Width() - KTextRectHeight, KTextRectHeight));				
+			}
+		else
+			{
+			// 3rd edition
+			TInt albumArtDimension = Rect().Width() - iMobblerBitmapLastFM->SizeInPixels().iWidth - ((3 * KTextRectHeight) / 2);
+					
+			iRectAlbumArt = 			TRect(TPoint(KTextRectHeight / 2, KTextRectHeight / 2), TSize(albumArtDimension, albumArtDimension));
+			iPointControls = 			TPoint(Rect().Width() - iMobblerBitmapLastFM->SizeInPixels().iWidth - (KTextRectHeight / 2), iRectAlbumArt.iBr.iY - (3 * iMobblerBitmapPound->SizeInPixels().iHeight) - 4);
+			iPointLastFM = 				TPoint(Rect().Width() - iMobblerBitmapLastFM->SizeInPixels().iWidth -  (KTextRectHeight / 2), iRectAlbumArt.iTl.iY + 4);
+					
+			iRectTrackDetailsText = 		TRect(TPoint(KTextRectHeight / 2 + iMobblerBitmapTrackIcon->SizeInPixels().iWidth, iRectAlbumArt.iBr.iY + (KTextRectHeight / 2)), TSize(Rect().Width() - KTextRectHeight - iMobblerBitmapTrackIcon->SizeInPixels().iWidth, KTextRectHeight));
+			iRectScrobbledQueuedText = 		TRect(TPoint(KTextRectHeight / 2 + iMobblerBitmapTrackIcon->SizeInPixels().iWidth, Rect().Height() - ((3 * KTextRectHeight) / 2)), TSize(Rect().Width() - KTextRectHeight, KTextRectHeight));
+			iRectProgressBar = 				TRect(TPoint(KTextRectHeight / 2, (iRectTrackDetailsText.iTl.iY + iRectScrobbledQueuedText.iTl.iY) / 2 ), TSize(Rect().Width() - KTextRectHeight, KTextRectHeight));				
+			}
 		}
 	else
 		{
@@ -286,6 +306,14 @@ void CMobblerStatusControl::SetPositions()
 		
 		iRectProgressBar = 				TRect(TPoint(albumArtDimension + KTextRectHeight, iRectAlbumArt.iBr.iY - KTextRectHeight), TSize(Rect().Width() -((3 * KTextRectHeight) / 2) - albumArtDimension, KTextRectHeight));
 		}
+	
+	// Draw the controls
+	iPointBuy = TPoint(iPointControls.iX + (0 * iMobblerBitmapPound->SizeInPixels().iWidth), iPointControls.iY + (1 * iMobblerBitmapPound->SizeInPixels().iHeight));
+	iPointLove = TPoint(iPointControls.iX + (1 * iMobblerBitmapPound->SizeInPixels().iWidth), iPointControls.iY + (0 * iMobblerBitmapPound->SizeInPixels().iHeight));
+	iPointBan = TPoint(iPointControls.iX + (1 * iMobblerBitmapPound->SizeInPixels().iWidth), iPointControls.iY + (2 * iMobblerBitmapPound->SizeInPixels().iHeight));
+	iPointSkip = TPoint(iPointControls.iX + (2 * iMobblerBitmapPound->SizeInPixels().iWidth), iPointControls.iY + (1 * iMobblerBitmapPound->SizeInPixels().iHeight));
+	iPointPlayStop = TPoint(iPointControls.iX + (1 * iMobblerBitmapPlay->SizeInPixels().iWidth), iPointControls.iY + (1 * iMobblerBitmapPlay->SizeInPixels().iHeight));
+	
 	
 	// Set the size of the application icons to be the same as the rect we will draw them to.
 	// They don't seem to like being drawn at a different size
@@ -657,21 +685,21 @@ void CMobblerStatusControl::Draw(const TRect& /*aRect*/) const
 		}
 	
 	// Draw the controls
-	DrawMobblerBitmap(iMobblerBitmapPound, TPoint(iPointControls.iX + (0 * iMobblerBitmapPound->SizeInPixels().iWidth), iPointControls.iY + (1 * iMobblerBitmapPound->SizeInPixels().iHeight)));
-	DrawMobblerBitmap(iMobblerBitmapLove, TPoint(iPointControls.iX + (1 * iMobblerBitmapPound->SizeInPixels().iWidth), iPointControls.iY + (0 * iMobblerBitmapPound->SizeInPixels().iHeight)));
-	DrawMobblerBitmap(iMobblerBitmapBan, TPoint(iPointControls.iX + (1 * iMobblerBitmapPound->SizeInPixels().iWidth), iPointControls.iY + (2 * iMobblerBitmapPound->SizeInPixels().iHeight)));
-	DrawMobblerBitmap(iMobblerBitmapNext, TPoint(iPointControls.iX + (2 * iMobblerBitmapPound->SizeInPixels().iWidth), iPointControls.iY + (1 * iMobblerBitmapPound->SizeInPixels().iHeight)));
+	DrawMobblerBitmap(iMobblerBitmapPound, iPointBuy);
+	DrawMobblerBitmap(iMobblerBitmapLove, iPointLove);
+	DrawMobblerBitmap(iMobblerBitmapBan, iPointBan);
+	DrawMobblerBitmap(iMobblerBitmapNext, iPointSkip);
 	
 	// Draw either play or stop depending on the radio play state
 	if (!iAppUi.RadioPlayer()->CurrentTrack())
 		{
 		// There is no current track so display the play button
-		DrawMobblerBitmap(iMobblerBitmapPlay, TPoint(iPointControls.iX + (1 * iMobblerBitmapPlay->SizeInPixels().iWidth), iPointControls.iY + (1 * iMobblerBitmapPlay->SizeInPixels().iHeight)));
+		DrawMobblerBitmap(iMobblerBitmapPlay, iPointPlayStop);
 		}
 	else
 		{
 		// There is a track playing
-		DrawMobblerBitmap(iMobblerBitmapStop, TPoint(iPointControls.iX + (1 * iMobblerBitmapStop->SizeInPixels().iWidth), iPointControls.iY + (1 * iMobblerBitmapStop->SizeInPixels().iHeight)));
+		DrawMobblerBitmap(iMobblerBitmapStop, iPointPlayStop);
 		}
 	
 	// Draw the Last.fm graphic
@@ -959,6 +987,51 @@ TKeyResponse CMobblerStatusControl::OfferKeyEventL(const TKeyEvent& aKeyEvent, T
 	DrawDeferred();
 	
 	return response;
+	}
+
+void CMobblerStatusControl::HandlePointerEventL(const TPointerEvent& aPointerEvent)
+	{
+	// Check if they have touched any of the buttons
+	// if so, issue a command
+	
+	TRect buyRect(iPointBuy, iMobblerBitmapPound->SizeInPixels());
+	TRect loveRect(iPointLove, iMobblerBitmapLove->SizeInPixels());
+	TRect playStopRect(iPointPlayStop, iMobblerBitmapStop->SizeInPixels());
+	TRect banRect(iPointBan, iMobblerBitmapBan->SizeInPixels());
+	TRect skipRect(iPointSkip, iMobblerBitmapNext->SizeInPixels());
+	
+	switch( aPointerEvent.iType )
+        {
+        case TPointerEvent::EButton1Down:
+        	// we should check if the 'button' went down on a control
+        	// so that we can draw it differently
+            break;
+        case TPointerEvent::EButton1Up:
+        	TKeyEvent event;
+        	event.iCode = EKeyNull;
+        	
+        	if (buyRect.Contains(aPointerEvent.iPosition) && buyRect.Contains(iLastPointerEvent.iPosition))
+        		event.iCode = EKeyLeftArrow;
+        	else if (loveRect.Contains(aPointerEvent.iPosition) && loveRect.Contains(iLastPointerEvent.iPosition))
+        		event.iCode = EKeyUpArrow;
+        	else if (playStopRect.Contains(aPointerEvent.iPosition) && playStopRect.Contains(iLastPointerEvent.iPosition))
+        		event.iCode = EKeyDevice3;
+        	else if (banRect.Contains(aPointerEvent.iPosition) && banRect.Contains(iLastPointerEvent.iPosition))
+        		event.iCode = EKeyDownArrow;
+        	else if (skipRect.Contains(aPointerEvent.iPosition) && skipRect.Contains(iLastPointerEvent.iPosition))
+        		event.iCode = EKeyRightArrow;
+        	
+        	if (event.iCode != EKeyNull)
+        		OfferKeyEventL(event, EEventNull);
+        	
+        	break;
+        default:
+            break;
+        }
+	
+	iLastPointerEvent = aPointerEvent;
+	
+	CCoeControl::HandlePointerEventL(aPointerEvent);
 	}
 
 
