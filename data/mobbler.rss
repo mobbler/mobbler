@@ -133,6 +133,11 @@ RESOURCE MENU_PANE r_mobbler_status_menu_pane
 			},
 		MENU_ITEM
 			{
+			command = EMobblerCommandResumeRadio;
+			txt = STR_mobbler_resume_radio;
+			},
+		MENU_ITEM
+			{
 			command = EMobblerCommandOnline;
 			txt = STR_mobbler_go_online;
 			},
@@ -149,7 +154,7 @@ RESOURCE MENU_PANE r_mobbler_status_menu_pane
 		MENU_ITEM
 			{
 			command = EMobblerCommandEditSettings;
-			txt = STR_mobbler_details;
+			txt = STR_mobbler_settings;
 			},
 
 		MENU_ITEM
@@ -307,7 +312,7 @@ RESOURCE TITLE_PANE r_mobbler_title_resource
 	
 RESOURCE AVKON_SETTING_ITEM_LIST r_mobbler_setting_item_list
 	{
-	title = STR_mobbler_details;
+	title = STR_mobbler_settings;
 	items =
 		{
 		AVKON_SETTING_ITEM
@@ -321,6 +326,13 @@ RESOURCE AVKON_SETTING_ITEM_LIST r_mobbler_setting_item_list
 			name = STR_mobbler_password;
 			identifier = EMobblerSettingItemListViewPassword;
 			setting_page_resource = r_mobbler_setting_page_password;
+			},
+		AVKON_SETTING_ITEM
+			{
+			name = STR_mobbler_backlight;
+			identifier = EMobblerSettingItemListViewBacklight;
+			setting_page_resource = r_mobbler_setting_page_backlight;
+			associated_resource = r_mobbler_backlight_popup_setting_binary_texts;
 			}
 		};
 	}
@@ -353,7 +365,45 @@ RESOURCE SECRETED r_mobbler_setting_page_resource_id_password
 	{
 	num_letters = 30;
 	}
-	
+
+RESOURCE AVKON_POPUP_SETTING_TEXTS r_mobbler_backlight_popup_setting_binary_texts
+	{
+	flags = 0;
+	setting_texts_resource   = r_mobbler_backlight_on_off_texts;
+	popped_up_texts_resource = r_mobbler_backlight_popped_up_on_off_texts;
+	}
+
+RESOURCE ARRAY r_mobbler_backlight_on_off_texts
+	{
+	items =
+		{
+		AVKON_ENUMERATED_TEXT { value = 0; text = STR_mobbler_backlight_system_default; },
+		AVKON_ENUMERATED_TEXT { value = 1; text = STR_mobbler_backlight_on_when_active; }
+		};
+	}
+
+RESOURCE ARRAY r_mobbler_backlight_popped_up_on_off_texts
+	{
+	items =
+		{
+		LBUF { txt = STR_mobbler_backlight_on_when_active; },
+		LBUF { txt = STR_mobbler_backlight_system_default; }
+		};
+	}
+
+RESOURCE AVKON_SETTING_PAGE r_mobbler_setting_page_backlight
+	{
+	number = 0;
+	label = STR_mobbler_backlight; 
+	type = EAknCtPopupSettingList;
+	editor_resource_id = r_mobbler_backlight_binary_popup_setting_list;
+	}
+
+RESOURCE POPUP_SETTING_LIST r_mobbler_backlight_binary_popup_setting_list
+	{
+	flags= 0;
+	}
+
 RESOURCE DIALOG r_mobbler_connecting_dialog
 	{
 	flags = EAknWaitNoteFlags;
@@ -452,9 +502,6 @@ RESOURCE TBUF r_mobbler_artist						{buf = STR_mobbler_artist;}
 RESOURCE TBUF r_mobbler_radio_enter_artist			{buf = STR_mobbler_radio_enter_artist;}
 RESOURCE TBUF r_mobbler_radio_enter_tag				{buf = STR_mobbler_radio_enter_tag;}
 RESOURCE TBUF r_mobbler_radio_enter_user			{buf = STR_mobbler_radio_enter_user;}
-
-RESOURCE TBUF r_mobbler_error_no_track				{buf = STR_mobbler_error_no_track;}
-RESOURCE TBUF r_mobbler_error_no_radio_track		{buf = STR_mobbler_error_no_radio_track;}
 
 RESOURCE TBUF r_mobbler_update						{buf = STR_mobbler_update;}
 RESOURCE TBUF r_mobbler_no_update						{buf = STR_mobbler_no_update;}

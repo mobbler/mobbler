@@ -1,7 +1,7 @@
 ﻿/*
 mobbler.l16 - Russian
 
-mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
+Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
 Copyright (C) 2008  Michael Coffey
 
 
@@ -56,6 +56,7 @@ rls_string STR_mobbler_status_bad_session "подключён с другого 
 rls_string STR_mobbler_status_lastfm_error "ошибка Last.fm"
 rls_string STR_mobbler_status_comms_error "ошибка соединения"
 rls_string STR_mobbler_details "Введите детали"
+rls_string STR_mobbler_settings "Settings"
 rls_string STR_mobbler_current_track "текущий трек"
 rls_string STR_mobbler_love_track "Любите этот трек?"
 rls_string STR_mobbler_ban_track "Забанить этот трек?"
@@ -69,6 +70,7 @@ rls_string STR_mobbler_history "история"
 rls_string STR_mobbler_status "статус"
 rls_string STR_mobbler_data "данные"
 rls_string STR_mobbler_radio_start "Подключиться к станции"
+rls_string STR_mobbler_resume_radio "Resume last station"
 rls_string STR_mobbler_radio_artist "Исполнитель"
 rls_string STR_mobbler_radio_enter_artist "Введите имя исполнителя"
 rls_string STR_mobbler_radio_tag "Тэг"
@@ -104,11 +106,13 @@ rls_string STR_mobbler_ask_go_online "Перейти в online режим?"
 rls_string STR_mobbler_go_online "Включен онлайн режим"
 rls_string STR_mobbler_go_offline "Включен оффлайн режим"
 rls_string STR_mobbler_state_online "Онлайн"
-rls_string STR_mobbler_state_offline "Оффлайн"	
+rls_string STR_mobbler_state_offline "Оффлайн"
 rls_string STR_mobbler_state_connecting "Соединение"
-rls_string STR_mobbler_state_handshaking "Связь установлена"	
+rls_string STR_mobbler_state_handshaking "Связь установлена"
 rls_string STR_mobbler_state_selecting_station "Выбор станции"
 rls_string STR_mobbler_state_fetching_playlist "Добавление в плейлист"
 rls_string STR_mobbler_state_checking_for_updates "Поиск обновлений"
 rls_string STR_mobbler_softkey_hide "Свернуть"
-
+rls_string STR_mobbler_backlight "Backlight"
+rls_string STR_mobbler_backlight_on_when_active "On when active"
+rls_string STR_mobbler_backlight_system_default "System default"

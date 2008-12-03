@@ -1,7 +1,7 @@
 /*
-mobblersettingsitemlistsettings.h
+mobblersettingitemlistsettings.h
 
-mobbler, a last.fm mobile scrobbler for Symbian smartphones.
+Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
 Copyright (C) 2008  Michael Coffey
 
 http://code.google.com/p/mobbler
@@ -41,10 +41,13 @@ public:
 	void SetUsernameL(const TDesC& aUserName);
 	TDes& Password();
 	void SetPasswordL(const TDesC& aPassword);
+	TBool& Backlight();
+	void SetBacklight(const TBool aBacklight);
 
 protected:
 	TBuf<30> iUsername;
 	TBuf<30> iPassword;
+	TBool iBacklight;
 	};
 
 #endif // __MOBBLERSETTINGITEMLISTSETTINGS_H__

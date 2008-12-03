@@ -1,7 +1,7 @@
 /*
 mobbler.mmp
 
-mobbler, a last.fm mobile scrobbler for Symbian smartphones.
+Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
 Copyright (C) 2008  Michael Coffey
 
 http://code.google.com/p/mobbler
@@ -34,73 +34,58 @@ SYSTEMINCLUDE	 \epoc32\include \epoc32\include\mmf\plugin
 SOURCE		mobbler.cpp
 SOURCE		mobblerApplication.cpp
 SOURCE		mobblerAppUi.cpp
+SOURCE		mobblerbitmap.cpp
 SOURCE		mobblerDocument.cpp
-
+SOURCE		mobblerlastfmconnection.cpp
+SOURCE		mobblerlastfmerror.cpp
+SOURCE		mobblermarquee.cpp
 SOURCE		mobblermusiclistener.cpp
 SOURCE		mobblernowplayingcallback.cpp
-
-SOURCE		mobblerlastfmconnection.cpp
 SOURCE		mobblerparser.cpp
-
 SOURCE		mobblerradioplayer.cpp
 SOURCE		mobblerradioplaylist.cpp
-
+SOURCE		mobblersettingitemlist.cpp
 SOURCE		mobblersettingitemlistsettings.cpp
 SOURCE		mobblersettingitemlistview.cpp
-SOURCE		mobblersettingitemlist.cpp
-
-SOURCE		mobblerstatusview.cpp
 SOURCE		mobblerstatuscontrol.cpp
-
-SOURCE		mobblertrack.cpp
-SOURCE		mobblerutility.cpp
-SOURCE		mobblerbitmap.cpp
-SOURCE		mobblertransaction.cpp
-SOURCE		mobblerwebservicesquery.cpp
-
-SOURCE		mobblerlastfmerror.cpp
-
+SOURCE		mobblerstatusview.cpp
 SOURCE		mobblerstring.cpp
 SOURCE		mobblertimeout.cpp
-SOURCE		mobblermarquee.cpp
+SOURCE		mobblertrack.cpp
+SOURCE		mobblertransaction.cpp
+SOURCE		mobblerutility.cpp
+SOURCE		mobblerwebservicesquery.cpp
 
-LIBRARY		euser.lib
-LIBRARY		esock.lib 
-LIBRARY		apparc.lib
-LIBRARY		cone.lib
-LIBRARY		eikcore.lib
-LIBRARY		avkon.lib
-LIBRARY		commonengine.lib
-LIBRARY		efsrv.lib 
-LIBRARY		estor.lib
-LIBRARY		aknnotify.lib
-LIBRARY		http.lib
-LIBRARY		bafl.lib
-LIBRARY		inetprotutil.lib 
-LIBRARY		hash.lib 
-LIBRARY		charconv.lib 
-LIBRARY		eikctl.lib 
-LIBRARY		eikcoctl.lib
-LIBRARY		ws32.lib 
-LIBRARY		apgrfx.lib 
-LIBRARY		commdb.lib 
-LIBRARY		mediaclientaudiostream.lib 
+
+LIBRARY		aknicon.lib
 LIBRARY		aknskins.lib
-LIBRARY		aknskinsrv.lib
-LIBRARY		aknswallpaperutils.lib
-LIBRARY		fbscli.lib 
-LIBRARY		imageconversion.lib 
-LIBRARY		conarc.lib 
-LIBRARY		hal.lib 
-LIBRARY		bitmaptransforms.lib 
+LIBRARY		apgrfx.lib
+LIBRARY		apparc.lib
+LIBRARY		avkon.lib
+LIBRARY		bafl.lib
+LIBRARY		bitgdi.lib
+LIBRARY		charconv.lib
+LIBRARY		commdb.lib
+LIBRARY		commonengine.lib
+LIBRARY		cone.lib
+LIBRARY		ecom.lib
+LIBRARY		efsrv.lib
+LIBRARY		eikcoctl.lib
+LIBRARY		eikcore.lib
+LIBRARY		esock.lib
+LIBRARY		estor.lib
+LIBRARY		euser.lib
+LIBRARY		fbscli.lib
+LIBRARY		gdi.lib
+LIBRARY		hash.lib
+LIBRARY		http.lib
+LIBRARY		imageconversion.lib
+LIBRARY		inetprotutil.lib
+LIBRARY		mediaclientaudiostream.lib
 LIBRARY		RemConCoreApi.lib
 LIBRARY		RemConInterfaceBase.lib
-LIBRARY		senxml.lib 
-LIBRARY		ecom.lib
-LIBRARY		eikdlg.lib
-LIBRARY		bitgdi.lib
-LIBRARY		gdi.lib
-LIBRARY		aknicon.lib
+LIBRARY		senxml.lib
+LIBRARY		ws32.lib
 
 #ifndef WINS
 LIBRARY		browserlauncher.lib

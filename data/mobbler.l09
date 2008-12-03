@@ -1,7 +1,7 @@
 ﻿/*
 mobbler.l09 - Finnish
 
-mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
+Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
 Copyright (C) 2008  Michael Coffey
 
 
@@ -56,6 +56,7 @@ rls_string STR_mobbler_status_bad_session "kirjauduttu muualla"
 rls_string STR_mobbler_status_lastfm_error "Last.fm:n virhe"
 rls_string STR_mobbler_status_comms_error "Yhteysvirhe"
 rls_string STR_mobbler_details "Lisää tietoja"
+rls_string STR_mobbler_settings "Settings"
 rls_string STR_mobbler_current_track "nyt soi"
 rls_string STR_mobbler_love_track "Merkitse suosikiksi?"
 rls_string STR_mobbler_ban_track "Merkitse inhokiksi?"
@@ -69,6 +70,7 @@ rls_string STR_mobbler_history "historia"
 rls_string STR_mobbler_status "tila"
 rls_string STR_mobbler_data "data"
 rls_string STR_mobbler_radio_start "Avaa uusi radiokanava"
+rls_string STR_mobbler_resume_radio "Resume last station"
 rls_string STR_mobbler_radio_artist "Esittäjä"
 rls_string STR_mobbler_radio_enter_artist "Anna esittäjä"
 rls_string STR_mobbler_radio_tag "Tagi"
@@ -104,11 +106,13 @@ rls_string STR_mobbler_ask_go_online "Switch to online mode?"
 rls_string STR_mobbler_go_online "Vaihda Online-tilaan"
 rls_string STR_mobbler_go_offline "Vaihda Offline-tilaan"
 rls_string STR_mobbler_state_online "Online"
-rls_string STR_mobbler_state_offline "Offline"	
+rls_string STR_mobbler_state_offline "Offline"
 rls_string STR_mobbler_state_connecting "Yhdistetään"
 rls_string STR_mobbler_state_handshaking "Kätellään"
 rls_string STR_mobbler_state_selecting_station "Valitaan kanavaa"
 rls_string STR_mobbler_state_fetching_playlist "Haetaan soittolista"
 rls_string STR_mobbler_state_checking_for_updates "Tarkistetaan päivityksiä"
 rls_string STR_mobbler_softkey_hide "Hide"
-
+rls_string STR_mobbler_backlight "Backlight"
+rls_string STR_mobbler_backlight_on_when_active "On when active"
+rls_string STR_mobbler_backlight_system_default "System default"

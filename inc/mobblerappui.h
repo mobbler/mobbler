@@ -1,7 +1,7 @@
 /*
 mobblerappui.h
 
-mobbler, a last.fm mobile scrobbler for Symbian smartphones.
+Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
 Copyright (C) 2008  Michael Coffey
 
 http://code.google.com/p/mobbler
@@ -67,8 +67,13 @@ public:
 	CMobblerLastFMConnection::TMode Mode() const;
 	CMobblerLastFMConnection::TState State() const;
 
+	TBool RadioResumable() const;
+	TBool Foreground() const;
+	TBool Backlight() const;
+
 public: // CEikAppUi
 	void HandleCommandL(TInt aCommand);
+	void HandleForegroundEventL(TBool aForeground);
 
 private:
 	void HandleStatusPaneSizeChange();
@@ -103,10 +108,18 @@ private:
 	CMobblerLastFMConnection::TRadioStation iRadioStation;
 	HBufC8* iRadioOption;
 	TBool iCheckForUpdates;
+	TBool iRadioStartedAtLeastOnce;
+	TBool iResumeStationOnConnectCompleteCallback;
+
+	HBufC* iPreviousRadioArtist;
+	HBufC* iPreviousRadioTag;
+	HBufC* iPreviousRadioUser;
 	
 #ifndef __WINS__
 	CBrowserLauncher* iBrowserLauncher;
 #endif
+
+	TBool iForeground;
 	};
 
 #endif // __MOBBLERAPPUI_h__

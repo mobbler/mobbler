@@ -61,6 +61,7 @@ enum TMobblerSettingItemListViewCommands
 	EMobblerCommandArtistSimilar,
 	EMobblerCommandAlbumInfo,
 	
+	EMobblerCommandResumeRadio,
 	EMobblerCommandRadioArtist,
 	EMobblerCommandRadioTag,
 	EMobblerCommandRadioUser,
@@ -77,6 +78,7 @@ enum TMobblerControls
 	{
 	EMobblerSettingItemListViewUsername = 0x7000,
 	EMobblerSettingItemListViewPassword,
+	EMobblerSettingItemListViewBacklight,
 	EMobblerSettingItemListViewConnectingDialog,
 	EMobblerProgressNoteId,
 	EMobblerQuery,

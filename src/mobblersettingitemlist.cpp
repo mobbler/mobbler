@@ -70,6 +70,11 @@ CAknSettingItem* CMobblerSettingItemList::CreateSettingItemL(TInt aId)
 			CAknPasswordSettingItem* item = new(ELeave) CAknPasswordSettingItem(aId, CAknPasswordSettingItem::EAlpha, iSettings.Password());
 			return item;
 			}
+		case EMobblerSettingItemListViewBacklight:
+			{			
+			CAknBinaryPopupSettingItem* item = new(ELeave) CAknBinaryPopupSettingItem(aId, iSettings.Backlight());
+			return item;
+			}
 		}
 		
 	return NULL;
@@ -112,12 +117,17 @@ void CMobblerSettingItemList::LoadSettingValuesL(CMobblerSettingItemListSettings
 		
 		TBuf<255> username;
 		TBuf<255> password;
+		TBool backlight = EFalse;
 		
 		readStream >> username;
 		readStream >> password;
-		
+
+		 // Ignore KErrEof if this setting is not yet saved in the file
+		TRAP_IGNORE(backlight = readStream.ReadInt16L());
+
 		aSettings.SetUsernameL(username);
 		aSettings.SetPasswordL(password);
+		aSettings.SetBacklight(backlight);
 		
 		CleanupStack::PopAndDestroy(&readStream);
 		}
@@ -128,6 +138,7 @@ void CMobblerSettingItemList::LoadSettingValuesL(CMobblerSettingItemListSettings
 		aSettings.SetUsernameL(*username);
 		CleanupStack::PopAndDestroy(username);
 		aSettings.SetPasswordL(_L("password"));
+		aSettings.SetBacklight(EFalse);
 		}
 		
 	CleanupStack::PopAndDestroy(&file);
@@ -147,6 +158,7 @@ void CMobblerSettingItemList::SaveSettingValuesL()
 		
 		writeStream << iSettings.Username();
 		writeStream << iSettings.Password();
+		writeStream.WriteInt16L(iSettings.Backlight());
 		
 		CleanupStack::PopAndDestroy(&writeStream);
 		}

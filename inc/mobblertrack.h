@@ -1,7 +1,7 @@
 /*
 mobblertrack.h
 
-mobbler, a last.fm mobile scrobbler for Symbian smartphones.
+Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
 Copyright (C) 2008  Michael Coffey
 
 http://code.google.com/p/mobbler
@@ -57,6 +57,8 @@ public:
 	const TDesC8& AlbumArtLocation() const;
 	const TDesC8& RadioAuth() const;
 	TTimeIntervalSeconds TrackLength() const;
+	TTimeIntervalSeconds ScrobbleDuration() const;
+	TTimeIntervalSeconds InitialPlaybackPosition() const;
 	TTimeIntervalSeconds PlaybackPosition() const;
 	
 	void SetPlaybackPosition(TTimeIntervalSeconds aPlaybackPosition);
@@ -102,6 +104,8 @@ private:
 	CMobblerString* iAlbum;
 	TTime iStartTimeUTC;
 	TTimeIntervalSeconds iTrackLength;
+	TTimeIntervalSeconds iScrobbleTime;
+	TTimeIntervalSeconds iInitialPlaybackPosition;
 	TTimeIntervalSeconds iPlaybackPosition;
 	TBool iLove;
 	

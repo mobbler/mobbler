@@ -1,7 +1,7 @@
 /*
 mobblermarquee.cpp
 
-mobbler, a last.fm mobile scrobbler for Symbian smartphones.
+Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
 Copyright (C) 2008  Michael Coffey
 
 http://code.google.com/p/mobbler
@@ -21,8 +21,8 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-#include "mobblermarquee.h"
 #include "mobblerappui.h"
+#include "mobblermarquee.h"
 
 const TTimeIntervalMicroSeconds32 KDelay(2000000);
 const TTimeIntervalMicroSeconds32 KInterval(100000);
@@ -96,12 +96,17 @@ TInt CMobblerMarquee::GetPosition2() const
 	{
 	TInt offset(KMaxTInt);
 	
-	if (iTextWidth > iDisplayWidth)
+	if (iTextWidth + iInitialOffset > iDisplayWidth)
 		{
 		offset = GetPosition1() + iTextWidth + (iInitialOffset * 5);
 		}
 	
 	return offset;
+	}
+
+void CMobblerMarquee::Reset()
+	{
+	iText = KNullDesC;
 	}
 
 TInt CMobblerMarquee::CallBack(TAny* aRef)

@@ -1,7 +1,7 @@
 /*
-mobblersettingsitemlistsettings.cpp
+mobblersettingitemlistsettings.cpp
 
-mobbler, a last.fm mobile scrobbler for Symbian smartphones.
+Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
 Copyright (C) 2008  Michael Coffey
 
 http://code.google.com/p/mobbler
@@ -57,7 +57,6 @@ TDes& CMobblerSettingItemListSettings::Username()
 void CMobblerSettingItemListSettings::SetUsernameL(const TDesC& aUsername)
 	{
 	iUsername.Copy(aUsername);
-	iUsername.LowerCase();
 	}
 
 TDes& CMobblerSettingItemListSettings::Password()
@@ -68,5 +67,15 @@ TDes& CMobblerSettingItemListSettings::Password()
 void CMobblerSettingItemListSettings::SetPasswordL(const TDesC& aPassword)
 	{
 	iPassword.Copy(aPassword);
+	}
+
+TBool& CMobblerSettingItemListSettings::Backlight()
+	{
+	return iBacklight;
+	}
+
+void CMobblerSettingItemListSettings::SetBacklight(const TBool aBacklight)
+	{
+	iBacklight = aBacklight;
 	}
 

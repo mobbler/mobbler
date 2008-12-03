@@ -1,7 +1,7 @@
 /*
 mobblerstatuscontrol.h
 
-mobbler, a last.fm mobile scrobbler for Symbian smartphones.
+Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
 Copyright (C) 2008  Michael Coffey
 
 http://code.google.com/p/mobbler
@@ -26,6 +26,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <coecntrl.h>
 #include <coedef.h>
+#include <remconcoreapitargetobserver.h>    // link against RemConCoreApi.lib
+#include <remconcoreapitarget.h>            // and
+#include <remconinterfaceselector.h>        // RemConInterfaceBase.lib
+
+#include "mobblerbitmap.h" 
 
 const TInt KMaxMobblerTextSize(255);
 
@@ -38,12 +43,6 @@ class CBitmapScaler;
 class CAknsBasicBackgroundControlContext;
 class CMobblerTimeout;
 class CMobblerMarquee;
-
-#include <remconcoreapitargetobserver.h>    // link against RemConCoreApi.lib
-#include <remconcoreapitarget.h>            // and
-#include <remconinterfaceselector.h>        // RemConInterfaceBase.lib
-
-#include "mobblerbitmap.h" 
 
 class CMobblerStatusControl : public CCoeControl, public MMobblerBitmapObserver, public MRemConCoreApiTargetObserver
 	{
@@ -98,14 +97,21 @@ private:
 	void DrawRect(const TRect& aRect, const TRgb& aPenColor, const TRgb& aBrushColor) const;
 	
 	// formatting text
-	static void FormatTime(TDes& aString, TTimeIntervalSeconds aSeconds);
+	static void FormatTime(TDes& aString, TTimeIntervalSeconds aSeconds, TTimeIntervalSeconds aTotalSeconds = 0);
 	static void FormatTrackDetails(TDes& aString, const TDesC& aArtist, const TDesC& aTitle);
+#ifdef _DEBUG
+	static void FormatAlbumDetails(TDes& aString, const TDesC& aAlbum1, const TDesC& aAlbum2);
+#endif
 	
 	// Observer of media button clicks
 	void MrccatoCommand(TRemConCoreApiOperationId aOperationId, TRemConCoreApiButtonAction aButtonAct);
 	
 	void ChangePaneTextL(const TDesC& aText) const;
 	void DoChangePaneTextL(const TDesC& aText) const;
+	
+private: // auto-repeat audio button callbacks
+	static TInt VolumeUpCallBackL(TAny *self);
+	static TInt VolumeDownCallBackL(TAny *self);
 	
 private: // from CCoeControl
 	void HandleResourceChange(TInt aType);
@@ -139,6 +145,13 @@ private:
 	// media buttons
 	CRemConInterfaceSelector* iInterfaceSelector;
 	CRemConCoreApiTarget*     iCoreTarget;
+	
+	// timers and callbacks for media buttons autorepeat
+	CPeriodic* iVolumeUpTimer;
+	CPeriodic* iVolumeDownTimer;
+	TCallBack iVolumeUpCallBack;
+	TCallBack iVolumeDownCallBack;
+
 	
 	// for double buffering
     CFbsBitmap*                     iBackBuffer;
@@ -181,6 +194,10 @@ private:
 	
 	CMobblerTimeout* iMobblerVolumeTimeout;
 	CMobblerMarquee* iMobblerMarquee;
+
+#ifdef _DEBUG
+	TBool iAlbumNameInMarquee;
+#endif
 	};
 	
 #endif // __MOBBLERSTATUSCONTROL_H__

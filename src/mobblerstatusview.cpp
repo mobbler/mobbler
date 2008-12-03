@@ -84,6 +84,9 @@ void CMobblerStatusView::DynInitMenuPaneL(TInt aResourceId, CEikMenuPane* aMenuP
 			{
 			aMenuPane->SetItemDimmed(EMobblerCommandOffline, ETrue);
 			}
+
+		aMenuPane->SetItemDimmed(EMobblerCommandResumeRadio, 
+					!static_cast<CMobblerAppUi*>(AppUi())->RadioResumable());
 		}
 	}
 

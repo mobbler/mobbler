@@ -53,7 +53,7 @@ public:
 	virtual void Stop() = 0;
 	};
 
-class CMobblerRadioPlayer : public CBase,
+class CMobblerRadioPlayer : public CActive,
 							public MMdaAudioOutputStreamCallback,
 							public MMobblerRadioPlayer
 
@@ -78,6 +78,10 @@ public:
 	const CMobblerString& Station() const;
 	
 private:
+	void RunL();
+	void DoCancel();
+	
+private:
 	CMobblerRadioPlayer(CMobblerLastFMConnection& aSubmitter);
 	void ConstructL();
 	
@@ -100,7 +104,8 @@ private: // from MMdaAudioOutputStreamCallback
 	
 
 private:
-	RPointerArray<HBufC8> iBuffer;
+	RPointerArray<HBufC8> iPreBuffer;
+	RPointerArray<HBufC8> iWrittenBuffer;
 
 	TBool iOpen;
 	TBool iPlaying;

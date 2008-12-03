@@ -176,7 +176,7 @@ void CMobblerLastFMConnection::LoadSettingsL()
 		CleanupClosePushL(readStream);
 		
 		TInt8 mode = readStream.ReadInt8L();
-		TInt iap = readStream.ReadInt32L();
+		readStream.ReadInt32L(); // iap
 		
 		// future proofing
 		delete HBufC8::NewL(readStream, KMaxTInt);
@@ -323,6 +323,7 @@ void CMobblerLastFMConnection::SetDetailsL(const TDesC& aUsername, const TDesC& 
 	delete iPassword;
 	iUsername = tempUsername;
 	iPassword = tempPassword;
+	iUsername->Des().LowerCase();
 	}
 
 void CMobblerLastFMConnection::SetModeL(TMode aMode)
@@ -957,8 +958,7 @@ void CMobblerLastFMConnection::TrackStoppedL()
 			}
 		
 		// Test if the track passes Last.fm's scrobble rules
-		if ( ((listenedFor.Int() * 2) >= iCurrentTrack->TrackLength().Int()	// They have listened to over half the track in one go
-				|| listenedFor.Int() >= 240)								// or more than 4 minutes.
+		if ( listenedFor.Int() >= iCurrentTrack->ScrobbleDuration().Int()
 				&& iCurrentTrack->TrackLength().Int() >= 30					// the track length is over 30 seconds.
 				&& iCurrentTrack->Artist().String().Length() > 0 )					// must have an artist name	
 									

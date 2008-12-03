@@ -125,6 +125,11 @@ const TDesC& CMobblerSettingItemListView::GetPassword()
 	return iSettings->Password();
 	}
 
+const TBool CMobblerSettingItemListView::GetBacklight()
+	{
+	return iSettings->Backlight();
+	}
+
 void CMobblerSettingItemListView::HandleStatusPaneSizeChange()
 	{
 	CAknView::HandleStatusPaneSizeChange();

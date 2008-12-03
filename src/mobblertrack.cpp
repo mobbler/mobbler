@@ -1,7 +1,7 @@
 /*
 mobblertrack.cpp
 
-mobbler, a last.fm mobile scrobbler for Symbian smartphones.
+Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
 Copyright (C) 2008  Michael Coffey
 
 http://code.google.com/p/mobbler
@@ -21,10 +21,10 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-#include "mobblertrack.h"
-#include "mobblerutility.h"
 #include "mobblerappui.h"
 #include "mobblerstring.h"
+#include "mobblertrack.h"
+#include "mobblerutility.h"
 
 CMobblerTrack* CMobblerTrack::NewL(const TDesC8& aArtist,
 									const TDesC8& aTitle,
@@ -72,6 +72,8 @@ void CMobblerTrack::ConstructL(const TDesC8& aArtist,
 	iRadioAuth = aRadioAuth.AllocL();
 	
 	iStartTimeUTC = Time::NullTTime();
+	iScrobbleTime = (TTimeIntervalSeconds)Min(240, (iTrackLength.Int()/2));
+	iInitialPlaybackPosition = KErrUnknown;
 	}
 
 CMobblerTrack::~CMobblerTrack()
@@ -222,6 +224,25 @@ TTimeIntervalSeconds CMobblerTrack::PlaybackPosition() const
 void CMobblerTrack::SetPlaybackPosition(TTimeIntervalSeconds aPlaybackPosition)
 	{
 	iPlaybackPosition = aPlaybackPosition;
+
+	if (iInitialPlaybackPosition.Int() == KErrUnknown)
+		{
+		iInitialPlaybackPosition = aPlaybackPosition;
+
+		// Only need to correct music player tracks, because 
+		// iInitialPlaybackPosition may be up to 5 seconds off
+		if (iRadioAuth->Compare(KNullDesC8) == 0)
+			{
+			TTimeIntervalSeconds offset(0);
+			TTime now;
+			now.UniversalTime();
+			TInt error = now.SecondsFrom(iStartTimeUTC, offset);
+			if (error == KErrNone && offset.Int() > 0)
+				{
+				iInitialPlaybackPosition = Max(0, iInitialPlaybackPosition.Int() - offset.Int());
+				}
+			}
+		}	
 	}
 
 const CMobblerBitmap* CMobblerTrack::AlbumArt() const
@@ -247,4 +268,21 @@ TBool CMobblerTrack::Love() const
 TTimeIntervalSeconds CMobblerTrack::TrackLength() const
 	{
 	return iTrackLength.Int() == 0 ? 1 : iTrackLength;
+	}
+
+TTimeIntervalSeconds CMobblerTrack::ScrobbleDuration() const
+	{
+	return iScrobbleTime;
+	}
+
+TTimeIntervalSeconds CMobblerTrack::InitialPlaybackPosition() const
+	{
+	if (iInitialPlaybackPosition.Int() == KErrUnknown)
+		{
+		return 0;
+		}
+	else
+		{
+		return iInitialPlaybackPosition;
+		}
 	}
