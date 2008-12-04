@@ -43,6 +43,7 @@ class CBitmapScaler;
 class CAknsBasicBackgroundControlContext;
 class CMobblerTimeout;
 class CMobblerMarquee;
+class CMobblerTouchFeedbackInterface;
 
 class CMobblerStatusControl : public CCoeControl, public MMobblerBitmapObserver, public MRemConCoreApiTargetObserver
 	{
@@ -185,18 +186,18 @@ private:
 	
 	// graphics and text positions
 	TRect iRectAlbumArt;
-	TPoint iPointControls;
-	TPoint iPointLastFM;
-	//TRect iRectStateText;
-	TRect iRectTrackDetailsText;
-	TRect iRectScrobbledQueuedText;
-	TRect iRectProgressBar;
 	
+	TPoint iPointLastFM;
 	TPoint iPointBuy;
 	TPoint iPointLove;
 	TPoint iPointBan;
 	TPoint iPointSkip;
 	TPoint iPointPlayStop;
+	TSize iControlSize;
+	
+	TRect iRectTrackDetailsText;
+	TRect iRectScrobbledQueuedText;
+	TRect iRectProgressBar;
 	
 	const CFont* iMobblerFont;
 	
@@ -204,7 +205,10 @@ private:
 	CMobblerMarquee* iMobblerMarquee;
 	
 	TPointerEvent iLastPointerEvent;
-
+	
+	CMobblerTouchFeedbackInterface* iMobblerFeedback;
+	TUid iDtorIdKey;
+	
 #ifdef _DEBUG
 	TBool iAlbumNameInMarquee;
 #endif

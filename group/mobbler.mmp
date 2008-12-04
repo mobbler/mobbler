@@ -21,6 +21,31 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
+/* Mobbler UIDs
+
+0xA0007648 - Mobbler exe
+
+0xA0007CA8 - status view
+0xA0007CA9 - settings view
+0xA0007CAA - music app observer interface
+!0xA0007CAB - music app observer 3.1 dll 
+!0xA0007CAC - music app observer 3.1 implementation
+!0xA0007CAD - ?
+!0xA0007CAE - music app observer 3.0 dll
+!0xA0007CAF - music app observer 3.0 implementation
+
+0xA000B6CB - touch feedback dll
+0xA000B6CC - touch feedback interface
+0xA000B6CD - touch feedback implementation
+0xA000B6CE - unused
+0xA000B6CF - unused
+0xA000B6D0 - unused
+0xA000B6D1 - unused
+0xA000B6C2 - unused
+0xA000B6C3 - unused
+0xA000B6D4 - unused
+*/
+
 TARGET			mobbler.exe
 TARGETTYPE		exe
 UID				0x100039CE 0xA0007648
