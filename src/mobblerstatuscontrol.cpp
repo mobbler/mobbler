@@ -269,9 +269,9 @@ void CMobblerStatusControl::SetPositions()
 		if (Size().iWidth <= (Size().iHeight * 13) / 16)
 			{
 			// 5th edition
-			TInt albumArtDimension = Rect().Width() - (4 * KTextRectHeight);
+			TInt albumArtDimension = Rect().Width() - (3 * KTextRectHeight);
 								
-			iRectAlbumArt = 			TRect(TPoint(2 * KTextRectHeight, KTextRectHeight / 2), TSize(albumArtDimension, albumArtDimension));
+			iRectAlbumArt = 			TRect(TPoint((3 * KTextRectHeight) / 2, 0), TSize(albumArtDimension, albumArtDimension));
 			
 			iControlSize = TSize(64, 64);
 			
@@ -283,7 +283,7 @@ void CMobblerStatusControl::SetPositions()
 			
 			iPointLastFM = 				TPoint(-200, -200);
 					
-			iRectTrackDetailsText = 		TRect(TPoint(KTextRectHeight / 2 + iMobblerBitmapTrackIcon->SizeInPixels().iWidth, iRectAlbumArt.iBr.iY + KTextRectHeight), TSize(Rect().Width() - KTextRectHeight - iMobblerBitmapTrackIcon->SizeInPixels().iWidth, KTextRectHeight));
+			iRectTrackDetailsText = 		TRect(TPoint(KTextRectHeight / 2 + iMobblerBitmapTrackIcon->SizeInPixels().iWidth, iRectAlbumArt.iBr.iY + (KTextRectHeight / 2)), TSize(Rect().Width() - KTextRectHeight - iMobblerBitmapTrackIcon->SizeInPixels().iWidth, KTextRectHeight));
 			iRectScrobbledQueuedText = 		TRect(TPoint(KTextRectHeight / 2 + iMobblerBitmapTrackIcon->SizeInPixels().iWidth, Rect().Height() - ((5 * KTextRectHeight) / 2) - iControlSize.iHeight), TSize(Rect().Width() - KTextRectHeight, KTextRectHeight));
 			iRectProgressBar = 				TRect(TPoint(KTextRectHeight / 2, (iRectTrackDetailsText.iTl.iY + iRectScrobbledQueuedText.iTl.iY) / 2 ), TSize(Rect().Width() - KTextRectHeight, KTextRectHeight));				
 			}
