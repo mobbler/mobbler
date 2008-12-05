@@ -133,7 +133,7 @@ void CMobblerMarquee::Update()
 				iState = EStart;
 				
 				delete iTimer;
-				iTimer = CPeriodic::NewL(CActive::EPriorityHigh);
+				iTimer = CPeriodic::NewL(CActive::EPriorityLow);
 				TCallBack callBack(CallBack, this);
 				iTimer->Start(KDelay, KInterval, callBack);
 				}
