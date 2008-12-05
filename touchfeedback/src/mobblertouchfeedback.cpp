@@ -26,7 +26,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 const TImplementationProxy ImplementationTable[] =
     {
-    {{0xA0007CB0}, TProxyNewLPtr(CMobblerTouchFeedback::NewL)}
+    {{0xA000B6CD}, TProxyNewLPtr(CMobblerTouchFeedback::NewL)}
     };
 
 EXPORT_C const TImplementationProxy* ImplementationGroupProxy(TInt& aTableCount)
@@ -60,6 +60,6 @@ CMobblerTouchFeedback::~CMobblerTouchFeedback()
 
 void CMobblerTouchFeedback::InstantFeedback(TTouchLogicalFeedback aType)
 	{
-	iTouchFeedback->InstantFeedback(ETouchFeedbackBasic);
+	iTouchFeedback->InstantFeedback(aType);
 	}
 
