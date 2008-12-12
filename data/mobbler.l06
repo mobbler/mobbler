@@ -4,6 +4,7 @@ mobbler.l06 - Swedish
 Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
 Copyright (C) 2008  Michael Coffey
 
+
 http://code.google.com/p/mobbler
 
 This program is free software; you can redistribute it and/or
@@ -81,7 +82,7 @@ rls_string STR_mobbler_radio_personal "Min station"
 rls_string STR_mobbler_radio_loved "Älskade låtar"
 rls_string STR_mobbler_radio_neighbourhood "Mina grannar"
 rls_string STR_mobbler_radio_playlist "Min spellista"
-rls_string STR_mobbler_radio_buffering "Buffrar..."
+rls_string STR_mobbler_radio_buffering "Buffrar"
 rls_string STR_mobbler_note_bad_station "Behörighet saknas att lyssna på denna radiostation"
 rls_string STR_mobbler_note_no_tracks "Det finns inga spår kvar att spela på denna radiostation"
 rls_string STR_mobbler_buy "Köp"
