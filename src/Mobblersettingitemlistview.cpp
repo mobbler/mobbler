@@ -115,19 +115,34 @@ void CMobblerSettingItemListView::DoDeactivate()
 		}
 	}
 
-const TDesC& CMobblerSettingItemListView::GetUserName()
+const TDesC& CMobblerSettingItemListView::GetUserName() const
 	{
 	return iSettings->Username();
 	}
 
-const TDesC& CMobblerSettingItemListView::GetPassword()
+const TDesC& CMobblerSettingItemListView::GetPassword() const
 	{
 	return iSettings->Password();
 	}
 
-const TBool CMobblerSettingItemListView::GetBacklight()
+TBool CMobblerSettingItemListView::GetBacklight() const
 	{
 	return iSettings->Backlight();
+	}
+
+TBool CMobblerSettingItemListView::GetCheckForUpdates() const
+	{
+	return iSettings->CheckForUpdates();
+	}
+
+TUint32 CMobblerSettingItemListView::GetIapID() const
+	{
+	return iSettings->IapID();
+	}
+
+TUint8 CMobblerSettingItemListView::GetBufferSize() const
+	{
+	return iSettings->BufferSize();
 	}
 
 void CMobblerSettingItemListView::HandleStatusPaneSizeChange()

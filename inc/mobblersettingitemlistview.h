@@ -43,9 +43,12 @@ public:
 	TUid Id() const;
 	void HandleCommandL( TInt aCommand );
 	
-	const TDesC& GetUserName();
-	const TDesC& GetPassword();
-	const TBool GetBacklight();
+	const TDesC& GetUserName() const;
+	const TDesC& GetPassword() const;
+	TBool GetBacklight() const;
+	TBool GetCheckForUpdates() const;
+	TUint32 GetIapID() const;
+	TUint8 GetBufferSize() const;
 	
 private:
 	CMobblerSettingItemListView();        
