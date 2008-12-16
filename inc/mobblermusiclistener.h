@@ -27,13 +27,12 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <e32base.h>
 
 #include "mobblerlastfmconnection.h"
-#include "mobblerlastfmconnectionobserver.h"
 #include "mobblermusicapp.h"
 
 class CMobblerNowPlayingCallback;
 class CMobblerRadioPlayer;
 
-class CMobblerMusicAppListener : public CBase, public MMobblerLastFMConnectionObserver, public MMobblerMusicAppObserver
+class CMobblerMusicAppListener : public CBase, public MMobblerMusicAppObserver
 	{
 public:
 	static CMobblerMusicAppListener* NewL(CMobblerLastFMConnection& aSubmitter);
@@ -47,16 +46,6 @@ private:
 	CMobblerMusicAppListener(CMobblerLastFMConnection& aSubmitter);
 	void ConstructL();
 	
-private: // from CMobblerLastFMConnection::MMobblerLastFMConnectionObserver
-	void HandleConnectCompleteL();
-	void HandleLastFMErrorL(CMobblerLastFMError& aError);
-	void HandleCommsErrorL(const TDesC& aTransaction, const TDesC8& aStatus);
-	void HandleTrackSubmittedL(const CMobblerTrack& aTrack);
-	void HandleTrackQueuedL(const CMobblerTrack& aTrack);
-	void HandleTrackNowPlayingL(const CMobblerTrack& aTrack);
-	void HandleUpdateResponseL(TVersion aVersion, const TDesC8& aLocation);
-		
-
 private: 
 	void HandleTrackChangeL(const TDesC& aTrack);
 	void HandleMusicStateChangeL(TInt aState);

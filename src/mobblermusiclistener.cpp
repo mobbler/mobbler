@@ -108,43 +108,6 @@ CMobblerTrack* CMobblerMusicAppListener::CurrentTrack()
 	return iCurrentTrack;
 	}
 
-void CMobblerMusicAppListener::HandleConnectCompleteL()
-	{
-	ScheduleNowPlayingL();
-	}
-
-void CMobblerMusicAppListener::HandleLastFMErrorL(CMobblerLastFMError& /*aError*/)
-	{
-	// not interested
-	}
-
-void CMobblerMusicAppListener::HandleCommsErrorL(const TDesC& /*aTransaction*/, const TDesC8& /*aStatus*/)
-	{
-	// not interested
-	}
-
-void CMobblerMusicAppListener::HandleTrackSubmittedL(const CMobblerTrack& /*aTrack*/)
-	{
-	// not interested
-	}
-
-void CMobblerMusicAppListener::HandleTrackQueuedL(const CMobblerTrack& /*aTrack*/)
-	{
-	// not interested
-	}
-
-void CMobblerMusicAppListener::HandleTrackNowPlayingL(const CMobblerTrack& /*aTrack*/)
-	{
-	// not interested
-	}
-
-
-void CMobblerMusicAppListener::HandleUpdateResponseL(TVersion /*aVersion*/, const TDesC8& /*aLocation*/)
-	{
-	// not interested
-	}
-	
-
 void CMobblerMusicAppListener::HandleTrackChangeL(const TDesC& /*aTrack*/)
 	{
 	if (iCurrentTrack)

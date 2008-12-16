@@ -36,14 +36,14 @@ class CMobblerSettingItemListView;
 class CMobblerMusicAppListener;
 class CAknNavigationControlContainer;
 class CAknNavigationDecorator;
+class CMobblerDownload;
 class CMobblerStatusView;
 class CMobblerRadioPlayer;
 class CMobblerTrack;
 class CBrowserLauncher;
 
 class CMobblerAppUi : public CAknViewAppUi,
-						public MMobblerLastFMConnectionObserver,
-						public MWebServicesObserver
+						public MMobblerLastFMConnectionObserver
 	{
 public:
 
@@ -58,6 +58,9 @@ public:
 	const TDesC& MusicAppNameL() const;
 	
 	void SetDetailsL(const TDesC& aUsername, const TDesC& aPassword);
+	void SetCheckForUpdatesL(TBool aAutoUpdatesOn);
+	void SetIapIDL(TUint32 aIapID);
+	void SetBufferSize(TTimeIntervalSeconds aBufferSize);
 	
 	TInt Scrobbled() const;
 	TInt Queued() const;
@@ -78,18 +81,15 @@ public: // CEikAppUi
 private:
 	void HandleStatusPaneSizeChange();
 	
-	void HandleConnectCompleteL();
+	void HandleConnectCompleteL(TInt aError);
 	void HandleLastFMErrorL(CMobblerLastFMError& aError);
-	void HandleCommsErrorL(const TDesC& aTransaction, const TDesC8& aStatus);
+	void HandleCommsErrorL(TInt aStatusCode, const TDesC8& aStatus);
 	void HandleTrackSubmittedL(const CMobblerTrack& aTrack);
 	void HandleTrackQueuedL(const CMobblerTrack& aTrack);
 	void HandleTrackNowPlayingL(const CMobblerTrack& aTrack);
 	void HandleUpdateResponseL(TVersion aVersion, const TDesC8& aLocation);
 	
 	void RadioStartL(CMobblerLastFMConnection::TRadioStation aRadioStation, const TDesC8& aRadioOption);
-
-private: // from MWebServicesObserver
-	void WebServicesResponseL(const TDesC8& aXML);
 	
 private:
 	// the view classes
@@ -120,6 +120,8 @@ private:
 #endif
 
 	TBool iForeground;
+	
+	CMobblerDownload* iMobblerDownload;
 	};
 
 #endif // __MOBBLERAPPUI_h__

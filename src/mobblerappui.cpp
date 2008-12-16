@@ -43,6 +43,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "mobbler.hrh"
 #include "mobblerapplication.h"
 #include "mobblerappui.h"
+#include "mobblerdownload.h"
 #include "mobblerlastfmconnectionobserver.h"
 #include "mobblermusiclistener.h"
 #include "mobblerradioplayer.h"
@@ -51,6 +52,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "mobblerstring.h"
 #include "mobblertrack.h"
 #include "mobblerutility.h"
+#include "mobblerrichtextcontrol.h"
+#include "mobblerparser.h"
 
 _LIT(KVersionNumberDisplay,		"0.3.1");
 const TVersion version(0, 3, 1);
@@ -73,12 +76,10 @@ void CMobblerAppUi::ConstructL()
 	AddViewL(iStatusView);
 	ActivateLocalViewL(iStatusView->Id());
 	
-	iLastFMConnection = CMobblerLastFMConnection::NewL(iSettingView->GetUserName(), iSettingView->GetPassword());
-	iRadioPlayer = CMobblerRadioPlayer::NewL(*iLastFMConnection);
+	iLastFMConnection = CMobblerLastFMConnection::NewL(*this, iSettingView->GetUserName(), iSettingView->GetPassword(), iSettingView->GetIapID(), iSettingView->GetCheckForUpdates());
+	iRadioPlayer = CMobblerRadioPlayer::NewL(*iLastFMConnection, iSettingView->GetBufferSize());
 	iMusicListener = CMobblerMusicAppListener::NewL(*iLastFMConnection);
 	iLastFMConnection->SetRadioPlayer(*iRadioPlayer);
-	iLastFMConnection->AddObserverL(iMusicListener); 
-	iLastFMConnection->AddObserverL(this); 
 	
 	RProcess().SetPriority(EPriorityHigh);
 	
@@ -87,11 +88,28 @@ void CMobblerAppUi::ConstructL()
 #endif
 	iRadioStartedAtLeastOnce = EFalse;
 	iResumeStationOnConnectCompleteCallback = EFalse;
+	
+	iMobblerDownload = CMobblerDownload::NewL();
 	}
 
 void CMobblerAppUi::SetDetailsL(const TDesC& aUsername, const TDesC& aPassword)
 	{
 	iLastFMConnection->SetDetailsL(aUsername, aPassword);
+	}
+
+void CMobblerAppUi::SetCheckForUpdatesL(TBool aCheckForUpdates)
+	{
+	iLastFMConnection->SetCheckForUpdatesL(aCheckForUpdates);
+	}
+
+void CMobblerAppUi::SetIapIDL(TUint32 aIapID)
+	{
+	iLastFMConnection->SetIapIDL(aIapID);
+	}
+
+void CMobblerAppUi::SetBufferSize(TTimeIntervalSeconds aBufferSize)
+	{
+	iRadioPlayer->SetBufferSize(aBufferSize);
 	}
 
 const CMobblerTrack* CMobblerAppUi::CurrentTrack() const
@@ -141,6 +159,7 @@ CMobblerAppUi::~CMobblerAppUi()
 	delete iMusicListener;	
 	delete iRadioPlayer;
 	delete iLastFMConnection;
+	delete iMobblerDownload;
 #ifndef __WINS__
 	delete iBrowserLauncher;
 #endif
@@ -192,7 +211,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 			break;
 		case EMobblerCommandCheckForUpdates:
 			
-			TInt error = iLastFMConnection->CheckForUpdatesL();
+			TInt error = iLastFMConnection->CheckForUpdateL();
 			
 			if (error == KErrBadHandle)
 				{
@@ -327,7 +346,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 				artist = *iPreviousRadioArtist;
 				}
 			CAknTextQueryDialog* artistDialog = new(ELeave) CAknTextQueryDialog(artist);
-			artistDialog->PrepareLC(R_ARTIST_DIALOG);
+			artistDialog->PrepareLC(R_MOBBLER_RADIO_QUERY_DIALOG);
 			dialogPromptText = StringLoader::LoadLC(R_MOBBLER_RADIO_ENTER_ARTIST);
 			artistDialog->SetPromptL(*dialogPromptText);
 			CleanupStack::PopAndDestroy(dialogPromptText);
@@ -351,7 +370,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 				tag = *iPreviousRadioTag;
 				}
 			CAknTextQueryDialog* tagDialog = new(ELeave) CAknTextQueryDialog(tag);
-			tagDialog->PrepareLC(R_TAG_DIALOG);
+			tagDialog->PrepareLC(R_MOBBLER_RADIO_QUERY_DIALOG);
 			dialogPromptText = StringLoader::LoadLC(R_MOBBLER_RADIO_ENTER_TAG);
 			tagDialog->SetPromptL(*dialogPromptText);
 			CleanupStack::PopAndDestroy(dialogPromptText);
@@ -375,7 +394,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 				user = *iPreviousRadioUser;
 				}
 			CAknTextQueryDialog* userDialog = new(ELeave) CAknTextQueryDialog(user);
-			userDialog->PrepareLC(R_USER_DIALOG);
+			userDialog->PrepareLC(R_MOBBLER_RADIO_QUERY_DIALOG);
 			dialogPromptText = StringLoader::LoadLC(R_MOBBLER_RADIO_ENTER_USER);
 			userDialog->SetPromptL(*dialogPromptText);
 			CleanupStack::PopAndDestroy(dialogPromptText);
@@ -461,7 +480,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 			if (currentTrack)
 				{
 				// send the web services API call
-				iLastFMConnection->ArtistGetInfoL(*currentTrack, *this);
+				iLastFMConnection->ArtistGetInfoL(*currentTrack, iStatusView->ArtistInfoControlL());
 				}
 			
 			break;
@@ -528,11 +547,6 @@ TBool CMobblerAppUi::RadioResumable() const
 		}
 	}
 
-void CMobblerAppUi::WebServicesResponseL(const TDesC8& /*aXML*/)
-	{
-	//CMobblerParser::ParseArtistGetInfoL(aXML);
-	}
-
 CMobblerLastFMConnection::TMode CMobblerAppUi::Mode() const
 	{
 	return iLastFMConnection->Mode();
@@ -559,12 +573,7 @@ void CMobblerAppUi::HandleUpdateResponseL(TVersion aVersion, const TDesC8& aLoca
 						
 		if (yes)
 			{
-			HBufC* location16 = HBufC::NewLC(aLocation.Length());
-			location16->Des().Copy(aLocation);
-#ifndef __WINS__
-			iBrowserLauncher->LaunchBrowserEmbeddedL(*location16);
-#endif
-			CleanupStack::PopAndDestroy(location16);
+			iMobblerDownload->DownloadL(aLocation, iLastFMConnection->IapID());
 			}
 		}
 	else
@@ -576,39 +585,54 @@ void CMobblerAppUi::HandleUpdateResponseL(TVersion aVersion, const TDesC8& aLoca
 		}
 	}
 
-void CMobblerAppUi::HandleConnectCompleteL()
+void CMobblerAppUi::HandleConnectCompleteL(TInt aError)
 	{
 	iStatusView->DrawDeferred();
 	
-	if (iRadioOption)
+	if (aError == KErrNone)
 		{
-		iRadioPlayer->StartL(iRadioStation, *iRadioOption);
-		iRadioStartedAtLeastOnce = ETrue;
+		if (iRadioOption)
+			{
+			iRadioPlayer->StartL(iRadioStation, *iRadioOption);
+			iRadioStartedAtLeastOnce = ETrue;
+			delete iRadioOption;
+			iRadioOption = NULL;
+			}
+		else if (iResumeStationOnConnectCompleteCallback)
+			{
+			iResumeStationOnConnectCompleteCallback = EFalse;
+			iRadioPlayer->NextTrackL();
+			}
+		
+		if (iCheckForUpdates)
+			{
+			iLastFMConnection->CheckForUpdateL();
+			iCheckForUpdates = EFalse;
+			}
+		}
+	else
+		{
 		delete iRadioOption;
 		iRadioOption = NULL;
-		}
-	else if (iResumeStationOnConnectCompleteCallback)
-		{
-		iResumeStationOnConnectCompleteCallback = EFalse;
-		iRadioPlayer->NextTrackL();
-		}
-	
-	if (iCheckForUpdates)
-		{
-		iLastFMConnection->CheckForUpdatesL();
-		iCheckForUpdates = EFalse;
+		
+		// Tell the user that there was an error connecting
+		HBufC* commsErrorText = StringLoader::LoadLC(R_MOBBLER_NOTE_COMMS_ERROR);
+		CAknResourceNoteDialog *note = new (ELeave) CAknInformationNote(EFalse);
+		note->ExecuteLD(*commsErrorText);
+		CleanupStack::PopAndDestroy(commsErrorText);
 		}
 	}
 	
 void CMobblerAppUi::HandleLastFMErrorL(CMobblerLastFMError& aError)
 	{
 	iStatusView->DrawDeferred();
-
+	
+	
 	CAknResourceNoteDialog *note = new (ELeave) CAknInformationNote(EFalse);
 	note->ExecuteLD(aError.Text());
 	}
 
-void CMobblerAppUi::HandleCommsErrorL(const TDesC& aTransaction, const TDesC8& aStatus)
+void CMobblerAppUi::HandleCommsErrorL(TInt aStatusCode, const TDesC8& aStatus)
 	{
 	iStatusView->DrawDeferred();
 	
@@ -619,7 +643,7 @@ void CMobblerAppUi::HandleCommsErrorL(const TDesC& aTransaction, const TDesC8& a
 	CleanupStack::PopAndDestroy(commsErrorText);
 	
 	noteText->Des().Append(_L(" "));
-	noteText->Des().Append(aTransaction);
+	noteText->Des().AppendNum(aStatusCode);
 	noteText->Des().Append(_L(" "));
 	
 	HBufC* status = HBufC::NewLC(aStatus.Length());

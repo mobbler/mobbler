@@ -121,7 +121,7 @@ private: // from CCoeControl
 	void Draw(const TRect& aRect) const;
 	TKeyResponse OfferKeyEventL(const TKeyEvent& aKeyEvent, TEventCode aType);
 	void HandlePointerEventL(const TPointerEvent& aPointerEvent);
-
+	
 	
 private:
 	const CMobblerAppUi& iAppUi;

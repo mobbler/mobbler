@@ -75,7 +75,7 @@ public:
 		};
 	
 public:
-	static CMobblerLastFMConnection* NewL(const TDesC& aUsername, const TDesC& aPassword);
+	static CMobblerLastFMConnection* NewL(MMobblerLastFMConnectionObserver& aObserver, const TDesC& aUsername, const TDesC& aPassword, TUint32 aIapID, TBool aCheckUpdates);
 	~CMobblerLastFMConnection();
 	
 	void SetDetailsL(const TDesC& aUsername, const TDesC& aPassword);
@@ -83,8 +83,12 @@ public:
 	TMode Mode() const;
 	TState State() const;
 	
+	void SetIapIDL(TUint32 aIadID);
+	TUint32 IapID() const;
+	
 	// Updates
-	TInt CheckForUpdatesL();
+	TInt CheckForUpdateL();
+	void SetCheckForUpdatesL(TBool aCheckUpdates);
 	
 	// Scrobbling methods
 	void TrackStartedL(CMobblerTrack* aCurrentTrack);
@@ -102,22 +106,9 @@ public:
 	TInt TrackBanL(const CMobblerTrack& aTrack);
 	TInt ArtistGetInfoL(const CMobblerTrack& aTrack, MWebServicesObserver& aObserver);
 	
-	// Observing
-	void AddObserverL(MMobblerLastFMConnectionObserver* aObserver);
-	void RemoveObserverL(MMobblerLastFMConnectionObserver* aObserver);
-	
 private:
 	void RunL();
 	void DoCancel();
-	
-private:
-	void NotifyConnectCompleteL();
-	void NotifyLastFMErrorL(CMobblerLastFMError& aError);
-	void NotifyCommsErrorL(const TDesC& aTransaction, const TDesC8& aStatus);
-	void NotifyTrackSubmittedL(const CMobblerTrack& aTrack);
-	void NotifyTrackQueuedL(const CMobblerTrack& aTrack);
-	void NotifyTrackNowPlayingL(const CMobblerTrack& aTrack);
-	void NotifyUpdateResponseL(TVersion aVersion, const TDesC8& aLocation);
 	
 private: // from MHTTPTransactionCallback
 	void MHFRunL(RHTTPTransaction aTransaction, const THTTPEvent &aEvent);
@@ -126,7 +117,7 @@ private: // from MHTTPTransactionCallback
 private: // from MMobblerTransactionObserver
 	void TransactionResponseL(CMobblerTransaction* aTransaction, const TDesC8& aResponse);
 	void TransactionCompleteL(CMobblerTransaction* aTransaction);
-	void TransactionFailedL(CMobblerTransaction* aTransaction, const TDesC8& aStatus);
+	void TransactionFailedL(CMobblerTransaction* aTransaction, const TDesC8& aStatus, TInt aStatusCode);
 	
 private:
 	void DoNowPlayingL();
@@ -142,6 +133,8 @@ private:
 	void DoSetModeL(TMode aMode);
 	
 	// handshaking
+	void AuthenticateL();
+	
 	void HandshakeL();
 	void WSHandshakeL();
 	void RadioHandshakeL();
@@ -150,7 +143,7 @@ private:
 	
 private:
 	void ConstructL(const TDesC& aUsername, const TDesC& aPassword);
-	CMobblerLastFMConnection();
+	CMobblerLastFMConnection(MMobblerLastFMConnectionObserver& aObserver, TUint32 aIapID, TBool aAutoUpdatesOn);
 	
 private:  // utilities
 	void CreateAuthToken(TDes8& aHash, TTimeIntervalSeconds aUnixTimeStamp);
@@ -163,10 +156,15 @@ private:  // utilities
 	void ConnectL();
 	void Disconnect();
 	
+	TBool Connected();
+	
 private:
 	RHTTPSession iHTTPSession;
 	RSocketServ iSocketServ;
 	RConnection iConnection;
+	
+	TUint32 iIapID;
+	TUint32 iCurrentIapID;
 	
 	CMobblerTransaction* iHandshakeTransaction;
 	CMobblerTransaction* iRadioHandshakeTransaction;
@@ -202,7 +200,7 @@ private:
 	
 	MMobblerRadioPlayer* iRadioPlayer;
 	
-	RPointerArray<MMobblerLastFMConnectionObserver> iObservers;
+	MMobblerLastFMConnectionObserver& iObserver;
 	
 	CMobblerTrack* iCurrentTrack;
 	//CMobblerTrack* iPreviousTrack;
@@ -212,6 +210,10 @@ private:
 	
 	TMode iMode;
 	TState iState;
+	TBool iAuthenticated;
+	
+	TTime iNextUpdateCheck;
+	TBool iCheckForUpdates;
 	
 	CMobblerTrack* iDownloadingTrack;
 	};

@@ -46,6 +46,8 @@ public:
 
 	static TInt ParseUpdateResponseL(const TDesC8& aXML, TVersion& aVersion, TDes8& location);
 	
+	static void ParseArtistGetInfoL(const TDesC8& aXML, HBufC*& aArtistInfo);
+	
 private:
 	static HBufC8* DecodeURIStringLC(const TDesC8& aString);
 	};

@@ -1,5 +1,5 @@
 /*
-mobblerlastfmconnectionobserver.h
+mobblerdownloadmanager.h
 
 mobbler, a last.fm mobile scrobbler for Symbian smartphones.
 Copyright (C) 2008  Michael Coffey
@@ -21,27 +21,33 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-#ifndef __MOBBLERLASTFMCONNECTIONOBSERVER_H__
-#define __MOBBLERLASTFMCONNECTIONOBSERVER_H__
+#ifndef __MOBBLERDOWNLOAD_H__
+#define __MOBBLERDOWNLOAD_H__
 
-#include "mobblerlastfmconnection.h"
-#include "mobblerlastfmerror.h"
+#include <e32base.h>
+#include <downloadmgrclient.h>
 
-class CMobblerTrack;
+class CAknWaitDialog;
 
-class MMobblerLastFMConnectionObserver
+class CMobblerDownload : public CBase, public MHttpDownloadMgrObserver
 	{
 public:
-	virtual void HandleConnectCompleteL(TInt aError) = 0;
-	virtual void HandleLastFMErrorL(CMobblerLastFMError& aError) = 0;
-	virtual void HandleCommsErrorL(TInt aStatusCode, const TDesC8& aStatus) = 0;
+	static CMobblerDownload* NewL();
+	~CMobblerDownload();
 	
-	virtual void HandleTrackNowPlayingL(const CMobblerTrack& aTrack) = 0;
-	virtual void HandleTrackQueuedL(const CMobblerTrack& aTrack) = 0;
-	virtual void HandleTrackSubmittedL(const CMobblerTrack& aTrack) = 0;
+	void DownloadL(const TDesC8& aDownloadUrl, TUint32 aIap);
 	
-	virtual void HandleUpdateResponseL(TVersion aVersion, const TDesC8& aLocation) = 0;
+private:
+	CMobblerDownload();
+	void ConstructL();
+	
+private:
+	void HandleDMgrEventL(RHttpDownload& aDownload, THttpDownloadEvent aEvent);
+	
+private:
+	RHttpDownloadMgr iDownloadMgr;
+	
+	CAknWaitDialog* iWait;
 	};
 	
-#endif
-	
+#endif // __MOBBLERDOWNLOAD_H__

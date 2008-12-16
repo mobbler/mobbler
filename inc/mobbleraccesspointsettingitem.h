@@ -1,7 +1,7 @@
 /*
-mobblertransactionobserver.h
+mobbleraccesspointsettingitem.cpp
 
-mobbler, a last.fm mobile scrobbler for Symbian smartphones.
+Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
 Copyright (C) 2008  Michael Coffey
 
 http://code.google.com/p/mobbler
@@ -21,20 +21,25 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-#ifndef __MOBBLERTRANSACTIONOBSERVER_H__
-#define __MOBBLERTRANSACTIONOBSERVER_H__
+#ifndef __MOBBLERACCESSPOINTSETTINGITEM_H__
+#define __MOBBLERACCESSPOINTSETTINGITEM_H__
 
-#include <e32base.h>
+#include <aknsettingitemlist.h>
 
-class CMobblerTransaction;
-
-class MMobblerTransactionObserver
-	{
+class CMobblerAccessPointSettingItem : public CAknEnumeratedTextPopupSettingItem
+    {
 public:
-	virtual void TransactionResponseL(CMobblerTransaction* aTransaction, const TDesC8& aResponse) = 0;
-	virtual void TransactionCompleteL(CMobblerTransaction* aTransaction) = 0;
-	virtual void TransactionFailedL(CMobblerTransaction* aTransaction, const TDesC8& aStatus, TInt aStatusCode) = 0;
-	};
+	CMobblerAccessPointSettingItem(TInt aIdentifier, TInt& aSliderValue);
+ 
+private:
+	void CreateAndExecuteSettingPageL();
+	void CompleteConstructionL();
 	
-#endif
+	void LoadL();
+	void LoadIapListL();
+ 
+private:
+	TInt iValue;
+    };
 	
+#endif // __MOBBLERACCESSPOINTSETTINGITEM_H__

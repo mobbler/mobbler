@@ -32,6 +32,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "mobblerbitmap.h"
 
 class CMobblerStatusControl;
+class CMobblerRichTextControl;
 class CMobblerTrack;
 
 class CMobblerStatusView : public CAknView, public MMobblerBitmapObserver
@@ -44,6 +45,8 @@ public:
 	void HandleCommandL(TInt aCommand);
 	
 	void DrawDeferred() const;
+	
+	CMobblerRichTextControl& ArtistInfoControlL();
 	
 private:
 	CMobblerStatusView();        
@@ -64,6 +67,7 @@ private:
 private:
 	CAknWaitDialog* iConnectingDialog;
 	CMobblerStatusControl* iMobblerStatusControl;
+	CMobblerRichTextControl* iArtistInfoControl;
 	};
 
 #endif // __MOBBLERSTATUSVIEW_H__

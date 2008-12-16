@@ -44,6 +44,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "mobblersettingitemlistsettings.h"
 #include "mobblersettingitemlistview.h"
 #include "mobblerutility.h"
+#include "mobbleraccesspointsettingitem.h"
 
 CMobblerSettingItemList::CMobblerSettingItemList(CMobblerSettingItemListSettings& aSettings, MEikCommandObserver* aCommandObserver)
 	:iSettings(aSettings), iCommandObserver(aCommandObserver)
@@ -67,12 +68,27 @@ CAknSettingItem* CMobblerSettingItemList::CreateSettingItemL(TInt aId)
 			}
 		case EMobblerSettingItemListViewPassword:
 			{			
-			CAknPasswordSettingItem* item = new(ELeave) CAknPasswordSettingItem(aId, CAknPasswordSettingItem::EAlpha, iSettings.Password());
+			CAknSettingItem* item = new(ELeave) CAknPasswordSettingItem(aId, CAknPasswordSettingItem::EAlpha, iSettings.Password());
 			return item;
 			}
 		case EMobblerSettingItemListViewBacklight:
 			{			
-			CAknBinaryPopupSettingItem* item = new(ELeave) CAknBinaryPopupSettingItem(aId, iSettings.Backlight());
+			CAknSettingItem* item = new(ELeave) CAknBinaryPopupSettingItem(aId, iSettings.Backlight());
+			return item;
+			}
+		case EMobblerSettingItemListViewAutoUpdatesOn:
+			{			
+			CAknSettingItem* item = new(ELeave) CAknBinaryPopupSettingItem(aId, iSettings.CheckForUpdates());
+			return item;
+			}
+		case EMobblerSettingItemListViewIap:
+			{			
+			CAknSettingItem* item = new(ELeave) CMobblerAccessPointSettingItem(aId, iSettings.IapID());
+			return item;
+			}
+		case EMobblerSettingItemListViewBufferSize:
+			{			
+			CAknSettingItem* item = new(ELeave) CAknSliderSettingItem(aId, iSettings.BufferSize());
 			return item;
 			}
 		}
@@ -117,17 +133,28 @@ void CMobblerSettingItemList::LoadSettingValuesL(CMobblerSettingItemListSettings
 		
 		TBuf<255> username;
 		TBuf<255> password;
+		
+		// Default values if the settings do not already exist
 		TBool backlight = EFalse;
+		TBool autoUpdatesOn = ETrue;
+		TUint32 iapId(0);
+		TUint8 bufferSize(KDefaultBufferSizeSeconds);
 		
 		readStream >> username;
 		readStream >> password;
 
-		 // Ignore KErrEof if this setting is not yet saved in the file
+		 // Ignore KErrEof if these settings are not yet saved in the file
 		TRAP_IGNORE(backlight = readStream.ReadInt16L());
+		TRAP_IGNORE(autoUpdatesOn = readStream.ReadInt8L());
+		TRAP_IGNORE(iapId = readStream.ReadUint32L());
+		TRAP_IGNORE(bufferSize = readStream.ReadUint8L());
 
 		aSettings.SetUsernameL(username);
 		aSettings.SetPasswordL(password);
 		aSettings.SetBacklight(backlight);
+		aSettings.SetCheckForUpdates(autoUpdatesOn);
+		aSettings.SetIapID(iapId);
+		aSettings.SetBufferSize(bufferSize);
 		
 		CleanupStack::PopAndDestroy(&readStream);
 		}
@@ -139,6 +166,9 @@ void CMobblerSettingItemList::LoadSettingValuesL(CMobblerSettingItemListSettings
 		CleanupStack::PopAndDestroy(username);
 		aSettings.SetPasswordL(_L("password"));
 		aSettings.SetBacklight(EFalse);
+		aSettings.SetCheckForUpdates(ETrue);
+		aSettings.SetIapID(0);
+		aSettings.SetBufferSize(KDefaultBufferSizeSeconds);
 		}
 		
 	CleanupStack::PopAndDestroy(&file);
@@ -159,6 +189,9 @@ void CMobblerSettingItemList::SaveSettingValuesL()
 		writeStream << iSettings.Username();
 		writeStream << iSettings.Password();
 		writeStream.WriteInt16L(iSettings.Backlight());
+		writeStream.WriteInt8L(iSettings.CheckForUpdates());
+		writeStream.WriteUint32L(iSettings.IapID());
+		writeStream.WriteUint8L(iSettings.BufferSize());
 		
 		CleanupStack::PopAndDestroy(&writeStream);
 		}

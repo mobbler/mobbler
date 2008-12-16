@@ -53,13 +53,13 @@ CMobblerBitmap* CMobblerBitmap::NewL(MMobblerBitmapObserver& aObserver, const TD
 	}
 
 CMobblerBitmap::CMobblerBitmap(MMobblerBitmapObserver& aObserver, CFbsBitmap* aBitmap, CFbsBitmap* aMask)
-	:CActive(EPriorityNormal), iObserver(aObserver), iBitmapLoaded(ETrue), iBitmap(aBitmap), iMask(aMask)
+	:CActive(CActive::EPriorityStandard), iObserver(aObserver), iBitmapLoaded(ETrue), iBitmap(aBitmap), iMask(aMask)
 	{
 	//CActiveScheduler::Add(this);
 	}
 
 CMobblerBitmap::CMobblerBitmap(MMobblerBitmapObserver& aObserver)
-	:CActive(EPriorityNormal), iObserver(aObserver)
+	:CActive(CActive::EPriorityStandard), iObserver(aObserver)
 	{
 	CActiveScheduler::Add(this);
 	}
@@ -119,7 +119,7 @@ void CMobblerBitmap::ConstructL(const TDesC& aFileName, const TUid aFileUid)
 	fileName.Copy(parse.Drive());
 	fileName.Append(aFileName);	
 	
-	iImageDecoder = CImageDecoder::FileNewL(CCoeEnv::Static()->FsSession(), fileName, CImageDecoder::EOptionNone, aFileUid, TUid::Null(), TUid::Null());
+	iImageDecoder = CImageDecoder::FileNewL(CCoeEnv::Static()->FsSession(), fileName, CImageDecoder::EOptionAlwaysThread, aFileUid, TUid::Null(), TUid::Null());
 	const TFrameInfo& info = iImageDecoder->FrameInfo();
 	iBitmap = new(ELeave) CFbsBitmap();
 	iBitmap->Create(info.iOverallSizeInPixels, info.iFrameDisplayMode);
@@ -144,7 +144,7 @@ void CMobblerBitmap::ConstructL(const TDesC8& aData, const TUid aFileUid)
 	{
 	iData = aData.AllocL();
 	
-	iImageDecoder = CImageDecoder::DataNewL(CCoeEnv::Static()->FsSession(), *iData, CImageDecoder::EOptionNone, aFileUid, TUid::Null(), TUid::Null());
+	iImageDecoder = CImageDecoder::DataNewL(CCoeEnv::Static()->FsSession(), *iData, CImageDecoder::EOptionAlwaysThread, aFileUid, TUid::Null(), TUid::Null());
 	const TFrameInfo& info = iImageDecoder->FrameInfo();
 	iBitmap = new(ELeave) CFbsBitmap();
 	iBitmap->Create(info.iOverallSizeInPixels, info.iFrameDisplayMode);

@@ -266,7 +266,7 @@ void CMobblerStatusControl::SetPositions()
 		{
 		// Portrait graphics positions
 		
-		if (Size().iWidth <= (Size().iHeight * 13) / 16)
+		if (iMobblerFeedback)
 			{
 			// 5th edition
 			TInt albumArtDimension = Rect().Width() - (3 * KTextRectHeight);
@@ -312,28 +312,52 @@ void CMobblerStatusControl::SetPositions()
 	else
 		{
 		// Landscape graphics positions
-		TInt albumArtDimension = Min(Rect().Height() - ((3 * KTextRectHeight) / 2), Rect().Width() - (2 * KTextRectHeight) - (3 * iMobblerBitmapPlay->SizeInPixels().iWidth) - iMobblerBitmapLastFM->SizeInPixels().iWidth);
 		
-		iRectAlbumArt =				TRect(TPoint(KTextRectHeight / 2, KTextRectHeight / 2), TSize(albumArtDimension, albumArtDimension));
-		
-		iPointLastFM =				TPoint(albumArtDimension + ((3 * KTextRectHeight) / 2) + (3 * iMobblerBitmapPlay->SizeInPixels().iWidth), KTextRectHeight / 2);
-		
-		TPoint controlsTopLeft = 	TPoint(albumArtDimension + KTextRectHeight, KTextRectHeight / 2);
-		iPointBuy =					TPoint(controlsTopLeft.iX + (0 * iMobblerBitmapPound->SizeInPixels().iWidth), controlsTopLeft.iY + (1 * iMobblerBitmapPound->SizeInPixels().iHeight));
-		iPointLove =				TPoint(controlsTopLeft.iX + (1 * iMobblerBitmapPound->SizeInPixels().iWidth), controlsTopLeft.iY + (0 * iMobblerBitmapPound->SizeInPixels().iHeight));
-		iPointBan =					TPoint(controlsTopLeft.iX + (1 * iMobblerBitmapPound->SizeInPixels().iWidth), controlsTopLeft.iY + (2 * iMobblerBitmapPound->SizeInPixels().iHeight));
-		iPointSkip =				TPoint(controlsTopLeft.iX + (2 * iMobblerBitmapPound->SizeInPixels().iWidth), controlsTopLeft.iY + (1 * iMobblerBitmapPound->SizeInPixels().iHeight));
-		iPointPlayStop =			TPoint(controlsTopLeft.iX + (1 * iMobblerBitmapPlay->SizeInPixels().iWidth), controlsTopLeft.iY + (1 * iMobblerBitmapPlay->SizeInPixels().iHeight));
+		if (iMobblerFeedback)
+			{
+			// 5th edition
+			TInt albumArtDimension = Rect().Height() - (3 * KTextRectHeight);
+						
+			iRectAlbumArt =				TRect(TPoint(0, (3 * KTextRectHeight) / 2), TSize(albumArtDimension, albumArtDimension));
+			
+			iPointLastFM =				TPoint(albumArtDimension + (KTextRectHeight / 2), iRectAlbumArt.iTl.iY);
 
-		iControlSize = iMobblerBitmapPound->SizeInPixels();
-		
-		iRectTrackDetailsText = 	TRect(TPoint(KTextRectHeight / 2 + iMobblerBitmapTrackIcon->SizeInPixels().iWidth, iRectAlbumArt.iBr.iY + (KTextRectHeight / 2)), TSize(Rect().Width() - KTextRectHeight - iMobblerBitmapTrackIcon->SizeInPixels().iWidth, KTextRectHeight));
-		iRectScrobbledQueuedText = 	TRect(TPoint(KTextRectHeight / 2 + iMobblerBitmapTrackIcon->SizeInPixels().iWidth, Rect().Height() - ((3 * KTextRectHeight) / 2)), TSize(Rect().Width() - KTextRectHeight, KTextRectHeight));
-		
-		iRectProgressBar = 			TRect(TPoint(albumArtDimension + KTextRectHeight, iRectAlbumArt.iBr.iY - KTextRectHeight), TSize(Rect().Width() -((3 * KTextRectHeight) / 2) - albumArtDimension, KTextRectHeight));
-		}
+			iControlSize = TSize((Rect().Width() - albumArtDimension) / 5, (Rect().Width() - albumArtDimension) / 5);
+						
+			iPointBuy =					TPoint(albumArtDimension + (KTextRectHeight / 2) + (0 * (Rect().Width() - albumArtDimension - KTextRectHeight) / 5), Rect().Height() - iControlSize.iHeight - (KTextRectHeight / 2));
+			iPointLove =				TPoint(albumArtDimension + (KTextRectHeight / 2) + (1 * (Rect().Width() - albumArtDimension - KTextRectHeight) / 5), Rect().Height() - iControlSize.iHeight - (KTextRectHeight / 2));
+			iPointBan =					TPoint(albumArtDimension + (KTextRectHeight / 2) + (2 * (Rect().Width() - albumArtDimension - KTextRectHeight) / 5), Rect().Height() - iControlSize.iHeight - (KTextRectHeight / 2));
+			iPointPlayStop =			TPoint(albumArtDimension + (KTextRectHeight / 2) + (3 * (Rect().Width() - albumArtDimension - KTextRectHeight) / 5), Rect().Height() - iControlSize.iHeight - (KTextRectHeight / 2));
+			iPointSkip =				TPoint(albumArtDimension + (KTextRectHeight / 2) + (4 * (Rect().Width() - albumArtDimension - KTextRectHeight) / 5), Rect().Height() - iControlSize.iHeight - (KTextRectHeight / 2));
+			
+			iRectTrackDetailsText = 	TRect(TPoint(albumArtDimension + (KTextRectHeight / 2) + iMobblerBitmapTrackIcon->SizeInPixels().iWidth, Rect().Height() - iControlSize.iHeight - (5 * KTextRectHeight)), TSize(Rect().Width() - albumArtDimension - iMobblerBitmapTrackIcon->SizeInPixels().iWidth - KTextRectHeight, KTextRectHeight));
+			iRectScrobbledQueuedText = 	TRect(TPoint(albumArtDimension + (KTextRectHeight / 2) + iMobblerBitmapTrackIcon->SizeInPixels().iWidth, Rect().Height() - iControlSize.iHeight - (2 * KTextRectHeight)), TSize(Rect().Width() - albumArtDimension - iMobblerBitmapTrackIcon->SizeInPixels().iWidth - KTextRectHeight, KTextRectHeight));
+			iRectProgressBar = 			TRect(TPoint(albumArtDimension + (KTextRectHeight / 2), (iRectTrackDetailsText.iTl.iY + iRectScrobbledQueuedText.iTl.iY) / 2 ), TSize(Rect().Width() - albumArtDimension - KTextRectHeight, KTextRectHeight));							
+			}
+		else
+			{
+			// 3rd edition
+			TInt albumArtDimension = Min(Rect().Height() - ((3 * KTextRectHeight) / 2), Rect().Width() - (2 * KTextRectHeight) - (3 * iMobblerBitmapPlay->SizeInPixels().iWidth) - iMobblerBitmapLastFM->SizeInPixels().iWidth);
+			
+			iRectAlbumArt =				TRect(TPoint(KTextRectHeight / 2, KTextRectHeight / 2), TSize(albumArtDimension, albumArtDimension));
+			
+			iPointLastFM =				TPoint(albumArtDimension + ((3 * KTextRectHeight) / 2) + (3 * iMobblerBitmapPlay->SizeInPixels().iWidth), KTextRectHeight / 2);
+			
+			TPoint controlsTopLeft = 	TPoint(albumArtDimension + KTextRectHeight, KTextRectHeight / 2);
+			iPointBuy =					TPoint(controlsTopLeft.iX + (0 * iMobblerBitmapPound->SizeInPixels().iWidth), controlsTopLeft.iY + (1 * iMobblerBitmapPound->SizeInPixels().iHeight));
+			iPointLove =				TPoint(controlsTopLeft.iX + (1 * iMobblerBitmapPound->SizeInPixels().iWidth), controlsTopLeft.iY + (0 * iMobblerBitmapPound->SizeInPixels().iHeight));
+			iPointBan =					TPoint(controlsTopLeft.iX + (1 * iMobblerBitmapPound->SizeInPixels().iWidth), controlsTopLeft.iY + (2 * iMobblerBitmapPound->SizeInPixels().iHeight));
+			iPointSkip =				TPoint(controlsTopLeft.iX + (2 * iMobblerBitmapPound->SizeInPixels().iWidth), controlsTopLeft.iY + (1 * iMobblerBitmapPound->SizeInPixels().iHeight));
+			iPointPlayStop =			TPoint(controlsTopLeft.iX + (1 * iMobblerBitmapPlay->SizeInPixels().iWidth), controlsTopLeft.iY + (1 * iMobblerBitmapPlay->SizeInPixels().iHeight));
 	
-		
+			iControlSize = iMobblerBitmapPound->SizeInPixels();
+			
+			iRectTrackDetailsText = 	TRect(TPoint(KTextRectHeight / 2 + iMobblerBitmapTrackIcon->SizeInPixels().iWidth, iRectAlbumArt.iBr.iY + (KTextRectHeight / 2)), TSize(Rect().Width() - KTextRectHeight - iMobblerBitmapTrackIcon->SizeInPixels().iWidth, KTextRectHeight));
+			iRectScrobbledQueuedText = 	TRect(TPoint(KTextRectHeight / 2 + iMobblerBitmapTrackIcon->SizeInPixels().iWidth, Rect().Height() - ((3 * KTextRectHeight) / 2)), TSize(Rect().Width() - KTextRectHeight, KTextRectHeight));
+			
+			iRectProgressBar = 			TRect(TPoint(albumArtDimension + KTextRectHeight, iRectAlbumArt.iBr.iY - KTextRectHeight), TSize(Rect().Width() -((3 * KTextRectHeight) / 2) - albumArtDimension, KTextRectHeight));
+			}
+		}
 	
 	// Set the size of the application icons to be the same as the rect we will draw them to.
 	// They don't seem to like being drawn at a different size
@@ -838,20 +862,20 @@ void CMobblerStatusControl::MrccatoCommand(TRemConCoreApiOperationId aOperationI
         case ERemConCoreApiVolumeUp:
             {   
             switch(aButtonAct)
-                {
-                case ERemConCoreApiButtonClick:
-                    {
-                    TKeyEvent event;
-                    event.iCode = EKeyIncVolume;
-                    OfferKeyEventL(event, EEventNull);
-                    break;
-                    }
+	            {
+            	case ERemConCoreApiButtonClick:
+            		{
+            		TKeyEvent event;
+            		event.iCode = EKeyIncVolume;
+            		OfferKeyEventL(event, EEventNull);
+            		break;
+            		}
 
-                case ERemConCoreApiButtonPress:
-                {
-                TKeyEvent event;
-                event.iCode = EKeyIncVolume;
-                OfferKeyEventL(event, EEventNull);
+            	case ERemConCoreApiButtonPress:
+            		{
+            		TKeyEvent event;
+            		event.iCode = EKeyIncVolume;
+            		OfferKeyEventL(event, EEventNull);
 
             		TTimeIntervalMicroSeconds32 repeatDelay;
             		TTimeIntervalMicroSeconds32 repeatInterval;
@@ -860,17 +884,17 @@ void CMobblerStatusControl::MrccatoCommand(TRemConCoreApiOperationId aOperationI
             		delete iVolumeUpTimer;
             		iVolumeUpTimer = CPeriodic::New(CActive::EPriorityStandard);
             		iVolumeUpTimer->Start(repeatDelay, repeatInterval, iVolumeUpCallBack);
-                    break;
-                    }
+            		break;
+            		}
 
-                case ERemConCoreApiButtonRelease:
+            	case ERemConCoreApiButtonRelease:
            			delete iVolumeUpTimer;
             		iVolumeUpTimer = NULL;
-                    break;
+            		break;
 
-                default:
-                    break;
-                }
+            	default:
+            		break;
+            	}
             
             iCoreTarget->VolumeUpResponse(status, KErrNone);
             User::WaitForRequest(status);   
@@ -879,20 +903,20 @@ void CMobblerStatusControl::MrccatoCommand(TRemConCoreApiOperationId aOperationI
         case ERemConCoreApiVolumeDown:
             {
             switch(aButtonAct)
-                {
-                case ERemConCoreApiButtonClick:
-                    {
-                    TKeyEvent event;
-                    event.iCode = EKeyDecVolume;
-                    OfferKeyEventL(event, EEventNull);
-                    break;
-                    }
+            	{
+            	case ERemConCoreApiButtonClick:
+            		{
+            		TKeyEvent event;
+            		event.iCode = EKeyDecVolume;
+            		OfferKeyEventL(event, EEventNull);
+            		break;
+            		}
 
-                case ERemConCoreApiButtonPress:
-                {
-                TKeyEvent event;
-                event.iCode = EKeyDecVolume;
-                OfferKeyEventL(event, EEventNull);
+            	case ERemConCoreApiButtonPress:
+            		{
+            		TKeyEvent event;
+            		event.iCode = EKeyDecVolume;
+            		OfferKeyEventL(event, EEventNull);
 
 					TTimeIntervalMicroSeconds32 repeatDelay;
 					TTimeIntervalMicroSeconds32 repeatInterval;
@@ -901,17 +925,17 @@ void CMobblerStatusControl::MrccatoCommand(TRemConCoreApiOperationId aOperationI
 					delete iVolumeDownTimer;
 					iVolumeDownTimer = CPeriodic::New(CActive::EPriorityStandard);
 					iVolumeDownTimer->Start(TTimeIntervalMicroSeconds32(repeatDelay), TTimeIntervalMicroSeconds32(repeatInterval), iVolumeDownCallBack);
-                    break;
-                    }
+					break;
+            		}
 
-                case ERemConCoreApiButtonRelease:
+            	case ERemConCoreApiButtonRelease:
             		delete iVolumeDownTimer;
             		iVolumeDownTimer = NULL;
-                    break;
+            		break;
 
-                default:
-                    break;
-                }
+            	default:
+            		break;
+            	}
             
             iCoreTarget->VolumeDownResponse(status, KErrNone);
             User::WaitForRequest(status);   
@@ -1080,7 +1104,6 @@ void CMobblerStatusControl::HandlePointerEventL(const TPointerEvent& aPointerEve
 	
 	CCoeControl::HandlePointerEventL(aPointerEvent);
 	}
-
 
 
 				

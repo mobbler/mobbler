@@ -35,12 +35,14 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <mmf\server\mmfdatabuffer.h>
 
 #include "mobblerlastfmconnection.h"
+#include "mobblerincomingcallmonitorobserver.h"
 
 class CDesC8Array;
 class CMobblerRadioPlaylistParser;
 class CMobblerRadioPlaylist;
 class CMobblerTrack;
 class CMobblerString;
+class CMobblerIncomingCallMonitor;
 
 class MMobblerRadioPlayer
 	{
@@ -55,11 +57,12 @@ public:
 
 class CMobblerRadioPlayer : public CActive,
 							public MMdaAudioOutputStreamCallback,
-							public MMobblerRadioPlayer
+							public MMobblerRadioPlayer,
+							public MMobblerIncomingCallMonitorObserver
 
 	{
 public:
-	static CMobblerRadioPlayer* NewL(CMobblerLastFMConnection& aLastFMConnection);
+	static CMobblerRadioPlayer* NewL(CMobblerLastFMConnection& aLastFMConnection, TTimeIntervalSeconds aBufferSize);
 	~CMobblerRadioPlayer();
 	
 	TInt StartL(CMobblerLastFMConnection::TRadioStation aRadioStation, const TDesC8& aRadioText);
@@ -73,6 +76,8 @@ public:
 	TInt Volume() const;
 	TInt MaxVolume() const;
 	
+	void SetBufferSize(TTimeIntervalSeconds aBufferSize);
+	
 	void Stop();
 	
 	const CMobblerString& Station() const;
@@ -82,7 +87,7 @@ private:
 	void DoCancel();
 	
 private:
-	CMobblerRadioPlayer(CMobblerLastFMConnection& aSubmitter);
+	CMobblerRadioPlayer(CMobblerLastFMConnection& aSubmitter, TTimeIntervalSeconds aBufferSize);
 	void ConstructL();
 	
 	void SubmitCurrentTrackL();
@@ -102,6 +107,8 @@ private: // from MMdaAudioOutputStreamCallback
 	void MaoscBufferCopied(TInt aError, const TDesC8& aBuffer);
 	void MaoscPlayComplete(TInt aError);
 	
+private:
+	void HandleIncomingCallL(TPSTelephonyCallState aPSTelephonyCallState);
 
 private:
 	RPointerArray<HBufC8> iPreBuffer;
@@ -113,6 +120,7 @@ private:
 
 	TBool iTrackDownloading;
 	
+	TTimeIntervalSeconds iBufferSize; 
 	TInt iBufferOffset;
 
 	CMdaAudioOutputStream* iMdaAudioOutputStream;
@@ -122,6 +130,8 @@ private:
 	CMobblerRadioPlaylist* iPlaylist;
 	
 	CMobblerLastFMConnection& iLastFMConnection;
+	
+	CMobblerIncomingCallMonitor* iIncomingCallMonitor;
 	};
 
 #endif // __MOBBLERRADIOPLAYER_H__

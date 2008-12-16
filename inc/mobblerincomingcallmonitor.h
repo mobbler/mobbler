@@ -1,5 +1,5 @@
 /*
-mobblerlastfmconnectionobserver.h
+mobblerincomingcallmonitor.h
 
 mobbler, a last.fm mobile scrobbler for Symbian smartphones.
 Copyright (C) 2008  Michael Coffey
@@ -21,27 +21,31 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-#ifndef __MOBBLERLASTFMCONNECTIONOBSERVER_H__
-#define __MOBBLERLASTFMCONNECTIONOBSERVER_H__
+#ifndef __MOBBLERINCOMINGCALLMONITOR_H__
+#define __MOBBLERINCOMINGCALLMONITOR_H__
 
-#include "mobblerlastfmconnection.h"
-#include "mobblerlastfmerror.h"
+#include <e32base.h>
+#include <e32property.h>
 
-class CMobblerTrack;
+#include "mobblerincomingcallmonitorobserver.h" 
 
-class MMobblerLastFMConnectionObserver
+class CMobblerIncomingCallMonitor : public CActive
 	{
 public:
-	virtual void HandleConnectCompleteL(TInt aError) = 0;
-	virtual void HandleLastFMErrorL(CMobblerLastFMError& aError) = 0;
-	virtual void HandleCommsErrorL(TInt aStatusCode, const TDesC8& aStatus) = 0;
+	static CMobblerIncomingCallMonitor* NewL(MMobblerIncomingCallMonitorObserver& aObserver);
+	~CMobblerIncomingCallMonitor();
 	
-	virtual void HandleTrackNowPlayingL(const CMobblerTrack& aTrack) = 0;
-	virtual void HandleTrackQueuedL(const CMobblerTrack& aTrack) = 0;
-	virtual void HandleTrackSubmittedL(const CMobblerTrack& aTrack) = 0;
+private:
+	CMobblerIncomingCallMonitor(MMobblerIncomingCallMonitorObserver& aObserver);
+	void ConstructL();
 	
-	virtual void HandleUpdateResponseL(TVersion aVersion, const TDesC8& aLocation) = 0;
+private:
+	void RunL();
+	void DoCancel();
+	
+private:
+	RProperty iProperty;
+	MMobblerIncomingCallMonitorObserver& iObserver;
 	};
 	
-#endif
-	
+#endif // __MOBBLERINCOMINGCALLMONITOR_H__

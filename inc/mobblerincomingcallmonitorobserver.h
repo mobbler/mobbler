@@ -1,5 +1,5 @@
 /*
-mobblerlastfmconnectionobserver.h
+mobblerincomingcallmonitorobserver.h
 
 mobbler, a last.fm mobile scrobbler for Symbian smartphones.
 Copyright (C) 2008  Michael Coffey
@@ -21,27 +21,27 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-#ifndef __MOBBLERLASTFMCONNECTIONOBSERVER_H__
-#define __MOBBLERLASTFMCONNECTIONOBSERVER_H__
+#ifndef __MOBBLERINCOMINGCALLMONITOROBSERVER_H__
+#define __MOBBLERINCOMINGCALLMONITOROBSERVER_H__
 
-#include "mobblerlastfmconnection.h"
-#include "mobblerlastfmerror.h"
-
-class CMobblerTrack;
-
-class MMobblerLastFMConnectionObserver
+class MMobblerIncomingCallMonitorObserver
 	{
 public:
-	virtual void HandleConnectCompleteL(TInt aError) = 0;
-	virtual void HandleLastFMErrorL(CMobblerLastFMError& aError) = 0;
-	virtual void HandleCommsErrorL(TInt aStatusCode, const TDesC8& aStatus) = 0;
+	enum TPSTelephonyCallState
+		{
+		EPSTelephonyCallStateUninitialized,
+		EPSTelephonyCallStateNone,
+		EPSTelephonyCallStateAlerting,
+		EPSTelephonyCallStateRinging,
+		EPSTelephonyCallStateDialling,
+		EPSTelephonyCallStateAnswering,
+		EPSTelephonyCallStateDisconnecting,
+		EPSTelephonyCallStateConnected,
+		EPSTelephonyCallStateHold
+		};
 	
-	virtual void HandleTrackNowPlayingL(const CMobblerTrack& aTrack) = 0;
-	virtual void HandleTrackQueuedL(const CMobblerTrack& aTrack) = 0;
-	virtual void HandleTrackSubmittedL(const CMobblerTrack& aTrack) = 0;
-	
-	virtual void HandleUpdateResponseL(TVersion aVersion, const TDesC8& aLocation) = 0;
+public:
+	virtual void HandleIncomingCallL(TPSTelephonyCallState aPSTelephonyCallState) = 0;
 	};
 	
-#endif
-	
+#endif // __MOBBLERINCOMINGCALLMONITOROBSERVER_H__

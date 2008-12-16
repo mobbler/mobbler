@@ -77,6 +77,9 @@ void CMobblerSettingItemListView::HandleCommandL(TInt aCommand)
 		// save and set details then switch back to the status view
 		iMobblerSettingItemList->SaveSettingValuesL();
 		static_cast<CMobblerAppUi*>(AppUi())->SetDetailsL(iSettings->Username(), iSettings->Password());
+		static_cast<CMobblerAppUi*>(AppUi())->SetCheckForUpdatesL(iSettings->CheckForUpdates());
+		static_cast<CMobblerAppUi*>(AppUi())->SetIapIDL(iSettings->IapID());
+		static_cast<CMobblerAppUi*>(AppUi())->SetBufferSize(iSettings->BufferSize());
 		AppUi()->ActivateLocalViewL(TUid::Uid(0xA0007CA8));
 		}
 	else if (aCommand == EAknSoftkeyCancel)

@@ -26,6 +26,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <e32std.h>
 
+const TInt KDefaultBufferSizeSeconds(5);
+
 class CMobblerSettingItemListSettings : public CBase
 	{
 public:
@@ -39,15 +41,29 @@ private:
 public:
 	TDes& Username();
 	void SetUsernameL(const TDesC& aUserName);
+	
 	TDes& Password();
 	void SetPasswordL(const TDesC& aPassword);
+	
 	TBool& Backlight();
-	void SetBacklight(const TBool aBacklight);
+	void SetBacklight(TBool aBacklight);
+	
+	TBool& CheckForUpdates();
+	void SetCheckForUpdates(TBool aCheckForUpdates);
+	
+	TInt& IapID();
+	void SetIapID(TInt aIapID);
+	
+	TInt& BufferSize();
+	void SetBufferSize(TInt aBufferSize);
 
 protected:
 	TBuf<30> iUsername;
 	TBuf<30> iPassword;
 	TBool iBacklight;
+	TBool iCheckForUpdates;
+	TInt iIapID;
+	TInt iBufferSize;
 	};
 
 #endif // __MOBBLERSETTINGITEMLISTSETTINGS_H__

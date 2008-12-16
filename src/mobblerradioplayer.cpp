@@ -21,31 +21,31 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
+#include <badesca.h>
+#include <eikprogi.h>
+
 #include "mobblerradioplayer.h"
 #include "mobblerradioplaylist.h"
 #include "mobblerutility.h"
-#include "badesca.h"
+#include "mobblerincomingcallmonitor.h"
 #include "mobblerlastfmconnection.h"
 #include "mobblertrack.h"
 #include "mobblerappui.h"
 #include <mobbler.rsg>
 
-#include <eikprogi.h>
-
 const TInt KBufferSizeInPackets(32);
-const TInt KBufferSizeInSeconds(3);
 
-CMobblerRadioPlayer* CMobblerRadioPlayer::NewL(CMobblerLastFMConnection& aSubmitter)
+CMobblerRadioPlayer* CMobblerRadioPlayer::NewL(CMobblerLastFMConnection& aSubmitter, TTimeIntervalSeconds aBufferSize)
 	{
-	CMobblerRadioPlayer* self = new(ELeave) CMobblerRadioPlayer(aSubmitter);
+	CMobblerRadioPlayer* self = new(ELeave) CMobblerRadioPlayer(aSubmitter, aBufferSize);
 	CleanupStack::PushL(self);
 	self->ConstructL();
 	CleanupStack::Pop(self);
 	return self;
 	}
 
-CMobblerRadioPlayer::CMobblerRadioPlayer(CMobblerLastFMConnection& aLastFMConnection)
-	:CActive(EPriorityStandard), iLastFMConnection(aLastFMConnection)
+CMobblerRadioPlayer::CMobblerRadioPlayer(CMobblerLastFMConnection& aLastFMConnection, TTimeIntervalSeconds aBufferSize)
+	:CActive(EPriorityStandard), iBufferSize(aBufferSize), iLastFMConnection(aLastFMConnection)
 	{
 	CActiveScheduler::Add(this);
 	}
@@ -54,6 +54,8 @@ void CMobblerRadioPlayer::ConstructL()
 	{
 	iMdaAudioOutputStream = CMdaAudioOutputStream::NewL(*this, EMdaPriorityMax, EMdaPriorityPreferenceTimeAndQuality);
 	iMdaAudioOutputStream->Open(&iMdaAudioDataSettings);
+	
+	iIncomingCallMonitor = CMobblerIncomingCallMonitor::NewL(*this);
 	}
 
 CMobblerRadioPlayer::~CMobblerRadioPlayer()
@@ -64,6 +66,7 @@ CMobblerRadioPlayer::~CMobblerRadioPlayer()
 	iWrittenBuffer.ResetAndDestroy();
 	delete iMdaAudioOutputStream;
 	delete iPlaylist;
+	delete iIncomingCallMonitor;
 	}
 
 void CMobblerRadioPlayer::RunL()
@@ -170,6 +173,11 @@ const CMobblerString& CMobblerRadioPlayer::Station() const
 	return iPlaylist->Name();
 	}
 
+void CMobblerRadioPlayer::SetBufferSize(TTimeIntervalSeconds aBufferSize)
+	{
+	iBufferSize = aBufferSize;
+	}
+
 TInt CMobblerRadioPlayer::Volume() const
 	{
 	return iMdaAudioDataSettings.iVolume;
@@ -243,11 +251,13 @@ void CMobblerRadioPlayer::WriteL(const TDesC8& aData, TInt aTotalDataSize)
 				TInt secondsBuffered = buffered / byteRate;
 				
 				// either buffered amount of time or the track has finished downloading
-				bufferedEnough = secondsBuffered >= KBufferSizeInSeconds || (*iPlaylist)[iCurrentTrack]->Buffered() == (*iPlaylist)[iCurrentTrack]->DataSize();
+				bufferedEnough = secondsBuffered >= iBufferSize.Int()
+									|| (*iPlaylist)[iCurrentTrack]->Buffered() == (*iPlaylist)[iCurrentTrack]->DataSize();
 				}
 			}
 		else
 			{
+			// This is just a precaution in case we don't know the size of the mp3
 			bufferedEnough = iPreBuffer.Count() >= KBufferSizeInPackets;
 			}
 		
@@ -379,4 +389,28 @@ void CMobblerRadioPlayer::MaoscPlayComplete(TInt aError)
 		iPlaying = EFalse;
 		}
 	}
+
+void CMobblerRadioPlayer::HandleIncomingCallL(TPSTelephonyCallState aPSTelephonyCallState)
+	{
+	switch (aPSTelephonyCallState)
+		{
+		case EPSTelephonyCallStateAlerting:
+		case EPSTelephonyCallStateRinging:
+		case EPSTelephonyCallStateDialling:
+		case EPSTelephonyCallStateAnswering:
+		case EPSTelephonyCallStateConnected:
+			// There was an incoming call so stop playing the radio
+			Stop();
+			break;
+		case EPSTelephonyCallStateUninitialized:
+		case EPSTelephonyCallStateNone:
+		case EPSTelephonyCallStateDisconnecting:
+		case EPSTelephonyCallStateHold:
+		default:
+			// The normal S60 behaviour seems to be to pause and then restart
+			// music when the call finishes, but we have some problems with this
+			break;
+		}
+	}
+
 

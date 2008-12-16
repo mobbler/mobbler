@@ -44,7 +44,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "mobblerparser.h"
 #include "mobblerradioplaylist.h"
 #include "mobblertrack.h"
-
+#include "mobblerstring.h"
 
 _LIT8(KElementTitle, "title");
 _LIT8(KElementTrack, "track");
@@ -90,6 +90,14 @@ All other responses should be treated as a hard failure.
 */
 CMobblerLastFMError* CMobblerParser::ParseHandshakeL(const TDesC8& aHandshakeResponse, HBufC8*& aSessionId, HBufC8*& aNowPlayingURL, HBufC8*& aSubmitURL)
 	{
+#ifdef _DEBUG
+	RFile file;
+	CleanupClosePushL(file);
+	User::LeaveIfError(file.Replace(CCoeEnv::Static()->FsSession(), _L("c:scrobblehandshake.txt"), EFileWrite));
+	User::LeaveIfError(file.Write(aHandshakeResponse));
+	CleanupStack::PopAndDestroy(&file);
+#endif
+	
 	CMobblerLastFMError* error = NULL;
 	
 	if (aHandshakeResponse.MatchF(_L8("OK*")) == 0)
@@ -152,6 +160,14 @@ fingerprint_upload_url=http://ws.audioscrobbler.com/fingerprint/upload.php
 */
 CMobblerLastFMError* CMobblerParser::ParseRadioHandshakeL(const TDesC8& aRadioHandshakeResponse, HBufC8*& aRadioSessionID, HBufC8*& aRadioStreamURL, HBufC8*& aRadioBaseURL, HBufC8*& aRadioBasePath)
 	{
+#ifdef _DEBUG
+	RFile file;
+	CleanupClosePushL(file);
+	User::LeaveIfError(file.Replace(CCoeEnv::Static()->FsSession(), _L("c:radiohandshakeresponse.txt"), EFileWrite));
+	User::LeaveIfError(file.Write(aRadioHandshakeResponse));
+	CleanupStack::PopAndDestroy(&file);
+#endif
+	
 	CMobblerLastFMError* error = NULL;
 	
 	if (aRadioHandshakeResponse.MatchF(_L8("session*")) == 0)
@@ -220,6 +236,14 @@ CMobblerLastFMError* CMobblerParser::ParseRadioHandshakeL(const TDesC8& aRadioHa
 
 CMobblerLastFMError* CMobblerParser::ParseScrobbleResponseL(const TDesC8& aScrobbleResponse)
 	{
+#ifdef _DEBUG
+	RFile file;
+	CleanupClosePushL(file);
+	User::LeaveIfError(file.Replace(CCoeEnv::Static()->FsSession(), _L("c:scrobbleresponse.txt"), EFileWrite));
+	User::LeaveIfError(file.Write(aScrobbleResponse));
+	CleanupStack::PopAndDestroy(&file);
+#endif
+	
 	CMobblerLastFMError* error = NULL;
 	
 	if (aScrobbleResponse.Compare(_L8("OK\n")) == 0)
@@ -293,6 +317,14 @@ HBufC8* CMobblerParser::DecodeURIStringLC(const TDesC8& aString)
 
 CMobblerLastFMError* CMobblerParser::ParseRadioPlaylistL(const TDesC8& aXML, CMobblerRadioPlaylist*& aPlaylist)
 	{
+#ifdef _DEBUG
+	RFile file;
+	CleanupClosePushL(file);
+	User::LeaveIfError(file.Replace(CCoeEnv::Static()->FsSession(), _L("c:playlist.xml"), EFileWrite));
+	User::LeaveIfError(file.Write(aXML));
+	CleanupStack::PopAndDestroy(&file);
+#endif
+	
 	CMobblerLastFMError* error = NULL;
 	
 	CMobblerRadioPlaylist* playlist = CMobblerRadioPlaylist::NewL();
@@ -373,6 +405,14 @@ CMobblerLastFMError* CMobblerParser::ParseRadioPlaylistL(const TDesC8& aXML, CMo
 
 CMobblerLastFMError* CMobblerParser::ParseRadioSelectStationL(const TDesC8& aXML)
 	{
+#ifdef _DEBUG
+	RFile file;
+	CleanupClosePushL(file);
+	User::LeaveIfError(file.Replace(CCoeEnv::Static()->FsSession(), _L("c:radioselectresponse.xml"), EFileWrite));
+	User::LeaveIfError(file.Write(aXML));
+	CleanupStack::PopAndDestroy(&file);
+#endif
+	
 	CMobblerLastFMError* error = NULL;
 	
 	if (aXML.Find(_L8("response=OK")) != 0)
@@ -387,6 +427,14 @@ CMobblerLastFMError* CMobblerParser::ParseRadioSelectStationL(const TDesC8& aXML
 
 CMobblerLastFMError* CMobblerParser::ParseWebServicesHandshakeL(const TDesC8& aWebServicesHandshakeResponse, HBufC8*& aWebServicesSessionKey)
 	{
+#ifdef _DEBUG
+	RFile file;
+	CleanupClosePushL(file);
+	User::LeaveIfError(file.Replace(CCoeEnv::Static()->FsSession(), _L("c:webserviceshandshakeresponse.xml"), EFileWrite));
+	User::LeaveIfError(file.Write(aWebServicesHandshakeResponse));
+	CleanupStack::PopAndDestroy(&file);
+#endif
+	
 	CMobblerLastFMError* error = NULL;
 	
 	// create the xml reader and dom fragement and associate them with each other 
@@ -417,8 +465,60 @@ CMobblerLastFMError* CMobblerParser::ParseWebServicesHandshakeL(const TDesC8& aW
 	return error;
 	}
 
+void CMobblerParser::ParseArtistGetInfoL(const TDesC8& aXML, HBufC*& aArtistInfo)
+	{
+#ifdef _DEBUG
+	RFile file;
+	CleanupClosePushL(file);
+	User::LeaveIfError(file.Replace(CCoeEnv::Static()->FsSession(), _L("c:artistgetinfo.xml"), EFileWrite));
+	User::LeaveIfError(file.Write(aXML));
+	CleanupStack::PopAndDestroy(&file);
+#endif
+	
+	// create the xml reader and dom fragement and associate them with each other 
+	CSenXmlReader* xmlReader = CSenXmlReader::NewL();
+	CleanupStack::PushL(xmlReader);
+	CSenDomFragment* domFragment = CSenDomFragment::NewL();
+	CleanupStack::PushL(domFragment);
+	xmlReader->SetContentHandler(*domFragment);
+	domFragment->SetReader(*xmlReader);
+	
+	// parse the xml into the dom fragment
+	xmlReader->ParseL(aXML);
+	
+	CSenElement* artistElement = domFragment->AsElement().Element(_L8("artist"));
+	
+	if (artistElement)
+		{
+		CSenElement* bioElement = artistElement->Element(_L8("bio"));
+		
+		if (bioElement)
+			{
+			CSenElement* contentElement = bioElement->Element(_L8("content"));
+			
+			if (contentElement)
+				{
+				CMobblerString* content = CMobblerString::NewL(contentElement->Content());
+				CleanupStack::PushL(content);
+				aArtistInfo = content->String().AllocL();
+				CleanupStack::PopAndDestroy(content);
+				}
+			}
+		}
+	
+	CleanupStack::PopAndDestroy(2, xmlReader);
+	}
+
 TInt CMobblerParser::ParseUpdateResponseL(const TDesC8& aXML, TVersion& aVersion, TDes8& location)
 	{
+#ifdef _DEBUG
+	RFile file;
+	CleanupClosePushL(file);
+	User::LeaveIfError(file.Replace(CCoeEnv::Static()->FsSession(), _L("c:update.xml"), EFileWrite));
+	User::LeaveIfError(file.Write(aXML));
+	CleanupStack::PopAndDestroy(&file);
+#endif
+	
 	TInt error(KErrNone);
 	
 	// create the xml reader and dom fragement and associate them with each other 

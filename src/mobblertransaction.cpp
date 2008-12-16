@@ -151,7 +151,7 @@ void CMobblerTransaction::MHFRunL(RHTTPTransaction aTransaction, const THTTPEven
 			iObserver.TransactionCompleteL(this);
 			break;
 		case THTTPEvent::EFailed:
-			iObserver.TransactionFailedL(this, iTransaction.Response().StatusText().DesC());			
+			iObserver.TransactionFailedL(this, iTransaction.Response().StatusText().DesC(), iTransaction.Response().StatusCode());			
 			break;
 		default:
 			break;
@@ -160,10 +160,8 @@ void CMobblerTransaction::MHFRunL(RHTTPTransaction aTransaction, const THTTPEven
 
 TInt CMobblerTransaction::MHFRunError(TInt aError, RHTTPTransaction /*aTransaction*/, const THTTPEvent& /*aEvent*/)
 	{
-	_LIT8(KStatusFormat, "Leave %d");
-	TBuf8<255> status;
-	status.Format(KStatusFormat, aError);
-	iObserver.TransactionFailedL(this, status);
+	_LIT8(KMHFRunError, "MHFRunError");
+	iObserver.TransactionFailedL(this, KMHFRunError, aError);
 	return KErrNone;
 	}
 	

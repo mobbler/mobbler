@@ -38,6 +38,7 @@ CMobblerSettingItemListSettings* CMobblerSettingItemListSettings::NewL()
 	}
 
 CMobblerSettingItemListSettings::CMobblerSettingItemListSettings()
+	:iBufferSize(KDefaultBufferSizeSeconds)
 	{
 	}
 
@@ -74,8 +75,38 @@ TBool& CMobblerSettingItemListSettings::Backlight()
 	return iBacklight;
 	}
 
-void CMobblerSettingItemListSettings::SetBacklight(const TBool aBacklight)
+void CMobblerSettingItemListSettings::SetBacklight(TBool aBacklight)
 	{
 	iBacklight = aBacklight;
+	}
+
+TBool& CMobblerSettingItemListSettings::CheckForUpdates()
+	{
+	return iCheckForUpdates;
+	}
+
+void CMobblerSettingItemListSettings::SetCheckForUpdates(TBool aCheckForUpdates)
+	{
+	iCheckForUpdates = aCheckForUpdates;
+	}
+
+TInt& CMobblerSettingItemListSettings::IapID()
+	{
+	return iIapID;
+	}
+
+void CMobblerSettingItemListSettings::SetIapID(TInt aIapID)
+	{
+	iIapID = aIapID;
+	}
+
+TInt& CMobblerSettingItemListSettings::BufferSize()
+	{
+	return iBufferSize;
+	}
+
+void CMobblerSettingItemListSettings::SetBufferSize(TInt aBufferSize)
+	{
+	iBufferSize = aBufferSize;
 	}
 

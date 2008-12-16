@@ -60,43 +60,6 @@ RESOURCE LOCALISABLE_APP_INFO r_localisable_app_info
 		};
 	}
 
-RESOURCE DIALOG r_mobbler_friends_list_dialog
-	{
-	flags = EAknDialogSelectionList;
-	buttons = R_AVKON_SOFTKEYS_OPTIONS_BACK;
-	items =
-		{
-		DLG_LINE
-			{
-			type = EAknCtSingleGraphicListBox;
-			id = ESelectionListControl;
-			control = LISTBOX
-				{
-				flags = EAknListBoxSelectionList;
-				};
-			}
-		};
-	}
-
-RESOURCE DIALOG r_mobbler_radio_progress_note
-    {
-    flags = EAknProgressNoteFlags;
-    buttons = R_AVKON_SOFTKEYS_CANCEL;
-    items =
-        {
-        DLG_LINE
-            {
-            type = EAknCtNote;
-            id = EMobblerProgressNoteId;
-            control = AVKON_NOTE
-                {
-                layout = EProgressLayout;
-                singular_label = STR_mobbler_radio_buffering;
-                };
-            }
-        };
-    }
-
 RESOURCE AVKON_VIEW r_mobbler_setting_item_list_view
 	{
 	cba = R_AVKON_SOFTKEYS_OK_CANCEL;
@@ -217,7 +180,7 @@ RESOURCE MENU_PANE r_radio_submenu_pane
 		};
 	}
 
-RESOURCE DIALOG r_artist_dialog
+RESOURCE DIALOG r_mobbler_radio_query_dialog
 	{
 	flags = EGeneralQueryFlags;
 	buttons = R_AVKON_SOFTKEYS_OK_CANCEL;
@@ -226,7 +189,7 @@ RESOURCE DIALOG r_artist_dialog
 		DLG_LINE
 			{
 			type = EAknCtQuery;
-			id = EMobblerArtistQuery;
+			id = EMobblerRadioQuery;
 			control= AVKON_DATA_QUERY
 				{
 				layout = EDataLayout;
@@ -234,56 +197,6 @@ RESOURCE DIALOG r_artist_dialog
 					{
 					flags= EEikEdwinNoHorizScrolling | EEikEdwinResizable;
 					maxlength = 50;
-					width = 4;
-					lines = 1;
-					};
-				};
-			}
-		};
-	}
-	
-RESOURCE DIALOG r_tag_dialog
-	{
-	flags = EGeneralQueryFlags;
-	buttons = R_AVKON_SOFTKEYS_OK_CANCEL;
-	items=
-		{
-		DLG_LINE
-			{
-			type = EAknCtQuery;
-			id = EMobblerTagQuery;
-			control= AVKON_DATA_QUERY
-				{
-				layout = EDataLayout;
-				control = EDWIN
-					{
-					flags= EEikEdwinNoHorizScrolling | EEikEdwinResizable;
-					maxlength = 250;
-					width = 4;
-					lines = 1;
-					};
-				};
-			}
-		};
-	}
-
-RESOURCE DIALOG r_user_dialog
-	{
-	flags = EGeneralQueryFlags;
-	buttons = R_AVKON_SOFTKEYS_OK_CANCEL;
-	items=
-		{
-		DLG_LINE
-			{
-			type = EAknCtQuery;
-			id = EMobblerUserQuery;
-			control= AVKON_DATA_QUERY
-				{
-				layout = EDataLayout;
-				control = EDWIN
-					{
-					flags= EEikEdwinNoHorizScrolling | EEikEdwinResizable;
-					maxlength = 250;
 					width = 4;
 					lines = 1;
 					};
@@ -329,10 +242,30 @@ RESOURCE AVKON_SETTING_ITEM_LIST r_mobbler_setting_item_list
 			},
 		AVKON_SETTING_ITEM
 			{
+			name = STR_mobbler_iap;
+			identifier = EMobblerSettingItemListViewIap;
+			setting_page_resource = r_mobbler_setting_page_iap;
+			associated_resource = r_mobbler_popup_setting_texts_iap;
+			},
+		AVKON_SETTING_ITEM
+			{
+			name = STR_mobbler_buffer_size;
+			identifier = EMobblerSettingItemListViewBufferSize;
+			setting_page_resource = r_mobbler_slider_setting_page_buffer_size;
+			},
+		AVKON_SETTING_ITEM
+			{
+			name = STR_mobbler_check_for_updates;
+			identifier = EMobblerSettingItemListViewAutoUpdatesOn;
+			setting_page_resource = r_mobbler_setting_page_check_for_updates;
+			associated_resource = r_mobbler_popup_setting_binary_texts_check_for_updates;
+			},
+		AVKON_SETTING_ITEM
+			{
 			name = STR_mobbler_backlight;
 			identifier = EMobblerSettingItemListViewBacklight;
 			setting_page_resource = r_mobbler_setting_page_backlight;
-			associated_resource = r_mobbler_backlight_popup_setting_binary_texts;
+			associated_resource = r_mobbler_popup_setting_binary_texts_backlight;
 			}
 		};
 	}
@@ -366,14 +299,14 @@ RESOURCE SECRETED r_mobbler_setting_page_resource_id_password
 	num_letters = 30;
 	}
 
-RESOURCE AVKON_POPUP_SETTING_TEXTS r_mobbler_backlight_popup_setting_binary_texts
+RESOURCE AVKON_POPUP_SETTING_TEXTS r_mobbler_popup_setting_binary_texts_backlight
 	{
 	flags = 0;
-	setting_texts_resource   = r_mobbler_backlight_on_off_texts;
-	popped_up_texts_resource = r_mobbler_backlight_popped_up_on_off_texts;
+	setting_texts_resource   = r_mobbler_on_off_texts_backlight;
+	popped_up_texts_resource = r_mobbler_popped_up_on_off_texts_backlight;
 	}
 
-RESOURCE ARRAY r_mobbler_backlight_on_off_texts
+RESOURCE ARRAY r_mobbler_on_off_texts_backlight
 	{
 	items =
 		{
@@ -382,7 +315,7 @@ RESOURCE ARRAY r_mobbler_backlight_on_off_texts
 		};
 	}
 
-RESOURCE ARRAY r_mobbler_backlight_popped_up_on_off_texts
+RESOURCE ARRAY r_mobbler_popped_up_on_off_texts_backlight
 	{
 	items =
 		{
@@ -396,18 +329,105 @@ RESOURCE AVKON_SETTING_PAGE r_mobbler_setting_page_backlight
 	number = 0;
 	label = STR_mobbler_backlight; 
 	type = EAknCtPopupSettingList;
-	editor_resource_id = r_mobbler_backlight_binary_popup_setting_list;
+	editor_resource_id = r_mobbler_binary_popup_setting_list_backlight;
 	}
 
-RESOURCE POPUP_SETTING_LIST r_mobbler_backlight_binary_popup_setting_list
+RESOURCE POPUP_SETTING_LIST r_mobbler_binary_popup_setting_list_backlight
 	{
 	flags= 0;
 	}
 
-RESOURCE DIALOG r_mobbler_connecting_dialog
+RESOURCE AVKON_SETTING_PAGE r_mobbler_setting_page_iap
+	{
+	type = EAknCtPopupSettingList;
+	editor_resource_id = r_mobbler_popup_setting_list_iap;
+	}
+
+RESOURCE POPUP_SETTING_LIST r_mobbler_popup_setting_list_iap
+	{
+	flags = 0;
+	}
+
+RESOURCE AVKON_POPUP_SETTING_TEXTS r_mobbler_popup_setting_texts_iap
+	{
+	setting_texts_resource = r_mobbler_texts_iap;
+	}
+
+RESOURCE ARRAY r_mobbler_texts_iap
+	{
+	items =
+		{
+		AVKON_ENUMERATED_TEXT
+			{
+			value = 0;
+			text = STR_mobbler_always_ask;
+			}
+		};
+	}
+
+RESOURCE AVKON_POPUP_SETTING_TEXTS r_mobbler_popup_setting_binary_texts_check_for_updates
+	{
+	flags = 0;
+	setting_texts_resource   = r_mobbler_on_off_texts_check_for_updates;
+	popped_up_texts_resource = r_mobbler_popped_up_on_off_texts_check_for_updates;
+	}
+
+RESOURCE ARRAY r_mobbler_on_off_texts_check_for_updates
+	{
+	items =
+		{
+		AVKON_ENUMERATED_TEXT { value = 0; text = STR_mobbler_check_for_updates_no; },
+		AVKON_ENUMERATED_TEXT { value = 1; text = STR_mobbler_check_for_updates_yes; }
+		};
+	}
+
+RESOURCE ARRAY r_mobbler_popped_up_on_off_texts_check_for_updates
+	{
+	items =
+		{
+		LBUF { txt = STR_mobbler_check_for_updates_no; },
+		LBUF { txt = STR_mobbler_check_for_updates_yes; }
+		};
+	}
+
+
+RESOURCE AVKON_SETTING_PAGE r_mobbler_setting_page_check_for_updates
+	{
+	number = 0;
+	label = STR_mobbler_check_for_updates; 
+	type = EAknCtPopupSettingList;
+	editor_resource_id = r_mobbler_binary_popup_setting_list_check_for_updates;
+	}
+
+RESOURCE POPUP_SETTING_LIST r_mobbler_binary_popup_setting_list_check_for_updates
+	{
+	flags = 0;
+	}
+
+RESOURCE AVKON_SETTING_PAGE r_mobbler_slider_setting_page_buffer_size
+	{
+	label = STR_mobbler_buffer_size;
+	type = EAknCtSlider;
+	editor_resource_id = r_mobbler_slider_setting_editor_buffer_size;
+	}
+
+RESOURCE SLIDER r_mobbler_slider_setting_editor_buffer_size
+	{
+	layout = EAknSettingsItemSliderLayout;
+	minvalue = 1;
+	maxvalue = 15;
+	step = 1;
+	valuetype = EAknSliderValueBareFigure;
+	singular_valuelabel = STR_mobbler_second;
+	valuelabel = STR_mobbler_seconds;
+	minlabel = "1";
+	maxlabel = "15";
+	}
+
+RESOURCE DIALOG r_mobbler_downloading_dialog
 	{
 	flags = EAknWaitNoteFlags;
-	buttons = R_AVKON_SOFTKEYS_CANCEL;
+	buttons = R_AVKON_SOFTKEYS_EMPTY;
 	items =
 		{
 		DLG_LINE
@@ -417,7 +437,7 @@ RESOURCE DIALOG r_mobbler_connecting_dialog
 			control = AVKON_NOTE
 				{
 				layout = EWaitLayout;
-				singular_label = STR_mobbler_connecting;
+				singular_label = STR_mobbler_downloading;
 				animation = R_QGN_GRAF_WAIT_BAR_ANIM;
 				};
 			}

@@ -57,10 +57,13 @@ USERINCLUDE	..\inc
 SYSTEMINCLUDE	 \epoc32\include \epoc32\include\mmf\plugin
 
 SOURCE		mobbler.cpp
-SOURCE		mobblerApplication.cpp
-SOURCE		mobblerAppUi.cpp
+SOURCE		mobbleraccesspointsettingitem.cpp
+SOURCE		mobblerapplication.cpp
+SOURCE		mobblerappui.cpp
 SOURCE		mobblerbitmap.cpp
-SOURCE		mobblerDocument.cpp
+SOURCE		mobblerdocument.cpp
+SOURCE		mobblerdownload.cpp
+SOURCE		mobblerincomingcallmonitor.cpp
 SOURCE		mobblerlastfmconnection.cpp
 SOURCE		mobblerlastfmerror.cpp
 SOURCE		mobblermarquee.cpp
@@ -76,6 +79,8 @@ SOURCE		mobblerstatuscontrol.cpp
 SOURCE		mobblerstatusview.cpp
 SOURCE		mobblerstring.cpp
 SOURCE		mobblertimeout.cpp
+SOURCE		mobblerrichtextcontrol.cpp
+
 SOURCE		mobblertrack.cpp
 SOURCE		mobblertransaction.cpp
 SOURCE		mobblerutility.cpp
@@ -93,10 +98,12 @@ LIBRARY		charconv.lib
 LIBRARY		commdb.lib
 LIBRARY		commonengine.lib
 LIBRARY		cone.lib
+LIBRARY		downloadmgr.lib
 LIBRARY		ecom.lib
 LIBRARY		efsrv.lib
 LIBRARY		eikcoctl.lib
 LIBRARY		eikcore.lib
+LIBRARY		eikctl.lib 
 LIBRARY		esock.lib
 LIBRARY		estor.lib
 LIBRARY		euser.lib

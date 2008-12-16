@@ -79,12 +79,13 @@ enum TMobblerControls
 	EMobblerSettingItemListViewUsername = 0x7000,
 	EMobblerSettingItemListViewPassword,
 	EMobblerSettingItemListViewBacklight,
+	EMobblerSettingItemListViewAutoUpdatesOn,
+	EMobblerSettingItemListViewIap,
+	EMobblerSettingItemListViewBufferSize,
 	EMobblerSettingItemListViewConnectingDialog,
 	EMobblerProgressNoteId,
 	EMobblerQuery,
-	EMobblerArtistQuery,
-	EMobblerTagQuery,
-	EMobblerUserQuery
+	EMobblerRadioQuery
 	};
 
 #endif // __MOBBLER_HRH__

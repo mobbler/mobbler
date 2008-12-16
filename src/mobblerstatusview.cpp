@@ -39,6 +39,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "mobblerstatuscontrol.h"
 #include "mobblerappui.h"
 #include "mobblertrack.h"
+#include "mobblerrichtextcontrol.h"
 
 CMobblerStatusView* CMobblerStatusView::NewL()
 	{
@@ -166,4 +167,18 @@ void CMobblerStatusView::DrawDeferred() const
 		{
 		iMobblerStatusControl->DrawDeferred();
 		}
+	}
+
+CMobblerRichTextControl& CMobblerStatusView::ArtistInfoControlL()
+	{
+	if (!iArtistInfoControl)
+		{
+		iArtistInfoControl = CMobblerRichTextControl::NewL(ClientRect());
+		iArtistInfoControl->SetMopParent(AppUi());
+		}
+	
+	iArtistInfoControl->ActivateL();
+	AppUi()->AddToStackL(*this, iArtistInfoControl);
+	
+	return *iArtistInfoControl;
 	}
