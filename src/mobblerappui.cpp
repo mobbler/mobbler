@@ -55,8 +55,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "mobblerrichtextcontrol.h"
 #include "mobblerparser.h"
 
-_LIT(KVersionNumberDisplay,		"0.3.1");
-const TVersion version(0, 3, 1);
+_LIT(KVersionNumberDisplay,		"0.3.2");
+const TVersion version(0, 3, 2);
 
 _LIT(KSearchURL, "http://astore.amazon.co.uk/mobbler-21/search/203-4425999-4423160?node=25&keywords=%S&x=0&y=0&preview=");
 
