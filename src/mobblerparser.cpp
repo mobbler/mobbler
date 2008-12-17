@@ -1,7 +1,7 @@
 /*
 mobblerparser.cpp
 
-mobbler, a last.fm mobile scrobbler for Symbian smartphones.
+Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
 Copyright (C) 2008  Michael Coffey
 
 http://code.google.com/p/mobbler
@@ -21,30 +21,16 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-
-
-#include <concnf.h>
-#include <conlist.h>
-#include <s32mem.h>
-#include <e32debug.h>
-
-#include <stringloader.h>
-
-#include <sendomfragment.h>
-#include <senxmlutils.h> 
-#include <senxmlreader.h> 
-#include <sennamespace.h> 
-#include <senbaseattribute.h> 
-
-#include <charconv.h>
-#include <utf.h>
-
 #include <mobbler.rsg>
+#include <sendomfragment.h>
+#include <sennamespace.h> 
+#include <senxmlutils.h> 
+#include <stringloader.h>
 
 #include "mobblerparser.h"
 #include "mobblerradioplaylist.h"
-#include "mobblertrack.h"
 #include "mobblerstring.h"
+#include "mobblertrack.h"
 
 _LIT8(KElementTitle, "title");
 _LIT8(KElementTrack, "track");
@@ -546,3 +532,4 @@ TInt CMobblerParser::ParseUpdateResponseL(const TDesC8& aXML, TVersion& aVersion
 	return error;
 	}
 
+// End of file

@@ -1,7 +1,7 @@
 /*
 mobblerradioplayer.cpp
 
-mobbler, a last.fm mobile scrobbler for Symbian smartphones.
+Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
 Copyright (C) 2008  Michael Coffey
 
 http://code.google.com/p/mobbler
@@ -21,16 +21,11 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-#include <badesca.h>
-#include <eikprogi.h>
-
+#include "mobblerappui.h"
+#include "mobblerincomingcallmonitor.h"
 #include "mobblerradioplayer.h"
 #include "mobblerradioplaylist.h"
-#include "mobblerutility.h"
-#include "mobblerincomingcallmonitor.h"
-#include "mobblerlastfmconnection.h"
 #include "mobblertrack.h"
-#include "mobblerappui.h"
 #include <mobbler.rsg>
 
 const TInt KBufferSizeInPackets(32);
@@ -413,4 +408,16 @@ void CMobblerRadioPlayer::HandleIncomingCallL(TPSTelephonyCallState aPSTelephony
 		}
 	}
 
+TBool CMobblerRadioPlayer::HasPlaylist() const
+	{
+	if (iPlaylist)
+		{
+		return ETrue;
+		}
+	else
+		{
+		return EFalse;
+		}
+	}
 
+// End of file

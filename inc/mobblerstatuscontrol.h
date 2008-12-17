@@ -122,7 +122,6 @@ private: // from CCoeControl
 	TKeyResponse OfferKeyEventL(const TKeyEvent& aKeyEvent, TEventCode aType);
 	void HandlePointerEventL(const TPointerEvent& aPointerEvent);
 	
-	
 private:
 	const CMobblerAppUi& iAppUi;
 	CAknsBasicBackgroundControlContext* iBgContext;

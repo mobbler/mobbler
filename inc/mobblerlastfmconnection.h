@@ -48,6 +48,7 @@ class CMobblerLastFMConnection : public CActive, public MHTTPTransactionCallback
 public:
 	enum TRadioStation
 		{
+		EUnknown,
 		EPersonal,
 		ERecommendations,
 		ENeighbourhood,

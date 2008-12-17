@@ -1,7 +1,7 @@
 /*
 mobblerstatusview.cpp
 
-mobbler, a last.fm mobile scrobbler for Symbian smartphones.
+Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
 Copyright (C) 2008  Michael Coffey
 
 http://code.google.com/p/mobbler
@@ -21,25 +21,17 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-#include <aknviewappui.h>
-#include <eikmenub.h>
-#include <avkon.hrh>
 #include <akncontext.h>
 #include <akntitle.h>
-#include <stringloader.h>
 #include <barsread.h>
-#include <eikbtgpc.h>
+#include <eikmenub.h>
 #include <mobbler.rsg>
-#include <aknprogressdialog.h>
-#include <icl\imagecodecdata.h>
-#include <gulicon.h>
 
 #include "mobbler.hrh"
-#include "mobblerstatusview.h"
-#include "mobblerstatuscontrol.h"
 #include "mobblerappui.h"
-#include "mobblertrack.h"
 #include "mobblerrichtextcontrol.h"
+#include "mobblerstatuscontrol.h"
+#include "mobblerstatusview.h"
 
 CMobblerStatusView* CMobblerStatusView::NewL()
 	{
@@ -182,3 +174,5 @@ CMobblerRichTextControl& CMobblerStatusView::ArtistInfoControlL()
 	
 	return *iArtistInfoControl;
 	}
+
+// End of file

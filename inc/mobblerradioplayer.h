@@ -1,7 +1,7 @@
 /*
 mobblerradioplayer.h
 
-mobbler, a last.fm mobile scrobbler for Symbian smartphones.
+Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
 Copyright (C) 2008  Michael Coffey
 
 http://code.google.com/p/mobbler
@@ -24,25 +24,18 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #ifndef __MOBBLERRADIOPLAYER_H__
 #define __MOBBLERRADIOPLAYER_H__
 
-#include <e32base.h>
-
-#include <s32file.h>
 #include <mda\common\audio.h>
-#include <Mda\Client\Utility.h>
-#include <Mda\Common\Resource.h>
 #include <MdaAudioOutputStream.h>
-//#include <mmf\server\MmfCodec.h>
-#include <mmf\server\mmfdatabuffer.h>
 
-#include "mobblerlastfmconnection.h"
 #include "mobblerincomingcallmonitorobserver.h"
+#include "mobblerlastfmconnection.h"
 
 class CDesC8Array;
-class CMobblerRadioPlaylistParser;
-class CMobblerRadioPlaylist;
-class CMobblerTrack;
-class CMobblerString;
 class CMobblerIncomingCallMonitor;
+class CMobblerRadioPlaylist;
+class CMobblerRadioPlaylistParser;
+class CMobblerString;
+class CMobblerTrack;
 
 class MMobblerRadioPlayer
 	{
@@ -81,6 +74,8 @@ public:
 	void Stop();
 	
 	const CMobblerString& Station() const;
+
+	TBool HasPlaylist() const;
 	
 private:
 	void RunL();
@@ -135,3 +130,5 @@ private:
 	};
 
 #endif // __MOBBLERRADIOPLAYER_H__
+
+// End of file

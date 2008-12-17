@@ -1,7 +1,7 @@
 /*
 mobblermusiclistener.cpp
 
-mobbler, a last.fm mobile scrobbler for Symbian smartphones.
+Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
 Copyright (C) 2008  Michael Coffey
 
 http://code.google.com/p/mobbler
@@ -21,13 +21,11 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
+#include "mobblerappui.h"
 #include "mobblermusiclistener.h"
 #include "mobblernowplayingcallback.h"
+#include "mobblerstring.h"
 #include "mobblertrack.h"
-#include "mobblerappui.h"
-
-#include <mplayerremotecontrol.h>
-#include <ecom/ecom.h>
 
 #include <utf.h>
 
@@ -76,7 +74,7 @@ void CMobblerMusicAppListener::ConstructL()
 	
 	CleanupStack::PopAndDestroy(&implInfoPtrArray);
 	
-	// check if there is a song playing whe mobbler is started
+	// check if there is a song playing when Mobbler is started
 	ScheduleNowPlayingL();
 	}
 
@@ -172,7 +170,7 @@ void CMobblerMusicAppListener::NowPlayingL()
 	{
 	if ( iCurrentTrack )
 		{
-		// We are currently listenning to a track so just send the old one again
+		// We are currently listening to a track so just send the old one again
 		iLastFMConnection.TrackStartedL(iCurrentTrack);
 		}
 	else

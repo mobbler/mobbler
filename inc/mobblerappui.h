@@ -90,6 +90,9 @@ private:
 	void HandleUpdateResponseL(TVersion aVersion, const TDesC8& aLocation);
 	
 	void RadioStartL(CMobblerLastFMConnection::TRadioStation aRadioStation, const TDesC8& aRadioOption);
+
+	void LoadRadioStationsL();
+	void SaveRadioStationsL();
 	
 private:
 	// the view classes
@@ -108,9 +111,9 @@ private:
 	CMobblerLastFMConnection::TRadioStation iRadioStation;
 	HBufC8* iRadioOption;
 	TBool iCheckForUpdates;
-	TBool iRadioStartedAtLeastOnce;
 	TBool iResumeStationOnConnectCompleteCallback;
 
+	CMobblerLastFMConnection::TRadioStation iPreviousRadioStation;
 	HBufC* iPreviousRadioArtist;
 	HBufC* iPreviousRadioTag;
 	HBufC* iPreviousRadioUser;

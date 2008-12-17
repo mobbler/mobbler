@@ -31,12 +31,16 @@ gnumakefile icons.mk
 // projects
 mobbler.mmp
 ..\musicappobserver\group\musicappobserver.mmp
+#ifdef  __S60_50__
 ..\touchfeedback\group\mobblertouchfeedback.mmp
+#endif
 
 PRJ_EXPORTS
 // music player ecom plugin interface
 ..\inc\mobblermusicapp.h	mobbler\mobblermusicapp.h
+#ifdef  __S60_50__
 ..\inc\mobblertouchfeedbackinterface.h	mobbler\mobblertouchfeedbackinterface.h
+#endif
 
 // mobbler_gfx
 ..\gfx\icon_track.png										z:\resource\apps\mobbler\icon_track.png

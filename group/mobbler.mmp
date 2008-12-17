@@ -72,6 +72,7 @@ SOURCE		mobblernowplayingcallback.cpp
 SOURCE		mobblerparser.cpp
 SOURCE		mobblerradioplayer.cpp
 SOURCE		mobblerradioplaylist.cpp
+SOURCE		mobblerrichtextcontrol.cpp
 SOURCE		mobblersettingitemlist.cpp
 SOURCE		mobblersettingitemlistsettings.cpp
 SOURCE		mobblersettingitemlistview.cpp
@@ -79,8 +80,6 @@ SOURCE		mobblerstatuscontrol.cpp
 SOURCE		mobblerstatusview.cpp
 SOURCE		mobblerstring.cpp
 SOURCE		mobblertimeout.cpp
-SOURCE		mobblerrichtextcontrol.cpp
-
 SOURCE		mobblertrack.cpp
 SOURCE		mobblertransaction.cpp
 SOURCE		mobblerutility.cpp

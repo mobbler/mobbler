@@ -21,39 +21,25 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-#include <akncontext.h> 
 #include <aknmessagequerydialog.h>
-#include <aknnavi.h> 
-#include <aknnavide.h> 
-#include <aknnavilabel.h> 
 #include <aknnotewrappers.h>
-#include <aknquerydialog.h> 
-#include <aknqueryvaluetext.h> 
 #include <aknsutils.h>
-#include <akntitle.h> 
-#include <apgcli.h> 
-#include <avkon.hrh>
 #include <bautils.h> 
 #include <browserlauncher.h>
-#include <browseroverriddensettings.h> 
 #include <mobbler.rsg>
 #include <stringloader.h>
-#include <w32std.h> 
 
 #include "mobbler.hrh"
-#include "mobblerapplication.h"
 #include "mobblerappui.h"
 #include "mobblerdownload.h"
-#include "mobblerlastfmconnectionobserver.h"
 #include "mobblermusiclistener.h"
 #include "mobblerradioplayer.h"
+#include "mobblerrichtextcontrol.h"
 #include "mobblersettingitemlistview.h"
 #include "mobblerstatusview.h"
 #include "mobblerstring.h"
 #include "mobblertrack.h"
 #include "mobblerutility.h"
-#include "mobblerrichtextcontrol.h"
-#include "mobblerparser.h"
 
 _LIT(KVersionNumberDisplay,		"0.3.2");
 const TVersion version(0, 3, 2);
@@ -61,6 +47,8 @@ const TVersion version(0, 3, 2);
 _LIT(KSearchURL, "http://astore.amazon.co.uk/mobbler-21/search/203-4425999-4423160?node=25&keywords=%S&x=0&y=0&preview=");
 
 const TUid KBrowserUid = {0x10008D39};
+
+_LIT(KRadioFile, "c:radiostations.dat");
 
 void CMobblerAppUi::ConstructL()
 	{
@@ -86,8 +74,8 @@ void CMobblerAppUi::ConstructL()
 #ifndef __WINS__
 	iBrowserLauncher = CBrowserLauncher::NewL();
 #endif
-	iRadioStartedAtLeastOnce = EFalse;
 	iResumeStationOnConnectCompleteCallback = EFalse;
+	LoadRadioStationsL();
 	
 	iMobblerDownload = CMobblerDownload::NewL();
 	}
@@ -316,25 +304,38 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 				{
 				break;
 				}
-			if (iLastFMConnection->Mode() == CMobblerLastFMConnection::EOnline)
+			if (iRadioPlayer->HasPlaylist() && 
+				iLastFMConnection->Mode() == CMobblerLastFMConnection::EOnline)
 				{
 				iRadioPlayer->NextTrackL();
 				}
 			else
 				{
-				// Ask if they would like to go online
-				HBufC* goOnlineText = iEikonEnv->AllocReadResourceLC(R_MOBBLER_ASK_GO_ONLINE);
-
-				CAknQueryDialog* dlg = CAknQueryDialog::NewL();
-				TBool goOnline(dlg->ExecuteLD(R_MOBBLER_QUERY_DIALOG, *goOnlineText));
-
-				CleanupStack::PopAndDestroy(goOnlineText);
-
-				if (goOnline)
+				HBufC8* station8(NULL);
+				switch (iPreviousRadioStation)
 					{
-					iResumeStationOnConnectCompleteCallback = ETrue;
-					// Send the web services API call
-					iLastFMConnection->SetModeL(CMobblerLastFMConnection::EOnline);
+					case CMobblerLastFMConnection::EArtist:
+						station8 = MobblerUtility::URLEncodeLC(*iPreviousRadioArtist);
+						RadioStartL(iPreviousRadioStation, *station8);
+						CleanupStack::PopAndDestroy(station8);
+						break;
+					case CMobblerLastFMConnection::ETag:
+						station8 = MobblerUtility::URLEncodeLC(*iPreviousRadioTag);
+						RadioStartL(iPreviousRadioStation, *station8);
+						CleanupStack::PopAndDestroy(station8);
+						break;
+					case CMobblerLastFMConnection::EUser:
+						station8 = MobblerUtility::URLEncodeLC(*iPreviousRadioUser);
+						RadioStartL(iPreviousRadioStation, *station8);
+						CleanupStack::PopAndDestroy(station8);
+						break;
+					case CMobblerLastFMConnection::ERecommendations: // intentional fall-through
+					case CMobblerLastFMConnection::ENeighbourhood:
+					case CMobblerLastFMConnection::ELovedTracks:
+					case CMobblerLastFMConnection::EMyPlaylist:
+					default:
+						RadioStartL(iPreviousRadioStation, KNullDesC8);
+						break;
 					}
 				}
 			break;
@@ -359,6 +360,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 				CleanupStack::PopAndDestroy(artist8);
 				delete iPreviousRadioArtist;
 				iPreviousRadioArtist = artist.AllocL();
+				SaveRadioStationsL();
 				}
 			
 			break;
@@ -383,6 +385,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 				CleanupStack::PopAndDestroy(tag8);
 				delete iPreviousRadioTag;
 				iPreviousRadioTag = tag.AllocL();
+				SaveRadioStationsL();
 				}
 
 			break;
@@ -407,6 +410,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 				CleanupStack::PopAndDestroy(user8);
 				delete iPreviousRadioUser;
 				iPreviousRadioUser = user.AllocL();
+				SaveRadioStationsL();
 				}
 
 			break;
@@ -491,6 +495,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 
 void CMobblerAppUi::RadioStartL(CMobblerLastFMConnection::TRadioStation aRadioStation, const TDesC8& aRadioOption)
 	{
+	iPreviousRadioStation = aRadioStation;
 	TInt error = iRadioPlayer->StartL(aRadioStation, aRadioOption);
 	
 	TBool startStationOnConnectCompleteCallback(EFalse);
@@ -517,10 +522,6 @@ void CMobblerAppUi::RadioStartL(CMobblerLastFMConnection::TRadioStation aRadioSt
 		{
 		startStationOnConnectCompleteCallback = ETrue;
 		}
-	else
-		{
-		iRadioStartedAtLeastOnce = ETrue;
-		}
 			
 	if (startStationOnConnectCompleteCallback)
 		{
@@ -535,9 +536,10 @@ void CMobblerAppUi::RadioStartL(CMobblerLastFMConnection::TRadioStation aRadioSt
 
 TBool CMobblerAppUi::RadioResumable() const
 	{
-	// Can resume only if the radio has been played before,
-	// and is not playing now.
-	if (iRadioStartedAtLeastOnce && !(RadioPlayer()->CurrentTrack()))
+	// Can resume only if the radio is not playing now,
+	// and if a previous radio station is known.
+	if (!(RadioPlayer()->CurrentTrack()) &&
+		(iPreviousRadioStation != CMobblerLastFMConnection::EUnknown))
 		{
 		return ETrue;
 		}
@@ -594,14 +596,20 @@ void CMobblerAppUi::HandleConnectCompleteL(TInt aError)
 		if (iRadioOption)
 			{
 			iRadioPlayer->StartL(iRadioStation, *iRadioOption);
-			iRadioStartedAtLeastOnce = ETrue;
 			delete iRadioOption;
 			iRadioOption = NULL;
 			}
 		else if (iResumeStationOnConnectCompleteCallback)
 			{
 			iResumeStationOnConnectCompleteCallback = EFalse;
-			iRadioPlayer->NextTrackL();
+			if (iRadioPlayer->HasPlaylist())
+				{
+				iRadioPlayer->NextTrackL();
+				}
+			else
+				{
+				iRadioPlayer->StartL(iRadioStation, *iRadioOption);
+				}
 			}
 		
 		if (iCheckForUpdates)
@@ -626,7 +634,6 @@ void CMobblerAppUi::HandleConnectCompleteL(TInt aError)
 void CMobblerAppUi::HandleLastFMErrorL(CMobblerLastFMError& aError)
 	{
 	iStatusView->DrawDeferred();
-	
 	
 	CAknResourceNoteDialog *note = new (ELeave) CAknInformationNote(EFalse);
 	note->ExecuteLD(aError.Text());
@@ -712,6 +719,100 @@ TBool CMobblerAppUi::Foreground() const
 TBool CMobblerAppUi::Backlight() const
 	{
 	return iSettingView->GetBacklight();
+	}
+
+void CMobblerAppUi::LoadRadioStationsL()
+	{
+	RFile file;
+	CleanupClosePushL(file);
+	TInt openError = file.Open(CCoeEnv::Static()->FsSession(), KRadioFile, EFileRead);
+
+	if (openError == KErrNone)
+		{
+		RFileReadStream readStream(file);
+		CleanupClosePushL(readStream);
+
+		iPreviousRadioStation = (CMobblerLastFMConnection::TRadioStation)readStream.ReadInt32L();
+
+		TBuf<255> radio;
+		if (readStream.ReadInt8L())
+			{
+			readStream >> radio;
+			delete iPreviousRadioArtist;
+			iPreviousRadioArtist = radio.AllocL();
+			}
+		if (readStream.ReadInt8L())
+			{
+			readStream >> radio;
+			delete iPreviousRadioTag;
+			iPreviousRadioTag = radio.AllocL();
+			}
+		if (readStream.ReadInt8L())
+			{
+			readStream >> radio;
+			delete iPreviousRadioUser;
+			iPreviousRadioUser = radio.AllocL();
+			}
+
+		CleanupStack::PopAndDestroy(&readStream);
+		}
+	else
+		{
+		iPreviousRadioStation = CMobblerLastFMConnection::EUnknown;
+		}
+
+	CleanupStack::PopAndDestroy(&file);
+	}
+
+void CMobblerAppUi::SaveRadioStationsL()
+	{
+	CCoeEnv::Static()->FsSession().MkDirAll(KRadioFile);
+
+	RFile file;
+	CleanupClosePushL(file);
+	TInt replaceError = file.Replace(CCoeEnv::Static()->FsSession(), KRadioFile, EFileWrite);
+
+	if (replaceError == KErrNone)
+		{
+		RFileWriteStream writeStream(file);
+		CleanupClosePushL(writeStream);
+
+		writeStream.WriteInt32L(iPreviousRadioStation);
+
+		if (iPreviousRadioArtist)
+			{
+			writeStream.WriteInt8L(ETrue);
+			writeStream << *iPreviousRadioArtist;
+			}
+		else
+			{
+			writeStream.WriteInt8L(EFalse);
+			}
+
+		if (iPreviousRadioTag)
+			{
+			writeStream.WriteInt8L(ETrue);
+			writeStream << *iPreviousRadioTag;
+			}
+		else
+			{
+			writeStream.WriteInt8L(EFalse);
+			}
+
+		if (iPreviousRadioUser)
+			{
+			writeStream.WriteInt8L(ETrue);
+			writeStream << *iPreviousRadioUser;
+			}
+		else
+			{
+			writeStream.WriteInt8L(EFalse);
+			}
+
+		CleanupStack::PopAndDestroy(&writeStream);
+		}
+
+	CleanupStack::PopAndDestroy(&file);
 	}
 
 // End of File

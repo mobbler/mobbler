@@ -40,11 +40,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "coemain.h"
 #include "mobbler.hrh"
+#include "mobbleraccesspointsettingitem.h"
 #include "mobblersettingitemlist.h"
 #include "mobblersettingitemlistsettings.h"
 #include "mobblersettingitemlistview.h"
 #include "mobblerutility.h"
-#include "mobbleraccesspointsettingitem.h"
 
 CMobblerSettingItemList::CMobblerSettingItemList(CMobblerSettingItemListSettings& aSettings, MEikCommandObserver* aCommandObserver)
 	:iSettings(aSettings), iCommandObserver(aCommandObserver)
@@ -144,7 +144,7 @@ void CMobblerSettingItemList::LoadSettingValuesL(CMobblerSettingItemListSettings
 		readStream >> password;
 
 		 // Ignore KErrEof if these settings are not yet saved in the file
-		TRAP_IGNORE(backlight = readStream.ReadInt16L());
+		TRAP_IGNORE(backlight = readStream.ReadInt8L());
 		TRAP_IGNORE(autoUpdatesOn = readStream.ReadInt8L());
 		TRAP_IGNORE(iapId = readStream.ReadUint32L());
 		TRAP_IGNORE(bufferSize = readStream.ReadUint8L());
@@ -188,7 +188,7 @@ void CMobblerSettingItemList::SaveSettingValuesL()
 		
 		writeStream << iSettings.Username();
 		writeStream << iSettings.Password();
-		writeStream.WriteInt16L(iSettings.Backlight());
+		writeStream.WriteInt8L(iSettings.Backlight());
 		writeStream.WriteInt8L(iSettings.CheckForUpdates());
 		writeStream.WriteUint32L(iSettings.IapID());
 		writeStream.WriteUint8L(iSettings.BufferSize());

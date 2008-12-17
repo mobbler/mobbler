@@ -21,47 +21,26 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-#include <aknappui.h>
-#include <aknnavi.h> 
 #include <aknnavide.h> 
 #include <aknnavilabel.h>
 #include <aknsbasicbackgroundcontrolcontext.h>
-#include <aknscontrolcontext.h>
 #include <aknsdrawutils.h>
-#include <aknsskininstance.h>
-#include <aknsutils.h>
 #include <aknutils.h>
-#include <aknviewappui.h>
-#include <avkon.hrh>
-#include <avkon.rsg>
-#include <barsread.h>
-#include <bitmaptransforms.h>
-#include <ecom/ecom.h>
-#include <eikappui.h>
-#include <eikcmbut.h> 
-#include <eikcmobs.h>
-#include <eikedwin.h>
-#include <eikenv.h>
-#include <eikmenup.h>
-#include <eikseced.h>
-#include <gdi.h>
-#include <gulfont.h>
 #include <icl/imagecodecdata.h>
 #include <mobbler.rsg>
-#include <s32file.h>
 #include <stringloader.h>
 
+#ifdef  __S60_50__
 #include <mobbler/mobblertouchfeedbackinterface.h>
+#endif
 #include "mobbler.hrh"
 #include "mobblerappui.h"
-#include "mobblerbitmap.h"
 #include "mobblermarquee.h"
 #include "mobblerradioplayer.h"
 #include "mobblerstatuscontrol.h"
 #include "mobblerstring.h"
 #include "mobblertimeout.h"
 #include "mobblertrack.h"
-#include "mobblerutility.h"
 
 _LIT(KPngSpeakerLow, "\\resource\\apps\\mobbler\\speaker_low.png");
 _LIT(KPngSpeakerHigh, "\\resource\\apps\\mobbler\\speaker_high.png");
@@ -146,7 +125,7 @@ void CMobblerStatusControl::ConstructL(const TRect& aRect)
 	{
 	// No parent owner, so create an own window
 	CreateWindowL();
-	    
+	
 	// Initialize component array
 	InitComponentArrayL();
 	SetRect(aRect);
@@ -157,24 +136,26 @@ void CMobblerStatusControl::ConstructL(const TRect& aRect)
 	iNaviLabelDecorator = iNaviContainer->CreateNavigationLabelL();
 	iNaviContainer->PushL(*iNaviLabelDecorator);
 	
-    iInterfaceSelector = CRemConInterfaceSelector::NewL();
-    iCoreTarget = CRemConCoreApiTarget::NewL(*iInterfaceSelector, *this);
-    iInterfaceSelector->OpenTargetL();
-    
-    LoadGraphicsL();
-    LoadResourceFileTextL();
-    
-    ReleaseBackBuffer();
-    CreateBackBufferL();
-    
-    iMobblerVolumeTimeout = CMobblerTimeout::NewL(2000000);
-    iMobblerMarquee = CMobblerMarquee::NewL();
+	iInterfaceSelector = CRemConInterfaceSelector::NewL();
+	iCoreTarget = CRemConCoreApiTarget::NewL(*iInterfaceSelector, *this);
+	iInterfaceSelector->OpenTargetL();
+
+	LoadGraphicsL();
+	LoadResourceFileTextL();
+
+	ReleaseBackBuffer();
+	CreateBackBufferL();
+
+	iMobblerVolumeTimeout = CMobblerTimeout::NewL(2000000);
+	iMobblerMarquee = CMobblerMarquee::NewL();
 
 #ifdef _DEBUG
 	iAlbumNameInMarquee = EFalse;
 #endif
 	
+#ifdef  __S60_50__
 	TRAP_IGNORE(iMobblerFeedback = static_cast<CMobblerTouchFeedbackInterface*>(REComSession::CreateImplementationL(KTouchFeedbackImplUID, iDtorIdKey)));	
+#endif
 	}
 
 TInt CMobblerStatusControl::VolumeUpCallBackL(TAny *aSelf)
@@ -227,35 +208,36 @@ void CMobblerStatusControl::LoadGraphicsL()
     
 	// Load the Music Player icon to display when a music player track is playing
 	CFbsBitmap* musicAppIcon(NULL);
-    CFbsBitmap* musicAppIconMask(NULL);
-    AknsUtils::CreateAppIconLC(AknsUtils::SkinInstance(), KMusicAppUID,  EAknsAppIconTypeContext, musicAppIcon, musicAppIconMask);
-    iMobblerBitmapMusicAppIcon = CMobblerBitmap::NewL(*this, musicAppIcon, musicAppIconMask);
-    CleanupStack::Pop(2);
-    
-    // Load the Mobbler icon to display when a music player track is not playing
-    CFbsBitmap* appIcon(NULL);
-    CFbsBitmap* appIconMask(NULL);
-    AknsUtils::CreateAppIconLC(AknsUtils::SkinInstance(), KMobblerUID,  EAknsAppIconTypeContext, appIcon, appIconMask);
-    iMobblerBitmapAppIcon = CMobblerBitmap::NewL(*this, appIcon, appIconMask);
-    CleanupStack::Pop(2);
+	CFbsBitmap* musicAppIconMask(NULL);
+	AknsUtils::CreateAppIconLC(AknsUtils::SkinInstance(), KMusicAppUID,  EAknsAppIconTypeContext, musicAppIcon, musicAppIconMask);
+	iMobblerBitmapMusicAppIcon = CMobblerBitmap::NewL(*this, musicAppIcon, musicAppIconMask);
+	CleanupStack::Pop(2);
+
+	// Load the Mobbler icon to display when a music player track is not playing
+	CFbsBitmap* appIcon(NULL);
+	CFbsBitmap* appIconMask(NULL);
+	AknsUtils::CreateAppIconLC(AknsUtils::SkinInstance(), KMobblerUID,  EAknsAppIconTypeContext, appIcon, appIconMask);
+	iMobblerBitmapAppIcon = CMobblerBitmap::NewL(*this, appIcon, appIconMask);
+	CleanupStack::Pop(2);
 	}
 
 void CMobblerStatusControl::LoadResourceFileTextL()
 	{
 	iResTextScrobbledQueuedFormat = StringLoader::LoadL(R_MOBBLER_SCROBBLED_QUEUED);
-    iResTextOffline = StringLoader::LoadL(R_MOBBLER_IDLE);
-    iResTextOnline = StringLoader::LoadL(R_MOBBLER_IDLE);
-    iResTextArtist = StringLoader::LoadL(R_MOBBLER_ARTIST);
-    iResTextTitle = StringLoader::LoadL(R_MOBBLER_TITLE);
-    iResTextAlbum = StringLoader::LoadL(R_MOBBLER_ALBUM);
-    iResTextStateOnline = StringLoader::LoadL(R_MOBBLER_STATE_ONLINE);
-    iResTextStateOffline = StringLoader::LoadL(R_MOBBLER_STATE_OFFLINE);
-    iResTextStateConnecting = StringLoader::LoadL(R_MOBBLER_STATE_CONNECTING);
-    iResTextStateHandshaking = StringLoader::LoadL(R_MOBBLER_STATE_HANDSHAKING);
-    iResTextStateSelectingStation = StringLoader::LoadL(R_MOBBLER_STATE_SELECTING_STATION);
-    iResTextStateFetchingPlaylist = StringLoader::LoadL(R_MOBBLER_STATE_FETCHING_PLAYLIST);
-    iResTextStateCheckingForUpdates = StringLoader::LoadL(R_MOBBLER_STATE_CHECKING_FOR_UPDATES);
+	iResTextOffline = StringLoader::LoadL(R_MOBBLER_IDLE);
+	iResTextOnline = StringLoader::LoadL(R_MOBBLER_IDLE);
+	iResTextArtist = StringLoader::LoadL(R_MOBBLER_ARTIST);
+	iResTextTitle = StringLoader::LoadL(R_MOBBLER_TITLE);
+	iResTextAlbum = StringLoader::LoadL(R_MOBBLER_ALBUM);
+	iResTextStateOnline = StringLoader::LoadL(R_MOBBLER_STATE_ONLINE);
+	iResTextStateOffline = StringLoader::LoadL(R_MOBBLER_STATE_OFFLINE);
+	iResTextStateConnecting = StringLoader::LoadL(R_MOBBLER_STATE_CONNECTING);
+	iResTextStateHandshaking = StringLoader::LoadL(R_MOBBLER_STATE_HANDSHAKING);
+	iResTextStateSelectingStation = StringLoader::LoadL(R_MOBBLER_STATE_SELECTING_STATION);
+	iResTextStateFetchingPlaylist = StringLoader::LoadL(R_MOBBLER_STATE_FETCHING_PLAYLIST);
+	iResTextStateCheckingForUpdates = StringLoader::LoadL(R_MOBBLER_STATE_CHECKING_FOR_UPDATES);
 	}
+
 void CMobblerStatusControl::SetPositions()
 	{
 	// The height of the text bars
@@ -376,7 +358,7 @@ void CMobblerStatusControl::HandleResourceChange(TInt aType)
 	{
 	TRect rect;
 	if (aType == KEikDynamicLayoutVariantSwitch)
-		{    
+		{
 		AknLayoutUtils::LayoutMetricsRect(AknLayoutUtils::EMainPane, rect);
 		SetRect(rect);
 		}
@@ -419,45 +401,45 @@ void CMobblerStatusControl::SizeChanged()
 
 
 void CMobblerStatusControl::CreateBackBufferL()
-    {
-    // Create back buffer bitmap
-    iBackBuffer = new (ELeave) CFbsBitmap;
-    
-    User::LeaveIfError(iBackBuffer->Create(Size(), iEikonEnv->DefaultDisplayMode()));
-    
-    // Create back buffer graphics context
-    iBackBufferDevice = CFbsBitmapDevice::NewL(iBackBuffer);
-    User::LeaveIfError(iBackBufferDevice->CreateContext(iBackBufferContext));
-    iBackBufferContext->SetPenStyle(CGraphicsContext::ESolidPen);
- 
-    iBackBufferSize = iBackBuffer->SizeInPixels();
-    
-    // Get and set the font to use
-    iMobblerFont = iEikonEnv->AnnotationFont();
-	iBackBufferContext->UseFont(iMobblerFont);	
-    }
+	{
+	// Create back buffer bitmap
+	iBackBuffer = new (ELeave) CFbsBitmap;
+
+	User::LeaveIfError(iBackBuffer->Create(Size(), iEikonEnv->DefaultDisplayMode()));
+
+	// Create back buffer graphics context
+	iBackBufferDevice = CFbsBitmapDevice::NewL(iBackBuffer);
+	User::LeaveIfError(iBackBufferDevice->CreateContext(iBackBufferContext));
+	iBackBufferContext->SetPenStyle(CGraphicsContext::ESolidPen);
+
+	iBackBufferSize = iBackBuffer->SizeInPixels();
+
+	// Get and set the font to use
+	iMobblerFont = iEikonEnv->AnnotationFont();
+	iBackBufferContext->UseFont(iMobblerFont);
+	}
  
 void CMobblerStatusControl::ReleaseBackBuffer()
-    {    
-    if (iMobblerFont)
-    	{
-    	iBackBufferContext->DiscardFont();
-    	//iBackBufferDevice->ReleaseFont(iMobblerFont);
-    	iMobblerFont = NULL;
-    	}
-    
-	// Release double buffering classes
-    delete iBackBufferContext;
-    iBackBufferContext = NULL;
-    
-    delete iBackBufferDevice;
-    iBackBufferDevice = NULL;
+	{
+	if (iMobblerFont)
+		{
+		iBackBufferContext->DiscardFont();
+		//iBackBufferDevice->ReleaseFont(iMobblerFont);
+		iMobblerFont = NULL;
+		}
 
-    delete iBackBuffer;
-    iBackBuffer = NULL;
-        
-    iBackBufferSize = TSize(0, 0);
-    }
+	// Release double buffering classes
+	delete iBackBufferContext;
+	iBackBufferContext = NULL;
+
+	delete iBackBufferDevice;
+	iBackBufferDevice = NULL;
+
+	delete iBackBuffer;
+	iBackBuffer = NULL;
+
+	iBackBufferSize = TSize(0, 0);
+	}
 
 
 void CMobblerStatusControl::BitmapLoadedL(const CMobblerBitmap* /*aMobblerBitmap*/)
@@ -515,11 +497,13 @@ CMobblerStatusControl::~CMobblerStatusControl()
 	delete iVolumeUpTimer;
 	delete iVolumeDownTimer;
 	
+#ifdef  __S60_50__
 	if (iMobblerFeedback)
 		{
 		delete iMobblerFeedback;
 		REComSession::DestroyedImplementation(iDtorIdKey);
 		}
+#endif
 	}
 
 void CMobblerStatusControl::FormatTime(TDes& aString, TTimeIntervalSeconds aSeconds, TTimeIntervalSeconds aTotalSeconds)
@@ -662,8 +646,8 @@ void CMobblerStatusControl::Draw(const TRect& /*aRect*/) const
 	
 	
 	TRgb textColor; // text color when not highlighted
-    AknsUtils::GetCachedColor(skin, textColor, KAknsIIDQsnTextColors, EAknsCIQsnTextColorsCG6);
-    iBackBufferContext->SetPenColor(textColor);
+	AknsUtils::GetCachedColor(skin, textColor, KAknsIIDQsnTextColors, EAknsCIQsnTextColorsCG6);
+	iBackBufferContext->SetPenColor(textColor);
 	
 	// Draw the album art
     //DrawRect(iRectAlbumArt, KRgbWhite, KRgbWhite);
@@ -835,88 +819,88 @@ void CMobblerStatusControl::MrccatoCommand(TRemConCoreApiOperationId aOperationI
 	
 	switch (aOperationId)
 		{
-        case ERemConCoreApiStop:
-            {
-            if (aButtonAct == ERemConCoreApiButtonClick)
-                {
-                TKeyEvent event;
-                event.iCode = EKeyDevice3;
-                OfferKeyEventL(event, EEventNull);
-                }
-            iCoreTarget->StopResponse(status, KErrNone);
-            User::WaitForRequest(status);
-            break;
-            }
-        case ERemConCoreApiForward:
-            {
-            if (aButtonAct == ERemConCoreApiButtonClick)
-                {
-                TKeyEvent event;
-                event.iCode = EKeyRightArrow;
-                OfferKeyEventL(event, EEventNull);
-                }
-            iCoreTarget->ForwardResponse(status, KErrNone);
-            User::WaitForRequest(status);
-            break;
-            }
-        case ERemConCoreApiVolumeUp:
-            {   
-            switch(aButtonAct)
-	            {
-            	case ERemConCoreApiButtonClick:
-            		{
-            		TKeyEvent event;
-            		event.iCode = EKeyIncVolume;
-            		OfferKeyEventL(event, EEventNull);
-            		break;
-            		}
+		case ERemConCoreApiStop:
+			{
+			if (aButtonAct == ERemConCoreApiButtonClick)
+				{
+				TKeyEvent event;
+				event.iCode = EKeyDevice3;
+				OfferKeyEventL(event, EEventNull);
+				}
+			iCoreTarget->StopResponse(status, KErrNone);
+			User::WaitForRequest(status);
+			break;
+			}
+		case ERemConCoreApiForward:
+			{
+			if (aButtonAct == ERemConCoreApiButtonClick)
+				{
+				TKeyEvent event;
+				event.iCode = EKeyRightArrow;
+				OfferKeyEventL(event, EEventNull);
+				}
+			iCoreTarget->ForwardResponse(status, KErrNone);
+			User::WaitForRequest(status);
+			break;
+			}
+		case ERemConCoreApiVolumeUp:
+			{   
+			switch(aButtonAct)
+				{
+				case ERemConCoreApiButtonClick:
+					{
+					TKeyEvent event;
+					event.iCode = EKeyIncVolume;
+					OfferKeyEventL(event, EEventNull);
+					break;
+					}
 
-            	case ERemConCoreApiButtonPress:
-            		{
-            		TKeyEvent event;
-            		event.iCode = EKeyIncVolume;
-            		OfferKeyEventL(event, EEventNull);
+				case ERemConCoreApiButtonPress:
+				{
+				TKeyEvent event;
+				event.iCode = EKeyIncVolume;
+				OfferKeyEventL(event, EEventNull);
 
-            		TTimeIntervalMicroSeconds32 repeatDelay;
-            		TTimeIntervalMicroSeconds32 repeatInterval;
-            		iEikonEnv->WsSession().GetKeyboardRepeatRate(repeatDelay, repeatInterval);
-            		
-            		delete iVolumeUpTimer;
-            		iVolumeUpTimer = CPeriodic::New(CActive::EPriorityStandard);
-            		iVolumeUpTimer->Start(repeatDelay, repeatInterval, iVolumeUpCallBack);
-            		break;
-            		}
+					TTimeIntervalMicroSeconds32 repeatDelay;
+					TTimeIntervalMicroSeconds32 repeatInterval;
+					iEikonEnv->WsSession().GetKeyboardRepeatRate(repeatDelay, repeatInterval);
+					
+					delete iVolumeUpTimer;
+					iVolumeUpTimer = CPeriodic::New(CActive::EPriorityStandard);
+					iVolumeUpTimer->Start(repeatDelay, repeatInterval, iVolumeUpCallBack);
+					break;
+					}
 
-            	case ERemConCoreApiButtonRelease:
-           			delete iVolumeUpTimer;
-            		iVolumeUpTimer = NULL;
-            		break;
+				case ERemConCoreApiButtonRelease:
+					delete iVolumeUpTimer;
+					iVolumeUpTimer = NULL;
+					break;
 
-            	default:
-            		break;
-            	}
-            
-            iCoreTarget->VolumeUpResponse(status, KErrNone);
-            User::WaitForRequest(status);   
-            break;
-            }       
-        case ERemConCoreApiVolumeDown:
-            {
-            switch(aButtonAct)
-            	{
-            	case ERemConCoreApiButtonClick:
-            		{
-            		TKeyEvent event;
-            		event.iCode = EKeyDecVolume;
-            		OfferKeyEventL(event, EEventNull);
-            		break;
-            		}
+				default:
+					break;
+				}
+			
+			iCoreTarget->VolumeUpResponse(status, KErrNone);
+			User::WaitForRequest(status);   
+			break;
+			}   
+		case ERemConCoreApiVolumeDown:
+			{
+			switch(aButtonAct)
+				{
+				case ERemConCoreApiButtonClick:
+					{
+					TKeyEvent event;
+					event.iCode = EKeyDecVolume;
+					OfferKeyEventL(event, EEventNull);
+					break;
+					}
 
-            	case ERemConCoreApiButtonPress:
-            		{
-            		TKeyEvent event;
-            		event.iCode = EKeyDecVolume;
-            		OfferKeyEventL(event, EEventNull);
+				case ERemConCoreApiButtonPress:
+				{
+				TKeyEvent event;
+				event.iCode = EKeyDecVolume;
+				OfferKeyEventL(event, EEventNull);
 
 					TTimeIntervalMicroSeconds32 repeatDelay;
 					TTimeIntervalMicroSeconds32 repeatInterval;
@@ -926,23 +910,23 @@ void CMobblerStatusControl::MrccatoCommand(TRemConCoreApiOperationId aOperationI
 					iVolumeDownTimer = CPeriodic::New(CActive::EPriorityStandard);
 					iVolumeDownTimer->Start(TTimeIntervalMicroSeconds32(repeatDelay), TTimeIntervalMicroSeconds32(repeatInterval), iVolumeDownCallBack);
 					break;
-            		}
+					}
 
-            	case ERemConCoreApiButtonRelease:
-            		delete iVolumeDownTimer;
-            		iVolumeDownTimer = NULL;
-            		break;
+				case ERemConCoreApiButtonRelease:
+					delete iVolumeDownTimer;
+					iVolumeDownTimer = NULL;
+					break;
 
-            	default:
-            		break;
-            	}
-            
-            iCoreTarget->VolumeDownResponse(status, KErrNone);
-            User::WaitForRequest(status);   
-            break;
-            }
-        default:
-            break;
+				default:
+					break;
+				}
+			
+			iCoreTarget->VolumeDownResponse(status, KErrNone);
+			User::WaitForRequest(status);   
+			break;
+			}
+		default:
+			break;
 		}
 	}
 
@@ -1053,59 +1037,60 @@ void CMobblerStatusControl::HandlePointerEventL(const TPointerEvent& aPointerEve
 	TRect skipRect(iPointSkip, iControlSize);
 	
 	TKeyEvent event;
-    event.iCode = EKeyNull;
+	event.iCode = EKeyNull;
 	
 	switch( aPointerEvent.iType )
-        {
-        case TPointerEvent::EButton1Down:
-        	
-        	if (buyRect.Contains(aPointerEvent.iPosition))
-        		event.iCode = EKeyLeftArrow;
-        	else if (loveRect.Contains(aPointerEvent.iPosition))
-        		event.iCode = EKeyUpArrow;
-        	else if (playStopRect.Contains(aPointerEvent.iPosition))
-        		event.iCode = EKeyDevice3;
-        	else if (banRect.Contains(aPointerEvent.iPosition))
-        		event.iCode = EKeyDownArrow;
-        	else if (skipRect.Contains(aPointerEvent.iPosition))
-        		event.iCode = EKeyRightArrow;
-        	
-        	if (event.iCode != EKeyNull)
-        		{
-        		if (iMobblerFeedback)
-        			{
-        			iMobblerFeedback->InstantFeedback(ETouchFeedbackBasic);
-        			}
-        		}
-        	
-            break;
-        case TPointerEvent::EButton1Up:
-        	
-        	if (buyRect.Contains(aPointerEvent.iPosition) && buyRect.Contains(iLastPointerEvent.iPosition))
-        		event.iCode = EKeyLeftArrow;
-        	else if (loveRect.Contains(aPointerEvent.iPosition) && loveRect.Contains(iLastPointerEvent.iPosition))
-        		event.iCode = EKeyUpArrow;
-        	else if (playStopRect.Contains(aPointerEvent.iPosition) && playStopRect.Contains(iLastPointerEvent.iPosition))
-        		event.iCode = EKeyDevice3;
-        	else if (banRect.Contains(aPointerEvent.iPosition) && banRect.Contains(iLastPointerEvent.iPosition))
-        		event.iCode = EKeyDownArrow;
-        	else if (skipRect.Contains(aPointerEvent.iPosition) && skipRect.Contains(iLastPointerEvent.iPosition))
-        		event.iCode = EKeyRightArrow;
-        	
-        	if (event.iCode != EKeyNull)
-        		{
-        		OfferKeyEventL(event, EEventNull);
-        		}
-        	
-        	break;
-        default:
-            break;
-        }
+		{
+		case TPointerEvent::EButton1Down:
+			
+			if (buyRect.Contains(aPointerEvent.iPosition))
+				event.iCode = EKeyLeftArrow;
+			else if (loveRect.Contains(aPointerEvent.iPosition))
+				event.iCode = EKeyUpArrow;
+			else if (playStopRect.Contains(aPointerEvent.iPosition))
+				event.iCode = EKeyDevice3;
+			else if (banRect.Contains(aPointerEvent.iPosition))
+				event.iCode = EKeyDownArrow;
+			else if (skipRect.Contains(aPointerEvent.iPosition))
+				event.iCode = EKeyRightArrow;
+			
+			if (event.iCode != EKeyNull)
+				{
+				if (iMobblerFeedback)
+					{
+#ifdef  __S60_50__
+					iMobblerFeedback->InstantFeedback(ETouchFeedbackBasic);
+#endif
+					}
+				}
+			
+			break;
+		case TPointerEvent::EButton1Up:
+			
+			if (buyRect.Contains(aPointerEvent.iPosition) && buyRect.Contains(iLastPointerEvent.iPosition))
+				event.iCode = EKeyLeftArrow;
+			else if (loveRect.Contains(aPointerEvent.iPosition) && loveRect.Contains(iLastPointerEvent.iPosition))
+				event.iCode = EKeyUpArrow;
+			else if (playStopRect.Contains(aPointerEvent.iPosition) && playStopRect.Contains(iLastPointerEvent.iPosition))
+				event.iCode = EKeyDevice3;
+			else if (banRect.Contains(aPointerEvent.iPosition) && banRect.Contains(iLastPointerEvent.iPosition))
+				event.iCode = EKeyDownArrow;
+			else if (skipRect.Contains(aPointerEvent.iPosition) && skipRect.Contains(iLastPointerEvent.iPosition))
+				event.iCode = EKeyRightArrow;
+			
+			if (event.iCode != EKeyNull)
+				{
+				OfferKeyEventL(event, EEventNull);
+				}
+			
+			break;
+		default:
+			break;
+		}
 	
 	iLastPointerEvent = aPointerEvent;
 	
 	CCoeControl::HandlePointerEventL(aPointerEvent);
 	}
 
-
-				
+// End of file
