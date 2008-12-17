@@ -103,7 +103,9 @@ void CMobblerTrack::Release()
 TBool CMobblerTrack::operator==(const CMobblerTrack& aTrack) const
 	{
 	// check that the artist, album, and track name are the same
-	return (iArtist->String().Compare(aTrack.iArtist->String())) && (iTitle->String().Compare(aTrack.iTitle->String())) && (iAlbum->String().Compare(aTrack.iAlbum->String()));
+	return (iArtist->String().Compare(aTrack.iArtist->String()) == 0) && 
+		   (iTitle->String().Compare(aTrack.iTitle->String()) == 0) && 
+		   (iAlbum->String().Compare(aTrack.iAlbum->String()) == 0);
 	}
 
 void CMobblerTrack::InternalizeL(RReadStream& aReadStream)
