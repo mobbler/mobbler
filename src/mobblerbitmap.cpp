@@ -105,7 +105,10 @@ CFbsBitmap* CMobblerBitmap::Mask() const
 
 void CMobblerBitmap::SetSize(TSize aSize)
 	{
-	AknIconUtils::SetSize(iBitmap, aSize);
+	if (this)
+		{
+		AknIconUtils::SetSize(iBitmap, aSize);
+		}
 	}
 
 TSize CMobblerBitmap::SizeInPixels() const
