@@ -216,6 +216,14 @@ void CMobblerLastFMConnection::LoadSettingsL()
 		
 		SetModeL(static_cast<TMode>(mode));
 		}
+	else
+		{
+		// we were unable to find a file so set some default values
+		iNextUpdateCheck.UniversalTime();
+		iNextUpdateCheck += KUpdateCheckInterval;
+		
+		iCheckForUpdates = ETrue;
+		}
 		
 	CleanupStack::PopAndDestroy(&file);
 	}

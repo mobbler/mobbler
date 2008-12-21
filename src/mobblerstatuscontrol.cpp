@@ -32,7 +32,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #ifdef  __S60_50__
 #include <mobbler/mobblertouchfeedbackinterface.h>
+#include <touchfeedback.h>
 #endif
+
 #include "mobbler.hrh"
 #include "mobblerappui.h"
 #include "mobblermarquee.h"
@@ -123,6 +125,10 @@ CMobblerStatusControl::CMobblerStatusControl(const CMobblerAppUi& aAppUi)
 
 void CMobblerStatusControl::ConstructL(const TRect& aRect)
 	{
+#ifdef  __S60_50__
+	TRAP_IGNORE(iMobblerFeedback = static_cast<CMobblerTouchFeedbackInterface*>(REComSession::CreateImplementationL(KTouchFeedbackImplUID, iDtorIdKey)));	
+#endif
+	
 	// No parent owner, so create an own window
 	CreateWindowL();
 	
@@ -151,10 +157,6 @@ void CMobblerStatusControl::ConstructL(const TRect& aRect)
 
 #ifdef _DEBUG
 	iAlbumNameInMarquee = EFalse;
-#endif
-	
-#ifdef  __S60_50__
-	TRAP_IGNORE(iMobblerFeedback = static_cast<CMobblerTouchFeedbackInterface*>(REComSession::CreateImplementationL(KTouchFeedbackImplUID, iDtorIdKey)));	
 #endif
 	}
 
@@ -207,18 +209,10 @@ void CMobblerStatusControl::LoadGraphicsL()
 	iMobblerBitmapTrackIcon = CMobblerBitmap::NewL(*this, KPngTrackIcon, KImageTypePNGUid);
     
 	// Load the Music Player icon to display when a music player track is playing
-	CFbsBitmap* musicAppIcon(NULL);
-	CFbsBitmap* musicAppIconMask(NULL);
-	AknsUtils::CreateAppIconLC(AknsUtils::SkinInstance(), KMusicAppUID,  EAknsAppIconTypeContext, musicAppIcon, musicAppIconMask);
-	iMobblerBitmapMusicAppIcon = CMobblerBitmap::NewL(*this, musicAppIcon, musicAppIconMask);
-	CleanupStack::Pop(2);
-
+	iMobblerBitmapMusicAppIcon = CMobblerBitmap::NewL(KMusicAppUID);
+	
 	// Load the Mobbler icon to display when a music player track is not playing
-	CFbsBitmap* appIcon(NULL);
-	CFbsBitmap* appIconMask(NULL);
-	AknsUtils::CreateAppIconLC(AknsUtils::SkinInstance(), KMobblerUID,  EAknsAppIconTypeContext, appIcon, appIconMask);
-	iMobblerBitmapAppIcon = CMobblerBitmap::NewL(*this, appIcon, appIconMask);
-	CleanupStack::Pop(2);
+	iMobblerBitmapAppIcon = CMobblerBitmap::NewL(KMobblerUID);
 	}
 
 void CMobblerStatusControl::LoadResourceFileTextL()
@@ -273,16 +267,16 @@ void CMobblerStatusControl::SetPositions()
 			{
 			// 3rd edition
 			TInt albumArtDimension = Rect().Width() - iMobblerBitmapLastFM->SizeInPixels().iWidth - ((3 * KTextRectHeight) / 2);
-					
+			
+			iControlSize = TSize(27, 27);
+			
 			iRectAlbumArt = 			TRect(TPoint(KTextRectHeight / 2, KTextRectHeight / 2), TSize(albumArtDimension, albumArtDimension));
-			TPoint controlsTopLeft = 	TPoint(Rect().Width() - iMobblerBitmapLastFM->SizeInPixels().iWidth - (KTextRectHeight / 2), iRectAlbumArt.iBr.iY - (3 * iMobblerBitmapPound->SizeInPixels().iHeight) - 4);
-			iPointBuy =					TPoint(controlsTopLeft.iX + (0 * iMobblerBitmapPound->SizeInPixels().iWidth), controlsTopLeft.iY + (1 * iMobblerBitmapPound->SizeInPixels().iHeight));
-			iPointLove =				TPoint(controlsTopLeft.iX + (1 * iMobblerBitmapPound->SizeInPixels().iWidth), controlsTopLeft.iY + (0 * iMobblerBitmapPound->SizeInPixels().iHeight));
-			iPointBan =					TPoint(controlsTopLeft.iX + (1 * iMobblerBitmapPound->SizeInPixels().iWidth), controlsTopLeft.iY + (2 * iMobblerBitmapPound->SizeInPixels().iHeight));
-			iPointSkip =				TPoint(controlsTopLeft.iX + (2 * iMobblerBitmapPound->SizeInPixels().iWidth), controlsTopLeft.iY + (1 * iMobblerBitmapPound->SizeInPixels().iHeight));
-			iPointPlayStop =			TPoint(controlsTopLeft.iX + (1 * iMobblerBitmapPlay->SizeInPixels().iWidth), controlsTopLeft.iY + (1 * iMobblerBitmapPlay->SizeInPixels().iHeight));
-
-			iControlSize = iMobblerBitmapPound->SizeInPixels();
+			TPoint controlsTopLeft = 	TPoint(Rect().Width() - iMobblerBitmapLastFM->SizeInPixels().iWidth - (KTextRectHeight / 2), iRectAlbumArt.iBr.iY - (3 * iControlSize.iHeight) - 4);
+			iPointBuy =					TPoint(controlsTopLeft.iX + (0 * iControlSize.iWidth), controlsTopLeft.iY + (1 * iControlSize.iHeight));
+			iPointLove =				TPoint(controlsTopLeft.iX + (1 * iControlSize.iWidth), controlsTopLeft.iY + (0 * iControlSize.iHeight));
+			iPointBan =					TPoint(controlsTopLeft.iX + (1 * iControlSize.iWidth), controlsTopLeft.iY + (2 * iControlSize.iHeight));
+			iPointSkip =				TPoint(controlsTopLeft.iX + (2 * iControlSize.iWidth), controlsTopLeft.iY + (1 * iControlSize.iHeight));
+			iPointPlayStop =			TPoint(controlsTopLeft.iX + (1 * iControlSize.iWidth), controlsTopLeft.iY + (1 * iControlSize.iHeight));
 			
 			iPointLastFM = 				TPoint(Rect().Width() - iMobblerBitmapLastFM->SizeInPixels().iWidth -  (KTextRectHeight / 2), iRectAlbumArt.iTl.iY + 4);
 					
@@ -343,15 +337,9 @@ void CMobblerStatusControl::SetPositions()
 	
 	// Set the size of the application icons to be the same as the rect we will draw them to.
 	// They don't seem to like being drawn at a different size
-	if (iMobblerBitmapMusicAppIcon)
-		{
-		AknIconUtils::SetSize(iMobblerBitmapMusicAppIcon->Bitmap(), iRectAlbumArt.Size(), EAspectRatioNotPreserved);
-		}
 	
-	if (iMobblerBitmapAppIcon)
-		{
-		AknIconUtils::SetSize(iMobblerBitmapAppIcon->Bitmap(), iRectAlbumArt.Size(), EAspectRatioNotPreserved);
-		}
+	iMobblerBitmapMusicAppIcon->SetSize(iRectAlbumArt.Size());
+	iMobblerBitmapAppIcon->SetSize(iRectAlbumArt.Size());
 	}
 
 void CMobblerStatusControl::HandleResourceChange(TInt aType)

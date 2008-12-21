@@ -26,7 +26,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <e32base.h>
 #include <mobbler\mobblertouchfeedbackinterface.h>
+
+#ifdef  __S60_50__
 #include <touchfeedback.h>
+#endif
 
 class CMobblerTouchFeedback : public CMobblerTouchFeedbackInterface
 	{
@@ -37,12 +40,14 @@ public:
 private:
 	CMobblerTouchFeedback();
 	void ConstructL();
-	
+
 private: // from CMobblerTouchFeedbackInterface
-	void InstantFeedback(TTouchLogicalFeedback aType);
-	
+	void InstantFeedback(TInt aType);
+
 private:
+#ifdef  __S60_50__
 	MTouchFeedback* iTouchFeedback;
+#endif
 	};
 
 #endif // __MOBBLERTOUCHFEEDBACK_H__

@@ -39,8 +39,9 @@ public:
 class CMobblerBitmap : public CActive
 	{
 public:
-
-	static CMobblerBitmap* NewL(MMobblerBitmapObserver& aObserver, CFbsBitmap* iBitmap, CFbsBitmap* iMask);
+	
+	static CMobblerBitmap* NewL(const TDesC& aMifFileName, TInt aBitmapIndex, TInt iMaskIndex);
+	static CMobblerBitmap* NewL(TUid aAppUid);
 	static CMobblerBitmap* NewL(MMobblerBitmapObserver& aObserver, const TDesC& aFileName, const TUid aImageType = KNullUid);
 	static CMobblerBitmap* NewL(MMobblerBitmapObserver& aObserver, const TDesC8& aData, const TUid aImageType = KNullUid);
 	~CMobblerBitmap();
@@ -48,21 +49,23 @@ public:
 	CFbsBitmap* Bitmap() const;
 	CFbsBitmap* Mask() const;
 	
+	void SetSize(TSize aSize);
 	TSize SizeInPixels() const;
 	
 private:
 	void ConstructL(const TDesC& aFileName, const TUid aFileUid);
 	void ConstructL(const TDesC8& aData, const TUid aFileUid);
-	void ConstructL();
-	CMobblerBitmap(MMobblerBitmapObserver& aObserver);
-	CMobblerBitmap(MMobblerBitmapObserver& aObserver, CFbsBitmap* iBitmap, CFbsBitmap* iMask);
+	void ConstructL(TUid aAppUid);
+	void ConstructL(const TDesC& aMifFileName, TInt aBitmapIndex, TInt iMaskIndex);
+	
+	CMobblerBitmap(MMobblerBitmapObserver* aObserver);
 	
 private:
 	void RunL();
 	void DoCancel();
 	
 private:
-	MMobblerBitmapObserver& iObserver;
+	MMobblerBitmapObserver* iObserver;
 	
 	TBool iBitmapLoaded;
 	CImageDecoder* iImageDecoder;

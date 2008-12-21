@@ -24,12 +24,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #ifndef __MOBBLERTOUCHFEEDBACKINTERFACE_H__
 #define __MOBBLERTOUCHFEEDBACKINTERFACE_H__
 
-#include <touchfeedback.h>
-
 class CMobblerTouchFeedbackInterface : public CBase
 	{
 public:
-	virtual void InstantFeedback(TTouchLogicalFeedback aType) = 0;
+	virtual void InstantFeedback(TInt aType) = 0;
 	};
 
 #endif // __MOBBLERTOUCHFEEDBACKINTERFACE_H__

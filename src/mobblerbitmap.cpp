@@ -23,20 +23,32 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "mobblerbitmap.h"
 
+#include <akniconutils.h>
+#include <aknutils.h>
+#include <aknsutils.h>
 #include <imageconversion.h>
 
-CMobblerBitmap* CMobblerBitmap::NewL(MMobblerBitmapObserver& aObserver, CFbsBitmap* aBitmap, CFbsBitmap* aMask)
+CMobblerBitmap* CMobblerBitmap::NewL(const TDesC& aMifFileName, TInt aBitmapIndex, TInt iMaskIndex)
 	{
-	CMobblerBitmap* self = new(ELeave) CMobblerBitmap(aObserver, aBitmap, aMask);
+	CMobblerBitmap* self = new(ELeave) CMobblerBitmap(NULL);
 	CleanupStack::PushL(self);
-	self->ConstructL();
+	self->ConstructL(aMifFileName, aBitmapIndex, iMaskIndex);
+	CleanupStack::Pop(self);
+	return self;
+	}
+
+CMobblerBitmap* CMobblerBitmap::NewL(TUid aAppUid)
+	{
+	CMobblerBitmap* self = new(ELeave) CMobblerBitmap(NULL);
+	CleanupStack::PushL(self);
+	self->ConstructL(aAppUid);
 	CleanupStack::Pop(self);
 	return self;
 	}
 
 CMobblerBitmap* CMobblerBitmap::NewL(MMobblerBitmapObserver& aObserver, const TDesC& aFileName, const TUid aFileUid)
 	{
-	CMobblerBitmap* self = new(ELeave) CMobblerBitmap(aObserver);
+	CMobblerBitmap* self = new(ELeave) CMobblerBitmap(&aObserver);
 	CleanupStack::PushL(self);
 	self->ConstructL(aFileName, aFileUid);
 	CleanupStack::Pop(self);
@@ -45,20 +57,14 @@ CMobblerBitmap* CMobblerBitmap::NewL(MMobblerBitmapObserver& aObserver, const TD
 
 CMobblerBitmap* CMobblerBitmap::NewL(MMobblerBitmapObserver& aObserver, const TDesC8& aData, const TUid aFileUid)
 	{
-	CMobblerBitmap* self = new(ELeave) CMobblerBitmap(aObserver);
+	CMobblerBitmap* self = new(ELeave) CMobblerBitmap(&aObserver);
 	CleanupStack::PushL(self);
 	self->ConstructL(aData, aFileUid);
 	CleanupStack::Pop(self);
 	return self;
 	}
 
-CMobblerBitmap::CMobblerBitmap(MMobblerBitmapObserver& aObserver, CFbsBitmap* aBitmap, CFbsBitmap* aMask)
-	:CActive(CActive::EPriorityStandard), iObserver(aObserver), iBitmapLoaded(ETrue), iBitmap(aBitmap), iMask(aMask)
-	{
-	//CActiveScheduler::Add(this);
-	}
-
-CMobblerBitmap::CMobblerBitmap(MMobblerBitmapObserver& aObserver)
+CMobblerBitmap::CMobblerBitmap(MMobblerBitmapObserver* aObserver)
 	:CActive(CActive::EPriorityStandard), iObserver(aObserver)
 	{
 	CActiveScheduler::Add(this);
@@ -95,6 +101,11 @@ CFbsBitmap* CMobblerBitmap::Mask() const
 		}
 	
 	return mask;
+	}
+
+void CMobblerBitmap::SetSize(TSize aSize)
+	{
+	AknIconUtils::SetSize(iBitmap, aSize);
 	}
 
 TSize CMobblerBitmap::SizeInPixels() const
@@ -164,9 +175,25 @@ void CMobblerBitmap::ConstructL(const TDesC8& aData, const TUid aFileUid)
 
 	SetActive();
 	}
-	
-void CMobblerBitmap::ConstructL()
+
+void CMobblerBitmap::ConstructL(TUid aAppUid)
 	{
+	AknsUtils::CreateAppIconLC(AknsUtils::SkinInstance(), aAppUid,  EAknsAppIconTypeContext, iBitmap, iMask);
+	CleanupStack::Pop(2);
+	iBitmapLoaded = ETrue;
+	}
+	
+void CMobblerBitmap::ConstructL(const TDesC& aMifFileName, TInt aBitmapIndex, TInt iMaskIndex)
+	{
+	TParse parse;
+	TFileName mifFileName;
+	TFileName appFullName = RProcess().FileName();
+	parse.Set(appFullName, NULL, NULL);
+	mifFileName.Copy(parse.Drive());
+	mifFileName.Append(aMifFileName);	
+	
+	AknIconUtils::CreateIconL(iBitmap, iMask, mifFileName, aBitmapIndex, iMaskIndex);
+	iBitmapLoaded = ETrue;
 	}
 
 void CMobblerBitmap::RunL()
@@ -177,7 +204,10 @@ void CMobblerBitmap::RunL()
 	if (iStatus.Int() == KErrNone)
 		{
 		iBitmapLoaded = ETrue;
-		iObserver.BitmapLoadedL(this);
+		if (iObserver)
+			{
+			iObserver->BitmapLoadedL(this);
+			}
 		}
 	}
 

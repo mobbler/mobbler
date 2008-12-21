@@ -50,16 +50,22 @@ CMobblerTouchFeedback::CMobblerTouchFeedback()
 	
 void CMobblerTouchFeedback::ConstructL()
 	{
+#ifdef  __S60_50__
 	iTouchFeedback = MTouchFeedback::Instance();
 	iTouchFeedback->SetFeedbackEnabledForThisApp(ETrue);
+#else
+	User::Leave(KErrNotSupported);
+#endif
 	}
 	
 CMobblerTouchFeedback::~CMobblerTouchFeedback()
 	{
 	}
 
-void CMobblerTouchFeedback::InstantFeedback(TTouchLogicalFeedback aType)
+void CMobblerTouchFeedback::InstantFeedback(TInt aType)
 	{
-	iTouchFeedback->InstantFeedback(aType);
+#ifdef  __S60_50__
+	iTouchFeedback->InstantFeedback(static_cast<TTouchLogicalFeedback>(aType));
+#endif
 	}
 
