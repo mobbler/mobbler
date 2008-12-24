@@ -29,13 +29,18 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "mobblerincomingcallmonitorobserver.h"
 #include "mobblerlastfmconnection.h"
+#include "mobblershareddata.h"
+#include "mobblerlastfmconnection.h"
+#include "mobblerlastfmconnection.h"
 
 class CDesC8Array;
 class CMobblerIncomingCallMonitor;
 class CMobblerRadioPlaylist;
 class CMobblerRadioPlaylistParser;
 class CMobblerString;
-class CMobblerTrack;
+class CMobblerRadioPlaylistParser;
+class CAudioEqualizerUtility;
+class CMobblerAudioControl;
 
 class MMobblerRadioPlayer
 	{
@@ -61,13 +66,16 @@ public:
 	TInt StartL(CMobblerLastFMConnection::TRadioStation aRadioStation, const TDesC8& aRadioText);
 	
 	CMobblerTrack* CurrentTrack();
-	
+
 	void NextTrackL();
 	void VolumeUp();
 	void VolumeDown();
-	
+
 	TInt Volume() const;
 	TInt MaxVolume() const;
+	
+	void SetEqualizer(TInt aIndex);
+	void EmptyTrashCan();
 	
 	void SetBufferSize(TTimeIntervalSeconds aBufferSize);
 	
@@ -80,6 +88,7 @@ public:
 private:
 	void RunL();
 	void DoCancel();
+	static TInt CheckForEndOfTrack(TAny* aRef);
 	
 private:
 	CMobblerRadioPlayer(CMobblerLastFMConnection& aSubmitter, TTimeIntervalSeconds aBufferSize);
@@ -106,8 +115,7 @@ private:
 	void HandleIncomingCallL(TPSTelephonyCallState aPSTelephonyCallState);
 
 private:
-	RPointerArray<HBufC8> iPreBuffer;
-	RPointerArray<HBufC8> iWrittenBuffer;
+	RPointerArray<HBufC8> iTrashCan;
 
 	TBool iOpen;
 	TBool iPlaying;
@@ -118,15 +126,21 @@ private:
 	TTimeIntervalSeconds iBufferSize; 
 	TInt iBufferOffset;
 
-	CMdaAudioOutputStream* iMdaAudioOutputStream;
-	TMdaAudioDataSettings iMdaAudioDataSettings;
-
 	TInt iCurrentTrack;
 	CMobblerRadioPlaylist* iPlaylist;
 	
 	CMobblerLastFMConnection& iLastFMConnection;
 	
 	CMobblerIncomingCallMonitor* iIncomingCallMonitor;
+	
+	CPeriodic* iTimer;
+	RMutex iMutex;
+	
+	TBool iGotoNextTrack;
+	
+	TInt iEqualizerIndex;
+
+	CMobblerAudioControl* iAudio;
 	};
 
 #endif // __MOBBLERRADIOPLAYER_H__

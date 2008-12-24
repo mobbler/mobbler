@@ -22,13 +22,20 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
 #include "mobblerappui.h"
+#include "mobbleraudiothread.h"
+#include "mobbleraudiocontrol.h"
 #include "mobblerincomingcallmonitor.h"
+#include "mobblerlastfmconnection.h"
 #include "mobblerradioplayer.h"
 #include "mobblerradioplaylist.h"
 #include "mobblertrack.h"
+#include "mobblerutility.h"
 #include <mobbler.rsg>
 
 const TInt KBufferSizeInPackets(32);
+const TInt KTimerDuration(250000); // 1/4 second
+const TInt KDefaultVolume(5);
+const TInt KEqualizerOff(-1);
 
 CMobblerRadioPlayer* CMobblerRadioPlayer::NewL(CMobblerLastFMConnection& aSubmitter, TTimeIntervalSeconds aBufferSize)
 	{
@@ -47,44 +54,51 @@ CMobblerRadioPlayer::CMobblerRadioPlayer(CMobblerLastFMConnection& aLastFMConnec
 
 void CMobblerRadioPlayer::ConstructL()
 	{
-	iMdaAudioOutputStream = CMdaAudioOutputStream::NewL(*this, EMdaPriorityMax, EMdaPriorityPreferenceTimeAndQuality);
-	iMdaAudioOutputStream->Open(&iMdaAudioDataSettings);
-	
-	iIncomingCallMonitor = CMobblerIncomingCallMonitor::NewL(*this);
+	iTimer = CPeriodic::NewL(CActive::EPriorityLow);
+	User::LeaveIfError(iMutex.CreateLocal());
+	TCallBack callBack(CheckForEndOfTrack, this);
+	iTimer->Start(KTimerDuration, KTimerDuration, callBack);
+	iAudio = CMobblerAudioControl::NewL(this);
+	iAudio->SetVolume(KDefaultVolume);
+	// Set Initial Equalizer Setting here
+	iAudio->SetEqualizerIndex(KEqualizerOff);
+	iAudio->Start();
 	}
 
 CMobblerRadioPlayer::~CMobblerRadioPlayer()
 	{
+	delete iTimer;
 	Cancel();
-	
-	iPreBuffer.ResetAndDestroy();
-	iWrittenBuffer.ResetAndDestroy();
-	delete iMdaAudioOutputStream;
+	iAudio->Stop();
+	iAudio->TransferWrittenBuffer(iTrashCan);
+	EmptyTrashCan();
 	delete iPlaylist;
+	delete iAudio;
+	iMutex.Close();
+	
 	delete iIncomingCallMonitor;
 	}
 
 void CMobblerRadioPlayer::RunL()
 	{
-	if (iStatus.Int() == KErrNone)
+	Stop();
+	}
+
+TInt CMobblerRadioPlayer::CheckForEndOfTrack(TAny* aRef) // From timer every 0.25 seconds
+	{
+	CMobblerRadioPlayer* RadioPlayer = (CMobblerRadioPlayer*)aRef;
+	RadioPlayer->iMutex.Wait();
+	TBool gotoNextTrack = RadioPlayer->iGotoNextTrack;
+	RadioPlayer->iMutex.Signal();
+	if (gotoNextTrack && RadioPlayer->iPlaying)
 		{
-		if (iPreBuffer.Count() > 0)
-			{
-			// Write the next part of the pre-buffer
-			// and transfer it to the written buffer
-			iMdaAudioOutputStream->WriteL(*iPreBuffer[0]);
-			iWrittenBuffer.AppendL(iPreBuffer[0]);
-			iPreBuffer.Remove(0);
-			}
-		
-		if (iPreBuffer.Count() > 0)
-			{
-			// There is more data in iPreBuffer so schedule another callback
-			TRequestStatus* status = &iStatus;
-			User::RequestComplete(status, KErrNone);
-			SetActive();
-			}
+		RadioPlayer->NextTrackL();
+		RadioPlayer->iMutex.Wait();
+		RadioPlayer->iGotoNextTrack = EFalse;
+		RadioPlayer->iMutex.Signal();
 		}
+	static_cast<CMobblerAppUi*>(CEikonEnv::Static()->AppUi())->StatusDrawDeferred();
+	return KErrNone;
 	}
 
 void CMobblerRadioPlayer::DoCancel()
@@ -95,13 +109,6 @@ void CMobblerRadioPlayer::DoCancel()
 TInt CMobblerRadioPlayer::StartL(CMobblerLastFMConnection::TRadioStation aRadioStation, const TDesC8& aRadioText)
 	{
 	Stop();
-	
-#ifdef __WINS__
-	iMdaAudioDataSettings.iVolume = 0;
-	iMdaAudioOutputStream->SetVolume(iMdaAudioDataSettings.iVolume);
-	static_cast<CMobblerAppUi*>(CEikonEnv::Static()->AppUi())->StatusDrawDeferred();
-#endif
-	
 	return iLastFMConnection.RadioStartL(aRadioStation, aRadioText);
 	}
 
@@ -151,16 +158,28 @@ void CMobblerRadioPlayer::NextTrackL()
 
 void CMobblerRadioPlayer::VolumeUp()
 	{
-	iMdaAudioDataSettings.iVolume = Min(iMdaAudioDataSettings.iVolume + (iMdaAudioOutputStream->MaxVolume() / 10), iMdaAudioOutputStream->MaxVolume());
-	iMdaAudioOutputStream->SetVolume(iMdaAudioDataSettings.iVolume);
+	TInt volume = iAudio->Volume();
+	TInt maxVolume = iAudio->MaxVolume();
+	iAudio->SetVolume(Min(volume + (maxVolume / 10), maxVolume));
 	static_cast<CMobblerAppUi*>(CEikonEnv::Static()->AppUi())->StatusDrawDeferred();
 	}
 
 void CMobblerRadioPlayer::VolumeDown()
 	{
-	iMdaAudioDataSettings.iVolume = Max(iMdaAudioDataSettings.iVolume - (iMdaAudioOutputStream->MaxVolume() / 10), 0);
-	iMdaAudioOutputStream->SetVolume(iMdaAudioDataSettings.iVolume);
+	TInt volume = iAudio->Volume();
+	TInt maxVolume = iAudio->MaxVolume();
+	iAudio->SetVolume(Max(volume - (maxVolume / 10), 0));
 	static_cast<CMobblerAppUi*>(CEikonEnv::Static()->AppUi())->StatusDrawDeferred();
+	}
+
+TInt CMobblerRadioPlayer::Volume() const
+	{
+	return iAudio->Volume();
+	}
+
+TInt CMobblerRadioPlayer::MaxVolume() const
+	{
+	return iAudio->MaxVolume();
 	}
 
 const CMobblerString& CMobblerRadioPlayer::Station() const
@@ -173,16 +192,6 @@ void CMobblerRadioPlayer::SetBufferSize(TTimeIntervalSeconds aBufferSize)
 	iBufferSize = aBufferSize;
 	}
 
-TInt CMobblerRadioPlayer::Volume() const
-	{
-	return iMdaAudioDataSettings.iVolume;
-	}
-
-TInt CMobblerRadioPlayer::MaxVolume() const
-	{
-	return iMdaAudioOutputStream->MaxVolume();
-	}
-
 void CMobblerRadioPlayer::Stop()
 	{
 	DoStop();
@@ -192,22 +201,14 @@ void CMobblerRadioPlayer::DoStop()
 	{
 	// Try to submit the last played track
 	SubmitCurrentTrackL();
-	
-	// Stop the audio output stream
-	iMdaAudioOutputStream->Stop();
-	iPreBuffer.ResetAndDestroy();
-	iWrittenBuffer.ResetAndDestroy();
 	iPlaying = EFalse;
 	iOpen = EFalse;
-	
-	// Delete and create a new audio output stream
-	delete iMdaAudioOutputStream;
-	iMdaAudioOutputStream = NULL;
-	iMdaAudioOutputStream = CMdaAudioOutputStream::NewL(*this, EMdaPriorityMax, EMdaPriorityPreferenceTimeAndQuality);
-	iMdaAudioOutputStream->Open(&iMdaAudioDataSettings);
-	
 	// Stop downloading the mp3
 	iLastFMConnection.RadioStop();
+	// Close and reopen the audio stream
+	iAudio->Restart();
+	iAudio->TransferWrittenBuffer(iTrashCan);
+	EmptyTrashCan();
 	
 	static_cast<CMobblerAppUi*>(CEikonEnv::Static()->AppUi())->StatusDrawDeferred();
 	}
@@ -227,47 +228,58 @@ void CMobblerRadioPlayer::WriteL(const TDesC8& aData, TInt aTotalDataSize)
 	if (iPlaylist && iPlaylist->Count() > iCurrentTrack && iCurrentTrack >= 0)
 		{
 		// There is a playlist and the current track indexes a track in it
+		CMobblerTrack* track = (*iPlaylist)[iCurrentTrack];
 		
-		(*iPlaylist)[iCurrentTrack]->SetDataSize(aTotalDataSize);
-		(*iPlaylist)[iCurrentTrack]->BufferAdded(aData.Length());
+		track->SetDataSize(aTotalDataSize);
+		track->BufferAdded(aData.Length());
 		
-		iPreBuffer.AppendL(aData.AllocLC());
-		CleanupStack::Pop(); // aData.AllocLC()
+		TInt bufferTotal = track->DataSize();
+		TInt bufferPosition = Min(track->Buffered(), bufferTotal);
+		TInt playbackTotal = track->TrackLength().Int();
+		TInt playbackPosition = Min(track->PlaybackPosition().Int(), playbackTotal);
+		if (bufferTotal != 0 && playbackTotal != 0)
+			{
+			// We multiple by 1000 and then later divide by 1000 to retain accuracy
+			// in integer calculations. Otherwise roundoff error is intolerable
+			TInt64 bufferPercent = 1000 * (TInt64)bufferPosition / (TInt64)bufferTotal;
+			TInt64 playedPercent = 1000 * (TInt64)playbackPosition / (TInt64)playbackTotal;
+			TInt secsAhead = (TInt)(bufferPercent - playedPercent) * playbackTotal / 1000;
+			if (secsAhead > 60)
+				{
+				TRequestStatus* status = &iStatus;
+				User::RequestComplete(status, KErrNone);
+				SetActive();
+				}
+			}
+		
+		EmptyTrashCan();
+		iAudio->AddToBuffer(aData, iPlaying);
 		
 		TBool bufferedEnough(EFalse);
 		
-		if ((*iPlaylist)[iCurrentTrack]->DataSize() != 1)
+		if (track->DataSize() != 1)
 			{
-			TInt byteRate = (*iPlaylist)[iCurrentTrack]->DataSize() / (*iPlaylist)[iCurrentTrack]->TrackLength().Int();
-			TInt buffered = (*iPlaylist)[iCurrentTrack]->Buffered() - iBufferOffset;
+			TInt byteRate = track->DataSize() / (*iPlaylist)[iCurrentTrack]->TrackLength().Int();
+			TInt buffered = track->Buffered() - iBufferOffset;
 			
 			if (byteRate != 0)
 				{
 				TInt secondsBuffered = buffered / byteRate;
 				
 				// either buffered amount of time or the track has finished downloading
-				bufferedEnough = secondsBuffered >= iBufferSize.Int()
-									|| (*iPlaylist)[iCurrentTrack]->Buffered() == (*iPlaylist)[iCurrentTrack]->DataSize();
+				bufferedEnough = secondsBuffered >= iBufferSize.Int() || (*iPlaylist)[iCurrentTrack]->Buffered() == (*iPlaylist)[iCurrentTrack]->DataSize();
 				}
 			}
 		else
 			{
-			// This is just a precaution in case we don't know the size of the mp3
-			bufferedEnough = iPreBuffer.Count() >= KBufferSizeInPackets;
+			bufferedEnough = iAudio->PreBufferSize() >= KBufferSizeInPackets;
 			}
 		
 		if (iOpen && !iPlaying && bufferedEnough)
 			{
 			// start playing the track
 			iPlaying = ETrue;
-			
-			if (!IsActive())
-				{
-				// The next piece of data will be written to the output stream in RunL() 
-				TRequestStatus* status = &iStatus;
-				User::RequestComplete(status, KErrNone);
-				SetActive();
-				}
+			iAudio->BeginPlay();
 			
 			CMobblerTrack* track = (*iPlaylist)[iCurrentTrack];
 			
@@ -283,86 +295,37 @@ void CMobblerRadioPlayer::WriteL(const TDesC8& aData, TInt aTotalDataSize)
 			
 			iLastFMConnection.TrackStartedL(track);
 			}
-		else if (iOpen && iPlaying)
-			{
-			// We are already playing so write some more stuff to the buffer
-			
-			if (!IsActive())
-				{
-				// The next piece of data will be written to the output stream in RunL() 
-				TRequestStatus* status = &iStatus;
-				User::RequestComplete(status, KErrNone);
-				SetActive();
-				}
-			}
 		}
 	static_cast<CMobblerAppUi*>(CEikonEnv::Static()->AppUi())->StatusDrawDeferred();
 	}
 
 void CMobblerRadioPlayer::MaoscOpenComplete(TInt aError)
 	{
-	if (aError == KErrNone)
-		{
-		iOpen = ETrue;
-		
-		if (!iAlreadyOpened)
-			{
-			iAlreadyOpened = ETrue;
-			iMdaAudioDataSettings.iVolume = iMdaAudioOutputStream->MaxVolume() / 2;
-			}
-		
-		iMdaAudioOutputStream->SetVolume(iMdaAudioDataSettings.iVolume);
-		iMdaAudioDataSettings.iSampleRate = TMdaAudioDataSettings::ESampleRate44100Hz;
-		iMdaAudioDataSettings.iChannels = TMdaAudioDataSettings::EChannelsStereo;
-		TRAP_IGNORE(iMdaAudioOutputStream->SetDataTypeL(KMMFFourCCCodeMP3));
-		iMdaAudioOutputStream->SetAudioPropertiesL(iMdaAudioDataSettings.iSampleRate, iMdaAudioDataSettings.iChannels);
-		}
-	
-	static_cast<CMobblerAppUi*>(CEikonEnv::Static()->AppUi())->StatusDrawDeferred();
+	if (aError == KErrNone) iOpen = ETrue;
 	}
 
 void CMobblerRadioPlayer::MaoscBufferCopied(TInt /*aError*/, const TDesC8& /*aBuffer*/)
 	{
+	iAudio->TransferWrittenBuffer(iTrashCan);
 	if (CurrentTrack())
 		{
-		CurrentTrack()->SetPlaybackPosition(iMdaAudioOutputStream->Position().Int64() / 1000000 );
+		CurrentTrack()->SetPlaybackPosition(iAudio->PlaybackPosition());
 		}
-	
-	delete iWrittenBuffer[0];
-	iWrittenBuffer.Remove(0);
-	
-	if (iWrittenBuffer.Count() > 0)
+	TInt Count = iAudio->PreBufferSize();
+	if (Count == 0)
 		{
-		// There is data already written to the
-		// audio output stream so do nothing
-		}
-	else 
-		{
-		if (iPreBuffer.Count() > 0)
+		if (!iTrackDownloading)
 			{
-			// There is still data to write
-			// so force it to be writen now
-			Cancel();
-			iStatus = KErrNone;
-			RunL();
+			iMutex.Wait();
+			iGotoNextTrack = ETrue;
+			iMutex.Signal();
 			}
 		else
 			{
-			if (!iTrackDownloading)
-				{
-				// The track has finished playing and finished downloading
-				NextTrackL();
-				}
-			else
-				{
-				// The track is still downloading, but has run out of buffer
-				iBufferOffset = (*iPlaylist)[iCurrentTrack]->Buffered();
-				iPlaying = EFalse;
-				}
+			iBufferOffset = (*iPlaylist)[iCurrentTrack]->Buffered();
+			iPlaying = EFalse;
 			}
 		}
-	
-	static_cast<CMobblerAppUi*>(CEikonEnv::Static()->AppUi())->StatusDrawDeferred();
 	}
 
 void CMobblerRadioPlayer::SubmitCurrentTrackL()
@@ -408,6 +371,24 @@ void CMobblerRadioPlayer::HandleIncomingCallL(TPSTelephonyCallState aPSTelephony
 		}
 	}
 
+void CMobblerRadioPlayer::SetEqualizer(TInt aIndex)
+	{
+	iEqualizerIndex = aIndex;
+	iAudio->SetEqualizerIndex(aIndex);
+	}
+	
+void CMobblerRadioPlayer::EmptyTrashCan()
+	{
+	iMutex.Wait();
+	TInt Count = iTrashCan.Count();
+	for (TInt x = 0; x < Count; ++x)
+		{
+		HBufC8* data = iTrashCan[0];
+		iTrashCan.Remove(0);
+		delete data;
+		}
+	iMutex.Signal();
+	}
 TBool CMobblerRadioPlayer::HasPlaylist() const
 	{
 	if (iPlaylist)

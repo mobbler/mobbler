@@ -182,8 +182,16 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 	switch (aCommand)
 		{
 		case EAknSoftkeyExit:
+			// Send application to the background to give the user
+			// a sense of a really fast shutdown. Sometimes the thread
+			// doesn't shut down instantly, so best to do this without
+			// interferring with the user's ability to do something
+			// else with their phone.
+			task.SetWgId(CEikonEnv::Static()->RootWin().Identifier());
+			task.SendToBackground();
 			/// Check if scrobblable first and save queue
 			iLastFMConnection->TrackStoppedL();
+			iRadioPlayer->Stop();
 			Exit();
 			break;
 		case EEikCmdExit:

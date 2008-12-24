@@ -83,7 +83,7 @@ SOURCE		mobblertimeout.cpp
 SOURCE		mobblertrack.cpp
 SOURCE		mobblertransaction.cpp
 SOURCE		mobblerutility.cpp
-SOURCE		mobblerwebservicesquery.cpp
+SOURCE		mobblerwebservicesquery.cpp mobbleraudiothread.cpp mobbleraudiocmddispatcher.cpp mobbleraudiocontrol.cpp
 
 
 LIBRARY		aknicon.lib
@@ -116,7 +116,7 @@ LIBRARY		mediaclientaudiostream.lib
 LIBRARY		RemConCoreApi.lib
 LIBRARY		RemConInterfaceBase.lib
 LIBRARY		senxml.lib
-LIBRARY		ws32.lib
+LIBRARY		ws32.lib audioequalizereffect.lib audioequalizerutility.lib
 
 #ifndef WINS
 LIBRARY		browserlauncher.lib
