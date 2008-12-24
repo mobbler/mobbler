@@ -30,17 +30,14 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "mobblerincomingcallmonitorobserver.h"
 #include "mobblerlastfmconnection.h"
 #include "mobblershareddata.h"
-#include "mobblerlastfmconnection.h"
-#include "mobblerlastfmconnection.h"
 
+class CAudioEqualizerUtility;
 class CDesC8Array;
+class CMobblerAudioControl;
 class CMobblerIncomingCallMonitor;
 class CMobblerRadioPlaylist;
 class CMobblerRadioPlaylistParser;
 class CMobblerString;
-class CMobblerRadioPlaylistParser;
-class CAudioEqualizerUtility;
-class CMobblerAudioControl;
 
 class MMobblerRadioPlayer
 	{

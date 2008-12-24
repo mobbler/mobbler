@@ -60,6 +60,9 @@ SOURCE		mobbler.cpp
 SOURCE		mobbleraccesspointsettingitem.cpp
 SOURCE		mobblerapplication.cpp
 SOURCE		mobblerappui.cpp
+SOURCE		mobbleraudiocmddispatcher.cpp
+SOURCE		mobbleraudiocontrol.cpp
+SOURCE		mobbleraudiothread.cpp
 SOURCE		mobblerbitmap.cpp
 SOURCE		mobblerdocument.cpp
 SOURCE		mobblerdownload.cpp
@@ -83,13 +86,15 @@ SOURCE		mobblertimeout.cpp
 SOURCE		mobblertrack.cpp
 SOURCE		mobblertransaction.cpp
 SOURCE		mobblerutility.cpp
-SOURCE		mobblerwebservicesquery.cpp mobbleraudiothread.cpp mobbleraudiocmddispatcher.cpp mobbleraudiocontrol.cpp
+SOURCE		mobblerwebservicesquery.cpp
 
 
 LIBRARY		aknicon.lib
 LIBRARY		aknskins.lib
 LIBRARY		apgrfx.lib
 LIBRARY		apparc.lib
+LIBRARY		audioequalizereffect.lib
+LIBRARY		audioequalizerutility.lib
 LIBRARY		avkon.lib
 LIBRARY		bafl.lib
 LIBRARY		bitgdi.lib
@@ -116,7 +121,7 @@ LIBRARY		mediaclientaudiostream.lib
 LIBRARY		RemConCoreApi.lib
 LIBRARY		RemConInterfaceBase.lib
 LIBRARY		senxml.lib
-LIBRARY		ws32.lib audioequalizereffect.lib audioequalizerutility.lib
+LIBRARY		ws32.lib
 
 #ifndef WINS
 LIBRARY		browserlauncher.lib

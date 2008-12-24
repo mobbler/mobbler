@@ -52,9 +52,15 @@ TInt CMobblerAudioThread::ThreadFunction(TAny* aData)
 	shared.iAudioThread = NULL;
 		  
 	TRAPD(error, shared.iAudioThread = CMobblerAudioThread::CreateL(aData));
-	if(error != KErrNone) return error;
-	if(shared.iAudioThread == NULL) return KErrGeneral;
-		
+	if (error != KErrNone)
+		{
+		return error;
+		}
+	if (shared.iAudioThread == NULL)
+		{
+		return KErrGeneral;
+		}
+	
 	shared.iStatusPtr = &(shared.iAudioThread->iActive->iStatus);
 		
 	// if we're still here, activescheduler has been constructed
@@ -85,7 +91,7 @@ TInt CMobblerAudioThread::Construct()
 	{
 	// create cleanup stack
 	iCleanupStack = CTrapCleanup::New();
-	if(iCleanupStack == NULL)
+	if (iCleanupStack == NULL)
 		{
 		return KErrNoMemory;
 		}
@@ -186,10 +192,9 @@ void CMobblerAudioThread::StartAudioL()
 	iShared.iMaxVolume = iStream->MaxVolume();
 	iShared.iMutex.Signal();
 	iEqualizer = NULL;
-#ifndef _DEBUG
+#ifndef __WINS__
 	// Emulator seems to crap out even when TRAP_IGNORE is used,
-	// The emulator doesn't support the equalizer anyway, and so
-	// I just don't compile this line for the debug version
+	// it doesn't support the equalizer anyway
 	TRAP_IGNORE(iEqualizer = CAudioEqualizerUtility::NewL(*iStream));
 #endif
 	SetVolume();
@@ -263,9 +268,9 @@ void CMobblerAudioThread::FillBuffer()
 
 void CMobblerAudioThread::MaoscBufferCopied(TInt aError, const TDesC8& aBuffer)
 	{
-	const TInt KMilliSecsInOneSecond(1000000);
+	const TInt KMicrosecondsInOneSecond(1000000);
 	iShared.iMutex.Wait();
-	iShared.iPlaybackPosition = iStream->Position().Int64() / KMilliSecsInOneSecond;
+	iShared.iPlaybackPosition = iStream->Position().Int64() / KMicrosecondsInOneSecond;
 	MMdaAudioOutputStreamCallback* callback = iShared.iCallback;
 	iShared.iMutex.Signal();
 	callback->MaoscBufferCopied(aError, aBuffer);
@@ -291,7 +296,7 @@ void CMobblerAudioThread::MaoscOpenComplete(TInt aError)
 
 void CMobblerAudioThread::MaoscPlayComplete(TInt aError)
 	{
-	if( aError )
+	if (aError)
 		{
 		iError = aError;
 		}
@@ -309,7 +314,10 @@ void CMobblerAudioThread::SetEqualizer(TInt aIndex)
 	iShared.iMutex.Wait();
 	iShared.iEqualizerIndex = aIndex;
 	iShared.iMutex.Signal();
-	if (!iEqualizer) return;
+	if (!iEqualizer) 
+		{
+		return;
+		}
 	if (aIndex < 0)
 		{
 		iEqualizer->Equalizer().DisableL();
@@ -320,3 +328,5 @@ void CMobblerAudioThread::SetEqualizer(TInt aIndex)
 		iEqualizer->ApplyPresetL(aIndex);
 		}
 	}
+
+// End of file

@@ -1,7 +1,7 @@
 /*
 mobbleraudiothread.h
 
-mobbler, a last.fm mobile scrobbler for Symbian smartphones.
+Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
 Copyright (C) 2008  Michael Coffey
 
 http://code.google.com/p/mobbler
@@ -24,11 +24,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #ifndef __MOBBLERAUDIOTHREAD_H__
 #define __MOBBLERAUDIOTHREAD_H__
 
-#include <E32Base.h>
+#include <audioequalizerbase.h>
+#include <audioequalizerutility.h>
+#include <e32base.h>
 #include <mdaaudiooutputstream.h>
 #include <mda\common\audio.h>
-#include <audioequalizerutility.h>
-#include <audioequalizerbase.h>
 
 #include "mobblershareddata.h"
 
@@ -78,4 +78,4 @@ private:
 	CMobblerAudioCmdDispatcher* iActive;
 	};
 
-#endif /*CAUDIOTHREAD_H_*/
+#endif // __MOBBLERAUDIOTHREAD_H__

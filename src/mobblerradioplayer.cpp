@@ -22,8 +22,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
 #include "mobblerappui.h"
-#include "mobbleraudiothread.h"
 #include "mobbleraudiocontrol.h"
+#include "mobbleraudiothread.h"
 #include "mobblerincomingcallmonitor.h"
 #include "mobblerlastfmconnection.h"
 #include "mobblerradioplayer.h"
@@ -34,7 +34,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 const TInt KBufferSizeInPackets(32);
 const TInt KTimerDuration(250000); // 1/4 second
+#ifdef __WINS__
+const TInt KDefaultVolume(0);
+#else
 const TInt KDefaultVolume(5);
+#endif
 const TInt KEqualizerOff(-1);
 
 CMobblerRadioPlayer* CMobblerRadioPlayer::NewL(CMobblerLastFMConnection& aSubmitter, TTimeIntervalSeconds aBufferSize)
@@ -60,9 +64,11 @@ void CMobblerRadioPlayer::ConstructL()
 	iTimer->Start(KTimerDuration, KTimerDuration, callBack);
 	iAudio = CMobblerAudioControl::NewL(this);
 	iAudio->SetVolume(KDefaultVolume);
-	// Set Initial Equalizer Setting here
+	// Set initial equalizer setting here
 	iAudio->SetEqualizerIndex(KEqualizerOff);
 	iAudio->Start();
+	
+	iIncomingCallMonitor = CMobblerIncomingCallMonitor::NewL(*this);
 	}
 
 CMobblerRadioPlayer::~CMobblerRadioPlayer()
@@ -86,16 +92,16 @@ void CMobblerRadioPlayer::RunL()
 
 TInt CMobblerRadioPlayer::CheckForEndOfTrack(TAny* aRef) // From timer every 0.25 seconds
 	{
-	CMobblerRadioPlayer* RadioPlayer = (CMobblerRadioPlayer*)aRef;
-	RadioPlayer->iMutex.Wait();
-	TBool gotoNextTrack = RadioPlayer->iGotoNextTrack;
-	RadioPlayer->iMutex.Signal();
-	if (gotoNextTrack && RadioPlayer->iPlaying)
+	CMobblerRadioPlayer* radioPlayer = (CMobblerRadioPlayer*)aRef;
+	radioPlayer->iMutex.Wait();
+	TBool gotoNextTrack = radioPlayer->iGotoNextTrack;
+	radioPlayer->iMutex.Signal();
+	if (gotoNextTrack && radioPlayer->iPlaying)
 		{
-		RadioPlayer->NextTrackL();
-		RadioPlayer->iMutex.Wait();
-		RadioPlayer->iGotoNextTrack = EFalse;
-		RadioPlayer->iMutex.Signal();
+		radioPlayer->NextTrackL();
+		radioPlayer->iMutex.Wait();
+		radioPlayer->iGotoNextTrack = EFalse;
+		radioPlayer->iMutex.Signal();
 		}
 	static_cast<CMobblerAppUi*>(CEikonEnv::Static()->AppUi())->StatusDrawDeferred();
 	return KErrNone;
@@ -301,7 +307,10 @@ void CMobblerRadioPlayer::WriteL(const TDesC8& aData, TInt aTotalDataSize)
 
 void CMobblerRadioPlayer::MaoscOpenComplete(TInt aError)
 	{
-	if (aError == KErrNone) iOpen = ETrue;
+	if (aError == KErrNone)
+		{
+		iOpen = ETrue;
+		}
 	}
 
 void CMobblerRadioPlayer::MaoscBufferCopied(TInt /*aError*/, const TDesC8& /*aBuffer*/)
@@ -311,8 +320,8 @@ void CMobblerRadioPlayer::MaoscBufferCopied(TInt /*aError*/, const TDesC8& /*aBu
 		{
 		CurrentTrack()->SetPlaybackPosition(iAudio->PlaybackPosition());
 		}
-	TInt Count = iAudio->PreBufferSize();
-	if (Count == 0)
+	TInt count = iAudio->PreBufferSize();
+	if (count == 0)
 		{
 		if (!iTrackDownloading)
 			{
@@ -380,8 +389,8 @@ void CMobblerRadioPlayer::SetEqualizer(TInt aIndex)
 void CMobblerRadioPlayer::EmptyTrashCan()
 	{
 	iMutex.Wait();
-	TInt Count = iTrashCan.Count();
-	for (TInt x = 0; x < Count; ++x)
+	TInt count = iTrashCan.Count();
+	for (TInt x = 0; x < count; ++x)
 		{
 		HBufC8* data = iTrashCan[0];
 		iTrashCan.Remove(0);

@@ -1,7 +1,7 @@
 /*
 mobbleraudiocontrol.cpp
 
-mobbler, a last.fm mobile scrobbler for Symbian smartphones.
+Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
 Copyright (C) 2008  Michael Coffey
 
 http://code.google.com/p/mobbler
@@ -64,7 +64,10 @@ CMobblerAudioControl::~CMobblerAudioControl()
 	iShared.iAliveMutex.Close();
 	iShared.iMutex.Close();
 	iShared.iPreBuffer.ResetAndDestroy();
-	if (iShared.iAudioThread) delete iShared.iAudioThread;
+	if (iShared.iAudioThread)
+		{
+		delete iShared.iAudioThread;
+		}
 	}
 
 void CMobblerAudioControl::Restart()
@@ -94,7 +97,10 @@ void CMobblerAudioControl::Stop()
 
 void CMobblerAudioControl::Start()
 	{
-	if (iCreated) return;
+	if (iCreated)
+		{
+		return;
+		}
 	iCreated = ETrue;
 	SendCmd(ECmdStartAudio);
 	iShared.iMutex.Wait();
@@ -105,7 +111,10 @@ void CMobblerAudioControl::Start()
 
 void CMobblerAudioControl::Pause(TBool aPlaying)
 	{
-	if (!iCreated || !aPlaying) return;
+	if (!iCreated || !aPlaying)
+		{
+		return;
+		}
 	SendCmd(ECmdPauseAudio);
 	iShared.iMutex.Wait();
 	iShared.iPaused = !iShared.iPaused;
@@ -133,7 +142,10 @@ void CMobblerAudioControl::SetVolume(TInt aVolume)
 	iShared.iMutex.Wait();
 	iShared.iVolume = aVolume;
 	iShared.iMutex.Signal();
-	if (iCreated) SendCmd(ECmdSetVolume);
+	if (iCreated)
+		{
+		SendCmd(ECmdSetVolume);
+		}
 	}
 
 void CMobblerAudioControl::SetEqualizerIndex(TInt aIndex)
@@ -141,7 +153,10 @@ void CMobblerAudioControl::SetEqualizerIndex(TInt aIndex)
 	iShared.iMutex.Wait();
 	iShared.iEqualizerIndex = aIndex;
 	iShared.iMutex.Signal();
-	if (iCreated) SendCmd(ECmdSetEqualizer);
+	if (iCreated)
+		{
+		SendCmd(ECmdSetEqualizer);
+		}
 	}
 
 void CMobblerAudioControl::AddToBuffer(const TDesC8& aData, TBool aRunning)
@@ -151,7 +166,10 @@ void CMobblerAudioControl::AddToBuffer(const TDesC8& aData, TBool aRunning)
 	iShared.iPreBuffer.Append(aData.AllocLC());
 	CleanupStack::Pop(); // aData.AllocLC()
 	iShared.iMutex.Signal();
-	if ((count == 0) && aRunning && !IsPaused()) SendCmd(ECmdServiceBuffer);
+	if ((count == 0) && aRunning && !IsPaused())
+		{
+		SendCmd(ECmdServiceBuffer);
+		}
 	}
 
 void CMobblerAudioControl::BeginPlay()
