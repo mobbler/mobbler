@@ -255,7 +255,7 @@ RESOURCE AVKON_SETTING_ITEM_LIST r_mobbler_setting_item_list
 			},
 		AVKON_SETTING_ITEM
 			{
-			name = STR_mobbler_check_for_updates;
+			name = STR_mobbler_check_for_updates_once_a_week;
 			identifier = EMobblerSettingItemListViewAutoUpdatesOn;
 			setting_page_resource = r_mobbler_setting_page_check_for_updates;
 			associated_resource = r_mobbler_popup_setting_binary_texts_check_for_updates;
@@ -394,7 +394,7 @@ RESOURCE ARRAY r_mobbler_popped_up_on_off_texts_check_for_updates
 RESOURCE AVKON_SETTING_PAGE r_mobbler_setting_page_check_for_updates
 	{
 	number = 0;
-	label = STR_mobbler_check_for_updates; 
+	label = STR_mobbler_check_for_updates_once_a_week; 
 	type = EAknCtPopupSettingList;
 	editor_resource_id = r_mobbler_binary_popup_setting_list_check_for_updates;
 	}
