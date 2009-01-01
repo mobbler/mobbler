@@ -35,47 +35,47 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 class CMobblerAudioCmdDispatcher;
 class CAudioEqualizerUtility;
 
-class CMobblerAudioThread : CBase, MMdaAudioOutputStreamCallback
+TInt ThreadFunction(TAny* aData);
+
+class CMobblerAudioThread : public CActive, public MMdaAudioOutputStreamCallback
 	{
 public:
-	CMobblerAudioThread();
-	virtual ~CMobblerAudioThread();
+	static CMobblerAudioThread* NewL(TAny* aData);
+	~CMobblerAudioThread();
 	
-public:
-    static TInt ThreadFunction(TAny* aData);
-    void HandleUserInterruptCommandL();
+public: // from CActive
+    void RunL();
+    void DoCancel();
+    TInt RunError(TInt aError);
     
 private:
     CMobblerAudioThread(TAny* aData);
-    static CMobblerAudioThread* CreateL(TAny* aData);
-    TInt Construct();
     void ConstructL();
     
-public:
-    void StartAudioL();
-    void StopAudio();
-    void RestartAudioL();
+    void Request();
+    
+    void DestroyAudio();
     void SetVolume();
+    void FillBufferL(TBool aAddData);
+    TBool PreBufferFilled() const;
+    
     void SetEqualizerIndexL();
-    void FillBuffer();
     void SetEqualizer(TInt aIndex);
     
+private: // from MMdaAudioOutputStreamCallback
     void MaoscPlayComplete(TInt aError);
     void MaoscBufferCopied(TInt aError, const TDesC8& aBuffer);
     void MaoscOpenComplete(TInt aError);
     
 private:
-	CTrapCleanup* iCleanupStack;
-	CActiveScheduler* iActiveScheduler;
 	CMdaAudioOutputStream* iStream;
 	TMdaAudioDataSettings iSet;
 	CAudioEqualizerUtility* iEqualizer;
-  
-	TInt iError;   // contains CMdaAudioOutput errors
 
 	TMobblerSharedData& iShared;  // reference to shared data with client
-
-	CMobblerAudioCmdDispatcher* iActive;
+	
+	RPointerArray<HBufC8> iBuffer;
+	TTimeIntervalSeconds iPreBufferOffset;
 	};
 
 #endif // __MOBBLERAUDIOTHREAD_H__

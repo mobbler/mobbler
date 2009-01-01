@@ -104,11 +104,6 @@ CMobblerLastFMConnection::~CMobblerLastFMConnection()
 		{
 		iCurrentTrack->Release();
 		}
-	
-	if (iDownloadingTrack)
-		{
-		iDownloadingTrack->Release();
-		}
 
 	const TInt KTrackQueueCount(iTrackQueue.Count());
 	for (TInt i(0) ; i < KTrackQueueCount ; ++i)
@@ -738,10 +733,15 @@ void CMobblerLastFMConnection::RadioHandshakeL()
 
 void CMobblerLastFMConnection::RadioStop()
 	{
+	if (iDownloadObserver)
+		{
+		iDownloadObserver->TrackDownloadCompleteL();
+		iDownloadObserver = NULL;
+		}
+	
 	iRadioAudioTransaction.Close();
 	delete iRadioAlbumArtTransaction;
 	iRadioAlbumArtTransaction = NULL;
-	iRadioPlayer->TrackDownloadCompleteL();
 	}
 
 TInt CMobblerLastFMConnection::RadioStartL(TRadioStation aRadioStation, const TDesC8& aRadioText)
@@ -876,35 +876,29 @@ void CMobblerLastFMConnection::RequestPlaylistL()
 		}
 	}
 
-void CMobblerLastFMConnection::RequestMp3L(CMobblerTrack* aTrack)
+void CMobblerLastFMConnection::RequestMp3L(MMobblerDownloadObserver& aDownloadObserver, CMobblerTrack* aTrack)
 	{
 	if (iMode == EOnline)
 		{
-		if (iDownloadingTrack)
-			{
-			iDownloadingTrack->Release();
-			}
-		
-		iDownloadingTrack = aTrack;
-		iDownloadingTrack->Open();
-		
 		// Request the mp3 data
 		TUriParser8 urimp3Parser;
-		urimp3Parser.Parse(iDownloadingTrack->Mp3Location());
+		urimp3Parser.Parse(aTrack->Mp3Location());
 		
 		iRadioAudioTransaction.Close();
 		iRadioAudioTransaction = iHTTPSession.OpenTransactionL(urimp3Parser, *this);
 		iRadioAudioTransaction.SubmitL();
 		
-		if (iDownloadingTrack->AlbumArtLocation().Compare(KNullDesC8) != 0)
+		if (aTrack->AlbumArtLocation().Compare(KNullDesC8) != 0)
 			{
 			// Request the album art data
 			TUriParser8 uriAlbumArtParser;
-			uriAlbumArtParser.Parse(iDownloadingTrack->AlbumArtLocation());
+			uriAlbumArtParser.Parse(aTrack->AlbumArtLocation());
 			
 			delete iRadioAlbumArtTransaction;
 			iRadioAlbumArtTransaction = CMobblerTransaction::NewL(iHTTPSession, uriAlbumArtParser, *this);
 			}
+		
+		iDownloadObserver = &aDownloadObserver;
 		}
 	}
 
@@ -1286,12 +1280,7 @@ void CMobblerLastFMConnection::TransactionResponseL(CMobblerTransaction* aTransa
 		}
 	else if (aTransaction == iRadioAlbumArtTransaction)
 		{
-		if (iDownloadingTrack)
-			{
-			iDownloadingTrack->SetAlbumArtL(aResponse);
-			iDownloadingTrack->Release();
-			iDownloadingTrack = NULL;
-			}
+		iDownloadObserver->SetAbumArtL(aResponse);
 		}
 	else if (aTransaction == iSubmitTransaction)
 		{
@@ -1511,18 +1500,18 @@ void CMobblerLastFMConnection::MHFRunL(RHTTPTransaction aTransaction, const THTT
 		case THTTPEvent::EGotResponseBodyData:
 			aTransaction.Response().Body()->GetNextDataPart(nextDataPartPtr);
 			TInt dataSize = aTransaction.Response().Body()->OverallDataSize();
-			iRadioPlayer->WriteL(nextDataPartPtr, dataSize);	
+			iDownloadObserver->WriteMp3DataL(nextDataPartPtr, dataSize);	
 			aTransaction.Response().Body()->ReleaseData();
 			break;
 		case THTTPEvent::EFailed:
-			iRadioPlayer->TrackDownloadCompleteL();
+			iDownloadObserver->TrackDownloadCompleteL();
 			iRadioPlayer->NextTrackL();
 			break;
 		case THTTPEvent::ESucceeded:
 		case THTTPEvent::ECancel:
 		case THTTPEvent::EClosed:
 			// tell the radio player that the track has finished downloading
-			iRadioPlayer->TrackDownloadCompleteL();
+			iDownloadObserver->TrackDownloadCompleteL();
 			break;
 		default:
 			break;

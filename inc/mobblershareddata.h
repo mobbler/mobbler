@@ -27,43 +27,44 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <e32std.h>
 
 class CAudioEqualizerUtility;
-class CMobblerAudioThread;
-class MMdaAudioOutputStreamCallback;
+class CMobblerTrack;
 
 enum TMobblerAudioCmd
 	{
-	ECmdStartAudio = 0,
-	ECmdStopAudio,
-	ECmdPauseAudio,
-	ECmdRestartAudio,
 	ECmdDestroyAudio,
 	ECmdSetVolume,
 	ECmdSetEqualizer,
+	ECmdWriteData,
 	ECmdServiceBuffer
 	};
 
 class TMobblerSharedData
 	{
 public:
-	RSemaphore iAliveMutex;
-	RMutex iMutex;
-	RMutex iRestartMutex;
-	TBool iStopped;
-	TExcType iExc;
-	TRequestStatus* iStatusPtr;
-	TMobblerAudioCmd iCmd;
-	TInt iVolume;
+	// communication request statuses
+	TRequestStatus* iCmdStatus;
+	
+	// audio stream settings and etc
 	TInt iMaxVolume;
+	TBool iPlaying;
+	TBool iDownloadComplete;
+	TTimeIntervalSeconds iPreBufferSize;
+	TBool iCurrent;
+	
+	// data that is sent for ECmdServiceBuffer
+	TPtrC8 iAudioData;
+	
+	// data for ECmdSetVolume
+	TInt iVolume;
+	
+	// data for ECmdSetEqualizer
 	TInt iEqualizerIndex;
-	RPointerArray<HBufC8> iPreBuffer;
-	RPointerArray<HBufC8> iWrittenBuffer;
+	
+	// The equalizer
 	RPointerArray<HBufC16> iEqualizerProfiles;
 	CAudioEqualizerUtility* iEqualizer;
-	TInt iPlaybackPosition;
-	MMdaAudioOutputStreamCallback* iCallback;
-	CMobblerAudioThread* iAudioThread;
-	TBool iPaused;
-	TInt iPauseOffset;
+	
+	CMobblerTrack* iTrack;
 	};
 
 #endif

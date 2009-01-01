@@ -30,6 +30,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "mobblerincomingcallmonitorobserver.h"
 #include "mobblerlastfmconnection.h"
 #include "mobblershareddata.h"
+#include "mobbleraudiocontrol.h"
 
 class CAudioEqualizerUtility;
 class CDesC8Array;
@@ -43,21 +44,18 @@ class MMobblerRadioPlayer
 	{
 public:
 	virtual void SetPlaylistL(CMobblerRadioPlaylist* aPlaylist) = 0;
-	//virtual void SetAlbumArtL(const TDesC8& aData) = 0;
-	virtual void WriteL(const TDesC8& aData, TInt aTotalDataSize) = 0;
-	virtual void TrackDownloadCompleteL() = 0;
 	virtual void NextTrackL() = 0;
 	virtual void Stop() = 0;
 	};
 
-class CMobblerRadioPlayer : public CActive,
-							public MMdaAudioOutputStreamCallback,
+class CMobblerRadioPlayer : public CBase,
 							public MMobblerRadioPlayer,
-							public MMobblerIncomingCallMonitorObserver
+							public MMobblerIncomingCallMonitorObserver,
+							public MMobblerAudioControlObserver
 
 	{
 public:
-	static CMobblerRadioPlayer* NewL(CMobblerLastFMConnection& aLastFMConnection, TTimeIntervalSeconds aBufferSize);
+	static CMobblerRadioPlayer* NewL(CMobblerLastFMConnection& aLastFMConnection, TTimeIntervalSeconds aPreBufferSize);
 	~CMobblerRadioPlayer();
 	
 	TInt StartL(CMobblerLastFMConnection::TRadioStation aRadioStation, const TDesC8& aRadioText);
@@ -65,35 +63,29 @@ public:
 	CMobblerTrack* CurrentTrack();
 
 	void NextTrackL();
-	void VolumeUp();
-	void VolumeDown();
-
-	TInt Volume() const;
-	TInt MaxVolume() const;
-	
-	void SetEqualizer(TInt aIndex);
-	void EmptyTrashCan();
-	
-	void SetBufferSize(TTimeIntervalSeconds aBufferSize);
-	
 	void Stop();
 	
+	void VolumeUp();
+	void VolumeDown();
+	void SetEqualizer(TInt aIndex);
+	void SetPreBufferSize(TTimeIntervalSeconds aPreBufferSize);
+	
+	TInt Volume() const;
+	TInt MaxVolume() const;	
 	const CMobblerString& Station() const;
-
 	TBool HasPlaylist() const;
 	
-private:
-	void RunL();
-	void DoCancel();
-	static TInt CheckForEndOfTrack(TAny* aRef);
+private: // from MMobblerAudioControlObserver
+	void HandleAudioPositionChangeL();
+	void HandleAudioFinishedL(CMobblerAudioControl* aAudioControl);
 	
 private:
-	CMobblerRadioPlayer(CMobblerLastFMConnection& aSubmitter, TTimeIntervalSeconds aBufferSize);
+	CMobblerRadioPlayer(CMobblerLastFMConnection& aSubmitter, TTimeIntervalSeconds aPreBufferSize);
 	void ConstructL();
 	
 	void SubmitCurrentTrackL();
 	
-	void DoStop();
+	void DoStop(TBool aDeleteNextTrack);
 	
 private:
 	void DialogDismissedL(TInt aButtonId);
@@ -101,28 +93,11 @@ private:
 private: // MMobblerRadioPlayer	
 	void SetPlaylistL(CMobblerRadioPlaylist* aPlaylist);
 	void WriteL(const TDesC8& aData, TInt aTotalDataSize);
-	void TrackDownloadCompleteL();
-	
-private: // from MMdaAudioOutputStreamCallback
-	void MaoscOpenComplete(TInt aError);
-	void MaoscBufferCopied(TInt aError, const TDesC8& aBuffer);
-	void MaoscPlayComplete(TInt aError);
 	
 private:
 	void HandleIncomingCallL(TPSTelephonyCallState aPSTelephonyCallState);
 
 private:
-	RPointerArray<HBufC8> iTrashCan;
-
-	TBool iOpen;
-	TBool iPlaying;
-	TBool iAlreadyOpened;
-
-	TBool iTrackDownloading;
-	
-	TTimeIntervalSeconds iBufferSize; 
-	TInt iBufferOffset;
-
 	TInt iCurrentTrack;
 	CMobblerRadioPlaylist* iPlaylist;
 	
@@ -130,14 +105,12 @@ private:
 	
 	CMobblerIncomingCallMonitor* iIncomingCallMonitor;
 	
-	CPeriodic* iTimer;
-	RMutex iMutex;
+	CMobblerAudioControl* iCurrentAudioControl;
+	CMobblerAudioControl* iNextAudioControl;
 	
-	TBool iGotoNextTrack;
-	
-	TInt iEqualizerIndex;
-
-	CMobblerAudioControl* iAudio;
+	TTimeIntervalSeconds iPreBufferSize;
+	TInt iVolume;
+	TInt iMaxVolume;
 	};
 
 #endif // __MOBBLERRADIOPLAYER_H__

@@ -22,228 +22,173 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
 #include "mobbleraudiocontrol.h"
+#include "mobblerappui.h"
 #include "mobbleraudiothread.h"
+#include "mobblertrack.h"
 
 #include <e32svr.h>
 
-_LIT(KMobblerThreadName, "MobblerAudio");
-
-const TInt KWaitForEndTime(250000); // 1/4 second
-const TInt KInitialCount(1);
+const TInt KTimerDuration(250000); // 1/4 second
 const TInt KMobblerHeapSize(1000000); // 1 MB
 
-CMobblerAudioControl* CMobblerAudioControl::NewL(MMdaAudioOutputStreamCallback* aCallback)
+CMobblerAudioControl* CMobblerAudioControl::NewL(MMobblerAudioControlObserver& aObserver, CMobblerTrack& aTrack, TTimeIntervalSeconds aPreBufferSize, TInt aVolume)
 	{
-	CMobblerAudioControl* self = new (ELeave)CMobblerAudioControl();
+	CMobblerAudioControl* self = new(ELeave) CMobblerAudioControl(aObserver);
 	CleanupStack::PushL(self);
-	self->ConstructL(aCallback);
+	self->ConstructL(aTrack, aPreBufferSize, aVolume);
 	CleanupStack::Pop(self);
 	return self;
 	}
 
-void CMobblerAudioControl::ConstructL(MMdaAudioOutputStreamCallback* aCallback)
+CMobblerAudioControl::CMobblerAudioControl(MMobblerAudioControlObserver& aObserver)
+	:CActive(CActive::EPriorityStandard), iObserver(aObserver)
 	{
-	iShared.iCallback = aCallback;
-	User::LeaveIfError(iShared.iAliveMutex.CreateLocal(KInitialCount));
-	User::LeaveIfError(iShared.iMutex.CreateLocal());
-	User::LeaveIfError(iAudioThread.Create(KMobblerThreadName, CMobblerAudioThread::ThreadFunction, KDefaultStackSize, KMinHeapSize, KMinHeapSize + KMobblerHeapSize, &iShared));
-	iAudioThread.SetPriority(EPriorityRealTime);
-	iAudioThread.Resume();
-	iCreated = EFalse;
-	iShared.iPaused = EFalse;
+	CActiveScheduler::Add(this);
 	}
 
-CMobblerAudioControl::CMobblerAudioControl()
+void CMobblerAudioControl::ConstructL(CMobblerTrack& aTrack, TTimeIntervalSeconds aPreBufferSize, TInt aVolume)
 	{
+	// Set up the shared memory
+	iShared.iDownloadComplete = EFalse;
+	iShared.iPlaying = EFalse;
+	iShared.iTrack = &aTrack;
+	iShared.iPreBufferSize = aPreBufferSize;
+	iShared.iVolume = aVolume;
+	
+	// Create the audio thread and wait for it to finish loading
+	User::LeaveIfError(iAudioThread.Create(KNullDesC, ThreadFunction, KDefaultStackSize, KMinHeapSize, KMinHeapSize + KMobblerHeapSize, &iShared));
+	iAudioThread.SetPriority(EPriorityRealTime);
+	TRequestStatus status;
+	iAudioThread.Rendezvous(status);
+	iAudioThread.Resume();
+	User::WaitForRequest(status);
+	
+	iAudioThread.Logon(iStatus);
+	SetActive();
+	
+	iTimer = CPeriodic::NewL(CPeriodic::EPriorityStandard);
+	TCallBack callBack(HandleAudioPositionChangeL, this);
+	iTimer->Start(KTimerDuration, KTimerDuration, callBack);
 	}
 
 CMobblerAudioControl::~CMobblerAudioControl()
 	{
-	SendCmd(ECmdDestroyAudio);
-	iShared.iAliveMutex.Wait(KWaitForEndTime);
-	iShared.iAliveMutex.Close();
-	iShared.iMutex.Close();
-	iShared.iPreBuffer.ResetAndDestroy();
-	if (iShared.iAudioThread)
+	Cancel();
+	
+	delete iTimer;
+	
+	if (iAudioThread.ExitType() == EExitPending)
 		{
-		delete iShared.iAudioThread;
+		// The thread is still running so destroy
+		// it and then wait for it to close
+		
+		TRequestStatus threadStatus;
+		iAudioThread.Logon(threadStatus);
+		SendCmd(ECmdDestroyAudio);
+		User::WaitForRequest(threadStatus);
 		}
+	
+	iAudioThread.Close();
 	}
 
-void CMobblerAudioControl::Restart()
+void CMobblerAudioControl::RunL()
 	{
-	iShared.iMutex.Wait();
-	iShared.iPreBuffer.ResetAndDestroy();
-	iShared.iMutex.Signal();
-	SendCmd(ECmdRestartAudio);
-	iShared.iMutex.Wait();
-	iShared.iPauseOffset = 0;
-	iShared.iPaused = EFalse;
-	iShared.iMutex.Signal();
+	iObserver.HandleAudioFinishedL(this);	
 	}
 
-void CMobblerAudioControl::Stop()
+void CMobblerAudioControl::DoCancel()
 	{
-	iShared.iMutex.Wait();
-	iShared.iPreBuffer.ResetAndDestroy();
-	iShared.iMutex.Signal();
-	if (iCreated)
-		{
-		iCreated = EFalse;
-		SendCmd(ECmdStopAudio);
-		while (!iShared.iStopped);
-		}
+	iAudioThread.LogonCancel(iStatus);
 	}
 
-void CMobblerAudioControl::Start()
+TInt CMobblerAudioControl::HandleAudioPositionChangeL(TAny* aSelf)
 	{
-	if (iCreated)
-		{
-		return;
-		}
-	iCreated = ETrue;
-	SendCmd(ECmdStartAudio);
-	iShared.iMutex.Wait();
-	iShared.iPauseOffset = 0;
-	iShared.iPaused = EFalse;
-	iShared.iMutex.Signal();
+	static_cast<CMobblerAudioControl*>(aSelf)->iObserver.HandleAudioPositionChangeL();
+	return KErrNone;
 	}
 
-void CMobblerAudioControl::Pause(TBool aPlaying)
+void CMobblerAudioControl::WriteMp3DataL(const TDesC8& aData, TInt aTotalDataSize)
 	{
-	if (!iCreated || !aPlaying)
-		{
-		return;
-		}
-	SendCmd(ECmdPauseAudio);
-	iShared.iMutex.Wait();
-	iShared.iPaused = !iShared.iPaused;
-	if (iShared.iPaused)
-		{
-		iShared.iPauseOffset += iShared.iPlaybackPosition;
-		}
-	else
-		{
-		SendCmd(ECmdServiceBuffer);
-		}
-	iShared.iMutex.Signal();
+	iShared.iTrack->SetDataSize(aTotalDataSize);
+	iShared.iTrack->BufferAdded(aData.Length());
+	
+	iShared.iAudioData.Set(aData);
+	SendCmd(ECmdWriteData);
+	
+	static_cast<CMobblerAppUi*>(CEikonEnv::Static()->AppUi())->StatusDrawDeferred();
 	}
 
-TBool CMobblerAudioControl::IsPaused()
+void CMobblerAudioControl::SetAbumArtL(const TDesC8& aAlbumArt)
 	{
-	iShared.iMutex.Wait();
-	TBool pause = iShared.iPaused;
-	iShared.iMutex.Signal();
-	return pause;
+	iShared.iTrack->SetAlbumArtL(aAlbumArt);
+	}
+
+void CMobblerAudioControl::TrackDownloadCompleteL()
+	{
+	iShared.iDownloadComplete = ETrue;
 	}
 
 void CMobblerAudioControl::SetVolume(TInt aVolume)
 	{
-	iShared.iMutex.Wait();
 	iShared.iVolume = aVolume;
-	iShared.iMutex.Signal();
-	if (iCreated)
-		{
-		SendCmd(ECmdSetVolume);
-		}
+	SendCmd(ECmdSetVolume);
 	}
 
 void CMobblerAudioControl::SetEqualizerIndex(TInt aIndex)
 	{
-	iShared.iMutex.Wait();
 	iShared.iEqualizerIndex = aIndex;
-	iShared.iMutex.Signal();
-	if (iCreated)
-		{
-		SendCmd(ECmdSetEqualizer);
-		}
+	SendCmd(ECmdSetEqualizer);
 	}
 
-void CMobblerAudioControl::AddToBuffer(const TDesC8& aData, TBool aRunning)
+void CMobblerAudioControl::SetPreBufferSize(TTimeIntervalSeconds aPreBufferSize)
 	{
-	iShared.iMutex.Wait();
-	TInt count = iShared.iPreBuffer.Count();
-	iShared.iPreBuffer.Append(aData.AllocLC());
-	CleanupStack::Pop(); // aData.AllocLC()
-	iShared.iMutex.Signal();
-	if ((count == 0) && aRunning && !IsPaused())
-		{
-		SendCmd(ECmdServiceBuffer);
-		}
+	iShared.iPreBufferSize = aPreBufferSize;
 	}
 
-void CMobblerAudioControl::BeginPlay()
+void CMobblerAudioControl::SetCurrent()
 	{
+	iShared.iCurrent = ETrue;
 	SendCmd(ECmdServiceBuffer);
 	}
 
 void CMobblerAudioControl::SendCmd(TMobblerAudioCmd aCmd)
-	{
-	iShared.iMutex.Wait();
-	iShared.iCmd = aCmd;
-	iShared.iMutex.Signal();
-	iShared.iExc = EExcUserInterrupt;
-	    
-	TRequestStatus* status = iShared.iStatusPtr;
-	if(status->Int() == KRequestPending)
-		{
-		iAudioThread.RequestComplete(status, KErrNone);
-		}
-	else
-		{
-		// This should never happen, but we add this code to be safe
-		}
+	{	    
+	// send the command and wait for the audio thread to respond to it
+
+	TRequestStatus status;
+	iAudioThread.Rendezvous(status);
+	iAudioThread.RequestComplete(iShared.iCmdStatus, aCmd);
+	User::WaitForRequest(status);
 	}
 
-TInt CMobblerAudioControl::Volume()
+TTimeIntervalSeconds CMobblerAudioControl::PreBufferSize() const
 	{
-	iShared.iMutex.Wait();
-	TInt volume = iShared.iVolume;
-	iShared.iMutex.Signal();
-	return volume;
+	return iShared.iPreBufferSize;
 	}
 
-TInt CMobblerAudioControl::MaxVolume()
+TInt CMobblerAudioControl::Volume() const
 	{
-	iShared.iMutex.Wait();
-	TInt maxVolume = iShared.iMaxVolume;
-	iShared.iMutex.Signal();
-	return maxVolume;
+	return iShared.iVolume;
 	}
 
-TInt CMobblerAudioControl::PlaybackPosition()
+TInt CMobblerAudioControl::MaxVolume() const
 	{
-	iShared.iMutex.Wait();
-	TInt position = iShared.iPlaybackPosition + iShared.iPauseOffset;
-	iShared.iMutex.Signal();
-	return position;
+	return iShared.iMaxVolume;
 	}
 
-TInt CMobblerAudioControl::PreBufferSize()
+TBool CMobblerAudioControl::Playing() const
 	{
-	iShared.iMutex.Wait();
-	TInt count = iShared.iPreBuffer.Count();
-	iShared.iMutex.Signal();
-	return count;
+	return iShared.iPlaying;
 	}
 
-RPointerArray<HBufC16>& CMobblerAudioControl::EqualizerProfiles()
+TBool CMobblerAudioControl::DownloadComplete() const
 	{
-	iShared.iMutex.Wait();
-	RPointerArray<HBufC16>& profiles = iShared.iEqualizerProfiles;
-	iShared.iMutex.Signal();
-	return profiles;
+	return iShared.iDownloadComplete;
 	}
 
-void CMobblerAudioControl::TransferWrittenBuffer(RPointerArray<HBufC8>& aTrashCan)
+const RPointerArray<HBufC16>& CMobblerAudioControl::EqualizerProfiles() const
 	{
-	iShared.iMutex.Wait();
-	for (TInt i = 0; i < iShared.iWrittenBuffer.Count(); ++i)
-		{
-		aTrashCan.Append(iShared.iWrittenBuffer[i]);
-		}
-	iShared.iWrittenBuffer.Reset();
-	iShared.iMutex.Signal();
+	return iShared.iEqualizerProfiles;
 	}
 
 // End of File

@@ -43,6 +43,15 @@ class CMobblerParser;
 class MMobblerLastFMConnectionObserver;
 class CMobblerTrack;
 
+
+class MMobblerDownloadObserver
+	{
+public:
+	virtual void WriteMp3DataL(const TDesC8& aData, TInt aTotalSize) = 0;
+	virtual void SetAbumArtL(const TDesC8& aAlbumArt) = 0;
+	virtual void TrackDownloadCompleteL() = 0;
+	};
+
 class CMobblerLastFMConnection : public CActive, public MHTTPTransactionCallback, public MMobblerTransactionObserver
 	{
 public:
@@ -98,7 +107,7 @@ public:
 	// Radio APIs
 	void SetRadioPlayer(MMobblerRadioPlayer& aRadioPlayer);
 	TInt RadioStartL(TRadioStation aRadioStation, const TDesC8& aRadioText);
-	void RequestMp3L(CMobblerTrack* aTrack);
+	void RequestMp3L(MMobblerDownloadObserver& aDownloadObserver, CMobblerTrack* aTrack);
 	void RequestPlaylistL();
 	void RadioStop();
 	
@@ -181,6 +190,7 @@ private:
 	CMobblerTransaction* iArtistGetInfoTransaction;
 	
 	RHTTPTransaction iRadioAudioTransaction;
+	MMobblerDownloadObserver* iDownloadObserver;
 	
 	TBool iSubscriber;
 
@@ -215,8 +225,6 @@ private:
 	
 	TTime iNextUpdateCheck;
 	TBool iCheckForUpdates;
-	
-	CMobblerTrack* iDownloadingTrack;
 	};
 
 #endif // __MOBBLERLASTFMCONNECTION_H__

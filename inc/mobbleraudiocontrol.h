@@ -27,42 +27,59 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 // INCLUDES
 #include <E32Base.h>
 #include "mobblershareddata.h"
+#include "mobblerlastfmconnection.h"
 
-class CMobblerAudioControl : public CBase
+class CMobblerAudioControl;
+
+class MMobblerAudioControlObserver
 	{
 public:
-	static CMobblerAudioControl* NewL(MMdaAudioOutputStreamCallback* aCallback);
-	~CMobblerAudioControl();
+	virtual void HandleAudioPositionChangeL() = 0;
+	virtual void HandleAudioFinishedL(CMobblerAudioControl* aAudioControl) = 0;
+	};
 
-private:
-	CMobblerAudioControl();
-	void ConstructL(MMdaAudioOutputStreamCallback* aCallback);
-
+class CMobblerAudioControl : public CActive, public MMobblerDownloadObserver
+	{
 public:
-	void Restart();
-	void Stop();
-	void Start();
-	void Pause(TBool aPlaying);
+	static CMobblerAudioControl* NewL(MMobblerAudioControlObserver& aObserver, CMobblerTrack& aTrack, TTimeIntervalSeconds aPreBufferSize, TInt aVolume);
+	~CMobblerAudioControl();
+	
 	void SetVolume(TInt aVolume);
 	void SetEqualizerIndex(TInt aIndex);
-	void AddToBuffer(const TDesC8& aData, TBool aRunning);
-	void BeginPlay();
-	void TransferWrittenBuffer(RPointerArray<HBufC8>& aTrashCan);
+	void SetPreBufferSize(TTimeIntervalSeconds aPreBufferSize);
+	void SetCurrent();
+
+	TInt Volume() const;
+	TInt MaxVolume() const;
+	const RPointerArray<HBufC16>& EqualizerProfiles() const;
+	TBool Playing() const;
+	TBool DownloadComplete() const;
+	TTimeIntervalSeconds PreBufferSize() const;
 	
-	TInt Volume();
-	TInt MaxVolume();
-	TInt PlaybackPosition();
-	RPointerArray<HBufC16>& EqualizerProfiles();
-	TInt PreBufferSize();
-	TBool IsPaused();
-
 private:
+	CMobblerAudioControl(MMobblerAudioControlObserver& aObserver);
+	void ConstructL(CMobblerTrack& aTrack, TTimeIntervalSeconds aPreBufferSize, TInt aVolume);
+	
 	void SendCmd(TMobblerAudioCmd aCmd);
-
+	
+	static TInt HandleAudioPositionChangeL(TAny* aSelf);
+	
+private: // from CActive
+	void RunL();
+	void DoCancel();
+	
+private: // from MMobblerMp3DownloadObserver
+	void WriteMp3DataL(const TDesC8& aData, TInt aTotalSize);
+	void SetAbumArtL(const TDesC8& aAlbumArt);
+	void TrackDownloadCompleteL();
+	
 private:
 	TMobblerSharedData iShared;
 	RThread iAudioThread;
-	TBool iCreated;
+	
+	CPeriodic* iTimer;
+	
+	MMobblerAudioControlObserver& iObserver;
 	};
   
 #endif

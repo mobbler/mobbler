@@ -97,7 +97,7 @@ void CMobblerAppUi::SetIapIDL(TUint32 aIapID)
 
 void CMobblerAppUi::SetBufferSize(TTimeIntervalSeconds aBufferSize)
 	{
-	iRadioPlayer->SetBufferSize(aBufferSize);
+	iRadioPlayer->SetPreBufferSize(aBufferSize);
 	}
 
 const CMobblerTrack* CMobblerAppUi::CurrentTrack() const

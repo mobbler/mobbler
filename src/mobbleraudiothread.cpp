@@ -23,213 +23,163 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <e32svr.h>
 
-#include "mobbleraudiocmddispatcher.h"
 #include "mobbleraudiothread.h"
 #include "mobblershareddata.h"
+#include "mobblertrack.h"
 
-CMobblerAudioThread::CMobblerAudioThread(TAny* aData)
-	: iShared(*((TMobblerSharedData*)aData))
-	{
-	}
+const TInt KBufferSizeInPackets(32);
 
-CMobblerAudioThread::~CMobblerAudioThread()
+TInt ThreadFunction(TAny* aData)
 	{
-  delete iStream;
-  delete iActiveScheduler;
-  delete iCleanupStack;
-  if (iActive) iActive->Cancel();  
-  delete iActive;
-  delete iEqualizer;
-	}
-
-TInt CMobblerAudioThread::ThreadFunction(TAny* aData)
-	{
-	TMobblerSharedData& shared = *((TMobblerSharedData*)aData);
-		
-	// tell client we're alive
-	// signaled off when destroying this thread
-	shared.iAliveMutex.Wait();
-	shared.iAudioThread = NULL;
+	__UHEAP_MARK;
+	
+	CTrapCleanup* cleanupStack = CTrapCleanup::New();
+	
+	CActiveScheduler* activeScheduler = new CActiveScheduler;
+	CActiveScheduler::Install(activeScheduler);
+	
+	CMobblerAudioThread* audioThread(NULL);
 		  
-	TRAPD(error, shared.iAudioThread = CMobblerAudioThread::CreateL(aData));
-	if (error != KErrNone)
+	TRAPD(error, audioThread = CMobblerAudioThread::NewL(aData));
+	
+	if (error == KErrNone)
 		{
-		return error;
-		}
-	if (shared.iAudioThread == NULL)
-		{
-		return KErrGeneral;
+		// if we're still here, activescheduler has been constructed
+		// start wait loop which runs until it's time to end the thread
+		CActiveScheduler::Start();
 		}
 	
-	shared.iStatusPtr = &(shared.iAudioThread->iActive->iStatus);
+	delete audioThread;
+	delete activeScheduler;
+	delete cleanupStack;
+	
+	__UHEAP_MARKEND;
 		
-	// if we're still here, activescheduler has been constructed
-	// start wait loop which runs until it's time to end the thread
-	CActiveScheduler::Start();
-	delete shared.iAudioThread;
-	shared.iAudioThread = NULL;
-		
-	// tell owning thread it's safe to exit
-	shared.iAliveMutex.Signal();
-		
-	return KErrNone;
-	}
-
-CMobblerAudioThread* CMobblerAudioThread::CreateL(TAny* aData)
-	{
-	CMobblerAudioThread* self = new (ELeave)CMobblerAudioThread(aData);
-	if (self == NULL) return self;
-	if (self->Construct() != KErrNone)
-		{
-		delete self;
-		return NULL;
-		}
-	return self;
-	}
-
-TInt CMobblerAudioThread::Construct()
-	{
-	// create cleanup stack
-	iCleanupStack = CTrapCleanup::New();
-	if (iCleanupStack == NULL)
-		{
-		return KErrNoMemory;
-		}
-	TInt error = KErrNone;
-	TRAP(error, ConstructL());
 	return error;
 	}
 
-void CMobblerAudioThread::ConstructL()
+CMobblerAudioThread* CMobblerAudioThread::NewL(TAny* aData)
 	{
-	// create active scheduler
-	iActiveScheduler = new (ELeave)CActiveScheduler;
-	CActiveScheduler::Install(iActiveScheduler);
+	CMobblerAudioThread* self = new(ELeave) CMobblerAudioThread(aData);
+	CleanupStack::PushL(self);
+	self->ConstructL();
+	CleanupStack::Pop(self);
+	return self;
+	}
+
+CMobblerAudioThread::CMobblerAudioThread(TAny* aData)
+	:CActive(CActive::EPriorityStandard), iShared(*static_cast<TMobblerSharedData*>(aData))
+	{
+	CActiveScheduler::Add(this);
 	
 	// sound inits
 	iSet.iChannels = TMdaAudioDataSettings::EChannelsStereo;
 	iSet.iSampleRate = TMdaAudioDataSettings::ESampleRate44100Hz;
-	iSet.iVolume = 0;
+	iSet.iVolume = iShared.iVolume;
 	
-	iActive = new (ELeave)CMobblerAudioCmdDispatcher(this);
-	iActive->Request();
+	iShared.iPlaying = EFalse;
+	iPreBufferOffset = 0;
 	}
 
-void CMobblerAudioThread::HandleUserInterruptCommandL()
-	{
-	if (iShared.iExc == EExcUserInterrupt)
-		{
-		switch(iShared.iCmd)
-			{
-			case ECmdStartAudio:
-				{
-				StartAudioL();
-				break;
-				}
-			case ECmdStopAudio:
-				{
-				StopAudio();
-				break;
-				}
-			case ECmdPauseAudio:
-				{
-				iStream->Stop();
-				break;
-				}
-			case ECmdRestartAudio:
-				{
-				RestartAudioL();
-				break;
-				}
-			case ECmdDestroyAudio:
-				{
-				if (iStream)
-					{
-					iStream->Stop();
-					delete iStream;
-					iStream = NULL;
-					}
-				if (iActive)
-					{
-					iActive->Cancel();
-					delete iActive;
-					iActive = NULL;
-					}
-				delete iActiveScheduler;
-				iActiveScheduler = NULL;
-				CActiveScheduler::Stop(); // Exit
-				break;
-				}
-			case ECmdSetVolume:
-				{
-				SetVolume();
-				break;
-				}
-			case ECmdSetEqualizer:
-				{
-				SetEqualizerIndexL();
-				break;
-				}
-			case ECmdServiceBuffer:
-				{
-				FillBuffer();
-				break;
-				}
-			}
-		}
-	else
-		{
-		// if unknown exception, just exit this thread
-		CActiveScheduler::Stop();
-		}
-	}
-
-void CMobblerAudioThread::StartAudioL()
+void CMobblerAudioThread::ConstructL()
 	{
 	iStream = CMdaAudioOutputStream::NewL(*this);
 	iStream->Open(&iSet);
-	iShared.iMutex.Wait();
-	iShared.iMaxVolume = iStream->MaxVolume();
-	iShared.iMutex.Signal();
-	iEqualizer = NULL;
+	
 #ifndef __WINS__
 	// Emulator seems to crap out even when TRAP_IGNORE is used,
 	// it doesn't support the equalizer anyway
 	TRAP_IGNORE(iEqualizer = CAudioEqualizerUtility::NewL(*iStream));
 #endif
+	
 	SetVolume();
 	SetEqualizerIndexL();
-	iShared.iMutex.Wait();
+	
 	iShared.iEqualizer = iEqualizer;
+	
 	if (iEqualizer)
 		{
 		for (TInt i = 0; i < iEqualizer->Presets().Count(); ++i)
 			{
-			iShared.iEqualizerProfiles.Append(iEqualizer->Presets()[i].iPresetName.Alloc());
+			iShared.iEqualizerProfiles.AppendL(iEqualizer->Presets()[i].iPresetName.Alloc());
 			}
 		}
-	iShared.iStopped = EFalse;
-	iShared.iMutex.Signal();
+	
+	Request();
 	}
 
-void CMobblerAudioThread::StopAudio()
+CMobblerAudioThread::~CMobblerAudioThread()
 	{
-	if (iStream)
+	Cancel();
+	
+	delete iStream;
+	delete iEqualizer;
+	iBuffer.ResetAndDestroy();
+	}
+
+void CMobblerAudioThread::Request()
+	{
+	iShared.iCmdStatus = &iStatus;
+	iStatus = KRequestPending;
+	SetActive();
+	}
+
+void CMobblerAudioThread::RunL()
+	{
+	switch (iStatus.Int())
 		{
-		iStream->Stop();
-		delete iStream;
-		iStream = NULL;
+		case ECmdSetVolume:
+			{
+			SetVolume();
+			break;
+			}
+		case ECmdSetEqualizer:
+			{
+			SetEqualizerIndexL();
+			break;
+			}
+		case ECmdWriteData:
+			{
+			// Put the data in the buffer
+			iBuffer.AppendL(iShared.iAudioData.AllocLC());
+			CleanupStack::Pop(); // aData.AllocLC()
+			
+			FillBufferL(ETrue);
+			}
+			break;
+		case ECmdServiceBuffer:
+			{
+			FillBufferL(EFalse);
+			}
+			break;
+		case ECmdDestroyAudio:
+			{
+			DestroyAudio();
+			break;
+			}
 		}
-	iShared.iMutex.Wait();
-	iShared.iStopped = ETrue;
-	iShared.iEqualizerProfiles.ResetAndDestroy();
-	iShared.iMutex.Signal();
+	
+	// Let the main thread know that we are ready for another command
+	Request();
+	RThread().Rendezvous(KErrNone);
 	}
 
-void CMobblerAudioThread::RestartAudioL()
+void CMobblerAudioThread::DoCancel()
 	{
-	StopAudio();
-	StartAudioL();
+	TRequestStatus* status = &iStatus;
+	User::RequestComplete(status, KErrCancel);
+	}
+
+TInt CMobblerAudioThread::RunError(TInt aError)
+	{
+	// There was an error in the RunL so just end the thread
+	CActiveScheduler::Stop();
+	return KErrNone;
+	}
+
+void CMobblerAudioThread::DestroyAudio()
+	{
+	CActiveScheduler::Stop();
 	}
 
 void CMobblerAudioThread::SetVolume()
@@ -239,10 +189,13 @@ void CMobblerAudioThread::SetVolume()
 
 void CMobblerAudioThread::SetEqualizerIndexL()
 	{
-	if (!iEqualizer) return;
-	iShared.iMutex.Wait();
+	if (!iEqualizer)
+		{
+		return;
+		}
+	
 	TInt index = iShared.iEqualizerIndex;
-	iShared.iMutex.Signal();
+
 	if (index < 0)
 		{
 		iEqualizer->Equalizer().DisableL();
@@ -254,70 +207,111 @@ void CMobblerAudioThread::SetEqualizerIndexL()
 		}
 	}
 
-void CMobblerAudioThread::FillBuffer()
+TBool CMobblerAudioThread::PreBufferFilled() const
 	{
-	iShared.iMutex.Wait();
-	if ((iShared.iPreBuffer.Count() > 0) && !iShared.iPaused)
+	TBool preBufferedFilled(EFalse);
+	
+	TInt bufferTotal = iShared.iTrack->DataSize();
+	TInt bufferPosition = Min(iShared.iTrack->Buffered(), bufferTotal);
+	TInt playbackTotal = iShared.iTrack->TrackLength().Int();
+	TInt playbackPosition = Min(iShared.iTrack->PlaybackPosition().Int(), playbackTotal);
+	
+	if (iShared.iTrack->DataSize() != 1)
 		{
-		iStream->WriteL(*iShared.iPreBuffer[0]);
-		iShared.iWrittenBuffer.AppendL(iShared.iPreBuffer[0]);
-		iShared.iPreBuffer.Remove(0);
+		TInt byteRate = iShared.iTrack->DataSize() / iShared.iTrack->TrackLength().Int();
+		TInt buffered = iShared.iTrack->Buffered() - iPreBufferOffset.Int();
+		
+		if (byteRate != 0)
+			{
+			TInt secondsBuffered = buffered / byteRate;
+			
+			// either buffered amount of time or the track has finished downloading
+			preBufferedFilled = secondsBuffered >= iShared.iPreBufferSize.Int() || iShared.iTrack->Buffered() == iShared.iTrack->DataSize();
+			}
 		}
-	iShared.iMutex.Signal();
+	else
+		{
+		preBufferedFilled = iBuffer.Count() >= KBufferSizeInPackets;
+		}
+	
+	return preBufferedFilled;
 	}
 
-void CMobblerAudioThread::MaoscBufferCopied(TInt aError, const TDesC8& aBuffer)
+void CMobblerAudioThread::FillBufferL(TBool aDataAdded)
+	{	
+	if (iShared.iPlaying)
+		{
+		if (aDataAdded)
+			{
+			// we are already playing so add the last
+			//piece of the buffer to the stream
+			iStream->WriteL(*iBuffer[iBuffer.Count() - 1]);
+			}
+		}
+	else if (!iShared.iPlaying && iShared.iCurrent && PreBufferFilled())
+		{
+		// Start playing the track
+		iShared.iPlaying = ETrue;
+		
+		// write all the data we have to the audio output stream
+		const TInt KBufferCount(iBuffer.Count());
+		for (TInt i(0) ; i < KBufferCount ; ++i)
+			{
+			iStream->WriteL(*iBuffer[i]);
+			}
+		}
+	}
+
+void CMobblerAudioThread::MaoscBufferCopied(TInt aError, const TDesC8& /*aBuffer*/)
 	{
+	delete iBuffer[0];
+	iBuffer.Remove(0);
+	
 	const TInt KMicrosecondsInOneSecond(1000000);
-	iShared.iMutex.Wait();
-	iShared.iPlaybackPosition = iStream->Position().Int64() / KMicrosecondsInOneSecond;
-	MMdaAudioOutputStreamCallback* callback = iShared.iCallback;
-	iShared.iMutex.Signal();
-	callback->MaoscBufferCopied(aError, aBuffer);
-	FillBuffer();
-	}
-
-void CMobblerAudioThread::MaoscOpenComplete(TInt aError)
-	{
-	if (aError)
+	iShared.iTrack->SetPlaybackPosition(iStream->Position().Int64() / KMicrosecondsInOneSecond);
+	
+	if (iBuffer.Count() == 0)
 		{
-		iError = aError;
-		}
-	else
-		{
-		TRAP_IGNORE(iStream->SetDataTypeL(KMMFFourCCCodeMP3));
-		iStream->SetAudioPropertiesL(iSet.iSampleRate, iSet.iChannels);
-		iShared.iMutex.Wait();
-		MMdaAudioOutputStreamCallback* callback = iShared.iCallback;
-		iShared.iMutex.Signal();
-		callback->MaoscOpenComplete(aError);
+		if (iShared.iDownloadComplete)
+			{
+			// We don't have anything to write to the audio output stream
+			// and the mp3 download has finished so exit
+			CActiveScheduler::Stop();
+			}
+		else
+			{
+			// There is more data on its way so start buffering again
+			iShared.iPlaying = EFalse;
+			iPreBufferOffset = iShared.iTrack->Buffered();
+			}
 		}
 	}
 
-void CMobblerAudioThread::MaoscPlayComplete(TInt aError)
+void CMobblerAudioThread::MaoscOpenComplete(TInt /*aError*/)
 	{
-	if (aError)
-		{
-		iError = aError;
-		}
-	else
-		{
-		iShared.iMutex.Wait();
-		MMdaAudioOutputStreamCallback* callback = iShared.iCallback;
-		iShared.iMutex.Signal();
-		callback->MaoscPlayComplete(aError);
-		}
+	TRAP_IGNORE(iStream->SetDataTypeL(KMMFFourCCCodeMP3));
+	iStream->SetAudioPropertiesL(iSet.iSampleRate, iSet.iChannels);
+	iStream->SetVolume(iShared.iVolume);
+	iShared.iMaxVolume = iStream->MaxVolume();
+
+	
+	// Tell the creating thread that we are now running
+	RThread().Rendezvous(KErrNone);
+	}
+
+void CMobblerAudioThread::MaoscPlayComplete(TInt /*aError*/)
+	{
 	}
 
 void CMobblerAudioThread::SetEqualizer(TInt aIndex)
 	{
-	iShared.iMutex.Wait();
 	iShared.iEqualizerIndex = aIndex;
-	iShared.iMutex.Signal();
+	
 	if (!iEqualizer) 
 		{
 		return;
 		}
+	
 	if (aIndex < 0)
 		{
 		iEqualizer->Equalizer().DisableL();

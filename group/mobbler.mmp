@@ -60,7 +60,6 @@ SOURCE		mobbler.cpp
 SOURCE		mobbleraccesspointsettingitem.cpp
 SOURCE		mobblerapplication.cpp
 SOURCE		mobblerappui.cpp
-SOURCE		mobbleraudiocmddispatcher.cpp
 SOURCE		mobbleraudiocontrol.cpp
 SOURCE		mobbleraudiothread.cpp
 SOURCE		mobblerbitmap.cpp
