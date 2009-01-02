@@ -62,14 +62,13 @@ void CMobblerRadioPlayer::ConstructL()
 
 CMobblerRadioPlayer::~CMobblerRadioPlayer()
 	{
-	delete iPlaylist;
+	delete iCurrentPlaylist;
+	delete iNextPlaylist;
 	delete iCurrentAudioControl;
 	delete iNextAudioControl;
 	
 	delete iIncomingCallMonitor;
 	}
-
-
 
 void CMobblerRadioPlayer::HandleAudioPositionChangeL()
 	{
@@ -77,11 +76,10 @@ void CMobblerRadioPlayer::HandleAudioPositionChangeL()
 	// and only have the prebuffer amout of tim eleft of the track
 	// then start downloading th next track
 	
-	if (iCurrentTrack + 1 < iPlaylist->Count() &&
-			!iNextAudioControl &&
+	if (!iNextAudioControl &&
 			iCurrentAudioControl &&
 			iCurrentAudioControl->DownloadComplete() &&
-			(( (*iPlaylist)[iCurrentTrack]->TrackLength().Int() - (*iPlaylist)[iCurrentTrack]->PlaybackPosition().Int() ) <= iCurrentAudioControl->PreBufferSize().Int() ))
+			(( (*iCurrentPlaylist)[iCurrentTrackIndex]->TrackLength().Int() - (*iCurrentPlaylist)[iCurrentTrackIndex]->PlaybackPosition().Int() ) <= iCurrentAudioControl->PreBufferSize().Int() ))
 		{
 		// There is another track in the playlist
 		// We have not created the next track yet
@@ -89,8 +87,18 @@ void CMobblerRadioPlayer::HandleAudioPositionChangeL()
 		// and there is only the length of the pre-buffer to go on the current track 
 		// so start downloading the next track now 
 		
-		iNextAudioControl = CMobblerAudioControl::NewL(*this,  *(*iPlaylist)[iCurrentTrack + 1], iPreBufferSize, iVolume);
-		iLastFMConnection.RequestMp3L(*iNextAudioControl, (*iPlaylist)[iCurrentTrack + 1]);
+		if (iCurrentTrackIndex + 1 < iCurrentPlaylist->Count())
+			{
+			// There is more in the playlist so start fetching the next track
+			iNextAudioControl = CMobblerAudioControl::NewL(*this,  *(*iCurrentPlaylist)[iCurrentTrackIndex + 1], iPreBufferSize, iVolume);
+			iLastFMConnection.RequestMp3L(*iNextAudioControl, (*iCurrentPlaylist)[iCurrentTrackIndex + 1]);
+			}
+		else if (iNextPlaylist)
+			{
+			// there is another playlist so fetch the first track for that
+			iNextAudioControl = CMobblerAudioControl::NewL(*this,  *(*iNextPlaylist)[0], iPreBufferSize, iVolume);
+			iLastFMConnection.RequestMp3L(*iNextAudioControl, (*iNextPlaylist)[0]);
+			}
 		}
 	
 	static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->StatusDrawDeferred();
@@ -103,62 +111,55 @@ void CMobblerRadioPlayer::HandleAudioFinishedL(CMobblerAudioControl* aAudioContr
 
 TInt CMobblerRadioPlayer::StartL(CMobblerLastFMConnection::TRadioStation aRadioStation, const TDesC8& aRadioText)
 	{
-	Stop();
+	// Stop the radio and also make sure that
+	// we get rid of any playlists hanging around
+	DoStop(ETrue);
+	
+	delete iCurrentPlaylist;
+	iCurrentPlaylist = NULL;
+	delete iNextPlaylist;
+	iNextPlaylist = NULL;
+	
+	// now ask for the radio to start again
 	return iLastFMConnection.RadioStartL(aRadioStation, aRadioText);
 	}
 
 void CMobblerRadioPlayer::SetPlaylistL(CMobblerRadioPlaylist* aPlaylist)
 	{
-	iCurrentTrack = 0;
-	
-	if (aPlaylist->Count() > iCurrentTrack)
-		{		
-		delete iCurrentAudioControl;
-		iCurrentAudioControl = NULL;
+	if (iCurrentPlaylist)
+		{
+		// we are still using the current playlist
+		// so this must be the next one
 		
-		if (iNextAudioControl)
-			{
-			iCurrentAudioControl = iNextAudioControl;
-			iNextAudioControl = NULL;
-			}
-		else
-			{
-			iCurrentAudioControl = CMobblerAudioControl::NewL(*this, *(*aPlaylist)[iCurrentTrack], iPreBufferSize, iVolume);
-			iLastFMConnection.RequestMp3L(*iCurrentAudioControl, (*aPlaylist)[iCurrentTrack]);	
-			}
-		
-		iCurrentAudioControl->SetCurrent();
-		
-		// We have started playing the track so tell Last.fm
-		CMobblerTrack* track = (*aPlaylist)[iCurrentTrack];
-		
-		if (track->StartTimeUTC() == Time::NullTTime())
-			{
-			// we haven't set the start time for this track yet
-			// so this must be the first time we are writing data
-			// to the output stream.  Set the start time now.
-			TTime now;
-			now.UniversalTime();
-			track->SetStartTimeUTC(now);
-			}
-		
-		iLastFMConnection.TrackStartedL(track);
+		delete iNextPlaylist;
+		iNextPlaylist = aPlaylist;
 		}
-	
-	// take ownership of the playlist
-	delete iPlaylist;
-	iPlaylist = aPlaylist;
+	else
+		{
+		iCurrentPlaylist = aPlaylist;
+		
+		iCurrentTrackIndex = -1;
+		NextTrackL();
+		}
 	}
 
 void CMobblerRadioPlayer::NextTrackL()
 	{	
 	DoStop(EFalse);
 	
-	if (iPlaylist)
+	if (iCurrentPlaylist)
 		{
-		if (iPlaylist->Count() > iCurrentTrack + 1)
+		if (iCurrentPlaylist->Count() > iCurrentTrackIndex + 1)
 			{
-			++iCurrentTrack;
+			++iCurrentTrackIndex;
+			
+			if (iCurrentPlaylist->Count() - 1 == iCurrentTrackIndex)
+				{
+				// This is the last track in the playlist so
+				// fetch the next playlist
+
+				iLastFMConnection.RequestPlaylistL();
+				}
 			
 			delete iCurrentAudioControl;
 			iCurrentAudioControl = NULL;
@@ -170,14 +171,14 @@ void CMobblerRadioPlayer::NextTrackL()
 				}
 			else
 				{
-				iCurrentAudioControl = CMobblerAudioControl::NewL(*this, *(*iPlaylist)[iCurrentTrack], iPreBufferSize, iVolume);
-				iLastFMConnection.RequestMp3L(*iCurrentAudioControl, (*iPlaylist)[iCurrentTrack]);
+				iCurrentAudioControl = CMobblerAudioControl::NewL(*this, *(*iCurrentPlaylist)[iCurrentTrackIndex], iPreBufferSize, iVolume);
+				iLastFMConnection.RequestMp3L(*iCurrentAudioControl, (*iCurrentPlaylist)[iCurrentTrackIndex]);
 				}
 			
 			iCurrentAudioControl->SetCurrent();
 			
 			// We have started playing the track so tell Last.fm
-			CMobblerTrack* track = (*iPlaylist)[iCurrentTrack];
+			CMobblerTrack* track = (*iCurrentPlaylist)[iCurrentTrackIndex];
 			
 			if (track->StartTimeUTC() == Time::NullTTime())
 				{
@@ -193,10 +194,23 @@ void CMobblerRadioPlayer::NextTrackL()
 			}
 		else
 			{
-			//  There is a playlist so try and fetch another
-			delete iPlaylist;
-			iPlaylist = NULL;
-			iLastFMConnection.RequestPlaylistL();
+			// There is a playlist and the next one would have been
+			// fetched when the last track in this playlist was started
+			
+			delete iCurrentPlaylist;
+			iCurrentPlaylist = NULL;
+			
+			if (iNextPlaylist)
+				{
+				// we have already fetched the next plalist so start using it
+				// if we don't have the next playlist then it is still downloading
+				
+				iCurrentPlaylist = iNextPlaylist;
+				iNextPlaylist = NULL;
+				
+				iCurrentTrackIndex = -1;
+				NextTrackL();
+				}
 			}
 		}
 	}
@@ -258,7 +272,7 @@ TInt CMobblerRadioPlayer::MaxVolume() const
 
 const CMobblerString& CMobblerRadioPlayer::Station() const
 	{
-	return iPlaylist->Name();
+	return iCurrentPlaylist->Name();
 	}
 
 void CMobblerRadioPlayer::SetPreBufferSize(TTimeIntervalSeconds aPreBufferSize)
@@ -291,7 +305,7 @@ void CMobblerRadioPlayer::DoStop(TBool aDeleteNextTrack)
 			{
 			// if there was a next track then interment the current track
 			// becasue we can't download the same track twice
-			++iCurrentTrack;
+			++iCurrentTrackIndex;
 			}
 		
 		delete iNextAudioControl;
@@ -317,9 +331,9 @@ void CMobblerRadioPlayer::DoStop(TBool aDeleteNextTrack)
 CMobblerTrack* CMobblerRadioPlayer::CurrentTrack()
 	{
 	if (iCurrentAudioControl && (!iCurrentAudioControl->DownloadComplete() ||
-			iCurrentAudioControl->Playing()) && (iPlaylist && (iPlaylist->Count() > iCurrentTrack)) )
+			iCurrentAudioControl->Playing()) && (iCurrentPlaylist && (iCurrentPlaylist->Count() > iCurrentTrackIndex)) )
 		{
-		return (*iPlaylist)[iCurrentTrack];
+		return (*iCurrentPlaylist)[iCurrentTrackIndex];
 		}
 	
 	return NULL;
@@ -343,7 +357,7 @@ void CMobblerRadioPlayer::HandleIncomingCallL(TPSTelephonyCallState aPSTelephony
 		case EPSTelephonyCallStateAnswering:
 		case EPSTelephonyCallStateConnected:
 			// There was an incoming call so stop playing the radio
-			Stop();
+			DoStop(ETrue);
 			break;
 		case EPSTelephonyCallStateUninitialized:
 		case EPSTelephonyCallStateNone:
@@ -364,7 +378,7 @@ void CMobblerRadioPlayer::SetEqualizer(TInt aIndex)
 
 TBool CMobblerRadioPlayer::HasPlaylist() const
 	{
-	if (iPlaylist)
+	if (iCurrentPlaylist)
 		{
 		return ETrue;
 		}

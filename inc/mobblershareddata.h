@@ -57,12 +57,9 @@ public:
 	// data for ECmdSetVolume
 	TInt iVolume;
 	
-	// data for ECmdSetEqualizer
-	TInt iEqualizerIndex;
-	
-	// The equalizer
-	RPointerArray<HBufC16> iEqualizerProfiles;
+	// Data for ECmdSetEqualizer
 	CAudioEqualizerUtility* iEqualizer;
+	TInt iEqualizerIndex;
 	
 	CMobblerTrack* iTrack;
 	};

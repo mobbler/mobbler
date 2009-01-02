@@ -186,9 +186,16 @@ TBool CMobblerAudioControl::DownloadComplete() const
 	return iShared.iDownloadComplete;
 	}
 
-const RPointerArray<HBufC16>& CMobblerAudioControl::EqualizerProfiles() const
+void CMobblerAudioControl::GetEqualizerProfiles(RPointerArray<HBufC16>& aProfiles) const
 	{
-	return iShared.iEqualizerProfiles;
+	if (iShared.iEqualizer)
+		{
+		for (TInt i(0) ; i < iShared.iEqualizer->Presets().Count() ; ++i)
+			{
+			aProfiles.AppendL(iShared.iEqualizer->Presets()[i].iPresetName.AllocLC());
+			CleanupStack::Pop(); // iPresetName.AllocLC()
+			}
+		}
 	}
 
 // End of File

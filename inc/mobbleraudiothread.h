@@ -60,7 +60,6 @@ private:
     TBool PreBufferFilled() const;
     
     void SetEqualizerIndexL();
-    void SetEqualizer(TInt aIndex);
     
 private: // from MMdaAudioOutputStreamCallback
     void MaoscPlayComplete(TInt aError);
@@ -70,12 +69,13 @@ private: // from MMdaAudioOutputStreamCallback
 private:
 	CMdaAudioOutputStream* iStream;
 	TMdaAudioDataSettings iSet;
-	CAudioEqualizerUtility* iEqualizer;
 
 	TMobblerSharedData& iShared;  // reference to shared data with client
 	
 	RPointerArray<HBufC8> iBuffer;
 	TTimeIntervalSeconds iPreBufferOffset;
+	
+	TBool iActiveSchedulerStopped;
 	};
 
 #endif // __MOBBLERAUDIOTHREAD_H__

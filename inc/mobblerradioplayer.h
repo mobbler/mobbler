@@ -98,8 +98,9 @@ private:
 	void HandleIncomingCallL(TPSTelephonyCallState aPSTelephonyCallState);
 
 private:
-	TInt iCurrentTrack;
-	CMobblerRadioPlaylist* iPlaylist;
+	TInt iCurrentTrackIndex;
+	CMobblerRadioPlaylist* iCurrentPlaylist;
+	CMobblerRadioPlaylist* iNextPlaylist;
 	
 	CMobblerLastFMConnection& iLastFMConnection;
 	

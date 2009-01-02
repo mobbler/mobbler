@@ -51,7 +51,7 @@ public:
 
 	TInt Volume() const;
 	TInt MaxVolume() const;
-	const RPointerArray<HBufC16>& EqualizerProfiles() const;
+	void GetEqualizerProfiles(RPointerArray<HBufC16>& aProfiles) const;
 	TBool Playing() const;
 	TBool DownloadComplete() const;
 	TTimeIntervalSeconds PreBufferSize() const;

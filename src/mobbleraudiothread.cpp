@@ -89,21 +89,11 @@ void CMobblerAudioThread::ConstructL()
 #ifndef __WINS__
 	// Emulator seems to crap out even when TRAP_IGNORE is used,
 	// it doesn't support the equalizer anyway
-	TRAP_IGNORE(iEqualizer = CAudioEqualizerUtility::NewL(*iStream));
+	TRAP_IGNORE(iShared.iEqualizer = CAudioEqualizerUtility::NewL(*iStream));
 #endif
 	
 	SetVolume();
 	SetEqualizerIndexL();
-	
-	iShared.iEqualizer = iEqualizer;
-	
-	if (iEqualizer)
-		{
-		for (TInt i = 0; i < iEqualizer->Presets().Count(); ++i)
-			{
-			iShared.iEqualizerProfiles.AppendL(iEqualizer->Presets()[i].iPresetName.Alloc());
-			}
-		}
 	
 	Request();
 	}
@@ -112,8 +102,9 @@ CMobblerAudioThread::~CMobblerAudioThread()
 	{
 	Cancel();
 	
+	delete iShared.iEqualizer;
 	delete iStream;
-	delete iEqualizer;
+
 	iBuffer.ResetAndDestroy();
 	}
 
@@ -173,13 +164,22 @@ void CMobblerAudioThread::DoCancel()
 TInt CMobblerAudioThread::RunError(TInt aError)
 	{
 	// There was an error in the RunL so just end the thread
-	CActiveScheduler::Stop();
+	
+	if (!iActiveSchedulerStopped)
+		{
+		iActiveSchedulerStopped = ETrue;
+		CActiveScheduler::Stop();
+		}
 	return KErrNone;
 	}
 
 void CMobblerAudioThread::DestroyAudio()
 	{
-	CActiveScheduler::Stop();
+	if (!iActiveSchedulerStopped)
+		{
+		iActiveSchedulerStopped = ETrue;
+		CActiveScheduler::Stop();
+		}
 	}
 
 void CMobblerAudioThread::SetVolume()
@@ -189,21 +189,17 @@ void CMobblerAudioThread::SetVolume()
 
 void CMobblerAudioThread::SetEqualizerIndexL()
 	{
-	if (!iEqualizer)
+	if (iShared.iEqualizer)
 		{
-		return;
-		}
-	
-	TInt index = iShared.iEqualizerIndex;
-
-	if (index < 0)
-		{
-		iEqualizer->Equalizer().DisableL();
-		}
-	else
-		{
-		iEqualizer->Equalizer().EnableL();
-		iEqualizer->ApplyPresetL(index);
+		if (iShared.iEqualizerIndex < 0)
+			{
+			iShared.iEqualizer->Equalizer().DisableL();
+			}
+		else
+			{
+			iShared.iEqualizer->Equalizer().EnableL();
+			iShared.iEqualizer->ApplyPresetL(iShared.iEqualizerIndex);
+			}
 		}
 	}
 
@@ -276,7 +272,12 @@ void CMobblerAudioThread::MaoscBufferCopied(TInt aError, const TDesC8& /*aBuffer
 			{
 			// We don't have anything to write to the audio output stream
 			// and the mp3 download has finished so exit
-			CActiveScheduler::Stop();
+			
+			if (!iActiveSchedulerStopped)
+				{
+				iActiveSchedulerStopped = ETrue;
+				CActiveScheduler::Stop();
+				}
 			}
 		else
 			{
@@ -293,7 +294,6 @@ void CMobblerAudioThread::MaoscOpenComplete(TInt /*aError*/)
 	iStream->SetAudioPropertiesL(iSet.iSampleRate, iSet.iChannels);
 	iStream->SetVolume(iShared.iVolume);
 	iShared.iMaxVolume = iStream->MaxVolume();
-
 	
 	// Tell the creating thread that we are now running
 	RThread().Rendezvous(KErrNone);
@@ -301,26 +301,6 @@ void CMobblerAudioThread::MaoscOpenComplete(TInt /*aError*/)
 
 void CMobblerAudioThread::MaoscPlayComplete(TInt /*aError*/)
 	{
-	}
-
-void CMobblerAudioThread::SetEqualizer(TInt aIndex)
-	{
-	iShared.iEqualizerIndex = aIndex;
-	
-	if (!iEqualizer) 
-		{
-		return;
-		}
-	
-	if (aIndex < 0)
-		{
-		iEqualizer->Equalizer().DisableL();
-		}
-	else
-		{
-		iEqualizer->Equalizer().EnableL();
-		iEqualizer->ApplyPresetL(aIndex);
-		}
 	}
 
 // End of file
