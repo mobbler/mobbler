@@ -23,12 +23,15 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <akncontext.h>
 #include <akntitle.h>
+#include <audioequalizerutility.h>
 #include <barsread.h>
 #include <eikmenub.h>
+#include <mdaaudiooutputstream.h>
 #include <mobbler.rsg>
 
 #include "mobbler.hrh"
 #include "mobblerappui.h"
+#include "mobblerradioplayer.h"
 #include "mobblerrichtextcontrol.h"
 #include "mobblerstatuscontrol.h"
 #include "mobblerstatusview.h"
@@ -80,6 +83,42 @@ void CMobblerStatusView::DynInitMenuPaneL(TInt aResourceId, CEikMenuPane* aMenuP
 
 		aMenuPane->SetItemDimmed(EMobblerCommandResumeRadio, 
 					!static_cast<CMobblerAppUi*>(AppUi())->RadioResumable());
+		}
+	else if (aResourceId == R_EQUALIZER_SUBMENU_PANE)
+		{
+		CMdaAudioOutputStream* tempStream = CMdaAudioOutputStream::NewL(*this);
+		CleanupStack::PushL(tempStream);
+		CAudioEqualizerUtility* tempEqualizer = NULL;
+#ifndef __WINS__
+		// Emulator seems to crap out even when TRAP_IGNORE is used,
+		// it doesn't support the equalizer anyway
+		TRAP_IGNORE(tempEqualizer = CAudioEqualizerUtility::NewL(*tempStream));
+#endif
+		if (tempEqualizer)
+			{
+			CleanupStack::PushL(tempEqualizer);
+			TInt count = tempEqualizer->Presets().Count();
+			for (TInt x = 0; x < count; x++)
+				{
+				CEikMenuPaneItem::SData Item;
+				Item.iCascadeId = 0;
+				Item.iCommandId = EMobblerCommandEqualizerDefault + x + 1;
+				if (x == count - 1)
+					Item.iFlags = EEikMenuItemRadioEnd;
+				else
+					Item.iFlags = EEikMenuItemRadioMiddle;
+				Item.iText = tempEqualizer->Presets()[x].iPresetName;
+				aMenuPane->AddMenuItemL(Item);
+				}
+			TInt equalizerIndex = static_cast<CMobblerAppUi*>(AppUi())->RadioPlayer()->EqualizerIndex();
+			aMenuPane->SetItemButtonState(EMobblerCommandEqualizerDefault + equalizerIndex + 1, EEikMenuItemSymbolOn);
+			CleanupStack::PopAndDestroy(tempEqualizer);
+			}
+		else
+			{
+			aMenuPane->SetItemDimmed(EMobblerCommandEqualizer, ETrue);
+			}
+		CleanupStack::PopAndDestroy(tempStream);
 		}
 	}
 

@@ -119,6 +119,12 @@ RESOURCE MENU_PANE r_mobbler_status_menu_pane
 			command = EMobblerCommandEditSettings;
 			txt = STR_mobbler_settings;
 			},
+		MENU_ITEM
+			{
+			command = EMobblerCommandEqualizer;
+			txt = STR_mobbler_equalizer;
+			cascade = r_equalizer_submenu_pane;
+			},
 
 		MENU_ITEM
 			{
@@ -176,6 +182,19 @@ RESOURCE MENU_PANE r_radio_submenu_pane
 			{
 			command = EMobblerCommandRadioMyPlaylist;
 			txt = STR_mobbler_radio_playlist;
+			}
+		};
+	}
+
+RESOURCE MENU_PANE r_equalizer_submenu_pane
+	{
+	items =
+		{
+		MENU_ITEM
+			{
+			command = EMobblerCommandEqualizerDefault;
+			txt = STR_mobbler_equalizer_profile_default;
+			flags = EEikMenuItemRadioStart;
 			}
 		};
 	}

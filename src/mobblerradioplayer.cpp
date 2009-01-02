@@ -41,17 +41,17 @@ const TInt KEqualizerOff(-1);
 
 const TInt KDefaultMaxVolume(10);
 
-CMobblerRadioPlayer* CMobblerRadioPlayer::NewL(CMobblerLastFMConnection& aSubmitter, TTimeIntervalSeconds aPreBufferSize)
+CMobblerRadioPlayer* CMobblerRadioPlayer::NewL(CMobblerLastFMConnection& aSubmitter, TTimeIntervalSeconds aPreBufferSize, TInt aEqualizerIndex)
 	{
-	CMobblerRadioPlayer* self = new(ELeave) CMobblerRadioPlayer(aSubmitter, aPreBufferSize);
+	CMobblerRadioPlayer* self = new(ELeave) CMobblerRadioPlayer(aSubmitter, aPreBufferSize, aEqualizerIndex);
 	CleanupStack::PushL(self);
 	self->ConstructL();
 	CleanupStack::Pop(self);
 	return self;
 	}
 
-CMobblerRadioPlayer::CMobblerRadioPlayer(CMobblerLastFMConnection& aLastFMConnection, TTimeIntervalSeconds aPreBufferSize)
-	:iLastFMConnection(aLastFMConnection), iPreBufferSize(aPreBufferSize), iVolume(KDefaultVolume), iMaxVolume(KDefaultMaxVolume)
+CMobblerRadioPlayer::CMobblerRadioPlayer(CMobblerLastFMConnection& aLastFMConnection, TTimeIntervalSeconds aPreBufferSize, TInt aEqualizerIndex)
+	:iLastFMConnection(aLastFMConnection), iPreBufferSize(aPreBufferSize), iVolume(KDefaultVolume), iMaxVolume(KDefaultMaxVolume), iEqualizerIndex(aEqualizerIndex)
 	{
 	}
 
@@ -90,13 +90,13 @@ void CMobblerRadioPlayer::HandleAudioPositionChangeL()
 		if (iCurrentTrackIndex + 1 < iCurrentPlaylist->Count())
 			{
 			// There is more in the playlist so start fetching the next track
-			iNextAudioControl = CMobblerAudioControl::NewL(*this,  *(*iCurrentPlaylist)[iCurrentTrackIndex + 1], iPreBufferSize, iVolume);
+			iNextAudioControl = CMobblerAudioControl::NewL(*this,  *(*iCurrentPlaylist)[iCurrentTrackIndex + 1], iPreBufferSize, iVolume, iEqualizerIndex);
 			iLastFMConnection.RequestMp3L(*iNextAudioControl, (*iCurrentPlaylist)[iCurrentTrackIndex + 1]);
 			}
 		else if (iNextPlaylist)
 			{
 			// there is another playlist so fetch the first track for that
-			iNextAudioControl = CMobblerAudioControl::NewL(*this,  *(*iNextPlaylist)[0], iPreBufferSize, iVolume);
+			iNextAudioControl = CMobblerAudioControl::NewL(*this,  *(*iNextPlaylist)[0], iPreBufferSize, iVolume, iEqualizerIndex);
 			iLastFMConnection.RequestMp3L(*iNextAudioControl, (*iNextPlaylist)[0]);
 			}
 		}
@@ -171,7 +171,7 @@ void CMobblerRadioPlayer::NextTrackL()
 				}
 			else
 				{
-				iCurrentAudioControl = CMobblerAudioControl::NewL(*this, *(*iCurrentPlaylist)[iCurrentTrackIndex], iPreBufferSize, iVolume);
+				iCurrentAudioControl = CMobblerAudioControl::NewL(*this, *(*iCurrentPlaylist)[iCurrentTrackIndex], iPreBufferSize, iVolume, iEqualizerIndex);
 				iLastFMConnection.RequestMp3L(*iCurrentAudioControl, (*iCurrentPlaylist)[iCurrentTrackIndex]);
 				}
 			
@@ -268,6 +268,11 @@ TInt CMobblerRadioPlayer::MaxVolume() const
 		}
 	
 	return maxVolume;
+	}
+
+TInt CMobblerRadioPlayer::EqualizerIndex() const
+	{
+	return iEqualizerIndex;
 	}
 
 const CMobblerString& CMobblerRadioPlayer::Station() const
@@ -372,6 +377,7 @@ void CMobblerRadioPlayer::HandleIncomingCallL(TPSTelephonyCallState aPSTelephony
 
 void CMobblerRadioPlayer::SetEqualizer(TInt aIndex)
 	{
+	iEqualizerIndex = aIndex;
 	if (iCurrentAudioControl) iCurrentAudioControl->SetEqualizerIndex(aIndex);
 	if (iNextAudioControl) iNextAudioControl->SetEqualizerIndex(aIndex);
 	}

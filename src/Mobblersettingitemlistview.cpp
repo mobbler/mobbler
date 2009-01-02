@@ -61,7 +61,7 @@ void CMobblerSettingItemListView::ConstructL()
 	{
 	BaseConstructL(R_MOBBLER_SETTING_ITEM_LIST_VIEW);
 	iSettings = CMobblerSettingItemListSettings::NewL();
-	CMobblerSettingItemList::LoadSettingValuesL(*iSettings);
+	iSettings->LoadSettingValuesL();
 	}
 
 TUid CMobblerSettingItemListView::Id() const
@@ -75,7 +75,7 @@ void CMobblerSettingItemListView::HandleCommandL(TInt aCommand)
 	if (aCommand == EAknSoftkeyOk)
 		{
 		// save and set details then switch back to the status view
-		iMobblerSettingItemList->SaveSettingValuesL();
+		iSettings->SaveSettingValuesL();
 		static_cast<CMobblerAppUi*>(AppUi())->SetDetailsL(iSettings->Username(), iSettings->Password());
 		static_cast<CMobblerAppUi*>(AppUi())->SetCheckForUpdatesL(iSettings->CheckForUpdates());
 		static_cast<CMobblerAppUi*>(AppUi())->SetIapIDL(iSettings->IapID());
@@ -85,7 +85,7 @@ void CMobblerSettingItemListView::HandleCommandL(TInt aCommand)
 	else if (aCommand == EAknSoftkeyCancel)
 		{
 		// reset the details then switch back to the status view
-		iMobblerSettingItemList->LoadSettingValuesL(*iSettings);
+		iSettings->LoadSettingValuesL();
 		AppUi()->ActivateLocalViewL(TUid::Uid(0xA0007CA8));
 		}
 	else
@@ -102,7 +102,7 @@ void CMobblerSettingItemListView::DoActivateL(const TVwsViewId& /*aPrevViewId*/,
 		iMobblerSettingItemList->SetMopParent(this);
 		iMobblerSettingItemList->ConstructFromResourceL( R_MOBBLER_SETTING_ITEM_LIST );
 		iMobblerSettingItemList->LoadSettingsL();
-		iMobblerSettingItemList->LoadSettingValuesL(*iSettings);
+		iSettings->LoadSettingValuesL();
 		iMobblerSettingItemList->ActivateL();
 		AppUi()->AddToStackL(*this, iMobblerSettingItemList);
 		}
@@ -148,6 +148,11 @@ TUint8 CMobblerSettingItemListView::GetBufferSize() const
 	return iSettings->BufferSize();
 	}
 
+TBool CMobblerSettingItemListView::GetEqualizerIndex() const
+	{
+	return iSettings->EqualizerIndex();
+	}
+
 void CMobblerSettingItemListView::HandleStatusPaneSizeChange()
 	{
 	CAknView::HandleStatusPaneSizeChange();
@@ -158,3 +163,8 @@ TBool CMobblerSettingItemListView::HandleChangeSelectedSettingItemL(TInt /*aComm
 	return ETrue;
 	}
 
+void CMobblerSettingItemListView::SetEqualizerIndex(TInt aIndex)
+	{
+	iSettings->SetEqualizerIndex(aIndex);
+	iSettings->SaveSettingValuesL();
+	}

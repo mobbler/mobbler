@@ -65,7 +65,7 @@ void CMobblerAppUi::ConstructL()
 	ActivateLocalViewL(iStatusView->Id());
 	
 	iLastFMConnection = CMobblerLastFMConnection::NewL(*this, iSettingView->GetUserName(), iSettingView->GetPassword(), iSettingView->GetIapID(), iSettingView->GetCheckForUpdates());
-	iRadioPlayer = CMobblerRadioPlayer::NewL(*iLastFMConnection, iSettingView->GetBufferSize());
+	iRadioPlayer = CMobblerRadioPlayer::NewL(*iLastFMConnection, iSettingView->GetBufferSize(), iSettingView->GetEqualizerIndex());
 	iMusicListener = CMobblerMusicAppListener::NewL(*iLastFMConnection);
 	iLastFMConnection->SetRadioPlayer(*iRadioPlayer);
 	
@@ -163,6 +163,13 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 	TBuf<250> artist;
 	TBuf<250> user;
 
+	if (aCommand >= EMobblerCommandEqualizerDefault)
+		{
+		TInt Index = aCommand - EMobblerCommandEqualizerDefault - 1;
+		RadioPlayer()->SetEqualizer(Index);
+		iSettingView->SetEqualizerIndex(Index);
+		return;
+		}
 	// Don't bother going online to Last.fm if no user details entered
 	if (aCommand >= EMobblerCommandOnline)
 		{

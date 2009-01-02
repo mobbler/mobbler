@@ -58,7 +58,6 @@ public:
 	TInt iVolume;
 	
 	// Data for ECmdSetEqualizer
-	CAudioEqualizerUtility* iEqualizer;
 	TInt iEqualizerIndex;
 	
 	CMobblerTrack* iTrack;

@@ -71,7 +71,12 @@ enum TMobblerSettingItemListViewCommands
 	EMobblerCommandRadioNeighbourhood,
 	EMobblerCommandRadioMyPlaylist,
 	
-	EMobblerCommandCheckForUpdates
+	EMobblerCommandCheckForUpdates,
+	
+	// Commands for the Equalizer
+	
+	EMobblerCommandEqualizer = 0x7100,
+	EMobblerCommandEqualizerDefault
 	};
 	
 enum TMobblerControls

@@ -35,7 +35,7 @@ class CMobblerStatusControl;
 class CMobblerRichTextControl;
 class CMobblerTrack;
 
-class CMobblerStatusView : public CAknView, public MMobblerBitmapObserver
+class CMobblerStatusView : public CAknView, public MMobblerBitmapObserver, public MMdaAudioOutputStreamCallback
 	{
 public:
 	static CMobblerStatusView* NewL();
@@ -63,6 +63,11 @@ private:
 	void SetupStatusPaneL();
 	
 	void BitmapLoadedL(const CMobblerBitmap* aMobblerBitmap);
+    
+private: // from MMdaAudioOutputStreamCallback, but NOT USED
+    void MaoscPlayComplete(TInt aError) {}
+    void MaoscBufferCopied(TInt aError, const TDesC8& aBuffer) {}
+    void MaoscOpenComplete(TInt aError) {}
 	
 private:
 	CAknWaitDialog* iConnectingDialog;

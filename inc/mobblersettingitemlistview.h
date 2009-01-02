@@ -30,8 +30,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "mobblersettingitemlistsettings.h"
 
-_LIT(KSettingsFile, "c:settings.ini");
-
 class CMobblerSettingItemList;
 
 class CMobblerSettingItemListView : public CAknView
@@ -49,6 +47,8 @@ public:
 	TBool GetCheckForUpdates() const;
 	TUint32 GetIapID() const;
 	TUint8 GetBufferSize() const;
+	TBool GetEqualizerIndex() const;
+	void SetEqualizerIndex(TInt aIndex);
 	
 private:
 	CMobblerSettingItemListView();        

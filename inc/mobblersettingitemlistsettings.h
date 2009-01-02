@@ -28,6 +28,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 const TInt KDefaultBufferSizeSeconds(5);
 
+_LIT(KSettingsFile, "c:settings.ini");
+
 class CMobblerSettingItemListSettings : public CBase
 	{
 public:
@@ -38,6 +40,10 @@ private:
 	CMobblerSettingItemListSettings();
 	void ConstructL();
 
+public:
+	void LoadSettingValuesL();
+	void SaveSettingValuesL();
+	
 public:
 	TDes& Username();
 	void SetUsernameL(const TDesC& aUserName);
@@ -56,6 +62,9 @@ public:
 	
 	TInt& BufferSize();
 	void SetBufferSize(TInt aBufferSize);
+	
+	TInt& EqualizerIndex();
+	void SetEqualizerIndex(TInt aIndex);
 
 protected:
 	TBuf<30> iUsername;
@@ -64,6 +73,7 @@ protected:
 	TBool iCheckForUpdates;
 	TInt iIapID;
 	TInt iBufferSize;
+	TInt iEqualizerIndex;
 	};
 
 #endif // __MOBBLERSETTINGITEMLISTSETTINGS_H__

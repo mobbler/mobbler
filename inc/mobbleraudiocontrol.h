@@ -41,7 +41,7 @@ public:
 class CMobblerAudioControl : public CActive, public MMobblerDownloadObserver
 	{
 public:
-	static CMobblerAudioControl* NewL(MMobblerAudioControlObserver& aObserver, CMobblerTrack& aTrack, TTimeIntervalSeconds aPreBufferSize, TInt aVolume);
+	static CMobblerAudioControl* NewL(MMobblerAudioControlObserver& aObserver, CMobblerTrack& aTrack, TTimeIntervalSeconds aPreBufferSize, TInt aVolume, TInt aEqualizerIndex);
 	~CMobblerAudioControl();
 	
 	void SetVolume(TInt aVolume);
@@ -51,14 +51,13 @@ public:
 
 	TInt Volume() const;
 	TInt MaxVolume() const;
-	void GetEqualizerProfiles(RPointerArray<HBufC16>& aProfiles) const;
 	TBool Playing() const;
 	TBool DownloadComplete() const;
 	TTimeIntervalSeconds PreBufferSize() const;
 	
 private:
 	CMobblerAudioControl(MMobblerAudioControlObserver& aObserver);
-	void ConstructL(CMobblerTrack& aTrack, TTimeIntervalSeconds aPreBufferSize, TInt aVolume);
+	void ConstructL(CMobblerTrack& aTrack, TTimeIntervalSeconds aPreBufferSize, TInt aVolume, TInt aEqualizerIndex);
 	
 	void SendCmd(TMobblerAudioCmd aCmd);
 	

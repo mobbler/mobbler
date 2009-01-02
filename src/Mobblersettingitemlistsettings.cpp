@@ -25,6 +25,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <stringloader.h>
 #include <barsread.h>
 #include <mobbler.rsg>
+#include <s32file.h>
+
 #include "mobblersettingitemlistsettings.h"
 
 
@@ -48,6 +50,90 @@ CMobblerSettingItemListSettings::~CMobblerSettingItemListSettings()
 
 void CMobblerSettingItemListSettings::ConstructL()
 	{
+	}
+
+void CMobblerSettingItemListSettings::LoadSettingValuesL()
+	{
+	RFile file;
+	CleanupClosePushL(file);
+	TInt openError = file.Open(CCoeEnv::Static()->FsSession(), KSettingsFile, EFileRead | EFileShareAny);
+	
+	if (openError == KErrNone)
+		{
+		RFileReadStream readStream(file);
+		CleanupClosePushL(readStream);
+		
+		TBuf<255> username;
+		TBuf<255> password;
+		
+		// Default values if the settings do not already exist
+		TBool backlight = EFalse;
+		TBool autoUpdatesOn = ETrue;
+		TUint32 iapId(0);
+		TUint8 bufferSize(KDefaultBufferSizeSeconds);
+		TInt equalizerIndex(-1);
+		
+		readStream >> username;
+		readStream >> password;
+
+		 // Ignore KErrEof if these settings are not yet saved in the file
+		TRAP_IGNORE(backlight = readStream.ReadInt8L());
+		TRAP_IGNORE(autoUpdatesOn = readStream.ReadInt8L());
+		TRAP_IGNORE(iapId = readStream.ReadUint32L());
+		TRAP_IGNORE(bufferSize = readStream.ReadUint8L());
+		TRAP_IGNORE(equalizerIndex = readStream.ReadInt16L());
+
+		SetUsernameL(username);
+		SetPasswordL(password);
+		SetBacklight(backlight);
+		SetCheckForUpdates(autoUpdatesOn);
+		SetIapID(iapId);
+		SetBufferSize(bufferSize);
+		SetEqualizerIndex(equalizerIndex);
+		
+		CleanupStack::PopAndDestroy(&readStream);
+		}
+	else
+		{
+		// there was no file there so read from the resource file
+		HBufC* username  = StringLoader::LoadLC(R_MOBBLER_USERNAME);
+		SetUsernameL(*username);
+		CleanupStack::PopAndDestroy(username);
+		SetPasswordL(_L("password"));
+		SetBacklight(EFalse);
+		SetCheckForUpdates(ETrue);
+		SetIapID(0);
+		SetBufferSize(KDefaultBufferSizeSeconds);
+		SetEqualizerIndex(-1);
+		}
+		
+	CleanupStack::PopAndDestroy(&file);
+	}
+
+void CMobblerSettingItemListSettings::SaveSettingValuesL()
+	{
+	RFile file;
+	CleanupClosePushL(file);
+	CCoeEnv::Static()->FsSession().MkDirAll(KSettingsFile);
+	TInt error = file.Replace(CCoeEnv::Static()->FsSession(), KSettingsFile, EFileWrite | EFileShareAny);
+	
+	if (error == KErrNone)
+		{
+		RFileWriteStream writeStream(file);
+		CleanupClosePushL(writeStream);
+		
+		writeStream << Username();
+		writeStream << Password();
+		writeStream.WriteInt8L(Backlight());
+		writeStream.WriteInt8L(CheckForUpdates());
+		writeStream.WriteUint32L(IapID());
+		writeStream.WriteUint8L(BufferSize());
+		writeStream.WriteInt16L(EqualizerIndex());
+		
+		CleanupStack::PopAndDestroy(&writeStream);
+		}
+	
+	CleanupStack::PopAndDestroy(&file);
 	}
 	
 TDes& CMobblerSettingItemListSettings::Username()
@@ -108,5 +194,15 @@ TInt& CMobblerSettingItemListSettings::BufferSize()
 void CMobblerSettingItemListSettings::SetBufferSize(TInt aBufferSize)
 	{
 	iBufferSize = aBufferSize;
+	}
+
+TInt& CMobblerSettingItemListSettings::EqualizerIndex()
+	{
+	return iEqualizerIndex;
+	}
+
+void CMobblerSettingItemListSettings::SetEqualizerIndex(TInt aIndex)
+	{
+	iEqualizerIndex = aIndex;
 	}
 

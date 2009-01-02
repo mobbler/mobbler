@@ -35,9 +35,6 @@ public:
 	CMobblerSettingItemList(CMobblerSettingItemListSettings& settings, MEikCommandObserver* aCommandObserver);
 	~CMobblerSettingItemList();
 	
-	static void LoadSettingValuesL(CMobblerSettingItemListSettings& aSettings);
-	void SaveSettingValuesL();
-	
 private:
 	void ChangeSelectedItemL();
 	

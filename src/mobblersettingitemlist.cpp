@@ -35,7 +35,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <eikseced.h>
 #include <gdi.h>
 #include <mobbler.rsg>
-#include <s32file.h>
 #include <stringloader.h> 
 
 #include "coemain.h"
@@ -118,85 +117,6 @@ TKeyResponse CMobblerSettingItemList::OfferKeyEventL(const TKeyEvent& aKeyEvent,
 		}
 	
 	return CAknSettingItemList::OfferKeyEventL(aKeyEvent, aType);
-	}
-
-void CMobblerSettingItemList::LoadSettingValuesL(CMobblerSettingItemListSettings& aSettings)
-	{
-	RFile file;
-	CleanupClosePushL(file);
-	TInt openError = file.Open(CCoeEnv::Static()->FsSession(), KSettingsFile, EFileRead | EFileShareAny);
-	
-	if (openError == KErrNone)
-		{
-		RFileReadStream readStream(file);
-		CleanupClosePushL(readStream);
-		
-		TBuf<255> username;
-		TBuf<255> password;
-		
-		// Default values if the settings do not already exist
-		TBool backlight = EFalse;
-		TBool autoUpdatesOn = ETrue;
-		TUint32 iapId(0);
-		TUint8 bufferSize(KDefaultBufferSizeSeconds);
-		
-		readStream >> username;
-		readStream >> password;
-
-		 // Ignore KErrEof if these settings are not yet saved in the file
-		TRAP_IGNORE(backlight = readStream.ReadInt8L());
-		TRAP_IGNORE(autoUpdatesOn = readStream.ReadInt8L());
-		TRAP_IGNORE(iapId = readStream.ReadUint32L());
-		TRAP_IGNORE(bufferSize = readStream.ReadUint8L());
-
-		aSettings.SetUsernameL(username);
-		aSettings.SetPasswordL(password);
-		aSettings.SetBacklight(backlight);
-		aSettings.SetCheckForUpdates(autoUpdatesOn);
-		aSettings.SetIapID(iapId);
-		aSettings.SetBufferSize(bufferSize);
-		
-		CleanupStack::PopAndDestroy(&readStream);
-		}
-	else
-		{
-		// there was no file there so read from the resource file
-		HBufC* username  = StringLoader::LoadLC(R_MOBBLER_USERNAME);
-		aSettings.SetUsernameL(*username);
-		CleanupStack::PopAndDestroy(username);
-		aSettings.SetPasswordL(_L("password"));
-		aSettings.SetBacklight(EFalse);
-		aSettings.SetCheckForUpdates(ETrue);
-		aSettings.SetIapID(0);
-		aSettings.SetBufferSize(KDefaultBufferSizeSeconds);
-		}
-		
-	CleanupStack::PopAndDestroy(&file);
-	}
-
-void CMobblerSettingItemList::SaveSettingValuesL()
-	{
-	RFile file;
-	CleanupClosePushL(file);
-	CCoeEnv::Static()->FsSession().MkDirAll(KSettingsFile);
-	TInt error = file.Replace(CCoeEnv::Static()->FsSession(), KSettingsFile, EFileWrite | EFileShareAny);
-	
-	if (error == KErrNone)
-		{
-		RFileWriteStream writeStream(file);
-		CleanupClosePushL(writeStream);
-		
-		writeStream << iSettings.Username();
-		writeStream << iSettings.Password();
-		writeStream.WriteInt8L(iSettings.Backlight());
-		writeStream.WriteInt8L(iSettings.CheckForUpdates());
-		writeStream.WriteUint32L(iSettings.IapID());
-		writeStream.WriteUint8L(iSettings.BufferSize());
-		
-		CleanupStack::PopAndDestroy(&writeStream);
-		}
-	
-	CleanupStack::PopAndDestroy(&file);
 	}
 
 void CMobblerSettingItemList::SizeChanged()

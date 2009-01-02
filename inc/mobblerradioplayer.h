@@ -55,7 +55,7 @@ class CMobblerRadioPlayer : public CBase,
 
 	{
 public:
-	static CMobblerRadioPlayer* NewL(CMobblerLastFMConnection& aLastFMConnection, TTimeIntervalSeconds aPreBufferSize);
+	static CMobblerRadioPlayer* NewL(CMobblerLastFMConnection& aLastFMConnection, TTimeIntervalSeconds aPreBufferSize, TInt aEqualizerIndex);
 	~CMobblerRadioPlayer();
 	
 	TInt StartL(CMobblerLastFMConnection::TRadioStation aRadioStation, const TDesC8& aRadioText);
@@ -72,6 +72,7 @@ public:
 	
 	TInt Volume() const;
 	TInt MaxVolume() const;	
+	TInt EqualizerIndex() const;
 	const CMobblerString& Station() const;
 	TBool HasPlaylist() const;
 	
@@ -80,7 +81,7 @@ private: // from MMobblerAudioControlObserver
 	void HandleAudioFinishedL(CMobblerAudioControl* aAudioControl);
 	
 private:
-	CMobblerRadioPlayer(CMobblerLastFMConnection& aSubmitter, TTimeIntervalSeconds aPreBufferSize);
+	CMobblerRadioPlayer(CMobblerLastFMConnection& aSubmitter, TTimeIntervalSeconds aPreBufferSize, TInt aEqualizerIndex);
 	void ConstructL();
 	
 	void SubmitCurrentTrackL();
@@ -112,6 +113,7 @@ private:
 	TTimeIntervalSeconds iPreBufferSize;
 	TInt iVolume;
 	TInt iMaxVolume;
+	TInt iEqualizerIndex;
 	};
 
 #endif // __MOBBLERRADIOPLAYER_H__

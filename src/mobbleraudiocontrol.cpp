@@ -31,11 +31,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 const TInt KTimerDuration(250000); // 1/4 second
 const TInt KMobblerHeapSize(1000000); // 1 MB
 
-CMobblerAudioControl* CMobblerAudioControl::NewL(MMobblerAudioControlObserver& aObserver, CMobblerTrack& aTrack, TTimeIntervalSeconds aPreBufferSize, TInt aVolume)
+CMobblerAudioControl* CMobblerAudioControl::NewL(MMobblerAudioControlObserver& aObserver, CMobblerTrack& aTrack, TTimeIntervalSeconds aPreBufferSize, TInt aVolume, TInt aEqualizerIndex)
 	{
 	CMobblerAudioControl* self = new(ELeave) CMobblerAudioControl(aObserver);
 	CleanupStack::PushL(self);
-	self->ConstructL(aTrack, aPreBufferSize, aVolume);
+	self->ConstructL(aTrack, aPreBufferSize, aVolume, aEqualizerIndex);
 	CleanupStack::Pop(self);
 	return self;
 	}
@@ -46,7 +46,7 @@ CMobblerAudioControl::CMobblerAudioControl(MMobblerAudioControlObserver& aObserv
 	CActiveScheduler::Add(this);
 	}
 
-void CMobblerAudioControl::ConstructL(CMobblerTrack& aTrack, TTimeIntervalSeconds aPreBufferSize, TInt aVolume)
+void CMobblerAudioControl::ConstructL(CMobblerTrack& aTrack, TTimeIntervalSeconds aPreBufferSize, TInt aVolume, TInt aEqualizerIndex)
 	{
 	// Set up the shared memory
 	iShared.iDownloadComplete = EFalse;
@@ -54,6 +54,7 @@ void CMobblerAudioControl::ConstructL(CMobblerTrack& aTrack, TTimeIntervalSecond
 	iShared.iTrack = &aTrack;
 	iShared.iPreBufferSize = aPreBufferSize;
 	iShared.iVolume = aVolume;
+	iShared.iEqualizerIndex = aEqualizerIndex;
 	
 	// Create the audio thread and wait for it to finish loading
 	User::LeaveIfError(iAudioThread.Create(KNullDesC, ThreadFunction, KDefaultStackSize, KMinHeapSize, KMinHeapSize + KMobblerHeapSize, &iShared));
@@ -69,6 +70,8 @@ void CMobblerAudioControl::ConstructL(CMobblerTrack& aTrack, TTimeIntervalSecond
 	iTimer = CPeriodic::NewL(CPeriodic::EPriorityStandard);
 	TCallBack callBack(HandleAudioPositionChangeL, this);
 	iTimer->Start(KTimerDuration, KTimerDuration, callBack);
+	SetVolume(aVolume);
+	SetEqualizerIndex(aEqualizerIndex);
 	}
 
 CMobblerAudioControl::~CMobblerAudioControl()
@@ -184,18 +187,6 @@ TBool CMobblerAudioControl::Playing() const
 TBool CMobblerAudioControl::DownloadComplete() const
 	{
 	return iShared.iDownloadComplete;
-	}
-
-void CMobblerAudioControl::GetEqualizerProfiles(RPointerArray<HBufC16>& aProfiles) const
-	{
-	if (iShared.iEqualizer)
-		{
-		for (TInt i(0) ; i < iShared.iEqualizer->Presets().Count() ; ++i)
-			{
-			aProfiles.AppendL(iShared.iEqualizer->Presets()[i].iPresetName.AllocLC());
-			CleanupStack::Pop(); // iPresetName.AllocLC()
-			}
-		}
 	}
 
 // End of File

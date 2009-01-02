@@ -89,7 +89,7 @@ void CMobblerAudioThread::ConstructL()
 #ifndef __WINS__
 	// Emulator seems to crap out even when TRAP_IGNORE is used,
 	// it doesn't support the equalizer anyway
-	TRAP_IGNORE(iShared.iEqualizer = CAudioEqualizerUtility::NewL(*iStream));
+	TRAP_IGNORE(iEqualizer = CAudioEqualizerUtility::NewL(*iStream));
 #endif
 	
 	SetVolume();
@@ -102,7 +102,7 @@ CMobblerAudioThread::~CMobblerAudioThread()
 	{
 	Cancel();
 	
-	delete iShared.iEqualizer;
+	delete iEqualizer;
 	delete iStream;
 
 	iBuffer.ResetAndDestroy();
@@ -189,17 +189,14 @@ void CMobblerAudioThread::SetVolume()
 
 void CMobblerAudioThread::SetEqualizerIndexL()
 	{
-	if (iShared.iEqualizer)
+	if (iShared.iEqualizerIndex < 0)
 		{
-		if (iShared.iEqualizerIndex < 0)
-			{
-			iShared.iEqualizer->Equalizer().DisableL();
-			}
-		else
-			{
-			iShared.iEqualizer->Equalizer().EnableL();
-			iShared.iEqualizer->ApplyPresetL(iShared.iEqualizerIndex);
-			}
+		iEqualizer->Equalizer().DisableL();
+		}
+	else
+		{
+		iEqualizer->Equalizer().EnableL();
+		iEqualizer->ApplyPresetL(iShared.iEqualizerIndex);
 		}
 	}
 
