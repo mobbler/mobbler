@@ -35,7 +35,7 @@ enum TMobblerAudioCmd
 	ECmdSetVolume,
 	ECmdSetEqualizer,
 	ECmdWriteData,
-	ECmdServiceBuffer
+	ECmdSetCurrent
 	};
 
 class TMobblerSharedData

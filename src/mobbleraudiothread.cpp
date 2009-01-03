@@ -42,6 +42,8 @@ TInt ThreadFunction(TAny* aData)
 		  
 	TRAPD(error, audioThread = CMobblerAudioThread::NewL(aData));
 	
+	RThread().Rendezvous(KErrNone);
+	
 	if (error == KErrNone)
 		{
 		// if we're still here, activescheduler has been constructed
@@ -83,17 +85,7 @@ CMobblerAudioThread::CMobblerAudioThread(TAny* aData)
 
 void CMobblerAudioThread::ConstructL()
 	{
-	iStream = CMdaAudioOutputStream::NewL(*this);
-	iStream->Open(&iSet);
-	
-#ifndef __WINS__
-	// Emulator seems to crap out even when TRAP_IGNORE is used,
-	// it doesn't support the equalizer anyway
-	TRAP_IGNORE(iEqualizer = CAudioEqualizerUtility::NewL(*iStream));
-#endif
-	
-	SetVolume();
-	SetEqualizerIndexL();
+
 	
 	Request();
 	}
@@ -138,9 +130,16 @@ void CMobblerAudioThread::RunL()
 			FillBufferL(ETrue);
 			}
 			break;
-		case ECmdServiceBuffer:
+		case ECmdSetCurrent:
 			{
-			FillBufferL(EFalse);
+			iStream = CMdaAudioOutputStream::NewL(*this);
+			iStream->Open(&iSet);
+	
+#ifndef __WINS__
+			// Emulator seems to crap out even when TRAP_IGNORE is used,
+			// it doesn't support the equalizer anyway
+			TRAP_IGNORE(iEqualizer = CAudioEqualizerUtility::NewL(*iStream));
+#endif
 			}
 			break;
 		case ECmdDestroyAudio:
@@ -184,19 +183,25 @@ void CMobblerAudioThread::DestroyAudio()
 
 void CMobblerAudioThread::SetVolume()
 	{
-	iStream->SetVolume(iShared.iVolume);
+	if (iStream)
+		{
+		iStream->SetVolume(iShared.iVolume);
+		}
 	}
 
 void CMobblerAudioThread::SetEqualizerIndexL()
 	{
-	if (iShared.iEqualizerIndex < 0)
+	if (iEqualizer)
 		{
-		iEqualizer->Equalizer().DisableL();
-		}
-	else
-		{
-		iEqualizer->Equalizer().EnableL();
-		iEqualizer->ApplyPresetL(iShared.iEqualizerIndex);
+		if (iShared.iEqualizerIndex < 0)
+			{
+			iEqualizer->Equalizer().DisableL();
+			}
+		else
+			{
+			iEqualizer->Equalizer().EnableL();
+			iEqualizer->ApplyPresetL(iShared.iEqualizerIndex);
+			}
 		}
 	}
 
@@ -241,7 +246,7 @@ void CMobblerAudioThread::FillBufferL(TBool aDataAdded)
 			iStream->WriteL(*iBuffer[iBuffer.Count() - 1]);
 			}
 		}
-	else if (!iShared.iPlaying && iShared.iCurrent && PreBufferFilled())
+	else if (!iShared.iPlaying && iOpen && iShared.iCurrent && PreBufferFilled())
 		{
 		// Start playing the track
 		iShared.iPlaying = ETrue;
@@ -292,8 +297,10 @@ void CMobblerAudioThread::MaoscOpenComplete(TInt /*aError*/)
 	iStream->SetVolume(iShared.iVolume);
 	iShared.iMaxVolume = iStream->MaxVolume();
 	
-	// Tell the creating thread that we are now running
-	RThread().Rendezvous(KErrNone);
+	SetEqualizerIndexL();
+	
+	iOpen = ETrue;
+	FillBufferL(EFalse);
 	}
 
 void CMobblerAudioThread::MaoscPlayComplete(TInt /*aError*/)

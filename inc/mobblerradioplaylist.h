@@ -36,8 +36,10 @@ public:
 	~CMobblerRadioPlaylist();
 	
 	void AppendTrackL(CMobblerTrack* aTrack);
+	void RemoveAndReleaseTrack(TInt aTrackIndex);
 	TInt Count() const;
-	CMobblerTrack* operator[](TInt aCount) const;
+	const CMobblerTrack* operator[](TInt aCount) const;
+	CMobblerTrack* operator[](TInt aCount);
 	
 	void SetNameL(const TDesC8& aName);
 	const CMobblerString& Name() const;

@@ -151,7 +151,7 @@ void CMobblerAudioControl::SetPreBufferSize(TTimeIntervalSeconds aPreBufferSize)
 void CMobblerAudioControl::SetCurrent()
 	{
 	iShared.iCurrent = ETrue;
-	SendCmd(ECmdServiceBuffer);
+	SendCmd(ECmdSetCurrent);
 	}
 
 void CMobblerAudioControl::SendCmd(TMobblerAudioCmd aCmd)

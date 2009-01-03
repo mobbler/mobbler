@@ -106,7 +106,26 @@ void CMobblerRadioPlayer::HandleAudioPositionChangeL()
 
 void CMobblerRadioPlayer::HandleAudioFinishedL(CMobblerAudioControl* aAudioControl)
 	{
-	NextTrackL();
+	if (aAudioControl == iCurrentAudioControl)
+		{
+		NextTrackL();
+		}
+	else if (aAudioControl == iNextAudioControl)
+		{
+		// the next audio track failed before this one so
+		// delete it and remove it from the playlist
+		delete iNextAudioControl;
+		iNextAudioControl = NULL;
+		
+		if (iCurrentPlaylist->Count() > iCurrentTrackIndex + 1)
+			{
+			iCurrentPlaylist->RemoveAndReleaseTrack(iCurrentTrackIndex + 1);
+			}
+		else if (iNextPlaylist && iNextPlaylist->Count() > 0)
+			{
+			iNextPlaylist->RemoveAndReleaseTrack(0);
+			}
+		}
 	}
 
 TInt CMobblerRadioPlayer::StartL(CMobblerLastFMConnection::TRadioStation aRadioStation, const TDesC8& aRadioText)

@@ -60,6 +60,12 @@ void CMobblerRadioPlaylist::AppendTrackL(CMobblerTrack* aTrack)
 	iPlaylist.AppendL(aTrack);
 	}
 
+void CMobblerRadioPlaylist::RemoveAndReleaseTrack(TInt aTrackIndex)
+	{
+	iPlaylist[aTrackIndex]->Release();
+	iPlaylist.Remove(aTrackIndex);
+	}
+
 void CMobblerRadioPlaylist::SetNameL(const TDesC8& aName)
 	{
 	delete iName;
@@ -71,7 +77,12 @@ TInt CMobblerRadioPlaylist::Count() const
 	return iPlaylist.Count();
 	}
 
-CMobblerTrack* CMobblerRadioPlaylist::operator[](TInt aCount) const
+const CMobblerTrack* CMobblerRadioPlaylist::operator[](TInt aCount) const
+	{
+	return iPlaylist[aCount];
+	}
+
+CMobblerTrack* CMobblerRadioPlaylist::operator[](TInt aCount)
 	{
 	return iPlaylist[aCount];
 	}

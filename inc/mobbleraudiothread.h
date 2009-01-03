@@ -77,6 +77,8 @@ private:
 	TTimeIntervalSeconds iPreBufferOffset;
 	
 	TBool iActiveSchedulerStopped;
+	
+	TBool iOpen;
 	};
 
 #endif // __MOBBLERAUDIOTHREAD_H__

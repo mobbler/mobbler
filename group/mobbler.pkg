@@ -47,6 +47,7 @@
 "$(EPOCROOT)epoc32\data\z\resource\plugins\musicappobserver.rsc"-"!:\resource\plugins\musicappobserver.rsc"
 
 ; 5th edition touch feedback
+"$(EPOCROOT)epoc32\release\$(PLATFORM)\$(TARGET)\mobblertouchfeedback.dll"-"!:\sys\bin\mobblertouchfeedback.dll"
 "$(EPOCROOT)epoc32\data\z\resource\plugins\mobblertouchfeedback.rsc"-"!:\resource\plugins\mobblertouchfeedback.rsc"
 
 ; graphics
@@ -95,3 +96,4 @@
 
 ; backup and restore
 ".\backup_registration.xml"-"!:\private\A0007648\backup_registration.xml"
+
