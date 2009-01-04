@@ -165,9 +165,9 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 
 	if (aCommand >= EMobblerCommandEqualizerDefault)
 		{
-		TInt Index = aCommand - EMobblerCommandEqualizerDefault - 1;
-		RadioPlayer()->SetEqualizer(Index);
-		iSettingView->SetEqualizerIndex(Index);
+		TInt index = aCommand - EMobblerCommandEqualizerDefault - 1;
+		RadioPlayer()->SetEqualizer(index);
+		iSettingView->SetEqualizerIndex(index);
 		return;
 		}
 	// Don't bother going online to Last.fm if no user details entered
@@ -375,7 +375,6 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 				CleanupStack::PopAndDestroy(artist8);
 				delete iPreviousRadioArtist;
 				iPreviousRadioArtist = artist.AllocL();
-				SaveRadioStationsL();
 				}
 			
 			break;
@@ -400,7 +399,6 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 				CleanupStack::PopAndDestroy(tag8);
 				delete iPreviousRadioTag;
 				iPreviousRadioTag = tag.AllocL();
-				SaveRadioStationsL();
 				}
 
 			break;
@@ -425,7 +423,6 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 				CleanupStack::PopAndDestroy(user8);
 				delete iPreviousRadioUser;
 				iPreviousRadioUser = user.AllocL();
-				SaveRadioStationsL();
 				}
 
 			break;
@@ -511,6 +508,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 void CMobblerAppUi::RadioStartL(CMobblerLastFMConnection::TRadioStation aRadioStation, const TDesC8& aRadioOption)
 	{
 	iPreviousRadioStation = aRadioStation;
+	SaveRadioStationsL();
 	TInt error = iRadioPlayer->StartL(aRadioStation, aRadioOption);
 	
 	TBool startStationOnConnectCompleteCallback(EFalse);
@@ -522,13 +520,13 @@ void CMobblerAppUi::RadioStartL(CMobblerLastFMConnection::TRadioStation aRadioSt
 		
 		CAknQueryDialog* dlg = CAknQueryDialog::NewL();
 		TBool goOnline(dlg->ExecuteLD(R_MOBBLER_QUERY_DIALOG, *goOnlineText));
-					
+		
 		CleanupStack::PopAndDestroy(goOnlineText);
 		
 		if (goOnline)
 			{
 			// Send the web services API call
-			iLastFMConnection->SetModeL(CMobblerLastFMConnection::EOnline);		
+			iLastFMConnection->SetModeL(CMobblerLastFMConnection::EOnline);
 			
 			startStationOnConnectCompleteCallback = ETrue;
 			}
@@ -537,7 +535,7 @@ void CMobblerAppUi::RadioStartL(CMobblerLastFMConnection::TRadioStation aRadioSt
 		{
 		startStationOnConnectCompleteCallback = ETrue;
 		}
-			
+		
 	if (startStationOnConnectCompleteCallback)
 		{
 		// Setting these mean that the radio station selected 
