@@ -122,7 +122,7 @@ rls_string STR_mobbler_always_ask "Immer nachfragen"
 rls_string STR_mobbler_check_for_updates_once_a_week "Nach Updates suchen"
 rls_string STR_mobbler_check_for_updates_yes "Ja"
 rls_string STR_mobbler_check_for_updates_no "Nein"
-rls_string STR_mobbler_buffer_size "Größe des Zwischenspeichers"
+rls_string STR_mobbler_buffer_size "Größe des Zwischenspeichers" // TOO LONG - TEXT TRUNCATED
 rls_string STR_mobbler_second "%U Sekunde"
 rls_string STR_mobbler_seconds "%U Sekunden"
 rls_string STR_mobbler_equalizer "Equaliser"

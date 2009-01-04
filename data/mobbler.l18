@@ -25,7 +25,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 rls_string STR_mobbler_mobbler "Mobbler"
 rls_string STR_mobbler_connect "Verbinden met Last.fm"
 rls_string STR_mobbler_disconnect "Verbinding verbreken"
-rls_string STR_mobbler_about "Ove	r"
+rls_string STR_mobbler_about "Over"
 rls_string STR_mobbler_exit "Afsluiten (stop scrobbling)"
 rls_string STR_mobbler_username "Gebruikersnaam"
 rls_string STR_mobbler_password "Wachtwoord"

@@ -26,7 +26,7 @@ rls_string STR_mobbler_mobbler "Mobbler"
 rls_string STR_mobbler_connect "Pieslēgties Last.fm"
 rls_string STR_mobbler_disconnect "Atslēgties"
 rls_string STR_mobbler_about "Par"
-rls_string STR_mobbler_exit "Iziet (pārtraukt atskaņojumu sūtīšanu)"
+rls_string STR_mobbler_exit "Iziet (pārtraukt atskaņojumu sūtīšanu)" // TOO LONG - TEXT TRUNCATED
 rls_string STR_mobbler_username "Lietotājvārds"
 rls_string STR_mobbler_password "parole"
 rls_string STR_mobbler_connecting "Pieslēdzas Last.fm"

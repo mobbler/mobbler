@@ -69,8 +69,8 @@ rls_string STR_mobbler_user_events "Tus eventos"
 rls_string STR_mobbler_history "Historial"
 rls_string STR_mobbler_status "Estado"
 rls_string STR_mobbler_data "Datos"
-rls_string STR_mobbler_radio_start "Crear una nueva estación de radio"
-rls_string STR_mobbler_resume_radio "Continuar escuchando la última estación"
+rls_string STR_mobbler_radio_start "Crear una nueva estación de radio" // TOO LONG - TRUNCATED TEXT
+rls_string STR_mobbler_resume_radio "Continuar escuchando la última estación" // TOO LONG - TRUNCATED TEXT
 rls_string STR_mobbler_radio_artist "Artista"
 rls_string STR_mobbler_radio_enter_artist "Escribe un artista"
 rls_string STR_mobbler_radio_tag "Etiquetas"

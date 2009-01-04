@@ -70,7 +70,7 @@ rls_string STR_mobbler_history "история"
 rls_string STR_mobbler_status "статус"
 rls_string STR_mobbler_data "данные"
 rls_string STR_mobbler_radio_start "Слушать станцию"
-rls_string STR_mobbler_resume_radio "Слушать последнюю станцию"
+rls_string STR_mobbler_resume_radio "Слушать последнюю станцию" // TOO LONG - TRUNCATED TEXT
 rls_string STR_mobbler_radio_artist "Исполнитель"
 rls_string STR_mobbler_radio_enter_artist "Исполнитель"
 rls_string STR_mobbler_radio_tag "Тэг"

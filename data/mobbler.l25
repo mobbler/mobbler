@@ -26,7 +26,7 @@ rls_string STR_mobbler_mobbler "Mobbler"
 rls_string STR_mobbler_connect "Připojit k Last.fm"
 rls_string STR_mobbler_disconnect "Odpojit"
 rls_string STR_mobbler_about "O programu"
-rls_string STR_mobbler_exit "Konec (zastaví skroblování)"
+rls_string STR_mobbler_exit "Konec (zastaví skroblování)" // TOO LONG - TEXT TRUNCATED
 rls_string STR_mobbler_username "Uživatel"
 rls_string STR_mobbler_password "Heslo"
 rls_string STR_mobbler_connecting "Připojuji k Last.fm"
