@@ -31,8 +31,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "mobblerlastfmconnectionobserver.h"
 #include "mobblerwebservicesobserver.h"
 
-_LIT(KVersionNumberDisplay,		"0.3.2");
-const TVersion version(0, 3, 2);
+_LIT(KVersionNumberDisplay,		"0.3.3");
+const TVersion version(0, 3, 3);
 
 class CMobblerSettingItemListView;
 class CMobblerMusicAppListener;

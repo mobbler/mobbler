@@ -25,7 +25,7 @@
 &EN, FR, GE, SP, IT, SW, NO, FI, AM, PO, RU, HU, DU, CS, SK, PL, ZH, AF, AR, EL, LV, LT, BP, RO
 
 ; Header
-#{"Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler"}, (0xA0007648), 0, 3, 2
+#{"Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler"}, (0xA0007648), 0, 3, 3
 
 ;Localised vendor names
 %{"Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey"}
