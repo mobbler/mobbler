@@ -52,6 +52,7 @@ public:
 	TBool iCurrent;
 	
 	// data that is sent for ECmdServiceBuffer
+	TInt iTotalDataSize;
 	TPtrC8 iAudioData;
 	
 	// data for ECmdSetVolume

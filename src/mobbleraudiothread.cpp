@@ -123,6 +123,9 @@ void CMobblerAudioThread::RunL()
 			}
 		case ECmdWriteData:
 			{
+			iShared.iTrack->SetDataSize(iShared.iTotalDataSize);
+			iShared.iTrack->BufferAdded(iShared.iAudioData.Size());
+			
 			// Put the data in the buffer
 			iBuffer.AppendL(iShared.iAudioData.AllocLC());
 			CleanupStack::Pop(); // aData.AllocLC()

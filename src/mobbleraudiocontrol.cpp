@@ -112,9 +112,7 @@ TInt CMobblerAudioControl::HandleAudioPositionChangeL(TAny* aSelf)
 
 void CMobblerAudioControl::WriteMp3DataL(const TDesC8& aData, TInt aTotalDataSize)
 	{
-	iShared.iTrack->SetDataSize(aTotalDataSize);
-	iShared.iTrack->BufferAdded(aData.Length());
-	
+	iShared.iTotalDataSize = aTotalDataSize;
 	iShared.iAudioData.Set(aData);
 	SendCmd(ECmdWriteData);
 	
