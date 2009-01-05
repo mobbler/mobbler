@@ -1066,7 +1066,8 @@ void CMobblerLastFMConnection::TrackStoppedL()
 		}
 	
 	iCurrentTrack = NULL;
-	
+	static_cast<CMobblerAppUi*>(CEikonEnv::Static()->AppUi())->StatusDrawDeferred();
+
 	// Save the track queue and try to do a submission
 	SaveTrackQueue();
 	DoSubmitL();
