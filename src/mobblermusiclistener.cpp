@@ -74,6 +74,8 @@ void CMobblerMusicAppListener::ConstructL()
 	
 	CleanupStack::PopAndDestroy(&implInfoPtrArray);
 	
+	iMusicPlayerState = EMPlayerRCtrlNotRunning;
+
 	// check if there is a song playing when Mobbler is started
 	ScheduleNowPlayingL();
 	}
@@ -119,7 +121,7 @@ void CMobblerMusicAppListener::HandleTrackChangeL(const TDesC& /*aTrack*/)
 
 void CMobblerMusicAppListener::HandleMusicStateChangeL(TInt aState)
 	{
-	if (aState == EMPlayerRCtrlPlaying)
+	if (aState == EMPlayerRCtrlPlaying || aState == EMPlayerRCtrlPaused)
 		{
 		ScheduleNowPlayingL();
 		}
@@ -152,7 +154,7 @@ const TDesC& CMobblerMusicAppListener::MusicAppNameL() const
 	iMusicAppName.Zero(); 
 	
 	const TInt KMusicAppCount(iMobblerMusicApps.Count());
-	for (TInt i(0) ; i < KMusicAppCount ; ++i)
+	for (TInt i(0); i < KMusicAppCount; ++i)
 		{
 		if (iMobblerMusicApps[i]->PlayerState() == EMPlayerRCtrlPlaying)
 			{
@@ -160,6 +162,14 @@ const TDesC& CMobblerMusicAppListener::MusicAppNameL() const
 			iMusicAppName.Copy(*appName);
 			delete appName;
 			break;
+			}
+		else if (iMobblerMusicApps[i]->PlayerState() == EMPlayerRCtrlPaused)
+			{
+			HBufC* appName = iMobblerMusicApps[i]->NameL();
+			iMusicAppName.Copy(*appName);
+			delete appName;
+			// Intentionally don't break if found a paused app,
+			// so a playing app takes precendence.
 			}
 		}
 	
@@ -194,6 +204,7 @@ void CMobblerMusicAppListener::NowPlayingL()
 			if (iMobblerMusicApps[i]->PlayerState() == EMPlayerRCtrlPlaying)
 				{
 				musicAppIndex = i;
+				iMusicPlayerState = EMPlayerRCtrlPlaying;
 				break;
 				}
 			}
@@ -227,14 +238,48 @@ void CMobblerMusicAppListener::NowPlayingL()
 
 void CMobblerMusicAppListener::PlayerStateChangedL(TMPlayerRemoteControlState aState)
 	{
-	if (aState == EMPlayerRCtrlPlaying)
+	TMPlayerRemoteControlState oldState(iMusicPlayerState);
+	TMPlayerRemoteControlState newState(aState);
+	iMusicPlayerState = newState;
+
+	if ((oldState != EMPlayerRCtrlPlaying) && 
+		(newState == EMPlayerRCtrlPlaying))
 		{
+		// Set start time = now
+		if (iCurrentTrack)
+			{
+			TTime startTimeUTC;
+			startTimeUTC.UniversalTime();
+			iCurrentTrack->SetStartTimeUTC(startTimeUTC);
+			}
 		ScheduleNowPlayingL();
 		}
-	else
+	else if ((oldState == EMPlayerRCtrlPlaying) && 
+			 (newState != EMPlayerRCtrlPlaying))
+		{
+		// Update total played
+		if (iCurrentTrack)
+			{
+			TTimeIntervalSeconds totalPlayed = iCurrentTrack->TotalPlayed();
+
+			TTime now;
+			now.UniversalTime();
+			TTimeIntervalSeconds newPeriod;
+			User::LeaveIfError(now.SecondsFrom(iCurrentTrack->StartTimeUTC(), 
+											   newPeriod));
+
+			TInt64 newTotal(totalPlayed.Int() + newPeriod.Int());
+			iCurrentTrack->SetTotalPlayed(newTotal);
+			}
+		ScheduleNowPlayingL();
+		}
+	
+	if ((newState != EMPlayerRCtrlPlaying) && 
+		(newState != EMPlayerRCtrlPaused))
 		{
 		if (iCurrentTrack)
 			{
+			iCurrentTrack->SetTrackPlaying(EFalse);
 			iCurrentTrack->Release();
 			iCurrentTrack = NULL;
 			}
@@ -280,3 +325,4 @@ void CMobblerMusicAppListener::PlayerPositionL(TTimeIntervalSeconds aPlayerPosit
 		}
 	}
 	
+// End of file

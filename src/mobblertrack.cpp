@@ -74,6 +74,7 @@ void CMobblerTrack::ConstructL(const TDesC8& aArtist,
 	iStartTimeUTC = Time::NullTTime();
 	iScrobbleTime = (TTimeIntervalSeconds)Min(240, (iTrackLength.Int()/2));
 	iInitialPlaybackPosition = KErrUnknown;
+	iTotalPlayed = 0;
 	}
 
 CMobblerTrack::~CMobblerTrack()
@@ -175,11 +176,24 @@ TBool CMobblerTrack::Scrobbled() const
 void CMobblerTrack::SetStartTimeUTC(const TTime& aStartTimeUTC)
 	{
 	iStartTimeUTC = aStartTimeUTC;
+	iTrackPlaying = ETrue;
 	}
 
 const TTime& CMobblerTrack::StartTimeUTC() const
 	{
 	return iStartTimeUTC;
+	}
+
+void CMobblerTrack::SetTotalPlayed(TTimeIntervalSeconds aTotalPlayed)
+	{
+
+	iTotalPlayed = aTotalPlayed;
+	iTrackPlaying = EFalse;
+	}
+
+TTimeIntervalSeconds CMobblerTrack::TotalPlayed() const
+	{
+	return iTotalPlayed;
 	}
 
 const CMobblerString& CMobblerTrack::Artist() const
@@ -288,3 +302,15 @@ TTimeIntervalSeconds CMobblerTrack::InitialPlaybackPosition() const
 		return iInitialPlaybackPosition;
 		}
 	}
+
+void CMobblerTrack::SetTrackPlaying(TBool aTrackPlaying)
+	{
+	iTrackPlaying = aTrackPlaying;
+	}
+
+TBool CMobblerTrack::TrackPlaying() const
+	{
+	return iTrackPlaying;
+	}
+
+// End of file

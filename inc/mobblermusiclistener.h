@@ -1,7 +1,7 @@
 /*
 mobblermusiclistener.h
 
-mobbler, a last.fm mobile scrobbler for Symbian smartphones.
+Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
 Copyright (C) 2008  Michael Coffey
 
 http://code.google.com/p/mobbler
@@ -70,6 +70,9 @@ private:
 	CMobblerTrack* iCurrentTrack;
 	
 	mutable TBuf<255> iMusicAppName;
+	TMPlayerRemoteControlState iMusicPlayerState;
 	};
 
 #endif // __MOBBLERMUSICLISTENER_H__
+
+// End of file

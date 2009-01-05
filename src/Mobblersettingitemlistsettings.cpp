@@ -21,11 +21,11 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-#include <e32base.h>
-#include <stringloader.h>
 #include <barsread.h>
+#include <e32base.h>
 #include <mobbler.rsg>
 #include <s32file.h>
+#include <stringloader.h>
 
 #include "mobblersettingitemlistsettings.h"
 

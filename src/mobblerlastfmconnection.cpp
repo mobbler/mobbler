@@ -1033,17 +1033,24 @@ void CMobblerLastFMConnection::TrackStoppedL()
 		else
 			{
 			// The current track is a music player app so test the amount of continuous playback
-			
-			TTime now;
-			now.UniversalTime();
-			User::LeaveIfError(now.SecondsFrom(iCurrentTrack->StartTimeUTC(), listenedFor));
+			listenedFor = iCurrentTrack->TotalPlayed().Int();
+
+			if (iCurrentTrack->TrackPlaying())
+				{
+				TTimeIntervalSeconds lastPlayedSection(0);
+
+				TTime now;
+				now.UniversalTime();
+				User::LeaveIfError(now.SecondsFrom(iCurrentTrack->StartTimeUTC(), lastPlayedSection));
+
+				listenedFor = listenedFor.Int() + lastPlayedSection.Int();
+				}
 			}
 		
 		// Test if the track passes Last.fm's scrobble rules
 		if ( listenedFor.Int() >= iCurrentTrack->ScrobbleDuration().Int()
 				&& iCurrentTrack->TrackLength().Int() >= 30					// the track length is over 30 seconds.
 				&& iCurrentTrack->Artist().String().Length() > 0 )					// must have an artist name	
-									
 			{
 			// It passed, so notify and append it to the list
 			iObserver.HandleTrackQueuedL(*iCurrentTrack);
@@ -1707,12 +1714,6 @@ TBool CMobblerLastFMConnection::ExportQueueToLogFileL()
 		errors += file.Write(KLogFileFieldSeperator);
 		
 		// track position on album (optional)
-		if (iTrackQueue[i]->TrackNumber() != KErrUnknown)
-			{
-			TBuf8<10> trackNumber;
-			trackNumber.AppendNum(iTrackQueue[i]->TrackNumber());
-			errors += file.Write(trackNumber);
-			}
 		file.Write(KLogFileFieldSeperator);
 		
 		// song duration in seconds
@@ -1768,3 +1769,4 @@ void CMobblerLastFMConnection::StripOutTabs(TDes8& aString)
 		}
 	}
 
+// End of file

@@ -81,6 +81,11 @@ public:
 	void ExternalizeL(RWriteStream& aWriteStream) const;
 	
 	TBool operator==(const CMobblerTrack& aTrack) const;
+
+	void SetTotalPlayed(TTimeIntervalSeconds aTotalPlayed);
+	TTimeIntervalSeconds TotalPlayed() const;
+	void CMobblerTrack::SetTrackPlaying(TBool aTrackPlaying);
+	TBool CMobblerTrack::TrackPlaying() const;
 	
 private:
 	CMobblerTrack();
@@ -103,6 +108,8 @@ private:
 	CMobblerString* iTitle;
 	CMobblerString* iAlbum;
 	TTime iStartTimeUTC;
+	TTimeIntervalSeconds iTotalPlayed;
+	TBool iTrackPlaying;
 	TTimeIntervalSeconds iTrackLength;
 	TTimeIntervalSeconds iScrobbleTime;
 	TTimeIntervalSeconds iInitialPlaybackPosition;

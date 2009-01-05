@@ -73,19 +73,19 @@ CMobblerRadioPlayer::~CMobblerRadioPlayer()
 void CMobblerRadioPlayer::HandleAudioPositionChangeL()
 	{
 	// if we are finished downloading
-	// and only have the prebuffer amout of tim eleft of the track
-	// then start downloading th next track
+	// and only have the prebuffer amount of time left of the track
+	// then start downloading the next track
 	
 	if (!iNextAudioControl &&
 			iCurrentAudioControl &&
 			iCurrentAudioControl->DownloadComplete() &&
 			(( (*iCurrentPlaylist)[iCurrentTrackIndex]->TrackLength().Int() - (*iCurrentPlaylist)[iCurrentTrackIndex]->PlaybackPosition().Int() ) <= iCurrentAudioControl->PreBufferSize().Int() ))
 		{
-		// There is another track in the playlist
-		// We have not created the next track yet
+		// There is another track in the playlist.
+		// We have not created the next track yet.
 		// The download on the current track is complete
 		// and there is only the length of the pre-buffer to go on the current track 
-		// so start downloading the next track now 
+		// so start downloading the next track now.
 		
 		if (iCurrentTrackIndex + 1 < iCurrentPlaylist->Count())
 			{
@@ -221,8 +221,8 @@ void CMobblerRadioPlayer::NextTrackL()
 			
 			if (iNextPlaylist)
 				{
-				// we have already fetched the next plalist so start using it
-				// if we don't have the next playlist then it is still downloading
+				// We have already fetched the next plalist so start using it.
+				// If we don't have the next playlist then it is still downloading.
 				
 				iCurrentPlaylist = iNextPlaylist;
 				iNextPlaylist = NULL;
@@ -279,7 +279,7 @@ TInt CMobblerRadioPlayer::MaxVolume() const
 		if (iMaxVolume != iCurrentAudioControl->MaxVolume())
 			{
 			// The max audio volume has changed
-			// so correction the volume for this
+			// so correct the volume for this
 			iCurrentAudioControl->SetVolume((iCurrentAudioControl->Volume() * iCurrentAudioControl->MaxVolume()) / iMaxVolume);
 			}
 		
@@ -327,7 +327,7 @@ void CMobblerRadioPlayer::DoStop(TBool aDeleteNextTrack)
 		
 		if (iNextAudioControl)
 			{
-			// if there was a next track then interment the current track
+			// if there was a next track then increment the current track
 			// becasue we can't download the same track twice
 			++iCurrentTrackIndex;
 			}
@@ -340,7 +340,7 @@ void CMobblerRadioPlayer::DoStop(TBool aDeleteNextTrack)
 		if (!iNextAudioControl)
 			{
 			// we don't want to delete the next track, but
-			// it hasn't started downloading let so stop
+			// it hasn't started downloading yet so stop
 			// the current one
 			iLastFMConnection.RadioStop();
 			}
