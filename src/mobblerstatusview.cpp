@@ -124,11 +124,6 @@ void CMobblerStatusView::DynInitMenuPaneL(TInt aResourceId, CEikMenuPane* aMenuP
 			}
 		CleanupStack::PopAndDestroy(tempStream);
 		}
-	else if (aResourceId == R_MOBBLER_TOOLS_SUBMENU_PANE)
-		{
-		TBool isQueueEmpty(static_cast<CMobblerAppUi*>(AppUi())->Queued() == 0);
-		aMenuPane->SetItemDimmed(EMobblerCommandExportQueueToLogFile, isQueueEmpty);
-		}
 	}
 
 TUid CMobblerStatusView::Id() const
