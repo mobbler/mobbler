@@ -70,6 +70,11 @@ _LIT8(KLatesverFileLocation, "http://www.mobbler.co.uk/latestver.xml");
 // The file name to store the queue of listened tracks
 _LIT(KTracksFile, "c:track_queue.dat");
 _LIT(KStateFile, "c:state.dat");
+_LIT8(KLogFileHeader, "#AUDIOSCROBBLER/1.1\n#TZ/UTC\n#CLIENT/Mobbler ");
+_LIT8(KLogFileListenedRating, "L");
+_LIT8(KLogFileFieldSeperator, "\t");
+_LIT8(KLogFileEndOfLine, "\n");
+
 
 // The granularity of the buffers that responses from Last.fm are read into
 const TInt KBufferGranularity(256);
@@ -1643,4 +1648,123 @@ void CMobblerLastFMConnection::SaveTrackQueue()
 	CleanupStack::PopAndDestroy(&file);
 	}
 
+TBool CMobblerLastFMConnection::ExportQueueToLogFileL()
+	{
+	// Format described here: http://www.audioscrobbler.net/wiki/Portable_Player_Logging
+	// Uploaders can be found here: http://www.rockbox.org/twiki/bin/view/Main/LastFMLog
+	
+	const TInt KTracksCount(iTrackQueue.Count());
+	if (KTracksCount == 0)
+		{
+		return EFalse;
+		}
+	
+	CCoeEnv::Static()->FsSession().MkDirAll(KLogFile);
+
+	TInt errors(KErrNone);
+	RFile file;
+	CleanupClosePushL(file);
+	TInt replaceError = file.Replace(CCoeEnv::Static()->FsSession(), KLogFile, EFileWrite);
+	if (replaceError != KErrNone)
+		{
+		return EFalse;
+		}
+	else
+		{
+		errors = file.Write(KLogFileHeader);
+		TBuf8<10> version;
+		version.Copy(KVersionNumberDisplay);
+		errors += file.Write(version);
+		errors += file.Write(KLogFileEndOfLine);
+		}
+	
+	if (errors != KErrNone)
+		{
+		return EFalse;
+		}
+	
+	errors = KErrNone;
+	for (TInt i(0); i < KTracksCount && errors == KErrNone; ++i)
+		{
+		// artist name
+		TBuf8<255> buf(iTrackQueue[i]->Artist().String8());
+		StripOutTabs(buf);
+		errors += file.Write(buf);
+		errors += file.Write(KLogFileFieldSeperator);
+		
+		// album name (optional)
+		buf.Zero();
+		buf.Append(iTrackQueue[i]->Album().String8());
+		StripOutTabs(buf);
+		errors += file.Write(buf);
+		errors += file.Write(KLogFileFieldSeperator);
+		
+		// track name
+		buf.Zero();
+		buf.Append(iTrackQueue[i]->Title().String8());
+		StripOutTabs(buf);
+		errors += file.Write(buf);
+		errors += file.Write(KLogFileFieldSeperator);
+		
+		// track position on album (optional)
+		if (iTrackQueue[i]->TrackNumber() != KErrUnknown)
+			{
+			TBuf8<10> trackNumber;
+			trackNumber.AppendNum(iTrackQueue[i]->TrackNumber());
+			errors += file.Write(trackNumber);
+			}
+		file.Write(KLogFileFieldSeperator);
+		
+		// song duration in seconds
+		TBuf8<10> trackLength;
+		trackLength.AppendNum(iTrackQueue[i]->TrackLength().Int());
+		errors += file.Write(trackLength);
+		errors += file.Write(KLogFileFieldSeperator);
+		
+		// rating (L if listened at least 50% or S if skipped)
+		errors += file.Write(KLogFileListenedRating);
+		errors += file.Write(KLogFileFieldSeperator);
+		
+		// unix timestamp when song started playing
+		TTimeIntervalSeconds unixTimeStamp;
+		TTime epoch(TDateTime(1970, EJanuary, 0, 0, 0, 0, 0));
+		iTrackQueue[i]->StartTimeUTC().SecondsFrom(epoch, unixTimeStamp);
+		TBuf8<20> startTimeBuf;
+		startTimeBuf.AppendNum(unixTimeStamp.Int());
+		errors += file.Write(startTimeBuf);
+		errors += file.Write(KLogFileFieldSeperator);
+		
+		// MusicBrainz Track ID (optional)
+		errors += file.Write(KLogFileEndOfLine);
+		}
+	
+	if (errors != KErrNone)
+		{
+		return EFalse;
+		}
+		
+	// No errors, ok to empty the queue
+	for (TInt i(KTracksCount - 1); i >= 0; --i)
+		{
+		// If the track was loved, tough, that can't be submitted via log file
+		iObserver.HandleTrackDequeued(*iTrackQueue[i]);
+		iTrackQueue[i]->Release();
+		iTrackQueue.Remove(i);
+		}
+	SaveTrackQueue();
+	
+	CleanupStack::PopAndDestroy(&file);
+	
+	return ETrue;
+	}
+
+void CMobblerLastFMConnection::StripOutTabs(TDes8& aString)
+	{
+	TInt position(aString.Find(KLogFileFieldSeperator));
+	 while (position != KErrNotFound)
+		{
+		aString.Delete(position, 1);
+		position = aString.Find(KLogFileFieldSeperator);
+		}
+	}
 

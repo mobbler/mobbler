@@ -65,9 +65,9 @@ private:
 	void BitmapLoadedL(const CMobblerBitmap* aMobblerBitmap);
     
 private: // from MMdaAudioOutputStreamCallback, but NOT USED
-    void MaoscPlayComplete(TInt aError) {}
-    void MaoscBufferCopied(TInt aError, const TDesC8& aBuffer) {}
-    void MaoscOpenComplete(TInt aError) {}
+    void MaoscPlayComplete(TInt /*aError*/) {}
+    void MaoscBufferCopied(TInt /*aError*/, const TDesC8& /*aBuffer*/) {}
+    void MaoscOpenComplete(TInt /*aError*/) {}
 	
 private:
 	CAknWaitDialog* iConnectingDialog;

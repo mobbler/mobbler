@@ -41,8 +41,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "mobblertrack.h"
 #include "mobblerutility.h"
 
-_LIT(KVersionNumberDisplay,		"0.3.2");
-const TVersion version(0, 3, 2);
 
 _LIT(KSearchURL, "http://astore.amazon.co.uk/mobbler-21/search/203-4425999-4423160?node=25&keywords=%S&x=0&y=0&preview=");
 
@@ -500,6 +498,40 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 				}
 			
 			break;
+
+		case EMobblerCommandExportQueueToLogFile:
+			{
+			TBool okToReplaceLog(ETrue);
+			
+			if (BaflUtils::FileExists(CCoeEnv::Static()->FsSession(), KLogFile))
+				{
+				HBufC* replaceLogText = iEikonEnv->AllocReadResourceLC(R_MOBBLER_CONFIRM_REPLACE_LOG);
+				
+				CAknQueryDialog* dlg = CAknQueryDialog::NewL();
+				okToReplaceLog = dlg->ExecuteLD(R_MOBBLER_QUERY_DIALOG, *replaceLogText);
+				
+				CleanupStack::PopAndDestroy(replaceLogText);
+				}
+			
+			if (okToReplaceLog)
+				{
+				HBufC* confirmationText;
+				if (iLastFMConnection->ExportQueueToLogFileL())
+					{
+					confirmationText = StringLoader::LoadLC(R_MOBBLER_NOTE_QUEUE_EXPORTED);
+					}
+				else
+					{
+					BaflUtils::DeleteFile(CCoeEnv::Static()->FsSession(), KLogFile);
+					confirmationText = StringLoader::LoadLC(R_MOBBLER_NOTE_QUEUE_NOT_EXPORTED);
+					}
+				CAknResourceNoteDialog *note = new (ELeave) CAknInformationNote(EFalse);
+				note->ExecuteLD(*confirmationText);
+				CleanupStack::PopAndDestroy(confirmationText);
+				}
+			}
+			break;
+
 		default:
 			break;
 		}
@@ -708,6 +740,12 @@ void CMobblerAppUi::HandleTrackQueuedL(const CMobblerTrack& /*aTrack*/)
 		}
 	// update the track queued count and change the status bar text
 	++iTracksQueued;
+	}
+
+void CMobblerAppUi::HandleTrackDequeued(const CMobblerTrack& /*aTrack*/)
+	{
+	iStatusView->DrawDeferred();
+	--iTracksQueued;
 	}
 
 void CMobblerAppUi::StatusDrawDeferred()

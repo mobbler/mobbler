@@ -1,7 +1,7 @@
 /*
 mobblerlastfmconnection.h
 
-mobbler, a last.fm mobile scrobbler for Symbian smartphones.
+Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
 Copyright (C) 2008  Michael Coffey
 
 http://code.google.com/p/mobbler
@@ -24,25 +24,25 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #ifndef __MOBBLERLASTFMCONNECTION_H__
 #define __MOBBLERLASTFMCONNECTION_H__
 
-#include <e32base.h>
 #include <badesca.h>
+#include <cmmanager.h>
+#include <e32base.h>
 #include <es_sock.h>
 #include <http/rhttpsession.h>
-#include <http/mhttptransactioncallback.h> 
 #include <http/mhttpdatasupplier.h>
-#include <cmmanager.h>
+#include <http/mhttptransactioncallback.h> 
 
-#include "mobblertransactionobserver.h"
 #include "mobblerlastfmerror.h"
+#include "mobblertransactionobserver.h"
+
+_LIT(KLogFile, "c:\\Data\\Mobbler\\.scrobbler.log");
 
 class CHTTPFormEncoder;
+class CMobblerParser;
 class CMobblerTrack;
+class MMobblerLastFMConnectionObserver;
 class MMobblerRadioPlayer;
 class MWebServicesObserver;
-class CMobblerParser;
-class MMobblerLastFMConnectionObserver;
-class CMobblerTrack;
-
 
 class MMobblerDownloadObserver
 	{
@@ -116,6 +116,8 @@ public:
 	TInt TrackBanL(const CMobblerTrack& aTrack);
 	TInt ArtistGetInfoL(const CMobblerTrack& aTrack, MWebServicesObserver& aObserver);
 	
+	TBool ExportQueueToLogFileL();
+	
 private:
 	void RunL();
 	void DoCancel();
@@ -157,6 +159,7 @@ private:
 	
 private:  // utilities
 	void CreateAuthToken(TDes8& aHash, TTimeIntervalSeconds aUnixTimeStamp);
+	void StripOutTabs(TDes8& aString);
 	
 	// track queue methods
 	void LoadTrackQueueL();
@@ -228,3 +231,5 @@ private:
 	};
 
 #endif // __MOBBLERLASTFMCONNECTION_H__
+
+// End of file

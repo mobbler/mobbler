@@ -111,21 +111,21 @@ RESOURCE MENU_PANE r_mobbler_status_menu_pane
 			},
 		MENU_ITEM
 			{
-			command = EMobblerCommandCheckForUpdates;
-			txt = STR_mobbler_check_for_updates;
+			command = EMobblerCommandEqualizer;
+			txt = STR_mobbler_equalizer;
+			cascade = r_mobbler_equalizer_submenu_pane;
+			},
+		MENU_ITEM
+			{
+			command = EMobblerCommandTools;
+			txt = STR_mobbler_tools_submenu;
+			cascade = r_mobbler_tools_submenu_pane;
 			},
 		MENU_ITEM
 			{
 			command = EMobblerCommandEditSettings;
 			txt = STR_mobbler_settings;
 			},
-		MENU_ITEM
-			{
-			command = EMobblerCommandEqualizer;
-			txt = STR_mobbler_equalizer;
-			cascade = r_equalizer_submenu_pane;
-			},
-
 		MENU_ITEM
 			{
 			command = EMobblerCommandAbout;
@@ -186,7 +186,7 @@ RESOURCE MENU_PANE r_radio_submenu_pane
 		};
 	}
 
-RESOURCE MENU_PANE r_equalizer_submenu_pane
+RESOURCE MENU_PANE r_mobbler_equalizer_submenu_pane
 	{
 	items =
 		{
@@ -195,6 +195,23 @@ RESOURCE MENU_PANE r_equalizer_submenu_pane
 			command = EMobblerCommandEqualizerDefault;
 			txt = STR_mobbler_equalizer_profile_default;
 			flags = EEikMenuItemRadioStart;
+			}
+		};
+	}
+
+RESOURCE MENU_PANE r_mobbler_tools_submenu_pane
+	{
+	items =
+		{
+		MENU_ITEM
+			{
+			command = EMobblerCommandCheckForUpdates;
+			txt = STR_mobbler_check_for_updates;
+			},
+		MENU_ITEM
+			{
+			command = EMobblerCommandExportQueueToLogFile;
+			txt = STR_mobbler_export_queue_to_log;
 			}
 		};
 	}
@@ -562,5 +579,8 @@ RESOURCE TBUF r_mobbler_downloading							{buf = STR_mobbler_downloading;}
 
 RESOURCE TBUF r_mobbler_softkey_hide					{buf = STR_mobbler_softkey_hide;}
 
+RESOURCE TBUF r_mobbler_confirm_replace_log				{buf = STR_mobbler_confirm_replace_log;}
+RESOURCE TBUF r_mobbler_note_queue_exported				{buf = STR_mobbler_note_queue_exported;}
+RESOURCE TBUF r_mobbler_note_queue_not_exported			{buf = STR_mobbler_note_queue_not_exported;}
 
 // End of File

@@ -1,7 +1,7 @@
 /*
 mobblerlastfmconnectionobserver.h
 
-mobbler, a last.fm mobile scrobbler for Symbian smartphones.
+Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
 Copyright (C) 2008  Michael Coffey
 
 http://code.google.com/p/mobbler
@@ -38,6 +38,7 @@ public:
 	
 	virtual void HandleTrackNowPlayingL(const CMobblerTrack& aTrack) = 0;
 	virtual void HandleTrackQueuedL(const CMobblerTrack& aTrack) = 0;
+	virtual void HandleTrackDequeued(const CMobblerTrack& aTrack) = 0;
 	virtual void HandleTrackSubmittedL(const CMobblerTrack& aTrack) = 0;
 	
 	virtual void HandleUpdateResponseL(TVersion aVersion, const TDesC8& aLocation) = 0;
@@ -45,3 +46,4 @@ public:
 	
 #endif
 	
+// End of file

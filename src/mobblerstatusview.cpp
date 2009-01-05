@@ -84,7 +84,7 @@ void CMobblerStatusView::DynInitMenuPaneL(TInt aResourceId, CEikMenuPane* aMenuP
 		aMenuPane->SetItemDimmed(EMobblerCommandResumeRadio, 
 					!static_cast<CMobblerAppUi*>(AppUi())->RadioResumable());
 		}
-	else if (aResourceId == R_EQUALIZER_SUBMENU_PANE)
+	else if (aResourceId == R_MOBBLER_EQUALIZER_SUBMENU_PANE)
 		{
 		CMdaAudioOutputStream* tempStream = CMdaAudioOutputStream::NewL(*this);
 		CleanupStack::PushL(tempStream);
@@ -98,17 +98,21 @@ void CMobblerStatusView::DynInitMenuPaneL(TInt aResourceId, CEikMenuPane* aMenuP
 			{
 			CleanupStack::PushL(tempEqualizer);
 			TInt count = tempEqualizer->Presets().Count();
-			for (TInt x = 0; x < count; x++)
+			for (TInt i(0); i < count; ++i)
 				{
-				CEikMenuPaneItem::SData Item;
-				Item.iCascadeId = 0;
-				Item.iCommandId = EMobblerCommandEqualizerDefault + x + 1;
-				if (x == count - 1)
-					Item.iFlags = EEikMenuItemRadioEnd;
+				CEikMenuPaneItem::SData item;
+				item.iCascadeId = 0;
+				item.iCommandId = EMobblerCommandEqualizerDefault + i + 1;
+				if (i == count - 1)
+					{
+					item.iFlags = EEikMenuItemRadioEnd;
+					}
 				else
-					Item.iFlags = EEikMenuItemRadioMiddle;
-				Item.iText = tempEqualizer->Presets()[x].iPresetName;
-				aMenuPane->AddMenuItemL(Item);
+					{
+					item.iFlags = EEikMenuItemRadioMiddle;
+					}
+				item.iText = tempEqualizer->Presets()[i].iPresetName;
+				aMenuPane->AddMenuItemL(item);
 				}
 			TInt equalizerIndex = static_cast<CMobblerAppUi*>(AppUi())->RadioPlayer()->EqualizerIndex();
 			aMenuPane->SetItemButtonState(EMobblerCommandEqualizerDefault + equalizerIndex + 1, EEikMenuItemSymbolOn);
@@ -119,6 +123,11 @@ void CMobblerStatusView::DynInitMenuPaneL(TInt aResourceId, CEikMenuPane* aMenuP
 			aMenuPane->SetItemDimmed(EMobblerCommandEqualizer, ETrue);
 			}
 		CleanupStack::PopAndDestroy(tempStream);
+		}
+	else if (aResourceId == R_MOBBLER_TOOLS_SUBMENU_PANE)
+		{
+		TBool isQueueEmpty(static_cast<CMobblerAppUi*>(AppUi())->Queued() == 0);
+		aMenuPane->SetItemDimmed(EMobblerCommandExportQueueToLogFile, isQueueEmpty);
 		}
 	}
 

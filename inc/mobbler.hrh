@@ -35,6 +35,9 @@ enum TMobblerSettingItemListViewCommands
 	EMobblerCommandTrack,
 	EMobblerCommandRadio,
 	
+	EMobblerCommandTools,
+	EMobblerCommandExportQueueToLogFile,
+	
 	// IMPORTANT! New commands that WON'T connect to Last.fm go BEFORE here!
 	// IMPORTANT! New commands that WILL connect to Last.fm go AFTER here!
 	//

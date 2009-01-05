@@ -1,7 +1,7 @@
 /*
 mobbleraudiothread.cpp
 
-mobbler, a last.fm mobile scrobbler for Symbian smartphones.
+Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
 Copyright (C) 2008  Michael Coffey
 
 http://code.google.com/p/mobbler
@@ -160,7 +160,7 @@ void CMobblerAudioThread::DoCancel()
 	User::RequestComplete(status, KErrCancel);
 	}
 
-TInt CMobblerAudioThread::RunError(TInt aError)
+TInt CMobblerAudioThread::RunError(TInt /*aError*/)
 	{
 	// There was an error in the RunL so just end the thread
 	
@@ -209,11 +209,6 @@ TBool CMobblerAudioThread::PreBufferFilled() const
 	{
 	TBool preBufferedFilled(EFalse);
 	
-	TInt bufferTotal = iShared.iTrack->DataSize();
-	TInt bufferPosition = Min(iShared.iTrack->Buffered(), bufferTotal);
-	TInt playbackTotal = iShared.iTrack->TrackLength().Int();
-	TInt playbackPosition = Min(iShared.iTrack->PlaybackPosition().Int(), playbackTotal);
-	
 	if (iShared.iTrack->DataSize() != 1)
 		{
 		TInt byteRate = iShared.iTrack->DataSize() / iShared.iTrack->TrackLength().Int();
@@ -260,7 +255,7 @@ void CMobblerAudioThread::FillBufferL(TBool aDataAdded)
 		}
 	}
 
-void CMobblerAudioThread::MaoscBufferCopied(TInt aError, const TDesC8& /*aBuffer*/)
+void CMobblerAudioThread::MaoscBufferCopied(TInt /*aError*/, const TDesC8& /*aBuffer*/)
 	{
 	delete iBuffer[0];
 	iBuffer.Remove(0);
