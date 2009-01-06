@@ -29,16 +29,22 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 class CAknWaitDialog;
 
+class MMobblerDownloadObserver
+	{
+public:
+	virtual void HandleInstallStartedL() = 0;
+	};
+
 class CMobblerDownload : public CBase, public MHttpDownloadMgrObserver
 	{
 public:
-	static CMobblerDownload* NewL();
+	static CMobblerDownload* NewL(MMobblerDownloadObserver& aDownloadObserver);
 	~CMobblerDownload();
 	
 	void DownloadL(const TDesC8& aDownloadUrl, TUint32 aIap);
 	
 private:
-	CMobblerDownload();
+	CMobblerDownload(MMobblerDownloadObserver& aDownloadObserver);
 	void ConstructL();
 	
 private:
@@ -46,6 +52,7 @@ private:
 	
 private:
 	RHttpDownloadMgr iDownloadMgr;
+	MMobblerDownloadObserver& iDownloadObserver;
 	
 	CAknWaitDialog* iWait;
 	};

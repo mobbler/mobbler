@@ -44,7 +44,7 @@ class MMobblerLastFMConnectionObserver;
 class MMobblerRadioPlayer;
 class MWebServicesObserver;
 
-class MMobblerDownloadObserver
+class MMobblerTrackDownloadObserver
 	{
 public:
 	virtual void WriteMp3DataL(const TDesC8& aData, TInt aTotalSize) = 0;
@@ -107,7 +107,7 @@ public:
 	// Radio APIs
 	void SetRadioPlayer(MMobblerRadioPlayer& aRadioPlayer);
 	TInt RadioStartL(TRadioStation aRadioStation, const TDesC8& aRadioText);
-	void RequestMp3L(MMobblerDownloadObserver& aDownloadObserver, CMobblerTrack* aTrack);
+	void RequestMp3L(MMobblerTrackDownloadObserver& aDownloadObserver, CMobblerTrack* aTrack);
 	void RequestPlaylistL();
 	void RadioStop();
 	
@@ -193,7 +193,7 @@ private:
 	CMobblerTransaction* iArtistGetInfoTransaction;
 	
 	RHTTPTransaction iRadioAudioTransaction;
-	MMobblerDownloadObserver* iDownloadObserver;
+	MMobblerTrackDownloadObserver* iDownloadObserver;
 	
 	TBool iSubscriber;
 

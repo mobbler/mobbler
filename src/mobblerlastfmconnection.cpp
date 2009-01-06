@@ -881,7 +881,7 @@ void CMobblerLastFMConnection::RequestPlaylistL()
 		}
 	}
 
-void CMobblerLastFMConnection::RequestMp3L(MMobblerDownloadObserver& aDownloadObserver, CMobblerTrack* aTrack)
+void CMobblerLastFMConnection::RequestMp3L(MMobblerTrackDownloadObserver& aDownloadObserver, CMobblerTrack* aTrack)
 	{
 	if (iMode == EOnline)
 		{

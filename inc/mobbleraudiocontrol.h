@@ -38,7 +38,7 @@ public:
 	virtual void HandleAudioFinishedL(CMobblerAudioControl* aAudioControl) = 0;
 	};
 
-class CMobblerAudioControl : public CActive, public MMobblerDownloadObserver
+class CMobblerAudioControl : public CActive, public MMobblerTrackDownloadObserver
 	{
 public:
 	static CMobblerAudioControl* NewL(MMobblerAudioControlObserver& aObserver, CMobblerTrack& aTrack, TTimeIntervalSeconds aPreBufferSize, TInt aVolume, TInt aEqualizerIndex);

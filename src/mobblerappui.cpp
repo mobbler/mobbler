@@ -74,7 +74,7 @@ void CMobblerAppUi::ConstructL()
 	iResumeStationOnConnectCompleteCallback = EFalse;
 	LoadRadioStationsL();
 	
-	iMobblerDownload = CMobblerDownload::NewL();
+	iMobblerDownload = CMobblerDownload::NewL(*this);
 	}
 
 void CMobblerAppUi::SetDetailsL(const TDesC& aUsername, const TDesC& aPassword)
@@ -148,6 +148,11 @@ CMobblerAppUi::~CMobblerAppUi()
 #ifndef __WINS__
 	delete iBrowserLauncher;
 #endif
+	}
+
+void CMobblerAppUi::HandleInstallStartedL()
+	{
+	RunAppShutter();
 	}
 
 void CMobblerAppUi::HandleCommandL(TInt aCommand)

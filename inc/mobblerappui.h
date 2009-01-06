@@ -27,12 +27,14 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <aknviewappui.h>
 #include <aknprogressdialog.h>
 
+#include "mobblerdownload.h"
 #include "mobblerlastfmconnection.h"
 #include "mobblerlastfmconnectionobserver.h"
 #include "mobblerwebservicesobserver.h"
 
-_LIT(KVersionNumberDisplay,		"0.3.3");
-const TVersion version(0, 3, 3);
+
+_LIT(KVersionNumberDisplay,		"0.3.4");
+const TVersion version(0, 3, 4);
 
 class CMobblerSettingItemListView;
 class CMobblerMusicAppListener;
@@ -45,7 +47,8 @@ class CMobblerTrack;
 class CBrowserLauncher;
 
 class CMobblerAppUi : public CAknViewAppUi,
-						public MMobblerLastFMConnectionObserver
+						public MMobblerLastFMConnectionObserver,
+						public MMobblerDownloadObserver
 	{
 public:
 
@@ -80,6 +83,9 @@ public: // CEikAppUi
 	void HandleCommandL(TInt aCommand);
 	void HandleForegroundEventL(TBool aForeground);
 
+private:
+	void HandleInstallStartedL();
+	
 private:
 	void HandleStatusPaneSizeChange();
 	

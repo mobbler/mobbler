@@ -80,7 +80,23 @@ void CMobblerStatusView::DynInitMenuPaneL(TInt aResourceId, CEikMenuPane* aMenuP
 			{
 			aMenuPane->SetItemDimmed(EMobblerCommandOffline, ETrue);
 			}
-
+		
+		CMdaAudioOutputStream* tempStream = CMdaAudioOutputStream::NewL(*this);
+		CAudioEqualizerUtility* tempEqualizer = NULL;
+#ifndef __WINS__
+		// Emulator seems to crap out even when TRAP_IGNORE is used,
+		// it doesn't support the equalizer anyway
+		TRAP_IGNORE(tempEqualizer = CAudioEqualizerUtility::NewL(*tempStream));
+#endif
+		if (!tempEqualizer)
+			{
+			aMenuPane->SetItemDimmed(EMobblerCommandEqualizer, ETrue);
+			}
+			
+		tempStream->Stop();
+		delete tempEqualizer;
+		delete tempStream;
+		
 		aMenuPane->SetItemDimmed(EMobblerCommandResumeRadio, 
 					!static_cast<CMobblerAppUi*>(AppUi())->RadioResumable());
 		}
@@ -116,11 +132,8 @@ void CMobblerStatusView::DynInitMenuPaneL(TInt aResourceId, CEikMenuPane* aMenuP
 				}
 			TInt equalizerIndex = static_cast<CMobblerAppUi*>(AppUi())->RadioPlayer()->EqualizerIndex();
 			aMenuPane->SetItemButtonState(EMobblerCommandEqualizerDefault + equalizerIndex + 1, EEikMenuItemSymbolOn);
+			tempStream->Stop();
 			CleanupStack::PopAndDestroy(tempEqualizer);
-			}
-		else
-			{
-			aMenuPane->SetItemDimmed(EMobblerCommandEqualizer, ETrue);
 			}
 		CleanupStack::PopAndDestroy(tempStream);
 		}

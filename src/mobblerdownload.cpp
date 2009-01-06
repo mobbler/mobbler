@@ -29,16 +29,17 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 TUid KMobblerAppUid = {0xA0007648};
 
-CMobblerDownload* CMobblerDownload::NewL()
+CMobblerDownload* CMobblerDownload::NewL(MMobblerDownloadObserver& aDownloadObserver)
 	{
-	CMobblerDownload* self = new(ELeave) CMobblerDownload;
+	CMobblerDownload* self = new(ELeave) CMobblerDownload(aDownloadObserver);
 	CleanupStack::PushL(self);
 	self->ConstructL();
 	CleanupStack::Pop(self);
 	return self;
 	}
 
-CMobblerDownload::CMobblerDownload()
+CMobblerDownload::CMobblerDownload(MMobblerDownloadObserver& aDownloadObserver)
+	:iDownloadObserver(aDownloadObserver)
 	{
 	}
 
@@ -62,6 +63,7 @@ void CMobblerDownload::DownloadL(const TDesC8& aDownloadUrl, TUint32 aIap)
 	{
 	User::LeaveIfError(iDownloadMgr.SetIntAttribute(EDlMgrIap, aIap)); 
 	RHttpDownload& download = iDownloadMgr.CreateDownloadL(aDownloadUrl);
+	
 	download.SetBoolAttribute(EDlAttrNoContentTypeCheck, ETrue);
 	download.Start();
 	
@@ -92,36 +94,22 @@ void CMobblerDownload::HandleDMgrEventL(RHttpDownload& aDownload, THttpDownloadE
 	        TFileName fileName;
 	        aDownload.GetStringAttribute(EDlAttrDestFilename, fileName);
 	        
-	        RFile file;	
-	        TInt openError = file.Open(CEikonEnv::Static()->FsSession(), fileName, EFileRead);
-	        
-	        if (openError == KErrNone)
-	        	{
-	        	CleanupClosePushL(file);
-	            RApaLsSession apaLsSession;
-		        CleanupClosePushL(apaLsSession);
-		        User::LeaveIfError(apaLsSession.Connect());
-		        
-		        if (iWait)
-		        	{
-			        iWait->ProcessFinishedL();
-			        iWait = NULL;
-		        	}
-		        
-		        TThreadId threadId;
-		        TRequestStatus status;
-		        apaLsSession.StartDocument(file, threadId, &status);
-		        User::WaitForRequest(status);
-		        
-		        CleanupStack::PopAndDestroy(&apaLsSession);
-		        CleanupStack::PopAndDestroy(&file);
-	        	}
+            RApaLsSession apaLsSession;
+	        CleanupClosePushL(apaLsSession);
+	        User::LeaveIfError(apaLsSession.Connect());
 	        
 	        if (iWait)
 	        	{
 		        iWait->ProcessFinishedL();
 		        iWait = NULL;
 	        	}
+	        
+	        TThreadId threadId;
+	        User::LeaveIfError(apaLsSession.StartDocument(fileName, threadId));
+	        
+	        CleanupStack::PopAndDestroy(&apaLsSession);
+	        
+	        iDownloadObserver.HandleInstallStartedL();
 	    	}
 	    	break;
     	case EHttpDlFailed:

@@ -85,8 +85,6 @@ CMobblerAudioThread::CMobblerAudioThread(TAny* aData)
 
 void CMobblerAudioThread::ConstructL()
 	{
-
-	
 	Request();
 	}
 
@@ -94,6 +92,7 @@ CMobblerAudioThread::~CMobblerAudioThread()
 	{
 	Cancel();
 	
+	iStream->Stop();
 	delete iEqualizer;
 	delete iStream;
 
