@@ -1,7 +1,7 @@
 ;
 ; mobbler.pkg
 ;
-; mobbler, a last.fm mobile scrobbler for Symbian smartphones.
+; Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
 ; Copyright (C) 2008  Michael Coffey
 ; 
 ; http://code.google.com/p/mobbler
@@ -22,22 +22,22 @@
 ;
 
 ;Languages
-&EN, FR, GE, SP, IT, SW, NO, FI, AM, PO, TU, RU, HU, DU, CS, SK, PL, ZH, AF, AR, EL, LV, LT, BP, RO
+&EN, FR, GE, SP, IT, SW, NO, FI, AM, PO, TU, RU, HU, DU, CS, SK, PL, ZH, AF, AR, EL, IN, LV, LT, BP, RO
 
 ; Header
-#{"Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler"}, (0xA0007648), 0, 3, 2
+#{"Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler"}, (0xA0007648), 0, 3, 4
 
 ;Localised vendor names
-%{"Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey"}
+%{"Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey"}
 
 ;Unique vendor name
 :"Coffey"
 
 ;Supports Series 60 v 3.0
-[0x101F7961], 0, 0, 0, {"Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID"}
+[0x101F7961], 0, 0, 0, {"Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID"}
 
 ;Supports S60 release 5.0
-[0x1028315F], 0, 0, 0, {"Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID"}
+[0x1028315F], 0, 0, 0, {"Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID"}
 
 ; The Mobbler application
 "$(EPOCROOT)epoc32\release\$(PLATFORM)\$(TARGET)\mobbler.exe"-"!:\sys\bin\mobbler.exe"
@@ -87,6 +87,7 @@
 "$(EPOCROOT)epoc32\data\z\resource\apps\mobbler.r34"
 "$(EPOCROOT)epoc32\data\z\resource\apps\mobbler.r37"
 "$(EPOCROOT)epoc32\data\z\resource\apps\mobbler.r54"
+"$(EPOCROOT)epoc32\data\z\resource\apps\mobbler.r59"
 "$(EPOCROOT)epoc32\data\z\resource\apps\mobbler.r67"
 "$(EPOCROOT)epoc32\data\z\resource\apps\mobbler.r68"
 "$(EPOCROOT)epoc32\data\z\resource\apps\mobbler.r76"
@@ -99,3 +100,4 @@
 ; backup and restore
 ".\backup_registration.xml"-"!:\private\A0007648\backup_registration.xml"
 
+; End of file
