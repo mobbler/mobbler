@@ -505,33 +505,41 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 
 		case EMobblerCommandExportQueueToLogFile:
 			{
-			TBool okToReplaceLog(ETrue);
-			
-			if (BaflUtils::FileExists(CCoeEnv::Static()->FsSession(), KLogFile))
+			if (iTracksQueued == 0)
 				{
-				HBufC* replaceLogText = iEikonEnv->AllocReadResourceLC(R_MOBBLER_CONFIRM_REPLACE_LOG);
-				
-				CAknQueryDialog* dlg = CAknQueryDialog::NewL();
-				okToReplaceLog = dlg->ExecuteLD(R_MOBBLER_QUERY_DIALOG, *replaceLogText);
-				
-				CleanupStack::PopAndDestroy(replaceLogText);
-				}
-			
-			if (okToReplaceLog)
-				{
-				HBufC* confirmationText;
-				if (iLastFMConnection->ExportQueueToLogFileL())
-					{
-					confirmationText = StringLoader::LoadLC(R_MOBBLER_NOTE_QUEUE_EXPORTED);
-					}
-				else
-					{
-					BaflUtils::DeleteFile(CCoeEnv::Static()->FsSession(), KLogFile);
-					confirmationText = StringLoader::LoadLC(R_MOBBLER_NOTE_QUEUE_NOT_EXPORTED);
-					}
+				HBufC* errorText = iEikonEnv->AllocReadResourceLC(R_MOBBLER_NOTE_EXPORT_EMPTY_QUEUE);
 				CAknResourceNoteDialog *note = new (ELeave) CAknInformationNote(EFalse);
-				note->ExecuteLD(*confirmationText);
-				CleanupStack::PopAndDestroy(confirmationText);
+				note->ExecuteLD(*errorText);
+				CleanupStack::PopAndDestroy(errorText);
+				}
+			else
+				{
+				TBool okToReplaceLog(ETrue);
+				
+				if (BaflUtils::FileExists(CCoeEnv::Static()->FsSession(), KLogFile))
+					{
+					HBufC* replaceLogText = iEikonEnv->AllocReadResourceLC(R_MOBBLER_CONFIRM_REPLACE_LOG);
+					CAknQueryDialog* dlg = CAknQueryDialog::NewL();
+					okToReplaceLog = dlg->ExecuteLD(R_MOBBLER_QUERY_DIALOG, *replaceLogText);
+					CleanupStack::PopAndDestroy(replaceLogText);
+					}
+				
+				if (okToReplaceLog)
+					{
+					HBufC* confirmationText;
+					if (iLastFMConnection->ExportQueueToLogFileL())
+						{
+						confirmationText = StringLoader::LoadLC(R_MOBBLER_NOTE_QUEUE_EXPORTED);
+						}
+					else
+						{
+						BaflUtils::DeleteFile(CCoeEnv::Static()->FsSession(), KLogFile);
+						confirmationText = StringLoader::LoadLC(R_MOBBLER_NOTE_QUEUE_NOT_EXPORTED);
+						}
+					CAknResourceNoteDialog *note = new (ELeave) CAknInformationNote(EFalse);
+					note->ExecuteLD(*confirmationText);
+					CleanupStack::PopAndDestroy(confirmationText);
+					}
 				}
 			}
 			break;
