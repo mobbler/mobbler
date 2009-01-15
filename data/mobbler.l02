@@ -70,7 +70,7 @@ rls_string STR_mobbler_history "Historique"
 rls_string STR_mobbler_status "Statut"
 rls_string STR_mobbler_data "Données"
 rls_string STR_mobbler_radio_start "Chercher une station"
-rls_string STR_mobbler_resume_radio "Repprendre la dernière station" // TOO LONG - TEXT TRUNCATED
+rls_string STR_mobbler_resume_radio "Dernière station écoutée"
 rls_string STR_mobbler_radio_artist "Artiste"
 rls_string STR_mobbler_radio_enter_artist "Entrez un artiste"
 rls_string STR_mobbler_radio_tag "Tag"
