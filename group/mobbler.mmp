@@ -44,6 +44,17 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 0xA000B6C2 - unused
 0xA000B6C3 - unused
 0xA000B6D4 - unused
+
+0xA000BEB1 - unused
+0xA000BEB2 - unused
+0xA000BEB3 - unused
+0xA000BEB4 - unused
+0xA000BEB5 - unused
+0xA000BEB6 - unused
+0xA000BEB7 - unused
+0xA000BEB8 - unused
+0xA000BEB9 - unused
+0xA000BEBA - unused
 */
 
 TARGET			mobbler.exe
