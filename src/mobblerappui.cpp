@@ -377,6 +377,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 				CleanupStack::PopAndDestroy(artist8);
 				delete iPreviousRadioArtist;
 				iPreviousRadioArtist = artist.AllocL();
+				SaveRadioStationsL();
 				}
 			
 			break;
@@ -401,6 +402,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 				CleanupStack::PopAndDestroy(tag8);
 				delete iPreviousRadioTag;
 				iPreviousRadioTag = tag.AllocL();
+				SaveRadioStationsL();
 				}
 
 			break;
@@ -425,23 +427,29 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 				CleanupStack::PopAndDestroy(user8);
 				delete iPreviousRadioUser;
 				iPreviousRadioUser = user.AllocL();
+				SaveRadioStationsL();
 				}
 
 			break;
 		case EMobblerCommandRadioRecommendations:
 			RadioStartL(CMobblerLastFMConnection::ERecommendations, KNullDesC8);
+			SaveRadioStationsL();
 			break;
 		case EMobblerCommandRadioPersonal:
 			RadioStartL(CMobblerLastFMConnection::EPersonal, KNullDesC8);
+			SaveRadioStationsL();
 			break;
 		case EMobblerCommandRadioLoved:
 			RadioStartL(CMobblerLastFMConnection::ELovedTracks, KNullDesC8);
+			SaveRadioStationsL();
 			break;
 		case EMobblerCommandRadioNeighbourhood:
 			RadioStartL(CMobblerLastFMConnection::ENeighbourhood, KNullDesC8);
+			SaveRadioStationsL();
 			break;
 		case EMobblerCommandRadioMyPlaylist:
 			RadioStartL(CMobblerLastFMConnection::EMyPlaylist, KNullDesC8);
+			SaveRadioStationsL();
 			break;
 		case EMobblerCommandTrackLove:
 			// you can love either radio or music player tracks
@@ -552,7 +560,6 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 void CMobblerAppUi::RadioStartL(CMobblerLastFMConnection::TRadioStation aRadioStation, const TDesC8& aRadioOption)
 	{
 	iPreviousRadioStation = aRadioStation;
-	SaveRadioStationsL();
 	TInt error = iRadioPlayer->StartL(aRadioStation, aRadioOption);
 	
 	TBool startStationOnConnectCompleteCallback(EFalse);
