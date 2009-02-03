@@ -21,10 +21,12 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
+#include <centralrepository.h>
 #include <chttpformencoder.h>
 #include <commdbconnpref.h> 
 #include <httperr.h>
 #include <httpstringconstants.h>
+#include <ProfileEngineSDKCRKeys.h>
 
 #include "coemain.h"
 #include "mobblerappui.h"
@@ -85,6 +87,8 @@ const TInt KMaxSubmitTracks(50);
 // The time to wait after "check for updates" before
 // the next automatic check after connecting
 const TTimeIntervalDays KUpdateCheckInterval(7);
+
+const TInt KOfflineProfileId = 5;
 
 CMobblerLastFMConnection* CMobblerLastFMConnection::NewL(MMobblerLastFMConnectionObserver& aObserver, const TDesC& aUsername, const TDesC& aPassword, TUint32 aIapID, TBool aAutoUpdatesOn)
 	{
@@ -408,8 +412,19 @@ void CMobblerLastFMConnection::ConnectL()
 	if (iIapID == 0)
 		{
 		// This means the users has selected to always be asked
-		// which access point they wan to use
+		// which access point they want to use
 		prefs.SetDialogPreference(ECommDbDialogPrefPrompt);
+
+	    // Filter out operator APs when the phone profile is offline
+		TInt activeProfileId;
+	    CRepository* repository = CRepository::NewL(KCRUidProfileEngine);
+	    repository->Get(KProEngActiveProfile, activeProfileId);
+	    delete repository;
+
+	    if (activeProfileId == KOfflineProfileId)
+	        {
+			prefs.SetBearerSet(ECommDbBearerWLAN);
+	        }
 		}
 	else
 		{
