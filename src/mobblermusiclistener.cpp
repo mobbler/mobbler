@@ -27,9 +27,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "mobblerstring.h"
 #include "mobblertrack.h"
 
+#include <mobbler/mobblercontentlistinginterface.h>
 #include <utf.h>
 
 const TUid KMobblerMusicAppImplUid = {0xA0007CAA};
+const TUid KContentListingImplUid = {0xA000BEB1};
 
 CMobblerMusicAppListener* CMobblerMusicAppListener::NewL(CMobblerLastFMConnection& aSubmitter)
 	{
@@ -53,7 +55,7 @@ void CMobblerMusicAppListener::ConstructL()
 	REComSession::ListImplementationsL(KMobblerMusicAppImplUid, implInfoPtrArray);
 	
 	const TInt KImplCount(implInfoPtrArray.Count());
-	for (TInt i(0) ; i < KImplCount ; ++i)
+	for (TInt i(0); i < KImplCount ; ++i)
 		{
 		TUid dtorIdKey;
 		CMobblerMusicApp* mobblerMusicApp(NULL);
@@ -73,6 +75,12 @@ void CMobblerMusicAppListener::ConstructL()
 		}
 	
 	CleanupStack::PopAndDestroy(&implInfoPtrArray);
+
+	TRAP_IGNORE(iMobblerContentListing = static_cast<CMobblerContentListingInterface*>(REComSession::CreateImplementationL(KContentListingImplUid, iDtorIdKey)));
+	if (iMobblerContentListing)
+		{
+		iMobblerContentListing->SetObserver(*this);
+		}
 	
 	iMusicPlayerState = EMPlayerRCtrlNotRunning;
 
@@ -101,6 +109,12 @@ CMobblerMusicAppListener::~CMobblerMusicAppListener()
 	REComSession::FinalClose();
 	
 	delete iNowPlayingCallback;
+
+	if (iMobblerContentListing)
+		{
+		delete iMobblerContentListing;
+		REComSession::DestroyedImplementation(iDtorIdKey);
+		}
 	}
 
 CMobblerTrack* CMobblerMusicAppListener::CurrentTrack()
@@ -189,6 +203,7 @@ void CMobblerMusicAppListener::NowPlayingL()
 		// and try to submit it as 'now playing'
 		TBuf<255> trackArtist;
 		TBuf<255> trackTitle;
+		TBuf<255> trackAlbum;
 		
 		TTimeIntervalSeconds trackLength(0);
 		
@@ -213,6 +228,7 @@ void CMobblerMusicAppListener::NowPlayingL()
 			{
 			trackArtist.Copy(iMobblerMusicApps[musicAppIndex]->Artist());
 			trackTitle.Copy(iMobblerMusicApps[musicAppIndex]->Title());
+			trackAlbum.Copy(iMobblerMusicApps[musicAppIndex]->Album());
 			trackLength = iMobblerMusicApps[musicAppIndex]->Duration();
 			
 			if (trackLength.Int() >= 30 && trackArtist.Length() > 0)
@@ -227,12 +243,43 @@ void CMobblerMusicAppListener::NowPlayingL()
 					iCurrentTrack->Release();
 					}
 				
-				iCurrentTrack = CMobblerTrack::NewL(*artist, *title, KNullDesC8, KNullDesC8, KNullDesC8, trackLength, KNullDesC8);
-				CleanupStack::PopAndDestroy(2, artist);
+				if (trackAlbum.Length() == 0)
+					{
+					iCurrentTrack = CMobblerTrack::NewL(*artist, *title, KNullDesC8, KNullDesC8, KNullDesC8, trackLength, KNullDesC8);
+
+					if (trackTitle.Length() != 0 && trackArtist.Length() != 0)
+						{
+						iMobblerContentListing->FindAndSetAlbumNameL(*artist, *title);
+						}
+					}
+				else
+					{
+					HBufC8* album = CnvUtfConverter::ConvertFromUnicodeToUtf8L(trackAlbum);
+					CleanupStack::PushL(album);
+					iCurrentTrack = CMobblerTrack::NewL(*artist, *title, *album, KNullDesC8, KNullDesC8, trackLength, KNullDesC8);
+					CleanupStack::PopAndDestroy(album);
+					}
+				CleanupStack::PopAndDestroy(2, artist); // artist, title
 				iCurrentTrack->SetStartTimeUTC(startTimeUTC);
 				iLastFMConnection.TrackStartedL(iCurrentTrack);
 				}
 			}
+		}
+	}
+
+void CMobblerMusicAppListener::SetAlbumL(const TDesC& aAlbum)
+	{
+	if (iCurrentTrack)
+		{
+		iCurrentTrack->SetAlbumL(aAlbum);
+		}
+	}
+
+void CMobblerMusicAppListener::SetTrackNumber(const TInt aTrackNumber)
+	{
+	if (iCurrentTrack)
+		{
+		iCurrentTrack->SetTrackNumber(aTrackNumber);
 		}
 	}
 

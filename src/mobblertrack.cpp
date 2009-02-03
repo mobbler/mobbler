@@ -74,6 +74,7 @@ void CMobblerTrack::ConstructL(const TDesC8& aArtist,
 	iStartTimeUTC = Time::NullTTime();
 	iScrobbleTime = (TTimeIntervalSeconds)Min(240, (iTrackLength.Int()/2));
 	iInitialPlaybackPosition = KErrUnknown;
+	iTrackNumber = KErrUnknown;
 	iTotalPlayed = 0;
 	}
 
@@ -209,6 +210,22 @@ const CMobblerString& CMobblerTrack::Title() const
 const CMobblerString& CMobblerTrack::Album() const
 	{
 	return *iAlbum;
+	}
+
+void CMobblerTrack::SetAlbumL(const TDesC& aAlbum)
+	{
+	delete iAlbum;
+	iAlbum = CMobblerString::NewL(aAlbum);
+	}
+
+const TInt CMobblerTrack::TrackNumber() const
+	{
+	return iTrackNumber;
+	}
+
+void CMobblerTrack::SetTrackNumber(TInt aTrackNumber)
+	{
+	iTrackNumber = aTrackNumber;
 	}
 
 const TDesC8& CMobblerTrack::Mp3Location() const

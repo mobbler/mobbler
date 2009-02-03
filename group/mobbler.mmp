@@ -37,17 +37,17 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 0xA000B6CB - touch feedback dll
 0xA000B6CC - touch feedback interface
 0xA000B6CD - touch feedback implementation
-0xA000B6CE - unused
-0xA000B6CF - unused
-0xA000B6D0 - unused
-0xA000B6D1 - unused
-0xA000B6C2 - unused
-0xA000B6C3 - unused
+0xA000B6CE - gesture plug-in dll (3rd edition)
+0xA000B6CF - gesture plug-in interface
+0xA000B6D0 - gesture plug-in 3rd edition implementation
+0xA000B6D1 - gesture plug-in dll (5th edition)
+0xA000B6C2 - gesture plug-in 5th edition implementation
+0xA000B6C3 - strings sis file
 0xA000B6D4 - unused
 
-0xA000BEB1 - unused
-0xA000BEB2 - unused
-0xA000BEB3 - unused
+0xA000BEB1 - content listing dll
+0xA000BEB2 - content listing interface
+0xA000BEB3 - content listing implementation
 0xA000BEB4 - unused
 0xA000BEB5 - unused
 0xA000BEB6 - unused
@@ -108,10 +108,12 @@ LIBRARY		audioequalizerutility.lib
 LIBRARY		avkon.lib
 LIBRARY		bafl.lib
 LIBRARY		bitgdi.lib
+LIBRARY		centralrepository.lib
 LIBRARY		charconv.lib
 LIBRARY		commdb.lib
 LIBRARY		commonengine.lib
 LIBRARY		cone.lib
+LIBRARY		ContentListingFramework.lib
 LIBRARY		downloadmgr.lib
 LIBRARY		ecom.lib
 LIBRARY		efsrv.lib

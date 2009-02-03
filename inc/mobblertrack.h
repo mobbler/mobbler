@@ -52,6 +52,9 @@ public:
 	
 	const CMobblerString& Artist() const;
 	const CMobblerString& Album() const;
+	void SetAlbumL(const TDesC& aAlbum);
+	const TInt TrackNumber() const;
+	void SetTrackNumber(const TInt aTrackNumber);
 	const CMobblerString& Title() const;
 	const TDesC8& Mp3Location() const;
 	const TDesC8& AlbumArtLocation() const;
@@ -107,6 +110,7 @@ private:
 	CMobblerString* iArtist;
 	CMobblerString* iTitle;
 	CMobblerString* iAlbum;
+	TInt iTrackNumber;
 	TTime iStartTimeUTC;
 	TTimeIntervalSeconds iTotalPlayed;
 	TBool iTrackPlaying;

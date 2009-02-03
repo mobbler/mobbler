@@ -21,28 +21,28 @@
 ; Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ;
 
-;Languages
+; Languages
 &EN, FR, GE, SP, IT, SW, NO, FI, AM, TU, RU, HU, DU, CS, SK, PL, ZH, AF, AR, EL, HE, IN, LV, LT, BP, RO
 
 ; Header
 #{"Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler"}, (0xA0007648), 0, 3, 4
 
-;Localised vendor names
+; Localised vendor names
 %{"Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey"}
 
-;Unique vendor name
+; Unique vendor name
 :"Coffey"
 
-;Supports Series 60 v 3.0
+; Supports Series 60 v 3.0
 [0x101F7961], 0, 0, 0, {"Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID"}
 
-;Supports S60 release 5.0
+; Supports S60 release 5.0
 [0x1028315F], 0, 0, 0, {"Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID"}
 
 ; The Mobbler application
 "$(EPOCROOT)epoc32\release\$(PLATFORM)\$(TARGET)\mobbler.exe"-"!:\sys\bin\mobbler.exe"
 
-; The mobbler music app observer
+; The Mobbler music app observer
 "$(EPOCROOT)epoc32\release\$(PLATFORM)\$(TARGET)\musicappobserver.dll"-"!:\sys\bin\musicappobserver.dll"
 "$(EPOCROOT)epoc32\data\z\resource\plugins\musicappobserver.rsc"-"!:\resource\plugins\musicappobserver.rsc"
 
@@ -50,7 +50,11 @@
 "$(EPOCROOT)epoc32\release\$(PLATFORM)\$(TARGET)\mobblertouchfeedback.dll"-"!:\sys\bin\mobblertouchfeedback.dll"
 "$(EPOCROOT)epoc32\data\z\resource\plugins\mobblertouchfeedback.rsc"-"!:\resource\plugins\mobblertouchfeedback.rsc"
 
-; graphics
+; Content listing plugin
+"$(EPOCROOT)\epoc32\release\$(PLATFORM)\$(TARGET)\mobblercontentlisting.dll"-"!:\sys\bin\mobblercontentlisting.dll"
+"$(EPOCROOT)\epoc32\data\z\resource\plugins\mobblercontentlisting.rsc"-"!:\resource\plugins\mobblercontentlisting.rsc"
+
+; Graphics
 "$(EPOCROOT)epoc32\data\z\resource\apps\mobbler\speaker_low.png"-	"!:\resource\apps\mobbler\speaker_low.png"
 "$(EPOCROOT)epoc32\data\z\resource\apps\mobbler\speaker_high.png"-	"!:\resource\apps\mobbler\speaker_high.png"
 "$(EPOCROOT)epoc32\data\z\resource\apps\mobbler\scrobble.png"-		"!:\resource\apps\mobbler\scrobble.png"
@@ -97,7 +101,7 @@
 ; The application registration file
 "$(EPOCROOT)epoc32\data\z\private\10003a3f\apps\mobbler_reg.r01"-"!:\private\10003a3f\import\apps\mobbler_reg.rsc"
 
-; backup and restore
+; Backup and restore
 ".\backup_registration.xml"-"!:\private\A0007648\backup_registration.xml"
 
 ; End of file
