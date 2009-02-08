@@ -27,8 +27,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 CMobblerAccessPointSettingItem::CMobblerAccessPointSettingItem(TInt aIdentifier, TInt& aValue)
 		:CAknEnumeratedTextPopupSettingItem(aIdentifier, aValue), iValue(aValue)
-		{
-		}
+	{
+	}
 
 void CMobblerAccessPointSettingItem::LoadL()
 	{
@@ -48,41 +48,39 @@ void CMobblerAccessPointSettingItem::LoadL()
 	CAknEnumeratedTextPopupSettingItem::LoadL();
 	}
 
-
 void CMobblerAccessPointSettingItem::LoadIapListL()
-		{
-		// Add all the access point to the list
-		CCommsDatabase* commDb = CCommsDatabase::NewL(EDatabaseTypeIAP);
-		CleanupStack::PushL(commDb);
+	{
+	// Add all the access point to the list
+	CCommsDatabase* commDb = CCommsDatabase::NewL(EDatabaseTypeIAP);
+	CleanupStack::PushL(commDb);
 
+	// Open IAP table
+	CCommsDbTableView* commView = commDb->OpenIAPTableViewMatchingBearerSetLC(
+										ECommDbBearerGPRS | ECommDbBearerWLAN, 
+										ECommDbConnectionDirectionOutgoing);
 
-		// open IAP table
-		CCommsDbTableView* commView = commDb->OpenIAPTableViewMatchingBearerSetLC(ECommDbBearerGPRS | ECommDbBearerWLAN, ECommDbConnectionDirectionOutgoing);
-		
-		// search all IAPs
-		for (TInt error = commView->GotoFirstRecord();
-						error == KErrNone;
-						error = commView->GotoNextRecord())
-				{
-				TBuf<KCommsDbSvrMaxColumnNameLength> iapName;
-				TUint32 iapId;
-				
-				commView->ReadTextL(TPtrC(COMMDB_NAME), iapName);
-				commView->ReadUintL(TPtrC(COMMDB_ID), iapId);
+	// Search all IAPs
+	for (TInt error(commView->GotoFirstRecord());
+					error == KErrNone;
+					error = commView->GotoNextRecord())
+			{
+			TBuf<KCommsDbSvrMaxColumnNameLength> iapName;
+			TUint32 iapId;
 
-				HBufC* text = iapName.AllocLC();
-				CAknEnumeratedText* enumText = new(ELeave) CAknEnumeratedText(iapId, text);
-				CleanupStack::Pop(text);
-				CleanupStack::PushL(enumText);
-				EnumeratedTextArray()->AppendL(enumText);
-				CleanupStack::Pop(enumText);
-				}
-		
-		CleanupStack::PopAndDestroy(commView);
-		CleanupStack::PopAndDestroy(commDb);
-		}
- 
+			commView->ReadTextL(TPtrC(COMMDB_NAME), iapName);
+			commView->ReadUintL(TPtrC(COMMDB_ID), iapId);
 
+			HBufC* text = iapName.AllocLC();
+			CAknEnumeratedText* enumText = new(ELeave) CAknEnumeratedText(iapId, text);
+			CleanupStack::Pop(text);
+			CleanupStack::PushL(enumText);
+			EnumeratedTextArray()->AppendL(enumText);
+			CleanupStack::Pop(enumText);
+			}
+
+	CleanupStack::PopAndDestroy(commView);
+	CleanupStack::PopAndDestroy(commDb);
+	}
 
 void CMobblerAccessPointSettingItem::CreateAndExecuteSettingPageL()
 	{
@@ -97,11 +95,9 @@ void CMobblerAccessPointSettingItem::CreateAndExecuteSettingPageL()
 	SetSettingPage(0);
 	}
 
-
 void CMobblerAccessPointSettingItem::CompleteConstructionL()
 	{
 	CAknEnumeratedTextPopupSettingItem::CompleteConstructionL();
-	LoadIapListL();
 	}
 
 // End of file

@@ -1,8 +1,8 @@
 /*
-mobbleraccesspointsettingitem.h
+mobbler.rh
 
 Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
-Copyright (C) 2008  Michael Coffey
+Copyright (C) 2009  Michael Coffey
 
 http://code.google.com/p/mobbler
 
@@ -21,26 +21,22 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-#ifndef __MOBBLERACCESSPOINTSETTINGITEM_H__
-#define __MOBBLERACCESSPOINTSETTINGITEM_H__
+// For defining text resources
+STRUCT STRING
+	{
+	LTEXT text;
+	}
 
-#include <aknsettingitemlist.h>
+STRUCT STRING32
+	{
+	LTEXT text;
+	}
 
-class CMobblerAccessPointSettingItem : public CAknEnumeratedTextPopupSettingItem
-    {
-public:
-	CMobblerAccessPointSettingItem(TInt aIdentifier, TInt& aSliderValue);
-	void LoadIapListL();
-	void LoadL();
- 
-private:
-	void CreateAndExecuteSettingPageL();
-	void CompleteConstructionL();
-	
-private:
-	TInt iValue;
-    };
-	
-#endif // __MOBBLERACCESSPOINTSETTINGITEM_H__
+// For first resource in file, for ConfirmSignature()
+STRUCT SIGNATURE
+	{
+	LONG version;
+	SRLINK self;
+	}
 
 // End of file

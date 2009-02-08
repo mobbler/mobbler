@@ -1,0 +1,162 @@
+/*
+mobbler_strings.rss
+
+Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
+Copyright (C) 2009  Michael Coffey
+
+http://code.google.com/p/mobbler
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+*/
+
+NAME MOBS
+
+#include "mobbler.loc"
+#include "mobbler.rh"
+
+CHARACTER_SET UTF8
+
+RESOURCE SIGNATURE { version = 1; }
+
+///////////////////////////////////////////////////////////////////////////////
+
+// Mobbler 0.3.5 resources below
+
+///////////////////////////////////////////////////////////////////////////////
+
+// Main menu resources
+
+RESOURCE STRING r_mobbler_radio_start	{ text = STR_mobbler_radio_start; }
+RESOURCE STRING r_mobbler_resume_radio	{ text = STR_mobbler_resume_radio; }
+RESOURCE STRING r_mobbler_go_online		{ text = STR_mobbler_go_online; }
+RESOURCE STRING r_mobbler_go_offline	{ text = STR_mobbler_go_offline; }
+RESOURCE STRING r_mobbler_equalizer		{ text = STR_mobbler_equalizer; }
+RESOURCE STRING r_mobbler_tools_submenu	{ text = STR_mobbler_tools_submenu; }
+RESOURCE STRING r_mobbler_settings		{ text = STR_mobbler_settings; }
+RESOURCE STRING r_mobbler_about			{ text = STR_mobbler_about; }
+RESOURCE STRING r_mobbler_exit			{ text = STR_mobbler_exit; }
+
+// Radio submenu resources
+
+RESOURCE STRING r_mobbler_radio_artist			{ text = STR_mobbler_radio_artist; }
+RESOURCE STRING r_mobbler_radio_tag				{ text = STR_mobbler_radio_tag; }
+RESOURCE STRING r_mobbler_radio_user			{ text = STR_mobbler_radio_user; }
+RESOURCE STRING r_mobbler_radio_personal		{ text = STR_mobbler_radio_personal; }
+RESOURCE STRING r_mobbler_radio_recommendations	{ text = STR_mobbler_radio_recommendations; }
+RESOURCE STRING r_mobbler_radio_loved			{ text = STR_mobbler_radio_loved; }
+RESOURCE STRING r_mobbler_radio_neighbourhood	{ text = STR_mobbler_radio_neighbourhood; }
+RESOURCE STRING r_mobbler_radio_playlist		{ text = STR_mobbler_radio_playlist; }
+
+// Equalizer submenu resource
+
+RESOURCE STRING r_mobbler_equalizer_profile_default	{ text = STR_mobbler_equalizer_profile_default; }
+
+// Tools submenu resources
+
+RESOURCE STRING r_mobbler_check_for_updates		{ text = STR_mobbler_check_for_updates; }
+RESOURCE STRING r_mobbler_sleep_timer			{ text = STR_mobbler_sleep_timer; }
+RESOURCE STRING r_mobbler_set_sleep_timer		{ text = STR_mobbler_set_sleep_timer; }
+RESOURCE STRING r_mobbler_export_queue_to_log	{ text = STR_mobbler_export_queue_to_log; }
+
+// Settings resources
+
+RESOURCE STRING r_mobbler_username						{ text = STR_mobbler_username; }
+RESOURCE STRING r_mobbler_password						{ text = STR_mobbler_password; }
+RESOURCE STRING r_mobbler_buffer_size					{ text = STR_mobbler_buffer_size; }
+RESOURCE STRING r_mobbler_buffer_size_second			{ text = STR_mobbler_second; }
+RESOURCE STRING r_mobbler_buffer_size_seconds			{ text = STR_mobbler_seconds; }
+RESOURCE STRING r_mobbler_iap							{ text = STR_mobbler_iap; }
+RESOURCE STRING r_mobbler_always_ask					{ text = STR_mobbler_always_ask; }
+RESOURCE STRING r_mobbler_scrobble_percent				{ text = STR_mobbler_scrobble_percent; }
+RESOURCE STRING r_mobbler_percent						{ text = STR_mobbler_percent; }
+RESOURCE STRING r_mobbler_check_for_updates_once_a_week	{ text = STR_mobbler_check_for_updates_once_a_week; }
+RESOURCE STRING r_mobbler_check_for_updates_yes			{ text = STR_mobbler_check_for_updates_yes; }
+RESOURCE STRING r_mobbler_check_for_updates_no			{ text = STR_mobbler_check_for_updates_no; }
+RESOURCE STRING r_mobbler_backlight						{ text = STR_mobbler_backlight; }
+RESOURCE STRING r_mobbler_backlight_on_when_active		{ text = STR_mobbler_backlight_on_when_active; }
+RESOURCE STRING r_mobbler_backlight_system_default		{ text = STR_mobbler_backlight_system_default; }
+RESOURCE STRING r_mobbler_sleep_timer_action			{ text = STR_mobbler_sleep_timer_action; }
+RESOURCE STRING r_mobbler_sleep_timer_action_stop		{ text = STR_mobbler_sleep_timer_action_stop; }
+RESOURCE STRING r_mobbler_sleep_timer_action_offline	{ text = STR_mobbler_sleep_timer_action_offline; }
+RESOURCE STRING r_mobbler_sleep_timer_action_exit		{ text = STR_mobbler_sleep_timer_action_exit; }
+
+// Other resources
+
+RESOURCE STRING32 r_about_dialog_title	{ text = STR_mobbler_about; }
+RESOURCE STRING r_mobbler_about_text1	{ text = STR_mobbler_about_text1; }
+RESOURCE STRING r_mobbler_about_text2	{ text = STR_mobbler_about_text2; }
+
+RESOURCE STRING r_mobbler_note_banned		{text = STR_mobbler_note_banned;}
+RESOURCE STRING r_mobbler_note_bad_auth		{text = STR_mobbler_note_bad_auth;}
+RESOURCE STRING r_mobbler_note_bad_time		{text = STR_mobbler_note_bad_time;}
+RESOURCE STRING r_mobbler_note_bad_session	{text = STR_mobbler_note_bad_session;}
+RESOURCE STRING r_mobbler_note_comms_error	{text = STR_mobbler_note_comms_error;}
+RESOURCE STRING r_mobbler_note_no_details	{text = STR_mobbler_note_no_details;}
+
+RESOURCE STRING r_mobbler_love_track		{text = STR_mobbler_love_track;}
+RESOURCE STRING r_mobbler_ban_track			{text = STR_mobbler_ban_track;}
+RESOURCE STRING r_mobbler_buy_amazon		{text = STR_mobbler_buy_amazon;} // TODO remove from code?
+
+RESOURCE STRING r_mobbler_note_bad_station		{text = STR_mobbler_note_bad_station;}
+RESOURCE STRING r_mobbler_note_no_tracks		{text = STR_mobbler_note_no_tracks;}
+
+RESOURCE STRING r_mobbler_idle					{text = STR_mobbler_idle;}
+
+RESOURCE STRING r_mobbler_artist					{text = STR_mobbler_artist;}
+RESOURCE STRING r_mobbler_title						{text = STR_mobbler_title;}
+RESOURCE STRING r_mobbler_album						{text = STR_mobbler_album;}
+
+RESOURCE STRING r_mobbler_radio_enter_artist			{text = STR_mobbler_radio_enter_artist;}
+RESOURCE STRING r_mobbler_radio_enter_tag				{text = STR_mobbler_radio_enter_tag;}
+RESOURCE STRING r_mobbler_radio_enter_user				{text = STR_mobbler_radio_enter_user;}
+
+RESOURCE STRING r_mobbler_update						{text = STR_mobbler_update;}
+RESOURCE STRING r_mobbler_no_update						{text = STR_mobbler_no_update;}
+
+RESOURCE STRING r_mobbler_scrobbled_queued				{text = STR_mobbler_scrobbled_queued;}
+
+RESOURCE STRING r_mobbler_ask_go_online					{text = STR_mobbler_ask_go_online;}
+
+RESOURCE STRING r_mobbler_state_online					{text = STR_mobbler_state_online;}
+RESOURCE STRING r_mobbler_state_offline					{text = STR_mobbler_state_offline;}
+RESOURCE STRING r_mobbler_state_connecting				{text = STR_mobbler_state_connecting;}
+RESOURCE STRING r_mobbler_state_handshaking				{text = STR_mobbler_state_handshaking;}
+RESOURCE STRING r_mobbler_state_selecting_station		{text = STR_mobbler_state_selecting_station;}
+RESOURCE STRING r_mobbler_state_fetching_playlist		{text = STR_mobbler_state_fetching_playlist;}
+RESOURCE STRING r_mobbler_state_checking_for_updates	{text = STR_mobbler_state_checking_for_updates;}
+RESOURCE STRING r_mobbler_downloading					{text = STR_mobbler_downloading;}
+
+RESOURCE STRING r_mobbler_softkey_hide				{text = STR_mobbler_softkey_hide;}
+
+RESOURCE STRING r_mobbler_confirm_replace_log		{text = STR_mobbler_confirm_replace_log;}
+RESOURCE STRING r_mobbler_note_queue_exported		{text = STR_mobbler_note_queue_exported;}
+RESOURCE STRING r_mobbler_note_queue_not_exported	{text = STR_mobbler_note_queue_not_exported;}
+RESOURCE STRING r_mobbler_note_export_empty_queue	{text = STR_mobbler_note_export_empty_queue;}
+
+RESOURCE STRING r_mobbler_get_latest_language		{ text = STR_mobbler_get_latest_language; }
+RESOURCE STRING r_mobbler_sleep_timer_prompt		{ text = STR_mobbler_sleep_timer_prompt; }
+RESOURCE STRING r_mobbler_softkey_set				{ text = STR_mobbler_softkey_set; }
+RESOURCE STRING r_mobbler_softkey_remove			{ text = STR_mobbler_softkey_remove; }
+RESOURCE STRING r_mobbler_sleep_timer_expired		{ text = STR_mobbler_sleep_timer_expired; }
+RESOURCE STRING r_mobbler_sleep_timer_removed		{ text = STR_mobbler_sleep_timer_removed; }
+
+///////////////////////////////////////////////////////////////////////////////
+
+// Mobbler 0.3.5 resources above,
+// Mobbler 0.3.6 resources below
+
+///////////////////////////////////////////////////////////////////////////////
+
+// End of file

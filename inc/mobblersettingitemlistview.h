@@ -25,11 +25,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #define __MOBBLERSETTINGITEMLISTVIEW_H__
 
 #include <aknview.h>
-#include <aknwaitdialog.h>
-#include <aknprogressdialog.h>
 
 #include "mobblersettingitemlistsettings.h"
 
+class CAknTextSettingItem;
+class CMobblerResourceReader;
 class CMobblerSettingItemList;
 
 class CMobblerSettingItemListView : public CAknView
@@ -39,31 +39,58 @@ public:
 	~CMobblerSettingItemListView();
 	
 	TUid Id() const;
-	void HandleCommandL( TInt aCommand );
+	void HandleCommandL(TInt aCommand);
 	
-	const TDesC& GetUserName() const;
-	const TDesC& GetPassword() const;
-	TBool GetBacklight() const;
-	TBool GetCheckForUpdates() const;
-	TUint32 GetIapID() const;
-	TUint8 GetBufferSize() const;
-	TBool GetEqualizerIndex() const;
-	void SetEqualizerIndex(TInt aIndex);
+	const TDesC& UserName() const;
+	const TDesC& Password() const;
+	TBool Backlight() const;
+	TBool CheckForUpdates() const;
+	TUint32 IapID() const;
+	TUint8 BufferSize() const;
+	TBool EqualizerIndex() const;
+	void SetEqualizerIndexL(TInt aIndex);
 	
 private:
 	CMobblerSettingItemListView();        
 	void ConstructL();
 
-	void DoActivateL(const TVwsViewId& aPrevViewId, TUid aCustomMessageId, const TDesC8& aCustomMessage );
+	void DoActivateL(const TVwsViewId& aPrevViewId, TUid aCustomMessageId, const TDesC8& aCustomMessage);
 	void DoDeactivate();
 	void HandleStatusPaneSizeChange();
 	
-	TBool HandleChangeSelectedSettingItemL( TInt aCommand );
+	TBool HandleChangeSelectedSettingItemL(TInt aCommand);
 	
+	void LoadListL();
+	void CreateTextItemL(TDes& aText, 
+							const TInt aTitleResource, 
+							const TInt aPageResource);
+	void CreatePasswordItemL(TDes& aPassword, 
+							const TInt aTitleResource, 
+							const TInt aPageResource);
+	void CreateIapItemL(TInt& aIapId, 
+							const TInt aTitleResource, 
+							const TInt aPageResource);
+	void CreateSliderItemL(TInt& aSliderValue, 
+							const TInt aTitleResource, 
+							const TInt aPageResource, 
+							const TInt aResourceSingular, 
+							const TInt aResourcePlural);
+	void CreateBinaryItemL(TBool& aBinaryValue, 
+							const TInt aTitleResource, 
+							const TInt aPageResource,
+							const TInt aFirstEnumResource,
+							const TInt aSecondEnumResource);
 private:
 	CMobblerSettingItemList* iMobblerSettingItemList;
 	CMobblerSettingItemListSettings* iSettings;
 	CAknWaitDialog* iConnectingDialog;
+
+	TInt iOrdinal;
+	TBool iIsNumberedStyle;
+	CArrayPtr<CGulIcon>* iIcons;
+	CMobblerResourceReader* iResourceReader;
 	};
 
 #endif
+
+// End of file

@@ -30,7 +30,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "mobblerradioplaylist.h"
 #include "mobblertrack.h"
 #include "mobblerutility.h"
-#include <mobbler.rsg>
 
 #ifdef __WINS__
 const TInt KDefaultVolume(0);
@@ -239,10 +238,16 @@ void CMobblerRadioPlayer::VolumeUp()
 	TInt volume = Volume();
 	TInt maxVolume = MaxVolume();
 	iVolume = Min(volume + (maxVolume / 10), maxVolume);
-	
-	if (iCurrentAudioControl) iCurrentAudioControl->SetVolume(iVolume);
-	if (iNextAudioControl) iNextAudioControl->SetVolume(iVolume);
-	
+
+	if (iCurrentAudioControl)
+		{
+		iCurrentAudioControl->SetVolume(iVolume);
+		}
+	if (iNextAudioControl)
+		{
+		iNextAudioControl->SetVolume(iVolume);
+		}
+
 	static_cast<CMobblerAppUi*>(CEikonEnv::Static()->AppUi())->StatusDrawDeferred();
 	}
 
@@ -252,8 +257,14 @@ void CMobblerRadioPlayer::VolumeDown()
 	TInt maxVolume = MaxVolume();
 	iVolume = Max(volume - (maxVolume / 10), 0);
 		
-	if (iCurrentAudioControl) iCurrentAudioControl->SetVolume(iVolume);
-	if (iNextAudioControl) iNextAudioControl->SetVolume(iVolume);
+	if (iCurrentAudioControl)
+		{
+		iCurrentAudioControl->SetVolume(iVolume);
+		}
+	if (iNextAudioControl)
+		{
+		iNextAudioControl->SetVolume(iVolume);
+		}
 	
 	static_cast<CMobblerAppUi*>(CEikonEnv::Static()->AppUi())->StatusDrawDeferred();
 	}
@@ -397,8 +408,14 @@ void CMobblerRadioPlayer::HandleIncomingCallL(TPSTelephonyCallState aPSTelephony
 void CMobblerRadioPlayer::SetEqualizer(TInt aIndex)
 	{
 	iEqualizerIndex = aIndex;
-	if (iCurrentAudioControl) iCurrentAudioControl->SetEqualizerIndex(aIndex);
-	if (iNextAudioControl) iNextAudioControl->SetEqualizerIndex(aIndex);
+	if (iCurrentAudioControl)
+		{
+		iCurrentAudioControl->SetEqualizerIndex(aIndex);
+		}
+	if (iNextAudioControl)
+		{
+		iNextAudioControl->SetEqualizerIndex(aIndex);
+		}
 	}
 
 TBool CMobblerRadioPlayer::HasPlaylist() const

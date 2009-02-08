@@ -27,13 +27,13 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <bautils.h> 
 #include <browserlauncher.h>
 #include <mobbler.rsg>
-#include <stringloader.h>
+#include <mobbler_strings.rsg>
 
 #include "mobbler.hrh"
 #include "mobblerappui.h"
-#include "mobblerdownload.h"
 #include "mobblermusiclistener.h"
 #include "mobblerradioplayer.h"
+#include "mobblerresourcereader.h"
 #include "mobblerrichtextcontrol.h"
 #include "mobblersettingitemlistview.h"
 #include "mobblerstatusview.h"
@@ -61,8 +61,8 @@ void CMobblerAppUi::ConstructL()
 	AddViewL(iStatusView);
 	ActivateLocalViewL(iStatusView->Id());
 	
-	iLastFMConnection = CMobblerLastFMConnection::NewL(*this, iSettingView->GetUserName(), iSettingView->GetPassword(), iSettingView->GetIapID(), iSettingView->GetCheckForUpdates());
-	iRadioPlayer = CMobblerRadioPlayer::NewL(*iLastFMConnection, iSettingView->GetBufferSize(), iSettingView->GetEqualizerIndex());
+	iLastFMConnection = CMobblerLastFMConnection::NewL(*this, iSettingView->UserName(), iSettingView->Password(), iSettingView->IapID(), iSettingView->CheckForUpdates());
+	iRadioPlayer = CMobblerRadioPlayer::NewL(*iLastFMConnection, iSettingView->BufferSize(), iSettingView->EqualizerIndex());
 	iMusicListener = CMobblerMusicAppListener::NewL(*iLastFMConnection);
 	iLastFMConnection->SetRadioPlayer(*iRadioPlayer);
 	
@@ -75,6 +75,9 @@ void CMobblerAppUi::ConstructL()
 	LoadRadioStationsL();
 	
 	iMobblerDownload = CMobblerDownload::NewL(*this);
+
+	iResourceReader = CMobblerResourceReader::NewL();
+	iResourceReader->AddResourceFileL(KLanguageRscFile, KLanguageRscVersion);
 	}
 
 void CMobblerAppUi::SetDetailsL(const TDesC& aUsername, const TDesC& aPassword)
@@ -148,6 +151,7 @@ CMobblerAppUi::~CMobblerAppUi()
 #ifndef __WINS__
 	delete iBrowserLauncher;
 #endif
+	delete iResourceReader;
 	}
 
 void CMobblerAppUi::HandleInstallStartedL()
@@ -169,7 +173,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 		{
 		TInt index = aCommand - EMobblerCommandEqualizerDefault - 1;
 		RadioPlayer()->SetEqualizer(index);
-		iSettingView->SetEqualizerIndex(index);
+		iSettingView->SetEqualizerIndexL(index);
 		return;
 		}
 	// Don't bother going online to Last.fm if no user details entered
@@ -179,7 +183,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 			== EFalse)
 			{
 			CAknInformationNote* note = new (ELeave) CAknInformationNote(EFalse);
-			HBufC* errorText = StringLoader::LoadLC(R_MOBBLER_NOTE_NO_DETAILS);
+			HBufC* errorText = iResourceReader->AllocReadLC(R_MOBBLER_NOTE_NO_DETAILS);
 			note->ExecuteLD(*errorText);
 			CleanupStack::PopAndDestroy(errorText);
 
@@ -221,7 +225,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 			if (error == KErrBadHandle)
 				{
 				// Ask if they would like to go online
-				HBufC* goOnlineText = iEikonEnv->AllocReadResourceLC(R_MOBBLER_ASK_GO_ONLINE);
+				HBufC* goOnlineText = iResourceReader->AllocReadLC(R_MOBBLER_ASK_GO_ONLINE);
 				
 				CAknQueryDialog* dlg = CAknQueryDialog::NewL();
 				TBool goOnline(dlg->ExecuteLD(R_MOBBLER_QUERY_DIALOG, *goOnlineText));
@@ -246,16 +250,16 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 			break;
 		case EMobblerCommandAbout:
 			// create the message text
-			HBufC* msg1 = iEikonEnv->AllocReadResourceLC(R_MOBBLER_ABOUT_TEXT1);
+			HBufC* msg1 = iResourceReader->AllocReadLC(R_MOBBLER_ABOUT_TEXT1);
 			HBufC* msg2 = KVersionNumberDisplay().AllocLC();
-			HBufC* msg3 = iEikonEnv->AllocReadResourceLC(R_MOBBLER_ABOUT_TEXT2);
+			HBufC* msg3 = iResourceReader->AllocReadLC(R_MOBBLER_ABOUT_TEXT2);
 			HBufC* msg = HBufC::NewLC(msg1->Length() + msg2->Length() + msg3->Length());
 			msg->Des().Append(*msg1);
 			msg->Des().Append(*msg2);
 			msg->Des().Append(*msg3);
 			
 			// create the header text
-			HBufC* title = iEikonEnv->AllocReadResourceLC(R_ABOUT_DIALOG_TITLE);
+			HBufC* title = iResourceReader->AllocReadLC(R_ABOUT_DIALOG_TITLE);
 			CAknMessageQueryDialog* dlg = new(ELeave) CAknMessageQueryDialog();
 			
 			// initialise the dialog
@@ -279,7 +283,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 				// Ask if the user wants to open the full Amazon site.
 				
 				CAknQueryDialog* dlg = CAknQueryDialog::NewL();
-				HBufC* buyAmazon = iEikonEnv->AllocReadResourceLC(R_MOBBLER_BUY_AMAZON);
+				HBufC* buyAmazon = iResourceReader->AllocReadLC(R_MOBBLER_BUY_AMAZON);
 				TBool yes( dlg->ExecuteLD(R_MOBBLER_QUERY_DIALOG, *buyAmazon));
 				CleanupStack::PopAndDestroy(buyAmazon);
 				
@@ -365,7 +369,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 				}
 			CAknTextQueryDialog* artistDialog = new(ELeave) CAknTextQueryDialog(artist);
 			artistDialog->PrepareLC(R_MOBBLER_RADIO_QUERY_DIALOG);
-			dialogPromptText = StringLoader::LoadLC(R_MOBBLER_RADIO_ENTER_ARTIST);
+			dialogPromptText = iResourceReader->AllocReadLC(R_MOBBLER_RADIO_ENTER_ARTIST);
 			artistDialog->SetPromptL(*dialogPromptText);
 			CleanupStack::PopAndDestroy(dialogPromptText);
 			artistDialog->SetPredictiveTextInputPermitted(ETrue);
@@ -390,7 +394,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 				}
 			CAknTextQueryDialog* tagDialog = new(ELeave) CAknTextQueryDialog(tag);
 			tagDialog->PrepareLC(R_MOBBLER_RADIO_QUERY_DIALOG);
-			dialogPromptText = StringLoader::LoadLC(R_MOBBLER_RADIO_ENTER_TAG);
+			dialogPromptText = iResourceReader->AllocReadLC(R_MOBBLER_RADIO_ENTER_TAG);
 			tagDialog->SetPromptL(*dialogPromptText);
 			CleanupStack::PopAndDestroy(dialogPromptText);
 			tagDialog->SetPredictiveTextInputPermitted(ETrue);
@@ -415,7 +419,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 				}
 			CAknTextQueryDialog* userDialog = new(ELeave) CAknTextQueryDialog(user);
 			userDialog->PrepareLC(R_MOBBLER_RADIO_QUERY_DIALOG);
-			dialogPromptText = StringLoader::LoadLC(R_MOBBLER_RADIO_ENTER_USER);
+			dialogPromptText = iResourceReader->AllocReadLC(R_MOBBLER_RADIO_ENTER_USER);
 			userDialog->SetPromptL(*dialogPromptText);
 			CleanupStack::PopAndDestroy(dialogPromptText);
 			userDialog->SetPredictiveTextInputPermitted(ETrue);
@@ -460,7 +464,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 				if (!currentTrack->Love())
 					{
 					// There is a current track and it is not already loved
-					HBufC* loveText = iEikonEnv->AllocReadResourceLC(R_MOBBLER_LOVE_TRACK);
+					HBufC* loveText = iResourceReader->AllocReadLC(R_MOBBLER_LOVE_TRACK);
 					
 					CAknQueryDialog* dlg = CAknQueryDialog::NewL();
 					TBool love(dlg->ExecuteLD(R_MOBBLER_QUERY_DIALOG, *loveText));
@@ -484,7 +488,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 				{
 				// There is a current track and it is not already loved
 				
-				HBufC* banText = iEikonEnv->AllocReadResourceLC(R_MOBBLER_BAN_TRACK);
+				HBufC* banText = iResourceReader->AllocReadLC(R_MOBBLER_BAN_TRACK);
 				
 				CAknQueryDialog* dlg = CAknQueryDialog::NewL();
 				TBool ban(dlg->ExecuteLD(R_MOBBLER_QUERY_DIALOG, *banText));
@@ -515,7 +519,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 			{
 			if (iTracksQueued == 0)
 				{
-				HBufC* errorText = iEikonEnv->AllocReadResourceLC(R_MOBBLER_NOTE_EXPORT_EMPTY_QUEUE);
+				HBufC* errorText = iResourceReader->AllocReadLC(R_MOBBLER_NOTE_EXPORT_EMPTY_QUEUE);
 				CAknResourceNoteDialog *note = new (ELeave) CAknInformationNote(EFalse);
 				note->ExecuteLD(*errorText);
 				CleanupStack::PopAndDestroy(errorText);
@@ -526,7 +530,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 				
 				if (BaflUtils::FileExists(CCoeEnv::Static()->FsSession(), KLogFile))
 					{
-					HBufC* replaceLogText = iEikonEnv->AllocReadResourceLC(R_MOBBLER_CONFIRM_REPLACE_LOG);
+					HBufC* replaceLogText = iResourceReader->AllocReadLC(R_MOBBLER_CONFIRM_REPLACE_LOG);
 					CAknQueryDialog* dlg = CAknQueryDialog::NewL();
 					okToReplaceLog = dlg->ExecuteLD(R_MOBBLER_QUERY_DIALOG, *replaceLogText);
 					CleanupStack::PopAndDestroy(replaceLogText);
@@ -537,12 +541,12 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 					HBufC* confirmationText;
 					if (iLastFMConnection->ExportQueueToLogFileL())
 						{
-						confirmationText = StringLoader::LoadLC(R_MOBBLER_NOTE_QUEUE_EXPORTED);
+						confirmationText = iResourceReader->AllocReadLC(R_MOBBLER_NOTE_QUEUE_EXPORTED);
 						}
 					else
 						{
 						BaflUtils::DeleteFile(CCoeEnv::Static()->FsSession(), KLogFile);
-						confirmationText = StringLoader::LoadLC(R_MOBBLER_NOTE_QUEUE_NOT_EXPORTED);
+						confirmationText = iResourceReader->AllocReadLC(R_MOBBLER_NOTE_QUEUE_NOT_EXPORTED);
 						}
 					CAknResourceNoteDialog *note = new (ELeave) CAknInformationNote(EFalse);
 					note->ExecuteLD(*confirmationText);
@@ -567,7 +571,7 @@ void CMobblerAppUi::RadioStartL(CMobblerLastFMConnection::TRadioStation aRadioSt
 	if (error == KErrBadHandle)
 		{
 		// Ask if they would like to go online
-		HBufC* goOnlineText = iEikonEnv->AllocReadResourceLC(R_MOBBLER_ASK_GO_ONLINE);
+		HBufC* goOnlineText = iResourceReader->AllocReadLC(R_MOBBLER_ASK_GO_ONLINE);
 		
 		CAknQueryDialog* dlg = CAknQueryDialog::NewL();
 		TBool goOnline(dlg->ExecuteLD(R_MOBBLER_QUERY_DIALOG, *goOnlineText));
@@ -633,7 +637,7 @@ void CMobblerAppUi::HandleUpdateResponseL(TVersion aVersion, const TDesC8& aLoca
 	if (aVersion.Name().Compare(version.Name()) > 0)
 		{
 		CAknQueryDialog* dlg = CAknQueryDialog::NewL();
-		HBufC* update = iEikonEnv->AllocReadResourceLC(R_MOBBLER_UPDATE);
+		HBufC* update = iResourceReader->AllocReadLC(R_MOBBLER_UPDATE);
 		TBool yes( dlg->ExecuteLD(R_MOBBLER_QUERY_DIALOG, *update));
 		CleanupStack::PopAndDestroy(update);
 						
@@ -644,7 +648,7 @@ void CMobblerAppUi::HandleUpdateResponseL(TVersion aVersion, const TDesC8& aLoca
 		}
 	else
 		{
-		HBufC* noUpdate = iEikonEnv->AllocReadResourceLC(R_MOBBLER_NO_UPDATE);
+		HBufC* noUpdate = iResourceReader->AllocReadLC(R_MOBBLER_NO_UPDATE);
 		CAknResourceNoteDialog *note = new (ELeave) CAknInformationNote(EFalse);
 		note->ExecuteLD(*noUpdate);
 		CleanupStack::PopAndDestroy(noUpdate);
@@ -688,7 +692,7 @@ void CMobblerAppUi::HandleConnectCompleteL(TInt aError)
 		iRadioOption = NULL;
 		
 		// Tell the user that there was an error connecting
-		HBufC* commsErrorText = StringLoader::LoadLC(R_MOBBLER_NOTE_COMMS_ERROR);
+		HBufC* commsErrorText = iResourceReader->AllocReadLC(R_MOBBLER_NOTE_COMMS_ERROR);
 		CAknResourceNoteDialog *note = new (ELeave) CAknInformationNote(EFalse);
 		note->ExecuteLD(*commsErrorText);
 		CleanupStack::PopAndDestroy(commsErrorText);
@@ -709,7 +713,7 @@ void CMobblerAppUi::HandleCommsErrorL(TInt aStatusCode, const TDesC8& aStatus)
 	
 	HBufC* noteText = HBufC::NewLC(255);
 
-	HBufC* commsErrorText = StringLoader::LoadLC(R_MOBBLER_NOTE_COMMS_ERROR);
+	HBufC* commsErrorText = iResourceReader->AllocReadLC(R_MOBBLER_NOTE_COMMS_ERROR);
 	noteText->Des().Append(*commsErrorText);
 	CleanupStack::PopAndDestroy(commsErrorText);
 	
@@ -788,7 +792,7 @@ TBool CMobblerAppUi::Foreground() const
 
 TBool CMobblerAppUi::Backlight() const
 	{
-	return iSettingView->GetBacklight();
+	return iSettingView->Backlight();
 	}
 
 void CMobblerAppUi::LoadRadioStationsL()
@@ -883,6 +887,11 @@ void CMobblerAppUi::SaveRadioStationsL()
 		}
 
 	CleanupStack::PopAndDestroy(&file);
+	}
+
+HBufC* CMobblerAppUi::AllocReadLC(TInt aResourceId)
+	{
+	return iResourceReader->AllocReadLC(aResourceId);
 	}
 
 // End of File

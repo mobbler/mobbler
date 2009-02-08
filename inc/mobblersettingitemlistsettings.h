@@ -26,8 +26,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <e32std.h>
 
-const TInt KDefaultBufferSizeSeconds(5);
-
 _LIT(KSettingsFile, "c:settings.ini");
 
 class CMobblerSettingItemListSettings : public CBase

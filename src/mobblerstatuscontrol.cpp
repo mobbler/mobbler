@@ -27,8 +27,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <aknsdrawutils.h>
 #include <aknutils.h>
 #include <icl/imagecodecdata.h>
-#include <mobbler.rsg>
-#include <stringloader.h>
+#include <mobbler_strings.rsg>
 
 #ifdef  __S60_50__
 #include <mobbler/mobblertouchfeedbackinterface.h>
@@ -39,6 +38,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "mobblerappui.h"
 #include "mobblermarquee.h"
 #include "mobblerradioplayer.h"
+#include "mobblerresourcereader.h"
 #include "mobblerstatuscontrol.h"
 #include "mobblerstring.h"
 #include "mobblertimeout.h"
@@ -217,19 +217,24 @@ void CMobblerStatusControl::LoadGraphicsL()
 
 void CMobblerStatusControl::LoadResourceFileTextL()
 	{
-	iResTextScrobbledQueuedFormat = StringLoader::LoadL(R_MOBBLER_SCROBBLED_QUEUED);
-	iResTextOffline = StringLoader::LoadL(R_MOBBLER_IDLE);
-	iResTextOnline = StringLoader::LoadL(R_MOBBLER_IDLE);
-	iResTextArtist = StringLoader::LoadL(R_MOBBLER_ARTIST);
-	iResTextTitle = StringLoader::LoadL(R_MOBBLER_TITLE);
-	iResTextAlbum = StringLoader::LoadL(R_MOBBLER_ALBUM);
-	iResTextStateOnline = StringLoader::LoadL(R_MOBBLER_STATE_ONLINE);
-	iResTextStateOffline = StringLoader::LoadL(R_MOBBLER_STATE_OFFLINE);
-	iResTextStateConnecting = StringLoader::LoadL(R_MOBBLER_STATE_CONNECTING);
-	iResTextStateHandshaking = StringLoader::LoadL(R_MOBBLER_STATE_HANDSHAKING);
-	iResTextStateSelectingStation = StringLoader::LoadL(R_MOBBLER_STATE_SELECTING_STATION);
-	iResTextStateFetchingPlaylist = StringLoader::LoadL(R_MOBBLER_STATE_FETCHING_PLAYLIST);
-	iResTextStateCheckingForUpdates = StringLoader::LoadL(R_MOBBLER_STATE_CHECKING_FOR_UPDATES);
+	CMobblerResourceReader* resourceReader = CMobblerResourceReader::NewL();
+	resourceReader->AddResourceFileL(KLanguageRscFile, KLanguageRscVersion);
+
+	iResTextScrobbledQueuedFormat = resourceReader->AllocReadL(R_MOBBLER_SCROBBLED_QUEUED);
+	iResTextOffline = resourceReader->AllocReadL(R_MOBBLER_IDLE);
+	iResTextOnline = resourceReader->AllocReadL(R_MOBBLER_IDLE);
+	iResTextArtist = resourceReader->AllocReadL(R_MOBBLER_ARTIST);
+	iResTextTitle = resourceReader->AllocReadL(R_MOBBLER_TITLE);
+	iResTextAlbum = resourceReader->AllocReadL(R_MOBBLER_ALBUM);
+	iResTextStateOnline = resourceReader->AllocReadL(R_MOBBLER_STATE_ONLINE);
+	iResTextStateOffline = resourceReader->AllocReadL(R_MOBBLER_STATE_OFFLINE);
+	iResTextStateConnecting = resourceReader->AllocReadL(R_MOBBLER_STATE_CONNECTING);
+	iResTextStateHandshaking = resourceReader->AllocReadL(R_MOBBLER_STATE_HANDSHAKING);
+	iResTextStateSelectingStation = resourceReader->AllocReadL(R_MOBBLER_STATE_SELECTING_STATION);
+	iResTextStateFetchingPlaylist = resourceReader->AllocReadL(R_MOBBLER_STATE_FETCHING_PLAYLIST);
+	iResTextStateCheckingForUpdates = resourceReader->AllocReadL(R_MOBBLER_STATE_CHECKING_FOR_UPDATES);
+
+	delete resourceReader;
 	}
 
 void CMobblerStatusControl::SetPositions()

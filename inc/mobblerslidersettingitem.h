@@ -1,8 +1,8 @@
 /*
-mobbleraccesspointsettingitem.h
+mobblerslidersettingitem.h
 
 Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
-Copyright (C) 2008  Michael Coffey
+Copyright (C) 2009  Michael Coffey
 
 http://code.google.com/p/mobbler
 
@@ -21,26 +21,29 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-#ifndef __MOBBLERACCESSPOINTSETTINGITEM_H__
-#define __MOBBLERACCESSPOINTSETTINGITEM_H__
-
 #include <aknsettingitemlist.h>
 
-class CMobblerAccessPointSettingItem : public CAknEnumeratedTextPopupSettingItem
-    {
+class CMobblerSliderSettingItem : public CAknSliderSettingItem
+	{
 public:
-	CMobblerAccessPointSettingItem(TInt aIdentifier, TInt& aSliderValue);
-	void LoadIapListL();
-	void LoadL();
- 
-private:
+	CMobblerSliderSettingItem(TInt aIdentifier,
+							  TInt& aSliderValue,
+							  TInt aResourceId);
+	CMobblerSliderSettingItem(TInt aIdentifier,
+							  TInt& aSliderValue,
+							  TInt aResourceIdSingular,
+							  TInt aResourceIdPlural);
+
+protected: // Functions from base classes
 	void CreateAndExecuteSettingPageL();
-	void CompleteConstructionL();
-	
+	CFbsBitmap* CreateBitmapL();
+	const TDesC& SettingTextL();
+
 private:
-	TInt iValue;
-    };
-	
-#endif // __MOBBLERACCESSPOINTSETTINGITEM_H__
+	TInt iResourceIdSingular;
+	TInt iResourceIdPlural;
+	TBuf<256> iText;
+
+	};
 
 // End of file

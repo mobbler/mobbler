@@ -21,14 +21,10 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-#include <AknTextSettingPage.h>
+#include <aknview.h>
 #include <aknviewappui.h>
 
-#include "mobbler.hrh"
-#include "mobbleraccesspointsettingitem.h"
 #include "mobblersettingitemlist.h"
-#include "mobblersettingitemlistsettings.h"
-#include "mobblersettingitemlistview.h"
 
 CMobblerSettingItemList::CMobblerSettingItemList(CMobblerSettingItemListSettings& aSettings, MEikCommandObserver* aCommandObserver)
 	:iSettings(aSettings), iCommandObserver(aCommandObserver)
@@ -40,46 +36,6 @@ CMobblerSettingItemList::~CMobblerSettingItemList()
 	{
 	}
 
-CAknSettingItem* CMobblerSettingItemList::CreateSettingItemL(TInt aId)
-	{
-	switch ( aId )
-		{
-		case EMobblerSettingItemListViewUsername:
-			{
-			CAknTextSettingItem* item = new(ELeave) CAknTextSettingItem(aId, iSettings.Username());
-			item->SetSettingPageFlags(CAknTextSettingPage::EPredictiveTextEntryPermitted);
-			return item;
-			}
-		case EMobblerSettingItemListViewPassword:
-			{
-			CAknSettingItem* item = new(ELeave) CAknPasswordSettingItem(aId, CAknPasswordSettingItem::EAlpha, iSettings.Password());
-			return item;
-			}
-		case EMobblerSettingItemListViewBacklight:
-			{
-			CAknSettingItem* item = new(ELeave) CAknBinaryPopupSettingItem(aId, iSettings.Backlight());
-			return item;
-			}
-		case EMobblerSettingItemListViewAutoUpdatesOn:
-			{
-			CAknSettingItem* item = new(ELeave) CAknBinaryPopupSettingItem(aId, iSettings.CheckForUpdates());
-			return item;
-			}
-		case EMobblerSettingItemListViewIap:
-			{
-			CAknSettingItem* item = new(ELeave) CMobblerAccessPointSettingItem(aId, iSettings.IapID());
-			return item;
-			}
-		case EMobblerSettingItemListViewBufferSize:
-			{
-			CAknSettingItem* item = new(ELeave) CAknSliderSettingItem(aId, iSettings.BufferSize());
-			return item;
-			}
-		}
-	
-	return NULL;
-	}
-	
 void CMobblerSettingItemList::EditItemL(TInt aIndex, TBool aCalledFromMenu)
 	{
 	CAknSettingItemList::EditItemL(aIndex, aCalledFromMenu);
@@ -107,6 +63,5 @@ TKeyResponse CMobblerSettingItemList::OfferKeyEventL(const TKeyEvent& aKeyEvent,
 void CMobblerSettingItemList::SizeChanged()
 	{
 	}
-
 
 // End of file

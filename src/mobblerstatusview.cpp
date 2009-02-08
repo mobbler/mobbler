@@ -28,6 +28,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <eikmenub.h>
 #include <mdaaudiooutputstream.h>
 #include <mobbler.rsg>
+#include <mobbler_strings.rsg>
 
 #include "mobbler.hrh"
 #include "mobblerappui.h"
@@ -66,8 +67,51 @@ void CMobblerStatusView::BitmapLoadedL(const CMobblerBitmap* /*aMobblerBitmap*/)
 	{
 	}
 
+void CMobblerStatusView::SetMenuItemTextL(CEikMenuPane* aMenuPane,
+										  TInt aResourceId, TInt aCommandId)
+	{
+	HBufC* menuText = static_cast<CMobblerAppUi*>(AppUi())->AllocReadLC(aResourceId);
+	aMenuPane->SetItemTextL(aCommandId, *menuText);
+	CleanupStack::PopAndDestroy(menuText);
+	}
+
 void CMobblerStatusView::DynInitMenuPaneL(TInt aResourceId, CEikMenuPane* aMenuPane)
 	{
+	// First load the menu text so as not to confuse any dimming logic
+	if (aResourceId == R_MOBBLER_STATUS_MENU_PANE)
+		{
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_RADIO_START,		EMobblerCommandRadio);
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_RESUME_RADIO,		EMobblerCommandResumeRadio);
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_GO_ONLINE,		EMobblerCommandOnline);
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_GO_OFFLINE,		EMobblerCommandOffline);
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_EQUALIZER,		EMobblerCommandEqualizer);
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_TOOLS_SUBMENU,	EMobblerCommandTools);
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_SETTINGS,			EMobblerCommandEditSettings);
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_ABOUT,			EMobblerCommandAbout);
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_EXIT,				EAknSoftkeyExit);
+		}
+	else if(aResourceId == R_RADIO_SUBMENU_PANE)
+		{
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_RADIO_ARTIST,				EMobblerCommandRadioArtist);
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_RADIO_TAG,				EMobblerCommandRadioTag);
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_RADIO_USER,				EMobblerCommandRadioUser);
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_RADIO_PERSONAL,			EMobblerCommandRadioPersonal);
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_RADIO_RECOMMENDATIONS,	EMobblerCommandRadioRecommendations);
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_RADIO_LOVED,				EMobblerCommandRadioLoved);
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_RADIO_NEIGHBOURHOOD,		EMobblerCommandRadioNeighbourhood);
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_RADIO_PLAYLIST,			EMobblerCommandRadioMyPlaylist);
+		}
+	else if(aResourceId == R_MOBBLER_EQUALIZER_SUBMENU_PANE)
+		{
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_EQUALIZER_PROFILE_DEFAULT, EMobblerCommandEqualizerDefault);
+		}
+	else if(aResourceId == R_MOBBLER_TOOLS_SUBMENU_PANE)
+		{
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_CHECK_FOR_UPDATES,	EMobblerCommandCheckForUpdates);
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_EXPORT_QUEUE_TO_LOG,	EMobblerCommandExportQueueToLogFile);
+		}
+
+	// Now the menu text is set, dimming logic is next
 	if (aResourceId == R_MOBBLER_STATUS_MENU_PANE)
 		{
 		if (static_cast<CMobblerAppUi*>(AppUi())->Mode() == CMobblerLastFMConnection::EOnline ||
@@ -163,7 +207,7 @@ void CMobblerStatusView::DoActivateL(const TVwsViewId& /*aPrevViewId*/, TUid /*a
 	// Change the Back softkey to Hide
 	TInt pos = Cba()->PositionById(EAknSoftkeyBack);
 	Cba()->RemoveCommandFromStack(pos, EAknSoftkeyBack);
-	HBufC* HideText = iEikonEnv->AllocReadResourceLC(R_MOBBLER_SOFTKEY_HIDE);
+	HBufC* HideText = static_cast<CMobblerAppUi*>(AppUi())->AllocReadLC(R_MOBBLER_SOFTKEY_HIDE);
 	Cba()->SetCommandL(pos, EAknSoftkeyBack, *HideText);
 	CleanupStack::PopAndDestroy(HideText);
 	}

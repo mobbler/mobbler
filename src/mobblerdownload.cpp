@@ -25,7 +25,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <apgcli.h>
 #include <aknwaitdialog.h>
 #include <mobbler.rsg>
+#include <mobbler_strings.rsg>
 #include "mobblerdownload.h"
+#include "mobblerresourcereader.h"
 
 TUid KMobblerAppUid = {0xA0007648};
 
@@ -74,8 +76,16 @@ void CMobblerDownload::DownloadL(const TDesC8& aDownloadUrl, TUint32 aIap)
 		iWait = NULL;
 		}
 	
+	CMobblerResourceReader* resourceReader = CMobblerResourceReader::NewL();
+	resourceReader->AddResourceFileL(KLanguageRscFile, KLanguageRscVersion);
+	HBufC* downloadText = resourceReader->AllocReadLC(R_MOBBLER_DOWNLOADING);
+
 	iWait = new(ELeave) CAknWaitDialog((REINTERPRET_CAST(CEikDialog**, &iWait)));
-	iWait->ExecuteLD(R_MOBBLER_DOWNLOADING_DIALOG);		
+	iWait->SetTextL(*downloadText);
+	iWait->ExecuteLD(R_MOBBLER_DOWNLOADING_DIALOG);
+
+	CleanupStack::PopAndDestroy(downloadText);
+	delete resourceReader;
 	}
 
 void CMobblerDownload::HandleDMgrEventL(RHttpDownload& aDownload, THttpDownloadEvent aEvent)

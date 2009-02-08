@@ -64,6 +64,9 @@ private:
 	
 	void BitmapLoadedL(const CMobblerBitmap* aMobblerBitmap);
     
+	void SetMenuItemTextL(CEikMenuPane* aMenuPane, TInt aResourceId, 
+						  TInt aCommandId);
+    
 private: // from MMdaAudioOutputStreamCallback, but NOT USED
     void MaoscPlayComplete(TInt /*aError*/) {}
     void MaoscBufferCopied(TInt /*aError*/, const TDesC8& /*aBuffer*/) {}

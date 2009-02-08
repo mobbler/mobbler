@@ -34,16 +34,16 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 const TInt KMaxMobblerTextSize(255);
 
-class CMobblerTrack;
-class CMobblerAppUi;
 class CAknNavigationControlContainer;
 class CAknNavigationDecorator;
-class CMobblerBitmap;
-class CBitmapScaler;
 class CAknsBasicBackgroundControlContext;
-class CMobblerTimeout;
+class CBitmapScaler;
+class CMobblerAppUi;
+class CMobblerBitmap;
 class CMobblerMarquee;
+class CMobblerTimeout;
 class CMobblerTouchFeedbackInterface;
+class CMobblerTrack;
 
 class CMobblerStatusControl : public CCoeControl, public MMobblerBitmapObserver, public MRemConCoreApiTargetObserver
 	{

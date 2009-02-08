@@ -25,10 +25,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #define __MOBBLERAPPUI_h__
 
 #include <aknviewappui.h>
-#include <aknprogressdialog.h>
 
 #include "mobblerdownload.h"
-#include "mobblerlastfmconnection.h"
 #include "mobblerlastfmconnectionobserver.h"
 #include "mobblerwebservicesobserver.h"
 
@@ -36,22 +34,20 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 _LIT(KVersionNumberDisplay,		"0.3.4");
 const TVersion version(0, 3, 4);
 
-class CMobblerSettingItemListView;
-class CMobblerMusicAppListener;
-class CAknNavigationControlContainer;
-class CAknNavigationDecorator;
-class CMobblerDownload;
-class CMobblerStatusView;
-class CMobblerRadioPlayer;
-class CMobblerTrack;
 class CBrowserLauncher;
+class CMobblerDownload;
+class CMobblerMusicAppListener;
+class CMobblerRadioPlayer;
+class CMobblerResourceReader;
+class CMobblerSettingItemListView;
+class CMobblerStatusView;
+class CMobblerTrack;
 
 class CMobblerAppUi : public CAknViewAppUi,
 						public MMobblerLastFMConnectionObserver,
 						public MMobblerDownloadObserver
 	{
 public:
-
 	void ConstructL();
 	CMobblerAppUi();
 	~CMobblerAppUi();
@@ -78,6 +74,8 @@ public:
 	TBool RadioResumable() const;
 	TBool Foreground() const;
 	TBool Backlight() const;
+
+	HBufC* AllocReadLC(TInt aResourceId);
 
 public: // CEikAppUi
 	void HandleCommandL(TInt aCommand);
@@ -134,7 +132,10 @@ private:
 	TBool iForeground;
 	
 	CMobblerDownload* iMobblerDownload;
+
+	CMobblerResourceReader* iResourceReader;
 	};
 
 #endif // __MOBBLERAPPUI_h__
 
+// End of file

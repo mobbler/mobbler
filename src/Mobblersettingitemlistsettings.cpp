@@ -21,21 +21,26 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-#include <barsread.h>
-#include <e32base.h>
-#include <mobbler.rsg>
-#include <s32file.h>
-#include <stringloader.h>
+#include <coemain.h>
+#include <mobbler_strings.rsg>
 
+#include "mobblerresourcereader.h"
 #include "mobblersettingitemlistsettings.h"
 
+const TInt KDefaultBufferSizeSeconds(5);
+const TInt KDefaultEqualizerIndex(-1);
+#ifdef __WINS__
+const TInt KDefaultVolume(0);
+#else
+const TInt KDefaultVolume(5);
+#endif
 
 CMobblerSettingItemListSettings* CMobblerSettingItemListSettings::NewL()
 	{
 	CMobblerSettingItemListSettings* self = new(ELeave) CMobblerSettingItemListSettings;
 	CleanupStack::PushL(self);
 	self->ConstructL();
-	CleanupStack::Pop(self);	
+	CleanupStack::Pop(self);
 	return self;
 	}
 
@@ -58,6 +63,12 @@ void CMobblerSettingItemListSettings::LoadSettingValuesL()
 	CleanupClosePushL(file);
 	TInt openError = file.Open(CCoeEnv::Static()->FsSession(), KSettingsFile, EFileRead | EFileShareAny);
 	
+	// Default values if the settings do not already exist
+	TBool backlight(EFalse);
+	TBool autoUpdatesOn(ETrue);
+	TUint32 iapId(0);
+	TUint8 bufferSize(KDefaultBufferSizeSeconds);
+	TInt equalizerIndex(KDefaultEqualizerIndex);
 	if (openError == KErrNone)
 		{
 		RFileReadStream readStream(file);
@@ -65,13 +76,6 @@ void CMobblerSettingItemListSettings::LoadSettingValuesL()
 		
 		TBuf<255> username;
 		TBuf<255> password;
-		
-		// Default values if the settings do not already exist
-		TBool backlight = EFalse;
-		TBool autoUpdatesOn = ETrue;
-		TUint32 iapId(0);
-		TUint8 bufferSize(KDefaultBufferSizeSeconds);
-		TInt equalizerIndex(-1);
 		
 		readStream >> username;
 		readStream >> password;
@@ -85,28 +89,27 @@ void CMobblerSettingItemListSettings::LoadSettingValuesL()
 
 		SetUsernameL(username);
 		SetPasswordL(password);
-		SetBacklight(backlight);
-		SetCheckForUpdates(autoUpdatesOn);
-		SetIapID(iapId);
-		SetBufferSize(bufferSize);
-		SetEqualizerIndex(equalizerIndex);
-		
+
 		CleanupStack::PopAndDestroy(&readStream);
 		}
 	else
 		{
 		// there was no file there so read from the resource file
-		HBufC* username  = StringLoader::LoadLC(R_MOBBLER_USERNAME);
+		CMobblerResourceReader* resourceReader = CMobblerResourceReader::NewL();
+		resourceReader->AddResourceFileL(KLanguageRscFile, KLanguageRscVersion);
+		HBufC* username  = resourceReader->AllocReadLC(R_MOBBLER_USERNAME);
+		delete resourceReader;
 		SetUsernameL(*username);
 		CleanupStack::PopAndDestroy(username);
 		SetPasswordL(_L("password"));
-		SetBacklight(EFalse);
-		SetCheckForUpdates(ETrue);
-		SetIapID(0);
-		SetBufferSize(KDefaultBufferSizeSeconds);
-		SetEqualizerIndex(-1);
 		}
-		
+
+	SetBacklight(backlight);
+	SetCheckForUpdates(autoUpdatesOn);
+	SetIapID(iapId);
+	SetBufferSize(bufferSize);
+	SetEqualizerIndex(equalizerIndex);
+
 	CleanupStack::PopAndDestroy(&file);
 	}
 
@@ -206,3 +209,5 @@ void CMobblerSettingItemListSettings::SetEqualizerIndex(TInt aIndex)
 	iEqualizerIndex = aIndex;
 	}
 
+
+// End of file

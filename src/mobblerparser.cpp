@@ -21,14 +21,14 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-#include <mobbler.rsg>
+#include <mobbler_strings.rsg>
 #include <sendomfragment.h>
 #include <sennamespace.h> 
 #include <senxmlutils.h> 
-#include <stringloader.h>
 
 #include "mobblerparser.h"
 #include "mobblerradioplaylist.h"
+#include "mobblerresourcereader.h"
 #include "mobblerstring.h"
 #include "mobblertrack.h"
 
@@ -84,6 +84,9 @@ CMobblerLastFMError* CMobblerParser::ParseHandshakeL(const TDesC8& aHandshakeRes
 	CleanupStack::PopAndDestroy(&file);
 #endif
 	
+	CMobblerResourceReader* resourceReader = CMobblerResourceReader::NewL();
+	resourceReader->AddResourceFileL(KLanguageRscFile, KLanguageRscVersion);
+
 	CMobblerLastFMError* error = NULL;
 	
 	if (aHandshakeResponse.MatchF(_L8("OK*")) == 0)
@@ -110,19 +113,19 @@ CMobblerLastFMError* CMobblerParser::ParseHandshakeL(const TDesC8& aHandshakeRes
 		}
 	else if (aHandshakeResponse.MatchF(_L8("BANNED*")) == 0)
 		{
-		HBufC* errorText = StringLoader::LoadLC(R_MOBBLER_NOTE_BANNED);
+		HBufC* errorText = resourceReader->AllocReadLC(R_MOBBLER_NOTE_BANNED);
 		error = CMobblerLastFMError::NewL(*errorText, CMobblerLastFMError::EBanned);
 		CleanupStack::PopAndDestroy(errorText);
 		}
 	else if (aHandshakeResponse.MatchF(_L8("BADAUTH*")) == 0)
 		{
-		HBufC* errorText = StringLoader::LoadLC(R_MOBBLER_NOTE_BAD_AUTH);
+		HBufC* errorText = resourceReader->AllocReadLC(R_MOBBLER_NOTE_BAD_AUTH);
 		error = CMobblerLastFMError::NewL(*errorText, CMobblerLastFMError::EBadAuth);
 		CleanupStack::PopAndDestroy(errorText);
 		}
 	else if (aHandshakeResponse.MatchF(_L8("BADTIME*")) == 0)
 		{
-		HBufC* errorText = StringLoader::LoadLC(R_MOBBLER_NOTE_BAD_TIME);
+		HBufC* errorText = resourceReader->AllocReadLC(R_MOBBLER_NOTE_BAD_TIME);
 		error = CMobblerLastFMError::NewL(*errorText, CMobblerLastFMError::EBadTime);
 		CleanupStack::PopAndDestroy(errorText);
 		}
@@ -131,6 +134,7 @@ CMobblerLastFMError* CMobblerParser::ParseHandshakeL(const TDesC8& aHandshakeRes
 		error = CMobblerLastFMError::NewL(aHandshakeResponse, CMobblerLastFMError::EOther);
 		}
 	
+	delete resourceReader;
 	return error;
 	}
 
@@ -160,9 +164,12 @@ CMobblerLastFMError* CMobblerParser::ParseRadioHandshakeL(const TDesC8& aRadioHa
 		{
 		if (aRadioHandshakeResponse.Find(_L8("session=FAILED")) == 0)
 			{
-			HBufC* errorText = StringLoader::LoadLC(R_MOBBLER_NOTE_BAD_AUTH);
+			CMobblerResourceReader* resourceReader = CMobblerResourceReader::NewL();
+			resourceReader->AddResourceFileL(KLanguageRscFile, KLanguageRscVersion);
+			HBufC* errorText = resourceReader->AllocReadLC(R_MOBBLER_NOTE_BAD_AUTH);
 			error = CMobblerLastFMError::NewL(*errorText, CMobblerLastFMError::EBadAuth);
 			CleanupStack::PopAndDestroy(errorText);
+			delete resourceReader;
 			}
 		else
 			{
@@ -238,9 +245,12 @@ CMobblerLastFMError* CMobblerParser::ParseScrobbleResponseL(const TDesC8& aScrob
 		}
 	else if (aScrobbleResponse.Compare(_L8("BADSESSION\n")) == 0)
 		{
-		HBufC* errorText = StringLoader::LoadLC(R_MOBBLER_NOTE_BAD_SESSION);
+		CMobblerResourceReader* resourceReader = CMobblerResourceReader::NewL();
+		resourceReader->AddResourceFileL(KLanguageRscFile, KLanguageRscVersion);
+		HBufC* errorText = resourceReader->AllocReadLC(R_MOBBLER_NOTE_BAD_SESSION);
 		error = CMobblerLastFMError::NewL(*errorText, CMobblerLastFMError::EBadSession);
 		CleanupStack::PopAndDestroy(errorText);
+		delete resourceReader;
 		}
 	else
 		{
@@ -375,10 +385,13 @@ CMobblerLastFMError* CMobblerParser::ParseRadioPlaylistL(const TDesC8& aXML, CMo
 	
 	if (playlist->Count() == 0)
 		{
-		HBufC* errorText = StringLoader::LoadLC(R_MOBBLER_NOTE_NO_TRACKS);
+		CMobblerResourceReader* resourceReader = CMobblerResourceReader::NewL();
+		resourceReader->AddResourceFileL(KLanguageRscFile, KLanguageRscVersion);
+		HBufC* errorText = resourceReader->AllocReadLC(R_MOBBLER_NOTE_NO_TRACKS);
 		error = CMobblerLastFMError::NewL(*errorText, CMobblerLastFMError::ENoTracks);
 		CleanupStack::PopAndDestroy(errorText);
 		CleanupStack::PopAndDestroy(playlist);
+		delete resourceReader;
 		}
 	else
 		{
@@ -403,9 +416,12 @@ CMobblerLastFMError* CMobblerParser::ParseRadioSelectStationL(const TDesC8& aXML
 	
 	if (aXML.Find(_L8("response=OK")) != 0)
 		{
-		HBufC* errorText = StringLoader::LoadLC(R_MOBBLER_NOTE_BAD_STATION);
+		CMobblerResourceReader* resourceReader = CMobblerResourceReader::NewL();
+		resourceReader->AddResourceFileL(KLanguageRscFile, KLanguageRscVersion);
+		HBufC* errorText = resourceReader->AllocReadLC(R_MOBBLER_NOTE_BAD_STATION);
 		error = CMobblerLastFMError::NewL(*errorText, CMobblerLastFMError::EBadStation);
 		CleanupStack::PopAndDestroy(errorText);
+		delete resourceReader;
 		}
 	
 	return error;

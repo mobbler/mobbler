@@ -43,7 +43,6 @@ private: // from CCoeControl
 	
 private: // from CAknSettingItemList
 	void SizeChanged();
-	CAknSettingItem* CreateSettingItemL(TInt aId);
 	void EditItemL(TInt aIndex, TBool aCalledFromMenu);
 	TKeyResponse OfferKeyEventL(const TKeyEvent& aKeyEvent, TEventCode aType);
 

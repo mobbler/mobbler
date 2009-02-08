@@ -68,7 +68,7 @@
 "$(EPOCROOT)epoc32\data\z\resource\apps\mobbler\lastfm.png"-		"!:\resource\apps\mobbler\lastfm.png"
 "$(EPOCROOT)epoc32\data\z\resource\apps\mobbler.mif"-				"!:\resource\apps\mobbler.mif"
 
-; the language localization files
+; Resource file
 {
 "$(EPOCROOT)epoc32\data\z\resource\apps\mobbler.r01"
 "$(EPOCROOT)epoc32\data\z\resource\apps\mobbler.r02"
@@ -97,6 +97,9 @@
 "$(EPOCROOT)epoc32\data\z\resource\apps\mobbler.r76"
 "$(EPOCROOT)epoc32\data\z\resource\apps\mobbler.r78"
 }-"!:\resource\apps\mobbler.rsc"
+
+; Strings resource file in an embedded sis
+@"mobbler-strings.sis",(0xA000B6C3)
 
 ; The application registration file
 "$(EPOCROOT)epoc32\data\z\private\10003a3f\apps\mobbler_reg.r01"-"!:\private\10003a3f\import\apps\mobbler_reg.rsc"

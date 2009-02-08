@@ -85,10 +85,12 @@ SOURCE		mobblernowplayingcallback.cpp
 SOURCE		mobblerparser.cpp
 SOURCE		mobblerradioplayer.cpp
 SOURCE		mobblerradioplaylist.cpp
+SOURCE		mobblerresourcereader.cpp
 SOURCE		mobblerrichtextcontrol.cpp
 SOURCE		mobblersettingitemlist.cpp
 SOURCE		mobblersettingitemlistsettings.cpp
 SOURCE		mobblersettingitemlistview.cpp
+SOURCE		mobblerslidersettingitem.cpp
 SOURCE		mobblerstatuscontrol.cpp
 SOURCE		mobblerstatusview.cpp
 SOURCE		mobblerstring.cpp
@@ -120,6 +122,7 @@ LIBRARY		efsrv.lib
 LIBRARY		eikcoctl.lib
 LIBRARY		eikcore.lib
 LIBRARY		eikctl.lib 
+LIBRARY		eikdlg.lib
 LIBRARY		esock.lib
 LIBRARY		estor.lib
 LIBRARY		euser.lib
@@ -150,6 +153,12 @@ EPOCHEAPSIZE  0x100000 0x200000
 START RESOURCE	..\data\mobbler.rss
 HEADER
 TARGET mobbler
+TARGETPATH resource\apps
+END //RESOURCE
+
+START RESOURCE	..\data\mobbler_strings.rss
+HEADER
+TARGET mobbler_strings
 TARGETPATH resource\apps
 END //RESOURCE
 
