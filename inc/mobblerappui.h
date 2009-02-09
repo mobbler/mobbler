@@ -74,6 +74,7 @@ public:
 	TBool RadioResumable() const;
 	TBool Foreground() const;
 	TBool Backlight() const;
+	TInt ScrobblePercent() const;
 
 	HBufC* AllocReadLC(TInt aResourceId);
 

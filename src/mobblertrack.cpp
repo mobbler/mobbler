@@ -72,7 +72,6 @@ void CMobblerTrack::ConstructL(const TDesC8& aArtist,
 	iRadioAuth = aRadioAuth.AllocL();
 	
 	iStartTimeUTC = Time::NullTTime();
-	iScrobbleTime = (TTimeIntervalSeconds)Min(240, (iTrackLength.Int()/2));
 	iInitialPlaybackPosition = KErrUnknown;
 	iTrackNumber = KErrUnknown;
 	iTotalPlayed = 0;
@@ -305,7 +304,8 @@ TTimeIntervalSeconds CMobblerTrack::TrackLength() const
 
 TTimeIntervalSeconds CMobblerTrack::ScrobbleDuration() const
 	{
-	return iScrobbleTime;
+	TInt scrobblePercent = static_cast<CMobblerAppUi*>(CEikonEnv::Static()->AppUi())->ScrobblePercent();
+	return (TTimeIntervalSeconds)Min(240, (iTrackLength.Int() *  scrobblePercent / 100));
 	}
 
 TTimeIntervalSeconds CMobblerTrack::InitialPlaybackPosition() const

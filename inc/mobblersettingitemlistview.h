@@ -48,6 +48,7 @@ public:
 	TUint32 IapID() const;
 	TUint8 BufferSize() const;
 	TBool EqualizerIndex() const;
+	TInt ScrobblePercent() const;
 	void SetEqualizerIndexL(TInt aIndex);
 	
 private:

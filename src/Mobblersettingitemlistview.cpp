@@ -158,6 +158,11 @@ void CMobblerSettingItemListView::SetEqualizerIndexL(TInt aIndex)
 	iSettings->SaveSettingValuesL();
 	}
 
+TInt CMobblerSettingItemListView::ScrobblePercent() const
+	{
+	return iSettings->ScrobblePercent();
+	}
+
 void CMobblerSettingItemListView::HandleStatusPaneSizeChange()
 	{
 	CAknView::HandleStatusPaneSizeChange();
@@ -197,6 +202,13 @@ void CMobblerSettingItemListView::LoadListL()
 					  R_MOBBLER_SLIDER_SETTING_PAGE_BUFFER_SIZE,
 					  R_MOBBLER_BUFFER_SIZE_SECOND,
 					  R_MOBBLER_BUFFER_SIZE_SECONDS);
+
+	// Scrobble percent slider setting item
+	CreateSliderItemL(iSettings->ScrobblePercent(),
+					  R_MOBBLER_SCROBBLE_PERCENT,
+					  R_MOBBLER_SLIDER_SETTING_PAGE_SCROBBLE_PERCENT,
+					  R_MOBBLER_PERCENT,
+					  R_MOBBLER_PERCENT);
 
 	// Check for updates binary popup setting item
 	CreateBinaryItemL(iSettings->CheckForUpdates(),

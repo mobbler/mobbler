@@ -347,6 +347,25 @@ RESOURCE SLIDER r_mobbler_slider_setting_editor_buffer_size
 	maxlabel = "15";
 	}
 
+RESOURCE AVKON_SETTING_PAGE r_mobbler_slider_setting_page_scrobble_percent
+	{
+	label = "";
+	type = EAknCtSlider;
+	editor_resource_id = r_mobbler_slider_setting_editor_scrobble_percent;
+	}
+
+RESOURCE SLIDER r_mobbler_slider_setting_editor_scrobble_percent
+	{
+	layout = EAknSettingsItemSliderLayout;
+	minvalue = 50;
+	maxvalue = 100;
+	step = 1;
+	valuetype = EAknSliderValueBareFigure;
+	valuelabel = STR_mobbler_percent;
+	minlabel = "50";
+	maxlabel = "100";
+	}
+
 RESOURCE DIALOG r_mobbler_downloading_dialog
 	{
 	flags = EAknWaitNoteFlags;

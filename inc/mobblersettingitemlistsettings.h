@@ -63,6 +63,9 @@ public:
 	
 	TInt& EqualizerIndex();
 	void SetEqualizerIndex(TInt aIndex);
+	
+	TInt& ScrobblePercent();
+	void SetScrobblePercent(TInt aIndex);
 
 protected:
 	TBuf<30> iUsername;
@@ -72,6 +75,7 @@ protected:
 	TInt iIapID;
 	TInt iBufferSize;
 	TInt iEqualizerIndex;
+	TInt iScrobblePercent;
 	};
 
 #endif // __MOBBLERSETTINGITEMLISTSETTINGS_H__

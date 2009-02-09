@@ -795,6 +795,11 @@ TBool CMobblerAppUi::Backlight() const
 	return iSettingView->Backlight();
 	}
 
+TInt CMobblerAppUi::ScrobblePercent() const
+	{
+	return iSettingView->ScrobblePercent();
+	}
+
 void CMobblerAppUi::LoadRadioStationsL()
 	{
 	RFile file;

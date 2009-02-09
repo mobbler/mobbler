@@ -115,7 +115,6 @@ private:
 	TTimeIntervalSeconds iTotalPlayed;
 	TBool iTrackPlaying;
 	TTimeIntervalSeconds iTrackLength;
-	TTimeIntervalSeconds iScrobbleTime;
 	TTimeIntervalSeconds iInitialPlaybackPosition;
 	TTimeIntervalSeconds iPlaybackPosition;
 	TBool iLove;

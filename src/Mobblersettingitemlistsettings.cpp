@@ -28,6 +28,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "mobblersettingitemlistsettings.h"
 
 const TInt KDefaultBufferSizeSeconds(5);
+const TInt KDefaultScrobblePercent(50);
 const TInt KDefaultEqualizerIndex(-1);
 #ifdef __WINS__
 const TInt KDefaultVolume(0);
@@ -69,6 +70,7 @@ void CMobblerSettingItemListSettings::LoadSettingValuesL()
 	TUint32 iapId(0);
 	TUint8 bufferSize(KDefaultBufferSizeSeconds);
 	TInt equalizerIndex(KDefaultEqualizerIndex);
+	TInt scrobblePercent(KDefaultScrobblePercent);
 	if (openError == KErrNone)
 		{
 		RFileReadStream readStream(file);
@@ -86,6 +88,7 @@ void CMobblerSettingItemListSettings::LoadSettingValuesL()
 		TRAP_IGNORE(iapId = readStream.ReadUint32L());
 		TRAP_IGNORE(bufferSize = readStream.ReadUint8L());
 		TRAP_IGNORE(equalizerIndex = readStream.ReadInt16L());
+		TRAP_IGNORE(scrobblePercent = readStream.ReadInt16L());
 
 		SetUsernameL(username);
 		SetPasswordL(password);
@@ -109,6 +112,7 @@ void CMobblerSettingItemListSettings::LoadSettingValuesL()
 	SetIapID(iapId);
 	SetBufferSize(bufferSize);
 	SetEqualizerIndex(equalizerIndex);
+	SetScrobblePercent(scrobblePercent);
 
 	CleanupStack::PopAndDestroy(&file);
 	}
@@ -132,6 +136,7 @@ void CMobblerSettingItemListSettings::SaveSettingValuesL()
 		writeStream.WriteUint32L(IapID());
 		writeStream.WriteUint8L(BufferSize());
 		writeStream.WriteInt16L(EqualizerIndex());
+		writeStream.WriteInt16L(ScrobblePercent());
 		
 		CleanupStack::PopAndDestroy(&writeStream);
 		}
@@ -209,5 +214,14 @@ void CMobblerSettingItemListSettings::SetEqualizerIndex(TInt aIndex)
 	iEqualizerIndex = aIndex;
 	}
 
+TInt& CMobblerSettingItemListSettings::ScrobblePercent()
+	{
+	return iScrobblePercent;
+	}
+
+void CMobblerSettingItemListSettings::SetScrobblePercent(TInt aScrobblePercent)
+	{
+	iScrobblePercent = aScrobblePercent;
+	}
 
 // End of file
