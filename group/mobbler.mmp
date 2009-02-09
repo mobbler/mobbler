@@ -90,6 +90,7 @@ SOURCE		mobblerrichtextcontrol.cpp
 SOURCE		mobblersettingitemlist.cpp
 SOURCE		mobblersettingitemlistsettings.cpp
 SOURCE		mobblersettingitemlistview.cpp
+SOURCE		mobblersleeptimer.cpp
 SOURCE		mobblerslidersettingitem.cpp
 SOURCE		mobblerstatuscontrol.cpp
 SOURCE		mobblerstatusview.cpp

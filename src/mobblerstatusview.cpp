@@ -108,6 +108,7 @@ void CMobblerStatusView::DynInitMenuPaneL(TInt aResourceId, CEikMenuPane* aMenuP
 	else if(aResourceId == R_MOBBLER_TOOLS_SUBMENU_PANE)
 		{
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_CHECK_FOR_UPDATES,	EMobblerCommandCheckForUpdates);
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_SLEEP_TIMER,			EMobblerCommandSleepTimer);
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_EXPORT_QUEUE_TO_LOG,	EMobblerCommandExportQueueToLogFile);
 		}
 

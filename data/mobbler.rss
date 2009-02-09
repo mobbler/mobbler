@@ -191,6 +191,10 @@ RESOURCE MENU_PANE r_mobbler_tools_submenu_pane
 			},
 		MENU_ITEM
 			{
+			command = EMobblerCommandSleepTimer;
+			},
+		MENU_ITEM
+			{
 			command = EMobblerCommandExportQueueToLogFile;
 			}
 		};
@@ -452,5 +456,28 @@ RESOURCE DIALOG r_mobbler_get_latest_language_dialog
 		};
 	}
 
+RESOURCE DIALOG r_mobbler_sleep_timer_query_dialog
+	{
+	flags = EGeneralQueryFlags;
+	buttons = R_AVKON_SOFTKEYS_OK_CANCEL;
+	items =
+		{
+		DLG_LINE
+			{
+			type = EAknCtQuery;
+			id = EGeneralQuery;
+			control= AVKON_DATA_QUERY
+				{
+				layout = ENumberLayout;
+				control = AVKON_INTEGER_EDWIN
+					{
+					min = 1;
+					max = 999; // 16 hours and 39 minutes
+					maxlength = 3;
+					};
+				};
+			}
+		};
+	}
 
 // End of File

@@ -35,6 +35,7 @@ const TInt KDefaultVolume(0);
 #else
 const TInt KDefaultVolume(5);
 #endif
+const TInt KDefaultSleepTimerMinutes(30);
 
 CMobblerSettingItemListSettings* CMobblerSettingItemListSettings::NewL()
 	{
@@ -71,6 +72,7 @@ void CMobblerSettingItemListSettings::LoadSettingValuesL()
 	TUint8 bufferSize(KDefaultBufferSizeSeconds);
 	TInt equalizerIndex(KDefaultEqualizerIndex);
 	TInt scrobblePercent(KDefaultScrobblePercent);
+	TInt sleepTimerMinutes(KDefaultSleepTimerMinutes);
 	if (openError == KErrNone)
 		{
 		RFileReadStream readStream(file);
@@ -89,6 +91,7 @@ void CMobblerSettingItemListSettings::LoadSettingValuesL()
 		TRAP_IGNORE(bufferSize = readStream.ReadUint8L());
 		TRAP_IGNORE(equalizerIndex = readStream.ReadInt16L());
 		TRAP_IGNORE(scrobblePercent = readStream.ReadInt16L());
+		TRAP_IGNORE(sleepTimerMinutes = readStream.ReadInt16L());
 
 		SetUsernameL(username);
 		SetPasswordL(password);
@@ -113,6 +116,7 @@ void CMobblerSettingItemListSettings::LoadSettingValuesL()
 	SetBufferSize(bufferSize);
 	SetEqualizerIndex(equalizerIndex);
 	SetScrobblePercent(scrobblePercent);
+	SetSleepTimerMinutes(sleepTimerMinutes);
 
 	CleanupStack::PopAndDestroy(&file);
 	}
@@ -137,6 +141,7 @@ void CMobblerSettingItemListSettings::SaveSettingValuesL()
 		writeStream.WriteUint8L(BufferSize());
 		writeStream.WriteInt16L(EqualizerIndex());
 		writeStream.WriteInt16L(ScrobblePercent());
+		writeStream.WriteInt16L(SleepTimerMinutes());
 		
 		CleanupStack::PopAndDestroy(&writeStream);
 		}
@@ -222,6 +227,16 @@ TInt& CMobblerSettingItemListSettings::ScrobblePercent()
 void CMobblerSettingItemListSettings::SetScrobblePercent(TInt aScrobblePercent)
 	{
 	iScrobblePercent = aScrobblePercent;
+	}
+
+TInt& CMobblerSettingItemListSettings::SleepTimerMinutes()
+	{
+	return iSleepTimerMinutes;
+	}
+
+void CMobblerSettingItemListSettings::SetSleepTimerMinutes(TInt aSleepTimerMinutes)
+	{
+	iSleepTimerMinutes = aSleepTimerMinutes;
 	}
 
 // End of file

@@ -36,6 +36,7 @@ enum TMobblerSettingItemListViewCommands
 	EMobblerCommandRadio,
 	
 	EMobblerCommandTools,
+	EMobblerCommandSleepTimer,
 	EMobblerCommandExportQueueToLogFile,
 	
 	// IMPORTANT! New commands that WON'T connect to Last.fm go BEFORE here!
@@ -88,7 +89,8 @@ enum TMobblerControls
 	EMobblerProgressNoteId,
 	EMobblerQuery,
 	EMobblerRadioQuery,
-	EMobblerGetLatestLanguageNote
+	EMobblerGetLatestLanguageNote,
+	EMobblerSleepTimer
 	};
 
 #endif // __MOBBLER_HRH__

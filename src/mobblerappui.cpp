@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
 #include <aknmessagequerydialog.h>
+#include <AknLists.h>
 #include <aknnotewrappers.h>
 #include <aknsutils.h>
 #include <bautils.h> 
@@ -46,6 +47,13 @@ _LIT(KSearchURL, "http://astore.amazon.co.uk/mobbler-21/search/203-4425999-44231
 const TUid KBrowserUid = {0x10008D39};
 
 _LIT(KRadioFile, "c:radiostations.dat");
+
+enum TSleepTimerAction
+		{
+		EStopPlaying,
+		EGoOffline,
+		ExitMobber
+		};
 
 void CMobblerAppUi::ConstructL()
 	{
@@ -78,6 +86,9 @@ void CMobblerAppUi::ConstructL()
 
 	iResourceReader = CMobblerResourceReader::NewL();
 	iResourceReader->AddResourceFileL(KLanguageRscFile, KLanguageRscVersion);
+
+	iSleepTimer = CMobblerSleepTimer::NewL(EPriorityLow, *this);
+	iSleepAction = EGoOffline;
 	}
 
 void CMobblerAppUi::SetDetailsL(const TDesC& aUsername, const TDesC& aPassword)
@@ -152,6 +163,7 @@ CMobblerAppUi::~CMobblerAppUi()
 	delete iBrowserLauncher;
 #endif
 	delete iResourceReader;
+	delete iSleepTimer;
 	}
 
 void CMobblerAppUi::HandleInstallStartedL()
@@ -514,7 +526,9 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 				}
 			
 			break;
-
+		case EMobblerCommandSleepTimer:
+			SetSleepTimer();
+			break;
 		case EMobblerCommandExportQueueToLogFile:
 			{
 			if (iTracksQueued == 0)
@@ -897,6 +911,170 @@ void CMobblerAppUi::SaveRadioStationsL()
 HBufC* CMobblerAppUi::AllocReadLC(TInt aResourceId)
 	{
 	return iResourceReader->AllocReadLC(aResourceId);
+	}
+
+void CMobblerAppUi::SetSleepTimer()
+	{
+	TInt sleepMinutes(iSettingView->SleepTimerMinutes());
+	if (iSleepTimer->IsActive())
+		{
+		TTime now;
+		now.UniversalTime();
+#ifdef __WINS__
+		TTimeIntervalSeconds minutes(0);
+		iTimeToSleep.SecondsFrom(now, minutes);
+#else
+		TTimeIntervalMinutes minutes(0);
+		iTimeToSleep.MinutesFrom(now, minutes);
+#endif
+		sleepMinutes = minutes.Int();
+		}
+
+	CAknNumberQueryDialog* sleepDlg = CAknNumberQueryDialog::NewL(sleepMinutes,
+													CAknQueryDialog::ENoTone);
+	sleepDlg->PrepareLC(R_MOBBLER_SLEEP_TIMER_QUERY_DIALOG);
+	HBufC* dialogPromptText = iResourceReader->AllocReadLC(R_MOBBLER_SLEEP_TIMER_PROMPT);
+	sleepDlg->SetPromptL(*dialogPromptText);
+	CleanupStack::PopAndDestroy(dialogPromptText);
+
+	CEikButtonGroupContainer* cba = &sleepDlg->ButtonGroupContainer();
+	MEikButtonGroup* buttonGroup = cba->ButtonGroup();
+
+	HBufC* softkey = iResourceReader->AllocReadLC(R_MOBBLER_SOFTKEY_SET);
+	cba->SetCommandL(buttonGroup->CommandId(0), *softkey);
+	CleanupStack::PopAndDestroy(softkey);
+
+	if (iSleepTimer->IsActive())
+		{
+		softkey = iResourceReader->AllocReadLC(R_MOBBLER_SOFTKEY_REMOVE);
+		cba->SetCommandL(buttonGroup->CommandId(2), *softkey);
+		CleanupStack::PopAndDestroy(softkey);
+		}
+
+	TBool removeTimer(EFalse);
+
+	if (sleepDlg->RunLD())
+		{
+		CEikTextListBox* list = new(ELeave) CAknSinglePopupMenuStyleListBox;
+		CleanupStack::PushL(list);
+		CAknPopupList* popupList = CAknPopupList::NewL(list, 
+				R_AVKON_SOFTKEYS_SELECT_CANCEL, AknPopupLayouts::EMenuWindow);
+		CleanupStack::PushL(popupList);
+
+		list->ConstructL(popupList, CEikListBox::ELeftDownInViewRect);
+		list->CreateScrollBarFrameL(ETrue);
+		list->ScrollBarFrame()->SetScrollBarVisibilityL(CEikScrollBarFrame::EOff,
+														CEikScrollBarFrame::EAuto);
+
+		if (iSleepTimer->IsActive())
+			{
+			CEikButtonGroupContainer* cba = popupList->ButtonGroupContainer();
+			MEikButtonGroup* buttonGroup = cba->ButtonGroup();
+			softkey = iResourceReader->AllocReadLC(R_MOBBLER_SOFTKEY_REMOVE);
+			cba->SetCommandL(buttonGroup->CommandId(2), *softkey);
+			CleanupStack::PopAndDestroy(softkey);
+			}
+
+		CDesCArrayFlat* items = new CDesCArrayFlat(3);
+		CleanupStack::PushL(items);
+
+		HBufC* action = iResourceReader->AllocReadLC(R_MOBBLER_SLEEP_TIMER_ACTION_STOP);
+		items->AppendL(*action);
+		CleanupStack::PopAndDestroy(action);
+		action = iResourceReader->AllocReadLC(R_MOBBLER_SLEEP_TIMER_ACTION_OFFLINE);
+		items->AppendL(*action);
+		CleanupStack::PopAndDestroy(action);
+		action = iResourceReader->AllocReadLC(R_MOBBLER_SLEEP_TIMER_ACTION_EXIT);
+		items->AppendL(*action);
+		CleanupStack::PopAndDestroy(action);
+		
+		CTextListBoxModel* model = list->Model();
+		model->SetItemTextArray(items);
+		model->SetOwnershipType(ELbmOwnsItemArray);
+		CleanupStack::Pop();
+
+		dialogPromptText = iResourceReader->AllocReadLC(R_MOBBLER_SLEEP_TIMER_ACTION);
+		popupList->SetTitleL(*dialogPromptText);
+		CleanupStack::PopAndDestroy(dialogPromptText);
+		
+		list->SetCurrentItemIndex(iSleepAction);
+		TInt popupOk = popupList->ExecuteLD();
+		CleanupStack::Pop();
+		
+		if (popupOk)
+			{
+			iSleepAction = list->CurrentItemIndex();
+			iSettingView->SetSleepTimerMinutesL(sleepMinutes);
+#ifdef __WINS__
+			TTimeIntervalSeconds delay(sleepMinutes);
+#else
+			TTimeIntervalMinutes delay(sleepMinutes);
+#endif
+			iTimeToSleep.UniversalTime();
+			iTimeToSleep += delay;
+			iSleepTimer->AtUTC(iTimeToSleep);
+
+			CEikonEnv::Static()->InfoMsg(_L("Timer set"));
+			}
+		else
+			{
+			removeTimer = ETrue;
+			}
+		}
+	else
+		{
+		removeTimer = ETrue;
+		}
+
+	if (removeTimer && iSleepTimer->IsActive())
+		{
+		iSleepTimer->Cancel();
+		CAknInformationNote* note = new (ELeave) CAknInformationNote(ETrue);
+		HBufC* errorText = iResourceReader->AllocReadLC(R_MOBBLER_SLEEP_TIMER_REMOVED);
+		note->ExecuteLD(*errorText);
+		CleanupStack::PopAndDestroy(errorText);
+		}
+	}
+
+void CMobblerAppUi::TimerExpiredL(TAny* /*aTimer*/, TInt aError)
+	{
+	if (aError == KErrNone)
+		{
+		// Do this for all actions, it gives Mobbler a chance to scrobble
+		// the newly stopped song to Last.fm whilst displaying the dialog
+		iLastFMConnection->TrackStoppedL();
+		iRadioPlayer->Stop();
+
+		CEikonEnv::Static()->InfoMsg(_L("Timer expired!"));
+		CAknInformationNote* note = new (ELeave) CAknInformationNote(ETrue);
+		HBufC* errorText = iResourceReader->AllocReadLC(
+											R_MOBBLER_SLEEP_TIMER_EXPIRED);
+		note->ExecuteLD(*errorText);
+		CleanupStack::PopAndDestroy(errorText);
+		switch (iSleepAction)
+			{
+			case EStopPlaying:
+				// Nothing more to do
+				break;
+			case EGoOffline:
+				HandleCommandL(EMobblerCommandOffline);
+				break;
+			case ExitMobber:
+				HandleCommandL(EAknSoftkeyExit);
+				break;
+			default:
+				break;
+			}
+		}
+
+	// When the system time changes, At() timers will complete immediately with
+	// KErrAbort. This can happen either if the user changes the time, or if 
+	// the phone is set to auto-update with the network operator time.
+	else if (aError == KErrAbort)
+		{
+		// Reset the timer
+		iSleepTimer->AtUTC(iTimeToSleep);
+		}	
 	}
 
 // End of File

@@ -67,6 +67,9 @@ public:
 	TInt& ScrobblePercent();
 	void SetScrobblePercent(TInt aIndex);
 
+	TInt& SleepTimerMinutes();
+	void SetSleepTimerMinutes(TInt aSleepTimerMinutes);
+
 protected:
 	TBuf<30> iUsername;
 	TBuf<30> iPassword;
@@ -76,6 +79,9 @@ protected:
 	TInt iBufferSize;
 	TInt iEqualizerIndex;
 	TInt iScrobblePercent;
+	TInt iSleepTimerMinutes;
 	};
 
 #endif // __MOBBLERSETTINGITEMLISTSETTINGS_H__
+
+// End of file

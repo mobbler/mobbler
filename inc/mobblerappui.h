@@ -28,7 +28,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "mobblerdownload.h"
 #include "mobblerlastfmconnectionobserver.h"
-#include "mobblerwebservicesobserver.h"
+#include "mobblersleeptimer.h"
 
 
 _LIT(KVersionNumberDisplay,		"0.3.4");
@@ -45,7 +45,8 @@ class CMobblerTrack;
 
 class CMobblerAppUi : public CAknViewAppUi,
 						public MMobblerLastFMConnectionObserver,
-						public MMobblerDownloadObserver
+						public MMobblerDownloadObserver,
+					    public MMobblerSleepTimerNotify
 	{
 public:
 	void ConstructL();
@@ -101,6 +102,9 @@ private:
 
 	void LoadRadioStationsL();
 	void SaveRadioStationsL();
+	void SetSleepTimer();
+private: // from MMobblerSleepTimerNotify
+	void TimerExpiredL(TAny* aTimer, TInt aError);
 	
 private:
 	// the view classes
@@ -135,6 +139,10 @@ private:
 	CMobblerDownload* iMobblerDownload;
 
 	CMobblerResourceReader* iResourceReader;
+
+	CMobblerSleepTimer* iSleepTimer;
+	TTime iTimeToSleep;
+	TInt iSleepAction;
 	};
 
 #endif // __MOBBLERAPPUI_h__

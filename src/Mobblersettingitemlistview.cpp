@@ -163,6 +163,17 @@ TInt CMobblerSettingItemListView::ScrobblePercent() const
 	return iSettings->ScrobblePercent();
 	}
 
+TInt CMobblerSettingItemListView::SleepTimerMinutes() const
+	{
+	return iSettings->SleepTimerMinutes();
+	}
+
+void CMobblerSettingItemListView::SetSleepTimerMinutesL(TInt aSleepTimerMinutes)
+	{
+	iSettings->SetSleepTimerMinutes(aSleepTimerMinutes);
+	iSettings->SaveSettingValuesL();
+	}
+
 void CMobblerSettingItemListView::HandleStatusPaneSizeChange()
 	{
 	CAknView::HandleStatusPaneSizeChange();
@@ -224,6 +235,7 @@ void CMobblerSettingItemListView::LoadListL()
 					  R_MOBBLER_BACKLIGHT_SYSTEM_DEFAULT,
 					  R_MOBBLER_BACKLIGHT_ON_WHEN_ACTIVE);
 	
+	// Required when there is only one setting item
 	iMobblerSettingItemList->SettingItemArray()->RecalculateVisibleIndicesL();
 
 	iMobblerSettingItemList->HandleChangeInItemArrayOrVisibilityL();
