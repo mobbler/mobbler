@@ -1,3 +1,4 @@
+
 /*
 mobbler.l09 - Finnish
 
@@ -134,3 +135,16 @@ rls_string STR_mobbler_confirm_replace_log ".scrobbler.log on jo olemassa. Korva
 rls_string STR_mobbler_note_queue_exported "Tallennettu: C:\Data\Mobbler\.scrobbler.log"
 rls_string STR_mobbler_note_queue_not_exported "Jonon tallentaminen epäonnistui"
 rls_string STR_mobbler_note_export_empty_queue "Jono on tyhjä - ei tallennettu"
+rls_string STR_mobbler_scrobble_percent "Scrobble track after"
+rls_string STR_mobbler_percent "%U percent"
+rls_string STR_mobbler_get_latest_language "Language file out of date, please get the latest from code.google.com/p/mobbler"
+rls_string STR_mobbler_sleep_timer "Sleep timer"
+rls_string STR_mobbler_sleep_timer_prompt "Sleep timer (minutes):"
+rls_string STR_mobbler_softkey_set "Set"
+rls_string STR_mobbler_softkey_remove "Remove"
+rls_string STR_mobbler_sleep_timer_action "Sleep timer action:"
+rls_string STR_mobbler_sleep_timer_action_stop "Stop playing"
+rls_string STR_mobbler_sleep_timer_action_offline "Go offline"
+rls_string STR_mobbler_sleep_timer_action_exit "Exit"
+rls_string STR_mobbler_sleep_timer_expired "Sleep timer expired"
+rls_string STR_mobbler_sleep_timer_removed "Sleep timer removed"
