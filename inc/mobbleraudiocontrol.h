@@ -69,7 +69,7 @@ private: // from CActive
 	
 private: // from MMobblerMp3DownloadObserver
 	void WriteMp3DataL(const TDesC8& aData, TInt aTotalSize);
-	void SetAbumArtL(const TDesC8& aAlbumArt);
+	void SetAlbumArtL(const TDesC8& aAlbumArt);
 	void TrackDownloadCompleteL();
 	
 private:

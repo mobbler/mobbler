@@ -67,6 +67,9 @@ public:
 	TInt& ScrobblePercent();
 	void SetScrobblePercent(TInt aIndex);
 
+	TInt& Volume();
+	void SetVolume(TInt aVolume);
+
 	TInt& SleepTimerMinutes();
 	void SetSleepTimerMinutes(TInt aSleepTimerMinutes);
 
@@ -79,6 +82,7 @@ protected:
 	TInt iBufferSize;
 	TInt iEqualizerIndex;
 	TInt iScrobblePercent;
+	TInt iVolume;
 	TInt iSleepTimerMinutes;
 	};
 

@@ -50,6 +50,8 @@ public:
 	TBool EqualizerIndex() const;
 	TInt ScrobblePercent() const;
 	void SetEqualizerIndexL(TInt aIndex);
+	TInt Volume() const;
+	void SetVolumeL(TInt aVolume);
 	TInt SleepTimerMinutes() const;
 	void SetSleepTimerMinutesL(TInt aSleepTimerMinutes);
 	

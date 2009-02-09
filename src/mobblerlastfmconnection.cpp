@@ -260,9 +260,9 @@ void CMobblerLastFMConnection::SaveSettingsL()
 	CleanupStack::PopAndDestroy(&file);
 	}
 
-void CMobblerLastFMConnection::SetCheckForUpdatesL(TBool iCheckForUpdates)
+void CMobblerLastFMConnection::SetCheckForUpdatesL(TBool aCheckForUpdates)
 	{
-	iCheckForUpdates = iCheckForUpdates;
+	iCheckForUpdates = aCheckForUpdates;
 	
 	SaveSettingsL();
 	}
@@ -1003,7 +1003,16 @@ void CMobblerLastFMConnection::DoNowPlayingL()
 			TBuf8<10> trackLength;
 			trackLength.AppendNum(iCurrentTrack->TrackLength().Int());
 			nowPlayingForm->AddFieldL(_L8("l"), trackLength);
-			nowPlayingForm->AddFieldL(_L8("n"), KNullDesC8);
+			if (iCurrentTrack->TrackNumber() != KErrUnknown)
+				{
+				TBuf8<10> trackNumber;
+				trackNumber.AppendNum(iCurrentTrack->TrackNumber());
+				nowPlayingForm->AddFieldL(_L8("n"), trackNumber);
+				}
+			else
+				{
+				nowPlayingForm->AddFieldL(_L8("n"), KNullDesC8);
+				}
 			nowPlayingForm->AddFieldL(_L8("m"), KNullDesC8);
 			
 			// get the uri
@@ -1086,6 +1095,8 @@ void CMobblerLastFMConnection::TrackStoppedL()
 	// Save the track queue and try to do a submission
 	SaveTrackQueue();
 	DoSubmitL();
+
+	static_cast<CMobblerAppUi*>(CEikonEnv::Static()->AppUi())->SaveVolume();
 	}
 
 TBool CMobblerLastFMConnection::DoSubmitL()
@@ -1176,7 +1187,16 @@ TBool CMobblerLastFMConnection::DoSubmitL()
 				trackLength.AppendNum(iTrackQueue[ii]->TrackLength().Int());
 				submitForm->AddFieldL(l, trackLength);
 				
-				submitForm->AddFieldL(n, KNullDesC8);
+				if (iTrackQueue[ii]->TrackNumber() != KErrUnknown)
+					{
+					TBuf8<10> trackNumber;
+					trackNumber.AppendNum(iTrackQueue[ii]->TrackNumber());
+					submitForm->AddFieldL(n, trackNumber);
+					}
+				else
+					{
+					submitForm->AddFieldL(n, KNullDesC8);
+					}
 				submitForm->AddFieldL(m, KNullDesC8);
 				}
 			
@@ -1308,7 +1328,7 @@ void CMobblerLastFMConnection::TransactionResponseL(CMobblerTransaction* aTransa
 		}
 	else if (aTransaction == iRadioAlbumArtTransaction)
 		{
-		iDownloadObserver->SetAbumArtL(aResponse);
+		iDownloadObserver->SetAlbumArtL(aResponse);
 		}
 	else if (aTransaction == iSubmitTransaction)
 		{
@@ -1730,6 +1750,12 @@ TBool CMobblerLastFMConnection::ExportQueueToLogFileL()
 		errors += file.Write(KLogFileFieldSeperator);
 		
 		// track position on album (optional)
+		if (iTrackQueue[i]->TrackNumber() != KErrUnknown)
+			{
+			TBuf8<10> trackNumber;
+			trackNumber.AppendNum(iTrackQueue[i]->TrackNumber());
+			errors += file.Write(trackNumber);
+			}
 		file.Write(KLogFileFieldSeperator);
 		
 		// song duration in seconds

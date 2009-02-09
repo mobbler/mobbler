@@ -163,6 +163,17 @@ TInt CMobblerSettingItemListView::ScrobblePercent() const
 	return iSettings->ScrobblePercent();
 	}
 
+TInt CMobblerSettingItemListView::Volume() const
+	{
+	return iSettings->Volume();
+	}
+
+void CMobblerSettingItemListView::SetVolumeL(TInt aVolume)
+	{
+	iSettings->SetVolume(aVolume);
+	iSettings->SaveSettingValuesL();
+	}
+
 TInt CMobblerSettingItemListView::SleepTimerMinutes() const
 	{
 	return iSettings->SleepTimerMinutes();

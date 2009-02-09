@@ -70,7 +70,7 @@ void CMobblerAppUi::ConstructL()
 	ActivateLocalViewL(iStatusView->Id());
 	
 	iLastFMConnection = CMobblerLastFMConnection::NewL(*this, iSettingView->UserName(), iSettingView->Password(), iSettingView->IapID(), iSettingView->CheckForUpdates());
-	iRadioPlayer = CMobblerRadioPlayer::NewL(*iLastFMConnection, iSettingView->BufferSize(), iSettingView->EqualizerIndex());
+	iRadioPlayer = CMobblerRadioPlayer::NewL(*iLastFMConnection, iSettingView->BufferSize(), iSettingView->EqualizerIndex(), iSettingView->Volume());
 	iMusicListener = CMobblerMusicAppListener::NewL(*iLastFMConnection);
 	iLastFMConnection->SetRadioPlayer(*iRadioPlayer);
 	
@@ -155,7 +155,7 @@ CMobblerAppUi::~CMobblerAppUi()
 	delete iPreviousRadioArtist;
 	delete iPreviousRadioTag;
 	delete iPreviousRadioUser;
-	delete iMusicListener;	
+	delete iMusicListener;
 	delete iRadioPlayer;
 	delete iLastFMConnection;
 	delete iMobblerDownload;
@@ -181,13 +181,6 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 	TBuf<250> artist;
 	TBuf<250> user;
 
-	if (aCommand >= EMobblerCommandEqualizerDefault)
-		{
-		TInt index = aCommand - EMobblerCommandEqualizerDefault - 1;
-		RadioPlayer()->SetEqualizer(index);
-		iSettingView->SetEqualizerIndexL(index);
-		return;
-		}
 	// Don't bother going online to Last.fm if no user details entered
 	if (aCommand >= EMobblerCommandOnline)
 		{
@@ -571,6 +564,14 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 			break;
 
 		default:
+			if (aCommand >= EMobblerCommandEqualizerDefault && 
+				aCommand <= EMobblerCommandEqualizerMaximum)
+				{
+				TInt index = aCommand - EMobblerCommandEqualizerDefault - 1;
+				RadioPlayer()->SetEqualizer(index);
+				iSettingView->SetEqualizerIndexL(index);
+				return;
+				}
 			break;
 		}
 	}
@@ -812,6 +813,11 @@ TBool CMobblerAppUi::Backlight() const
 TInt CMobblerAppUi::ScrobblePercent() const
 	{
 	return iSettingView->ScrobblePercent();
+	}
+
+void CMobblerAppUi::SaveVolume()
+	{
+	iSettingView->SetVolumeL(RadioPlayer()->Volume());
 	}
 
 void CMobblerAppUi::LoadRadioStationsL()

@@ -39,6 +39,10 @@ enum TMobblerSettingItemListViewCommands
 	EMobblerCommandSleepTimer,
 	EMobblerCommandExportQueueToLogFile,
 	
+	EMobblerCommandEqualizer = 0x7000,
+	EMobblerCommandEqualizerDefault,
+	EMobblerCommandEqualizerMaximum = 0x7FFF,
+
 	// IMPORTANT! New commands that WON'T connect to Last.fm go BEFORE here!
 	// IMPORTANT! New commands that WILL connect to Last.fm go AFTER here!
 	//
@@ -48,7 +52,7 @@ enum TMobblerSettingItemListViewCommands
 	// already stored their Last.fm username and password. Otherwise an error
 	// note is shown.
 
-	EMobblerCommandOnline = 0x7000,
+	EMobblerCommandOnline = 0x8000,
 
 
 	// these commands are avaliable once connected
@@ -75,12 +79,7 @@ enum TMobblerSettingItemListViewCommands
 	EMobblerCommandRadioNeighbourhood,
 	EMobblerCommandRadioMyPlaylist,
 	
-	EMobblerCommandCheckForUpdates,
-	
-	// Commands for the Equalizer
-	
-	EMobblerCommandEqualizer = 0x7100,
-	EMobblerCommandEqualizerDefault
+	EMobblerCommandCheckForUpdates
 	};
 	
 enum TMobblerControls

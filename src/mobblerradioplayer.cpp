@@ -31,26 +31,21 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "mobblertrack.h"
 #include "mobblerutility.h"
 
-#ifdef __WINS__
-const TInt KDefaultVolume(0);
-#else
-const TInt KDefaultVolume(5);
-#endif
 const TInt KEqualizerOff(-1);
 
 const TInt KDefaultMaxVolume(10);
 
-CMobblerRadioPlayer* CMobblerRadioPlayer::NewL(CMobblerLastFMConnection& aSubmitter, TTimeIntervalSeconds aPreBufferSize, TInt aEqualizerIndex)
+CMobblerRadioPlayer* CMobblerRadioPlayer::NewL(CMobblerLastFMConnection& aSubmitter, TTimeIntervalSeconds aPreBufferSize, TInt aEqualizerIndex, TInt aVolume)
 	{
-	CMobblerRadioPlayer* self = new(ELeave) CMobblerRadioPlayer(aSubmitter, aPreBufferSize, aEqualizerIndex);
+	CMobblerRadioPlayer* self = new(ELeave) CMobblerRadioPlayer(aSubmitter, aPreBufferSize, aEqualizerIndex, aVolume);
 	CleanupStack::PushL(self);
 	self->ConstructL();
 	CleanupStack::Pop(self);
 	return self;
 	}
 
-CMobblerRadioPlayer::CMobblerRadioPlayer(CMobblerLastFMConnection& aLastFMConnection, TTimeIntervalSeconds aPreBufferSize, TInt aEqualizerIndex)
-	:iLastFMConnection(aLastFMConnection), iPreBufferSize(aPreBufferSize), iVolume(KDefaultVolume), iMaxVolume(KDefaultMaxVolume), iEqualizerIndex(aEqualizerIndex)
+CMobblerRadioPlayer::CMobblerRadioPlayer(CMobblerLastFMConnection& aLastFMConnection, TTimeIntervalSeconds aPreBufferSize, TInt aEqualizerIndex, TInt aVolume)
+	:iLastFMConnection(aLastFMConnection), iPreBufferSize(aPreBufferSize), iVolume(aVolume), iMaxVolume(KDefaultMaxVolume), iEqualizerIndex(aEqualizerIndex)
 	{
 	}
 

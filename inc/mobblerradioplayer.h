@@ -24,20 +24,14 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #ifndef __MOBBLERRADIOPLAYER_H__
 #define __MOBBLERRADIOPLAYER_H__
 
-#include <mda\common\audio.h>
 #include <MdaAudioOutputStream.h>
 
 #include "mobblerincomingcallmonitorobserver.h"
 #include "mobblerlastfmconnection.h"
-#include "mobblershareddata.h"
 #include "mobbleraudiocontrol.h"
 
-class CAudioEqualizerUtility;
-class CDesC8Array;
-class CMobblerAudioControl;
 class CMobblerIncomingCallMonitor;
 class CMobblerRadioPlaylist;
-class CMobblerRadioPlaylistParser;
 class CMobblerString;
 
 class MMobblerRadioPlayer
@@ -55,7 +49,7 @@ class CMobblerRadioPlayer : public CBase,
 
 	{
 public:
-	static CMobblerRadioPlayer* NewL(CMobblerLastFMConnection& aLastFMConnection, TTimeIntervalSeconds aPreBufferSize, TInt aEqualizerIndex);
+	static CMobblerRadioPlayer* NewL(CMobblerLastFMConnection& aLastFMConnection, TTimeIntervalSeconds aPreBufferSize, TInt aEqualizerIndex, TInt aVolume);
 	~CMobblerRadioPlayer();
 	
 	TInt StartL(CMobblerLastFMConnection::TRadioStation aRadioStation, const TDesC8& aRadioText);
@@ -81,7 +75,7 @@ private: // from MMobblerAudioControlObserver
 	void HandleAudioFinishedL(CMobblerAudioControl* aAudioControl);
 	
 private:
-	CMobblerRadioPlayer(CMobblerLastFMConnection& aSubmitter, TTimeIntervalSeconds aPreBufferSize, TInt aEqualizerIndex);
+	CMobblerRadioPlayer(CMobblerLastFMConnection& aSubmitter, TTimeIntervalSeconds aPreBufferSize, TInt aEqualizerIndex, TInt aVolume);
 	void ConstructL();
 	
 	void SubmitCurrentTrackL();

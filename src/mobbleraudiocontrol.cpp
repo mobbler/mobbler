@@ -119,7 +119,7 @@ void CMobblerAudioControl::WriteMp3DataL(const TDesC8& aData, TInt aTotalDataSiz
 	static_cast<CMobblerAppUi*>(CEikonEnv::Static()->AppUi())->StatusDrawDeferred();
 	}
 
-void CMobblerAudioControl::SetAbumArtL(const TDesC8& aAlbumArt)
+void CMobblerAudioControl::SetAlbumArtL(const TDesC8& aAlbumArt)
 	{
 	iShared.iTrack->SetAlbumArtL(aAlbumArt);
 	}

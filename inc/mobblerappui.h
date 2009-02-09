@@ -76,6 +76,7 @@ public:
 	TBool Foreground() const;
 	TBool Backlight() const;
 	TInt ScrobblePercent() const;
+	void SaveVolume();
 
 	HBufC* AllocReadLC(TInt aResourceId);
 

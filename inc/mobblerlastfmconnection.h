@@ -48,7 +48,7 @@ class MMobblerTrackDownloadObserver
 	{
 public:
 	virtual void WriteMp3DataL(const TDesC8& aData, TInt aTotalSize) = 0;
-	virtual void SetAbumArtL(const TDesC8& aAlbumArt) = 0;
+	virtual void SetAlbumArtL(const TDesC8& aAlbumArt) = 0;
 	virtual void TrackDownloadCompleteL() = 0;
 	};
 
