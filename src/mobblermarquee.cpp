@@ -117,6 +117,12 @@ TInt CMobblerMarquee::CallBack(TAny* aRef)
 
 void CMobblerMarquee::Update()
 	{
+	if (!static_cast<CMobblerAppUi*>(CEikonEnv::Static()->AppUi())->Foreground())
+		{
+		iTimer->Cancel();
+		Reset();
+		}
+
 	switch (iState)
 		{
 		case EStart:

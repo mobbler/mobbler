@@ -992,6 +992,7 @@ TKeyResponse CMobblerStatusControl::OfferKeyEventL(const TKeyEvent& aKeyEvent, T
 					{
 					CEikonEnv::Static()->InfoMsg(iAppUi.CurrentTrack()->Title().String());
 					}
+				DrawDeferred();
 				}
 			response = EKeyWasConsumed;
 			break;
@@ -1013,7 +1014,7 @@ TKeyResponse CMobblerStatusControl::OfferKeyEventL(const TKeyEvent& aKeyEvent, T
 			break;
 		}
 	
-	DrawDeferred();
+//	DrawDeferred();
 	
 	return response;
 	}

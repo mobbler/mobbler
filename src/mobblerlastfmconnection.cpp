@@ -357,8 +357,11 @@ CMobblerLastFMConnection::TState CMobblerLastFMConnection::State() const
 
 void CMobblerLastFMConnection::ChangeState(TState aState)
 	{
-	iState = aState;
-	static_cast<CMobblerAppUi*>(CEikonEnv::Static()->AppUi())->StatusDrawDeferred();
+	if (iState != aState)
+		{
+		iState = aState;
+		static_cast<CMobblerAppUi*>(CEikonEnv::Static()->AppUi())->StatusDrawDeferred();
+		}
 	}
 	
 void CMobblerLastFMConnection::RunL()

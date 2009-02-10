@@ -367,8 +367,11 @@ void CMobblerMusicAppListener::PlayerPositionL(TTimeIntervalSeconds aPlayerPosit
 	{
 	if (iCurrentTrack)
 		{
-		iCurrentTrack->SetPlaybackPosition(aPlayerPosition);
-		static_cast<CMobblerAppUi*>(CEikonEnv::Static()->AppUi())->StatusDrawDeferred();
+		if (iCurrentTrack->PlaybackPosition() != aPlayerPosition)
+			{
+			iCurrentTrack->SetPlaybackPosition(aPlayerPosition);
+			static_cast<CMobblerAppUi*>(CEikonEnv::Static()->AppUi())->StatusDrawDeferred();
+			}
 		}
 	}
 	
