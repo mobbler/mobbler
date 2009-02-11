@@ -134,7 +134,7 @@ rls_string STR_mobbler_note_queue_exported "Liste oluşturuldu C:\Data\Mobbler\.
 rls_string STR_mobbler_note_queue_not_exported "Bekleyen listesi oluşturulurken bir hata oluştu"
 rls_string STR_mobbler_note_export_empty_queue "Bekleyen yok, liste oluşturulamaz"
 rls_string STR_mobbler_scrobble_percent "Skroplama noktası"
-rls_string STR_mobbler_percent "Yüzde %U çalininca"
+rls_string STR_mobbler_percent "Yüzde %U çalınınca"
 rls_string STR_mobbler_get_latest_language "Dil paketi güncelliğini yitirmiş, lütfen yenisini code.google.com/p/mobbler adresinden edinin"
 rls_string STR_mobbler_sleep_timer "Kapanma sayacı"
 rls_string STR_mobbler_sleep_timer_prompt "Kapanma sayacı (dakika):"
