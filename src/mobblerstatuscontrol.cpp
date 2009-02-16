@@ -55,6 +55,7 @@ _LIT(KPngPlay, "\\resource\\apps\\mobbler\\play.png");
 _LIT(KPngPound, "\\resource\\apps\\mobbler\\pound.png");
 _LIT(KPngStop, "\\resource\\apps\\mobbler\\stop.png");
 _LIT(KPngLastFM, "\\resource\\apps\\mobbler\\lastfm.png");
+_LIT(KMusicAppNameAndConnectionSeperator, " - ");
 
 const TRgb KRgbLastFMRed(0xD5, 0x10, 0x07, 0xFF);
 
@@ -571,6 +572,16 @@ void CMobblerStatusControl::Draw(const TRect& /*aRect*/) const
 			{
 			// This is a music player track
 			iStateText.Copy(iAppUi.MusicAppNameL());
+			iStateText.Append(KMusicAppNameAndConnectionSeperator);
+			if (iAppUi.Mode() == CMobblerLastFMConnection::EOnline)
+				{
+				iStateText.Append(*iResTextStateOnline);
+				}
+			else
+				{
+				iStateText.Append(*iResTextStateOffline);
+				}
+
 			albumArt = iMobblerBitmapMusicAppIcon;
 			}
 	
