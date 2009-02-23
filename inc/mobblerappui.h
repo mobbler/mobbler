@@ -71,6 +71,7 @@ public:
 	
 	CMobblerLastFMConnection::TMode Mode() const;
 	CMobblerLastFMConnection::TState State() const;
+	TBool ScrobblingOn() const;
 
 	TBool RadioResumable() const;
 	TBool Foreground() const;

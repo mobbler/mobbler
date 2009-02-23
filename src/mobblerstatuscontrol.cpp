@@ -206,7 +206,8 @@ void CMobblerStatusControl::LoadGraphicsL()
 	iMobblerBitmapLastFM = CMobblerBitmap::NewL(*this, KPngLastFM, KImageTypePNGUid);
 	iMobblerBitmapSpeakerLow = CMobblerBitmap::NewL(*this, KPngSpeakerLow, KImageTypePNGUid);
 	iMobblerBitmapSpeakerHigh = CMobblerBitmap::NewL(*this, KPngSpeakerHigh, KImageTypePNGUid);
-	iMobblerBitmapScrobble = CMobblerBitmap::NewL(*this, KPngScrobble, KImageTypePNGUid);
+	iMobblerBitmapScrobbleOn = CMobblerBitmap::NewL(*this, KPngScrobble, KImageTypePNGUid);
+	iMobblerBitmapScrobbleOff = CMobblerBitmap::NewL(*this, KPngScrobble, KImageTypePNGUid, ETrue);
 	iMobblerBitmapTrackIcon = CMobblerBitmap::NewL(*this, KPngTrackIcon, KImageTypePNGUid);
     
 	// Load the Music Player icon to display when a music player track is playing
@@ -222,6 +223,7 @@ void CMobblerStatusControl::LoadResourceFileTextL()
 	resourceReader->AddResourceFileL(KLanguageRscFile, KLanguageRscVersion);
 
 	iResTextScrobbledQueuedFormat = resourceReader->AllocReadL(R_MOBBLER_SCROBBLED_QUEUED);
+	iResTextScrobblingOff = resourceReader->AllocReadL(R_MOBBLER_SCROBBLING_OFF);
 	iResTextOffline = resourceReader->AllocReadL(R_MOBBLER_IDLE);
 	iResTextOnline = resourceReader->AllocReadL(R_MOBBLER_IDLE);
 	iResTextArtist = resourceReader->AllocReadL(R_MOBBLER_ARTIST);
@@ -458,7 +460,8 @@ CMobblerStatusControl::~CMobblerStatusControl()
 	delete iMobblerBitmapLastFM;
 	delete iMobblerBitmapSpeakerLow;
 	delete iMobblerBitmapSpeakerHigh;
-	delete iMobblerBitmapScrobble;
+	delete iMobblerBitmapScrobbleOn;
+	delete iMobblerBitmapScrobbleOff;
 	delete iMobblerBitmapTrackIcon;
 	delete iMobblerBitmapAppIcon;
 	
@@ -467,6 +470,7 @@ CMobblerStatusControl::~CMobblerStatusControl()
 	delete iInterfaceSelector;
 	
 	delete iResTextScrobbledQueuedFormat;
+	delete iResTextScrobblingOff;
 	delete iResTextOffline;
 	delete iResTextOnline;
 	delete iResTextArtist;
@@ -665,11 +669,19 @@ void CMobblerStatusControl::Draw(const TRect& /*aRect*/) const
 	
 	ChangePaneTextL(iStateText);
 	
-	iScrobbledQueued.Zero();
-	iScrobbledQueued.Format(*iResTextScrobbledQueuedFormat, iAppUi.Scrobbled(), iAppUi.Queued());
-	
-	DrawMobblerBitmap(iMobblerBitmapScrobble, TPoint(iRectScrobbledQueuedText.iTl.iX - iMobblerBitmapTrackIcon->SizeInPixels().iWidth, iRectScrobbledQueuedText.iTl.iY + 3));
-	DrawText(iScrobbledQueued, iRectScrobbledQueuedText, textColor, CGraphicsContext::ELeft, iMobblerFont->WidthZeroInPixels());
+	if (iAppUi.ScrobblingOn())
+		{
+		iScrobbledQueued.Zero();
+		iScrobbledQueued.Format(*iResTextScrobbledQueuedFormat, iAppUi.Scrobbled(), iAppUi.Queued());
+		
+		DrawMobblerBitmap(iMobblerBitmapScrobbleOn, TPoint(iRectScrobbledQueuedText.iTl.iX - iMobblerBitmapTrackIcon->SizeInPixels().iWidth, iRectScrobbledQueuedText.iTl.iY + 3));
+		DrawText(iScrobbledQueued, iRectScrobbledQueuedText, textColor, CGraphicsContext::ELeft, iMobblerFont->WidthZeroInPixels());
+		}
+	else
+		{
+		DrawMobblerBitmap(iMobblerBitmapScrobbleOff, TPoint(iRectScrobbledQueuedText.iTl.iX - iMobblerBitmapTrackIcon->SizeInPixels().iWidth, iRectScrobbledQueuedText.iTl.iY + 3));
+		DrawText(*iResTextScrobblingOff, iRectScrobbledQueuedText, textColor, CGraphicsContext::ELeft, iMobblerFont->WidthZeroInPixels());
+		}
 	
 	// draw the progress bar background
 	DrawRect(iRectProgressBar, KRgbBlack, KRgbProgressBarBack);
@@ -708,7 +720,7 @@ void CMobblerStatusControl::Draw(const TRect& /*aRect*/) const
 			scrobbleTime = iAppUi.CurrentTrack()->InitialPlaybackPosition().Int() + 
 						   iAppUi.CurrentTrack()->ScrobbleDuration().Int();
 			}
-		if (scrobbleTime <= playbackTotal)
+		if (iAppUi.ScrobblingOn() && scrobbleTime <= playbackTotal)
 			{
 			TInt scrobbleMark = iRectProgressBar.iTl.iX - 1 + 
 				((iRectProgressBar.Width() * scrobbleTime) / playbackTotal);
@@ -1005,6 +1017,13 @@ TKeyResponse CMobblerStatusControl::OfferKeyEventL(const TKeyEvent& aKeyEvent, T
 					}
 				DrawDeferred();
 				}
+			response = EKeyWasConsumed;
+			break;
+#endif
+#ifdef _DEBUG
+		case '5':
+			const_cast<CMobblerAppUi&>(iAppUi).HandleCommandL(EMobblerCommandToggleScrobbling);
+			DrawDeferred();
 			response = EKeyWasConsumed;
 			break;
 #endif

@@ -149,3 +149,4 @@ void CMobblerMarquee::Update()
 	static_cast<CMobblerAppUi*>(CEikonEnv::Static()->AppUi())->StatusDrawDeferred();
 	}
 
+// End of file

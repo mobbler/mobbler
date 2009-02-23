@@ -519,6 +519,9 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 				}
 			
 			break;
+		case EMobblerCommandToggleScrobbling:
+			iLastFMConnection->ToggleScrobbling();
+			break;
 		case EMobblerCommandSleepTimer:
 			SetSleepTimer();
 			break;
@@ -642,6 +645,10 @@ CMobblerLastFMConnection::TState CMobblerAppUi::State() const
 	return iLastFMConnection->State();
 	}
 
+TBool CMobblerAppUi::ScrobblingOn() const
+	{
+	return iLastFMConnection->ScrobblingOn();
+	}
 
 void CMobblerAppUi::HandleStatusPaneSizeChange()
 	{

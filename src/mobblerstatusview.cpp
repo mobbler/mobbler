@@ -107,9 +107,17 @@ void CMobblerStatusView::DynInitMenuPaneL(TInt aResourceId, CEikMenuPane* aMenuP
 		}
 	else if(aResourceId == R_MOBBLER_TOOLS_SUBMENU_PANE)
 		{
-		SetMenuItemTextL(aMenuPane, R_MOBBLER_CHECK_FOR_UPDATES,	EMobblerCommandCheckForUpdates);
-		SetMenuItemTextL(aMenuPane, R_MOBBLER_SLEEP_TIMER,			EMobblerCommandSleepTimer);
-		SetMenuItemTextL(aMenuPane, R_MOBBLER_EXPORT_QUEUE_TO_LOG,	EMobblerCommandExportQueueToLogFile);
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_CHECK_FOR_UPDATES,		EMobblerCommandCheckForUpdates);
+		if (static_cast<CMobblerAppUi*>(AppUi())->ScrobblingOn())
+			{
+			SetMenuItemTextL(aMenuPane, R_MOBBLER_DISABLE_SCROBBLING,	EMobblerCommandToggleScrobbling);
+			}
+		else
+			{
+			SetMenuItemTextL(aMenuPane, R_MOBBLER_ENABLE_SCROBBLING,	EMobblerCommandToggleScrobbling);
+			}
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_SLEEP_TIMER,				EMobblerCommandSleepTimer);
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_EXPORT_QUEUE_TO_LOG,		EMobblerCommandExportQueueToLogFile);
 		}
 
 	// Now the menu text is set, dimming logic is next

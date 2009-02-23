@@ -118,6 +118,9 @@ public:
 	
 	TBool ExportQueueToLogFileL();
 	
+	TBool ScrobblingOn() { return iScrobblingOn; }
+	void ToggleScrobbling() { iScrobblingOn = !iScrobblingOn; }
+	
 private:
 	void RunL();
 	void DoCancel();
@@ -228,6 +231,8 @@ private:
 	
 	TTime iNextUpdateCheck;
 	TBool iCheckForUpdates;
+	
+	TBool iScrobblingOn;
 	};
 
 #endif // __MOBBLERLASTFMCONNECTION_H__

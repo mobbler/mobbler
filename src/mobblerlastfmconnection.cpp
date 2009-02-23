@@ -173,6 +173,8 @@ void CMobblerLastFMConnection::ConstructL(const TDesC& aUsername, const TDesC& a
 	// for new settings so save them after loading
 	LoadSettingsL();
 	SaveSettingsL();
+	
+	iScrobblingOn = ETrue;
 	}
 
 void CMobblerLastFMConnection::LoadSettingsL()
@@ -1075,9 +1077,10 @@ void CMobblerLastFMConnection::TrackStoppedL()
 			}
 		
 		// Test if the track passes Last.fm's scrobble rules
-		if ( listenedFor.Int() >= iCurrentTrack->ScrobbleDuration().Int()
-				&& iCurrentTrack->TrackLength().Int() >= 30					// the track length is over 30 seconds.
-				&& iCurrentTrack->Artist().String().Length() > 0 )					// must have an artist name	
+		if (iScrobblingOn 
+			&& listenedFor.Int() >= iCurrentTrack->ScrobbleDuration().Int()
+			&& iCurrentTrack->TrackLength().Int() >= 30				// Track length is over 30 seconds
+			&& iCurrentTrack->Artist().String().Length() > 0)		// Must have an artist name
 			{
 			// It passed, so notify and append it to the list
 			iObserver.HandleTrackQueuedL(*iCurrentTrack);

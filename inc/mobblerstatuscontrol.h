@@ -139,7 +139,8 @@ private:
 	CMobblerBitmap* iMobblerBitmapLastFM;
 	CMobblerBitmap* iMobblerBitmapSpeakerLow;
 	CMobblerBitmap* iMobblerBitmapSpeakerHigh;
-	CMobblerBitmap* iMobblerBitmapScrobble;
+	CMobblerBitmap* iMobblerBitmapScrobbleOn;
+	CMobblerBitmap* iMobblerBitmapScrobbleOff;
 	CMobblerBitmap* iMobblerBitmapTrackIcon;
 	CMobblerBitmap* iMobblerBitmapMusicAppIcon;
 	CMobblerBitmap* iMobblerBitmapAppIcon;
@@ -163,6 +164,7 @@ private:
     
     // text from resource files
     HBufC* iResTextScrobbledQueuedFormat;
+    HBufC* iResTextScrobblingOff;
     HBufC* iResTextOffline;
     HBufC* iResTextOnline;
     HBufC* iResTextArtist;

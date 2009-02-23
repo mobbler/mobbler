@@ -1,7 +1,7 @@
 /*
 mobblerbitmap.cpp
 
-mobbler, a last.fm mobile scrobbler for Symbian smartphones.
+Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
 Copyright (C) 2008  Michael Coffey
 
 http://code.google.com/p/mobbler
@@ -21,12 +21,12 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-#include "mobblerbitmap.h"
-
 #include <akniconutils.h>
 #include <aknutils.h>
 #include <aknsutils.h>
 #include <imageconversion.h>
+
+#include "mobblerbitmap.h"
 
 CMobblerBitmap* CMobblerBitmap::NewL(const TDesC& aMifFileName, TInt aBitmapIndex, TInt iMaskIndex)
 	{
@@ -46,11 +46,11 @@ CMobblerBitmap* CMobblerBitmap::NewL(TUid aAppUid)
 	return self;
 	}
 
-CMobblerBitmap* CMobblerBitmap::NewL(MMobblerBitmapObserver& aObserver, const TDesC& aFileName, const TUid aFileUid)
+CMobblerBitmap* CMobblerBitmap::NewL(MMobblerBitmapObserver& aObserver, const TDesC& aFileName, const TUid aFileUid, const TBool aGrayscale)
 	{
 	CMobblerBitmap* self = new(ELeave) CMobblerBitmap(&aObserver);
 	CleanupStack::PushL(self);
-	self->ConstructL(aFileName, aFileUid);
+	self->ConstructL(aFileName, aFileUid, aGrayscale);
 	CleanupStack::Pop(self);
 	return self;
 	}
@@ -123,7 +123,7 @@ TSize CMobblerBitmap::SizeInPixels() const
 	return returnSize;
 	}
 	
-void CMobblerBitmap::ConstructL(const TDesC& aFileName, const TUid aFileUid)
+void CMobblerBitmap::ConstructL(const TDesC& aFileName, const TUid aFileUid, const TBool aGrayscale)
 	{
 	// find the drive the mobbler is installed on so that we know where the graphic file is
 	TParse parse;
@@ -136,7 +136,14 @@ void CMobblerBitmap::ConstructL(const TDesC& aFileName, const TUid aFileUid)
 	iImageDecoder = CImageDecoder::FileNewL(CCoeEnv::Static()->FsSession(), fileName, CImageDecoder::EOptionAlwaysThread, aFileUid, TUid::Null(), TUid::Null());
 	const TFrameInfo& info = iImageDecoder->FrameInfo();
 	iBitmap = new(ELeave) CFbsBitmap();
-	iBitmap->Create(info.iOverallSizeInPixels, info.iFrameDisplayMode);
+	if (aGrayscale)
+		{
+		iBitmap->Create(info.iOverallSizeInPixels, EGray256);	
+		}
+	else
+		{
+		iBitmap->Create(info.iOverallSizeInPixels, info.iFrameDisplayMode);
+		}
 	
 	if (info.iFlags & TFrameInfo::ETransparencyPossible)
 		{

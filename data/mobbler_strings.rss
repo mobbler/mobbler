@@ -126,6 +126,7 @@ RESOURCE STRING r_mobbler_update						{text = STR_mobbler_update;}
 RESOURCE STRING r_mobbler_no_update						{text = STR_mobbler_no_update;}
 
 RESOURCE STRING r_mobbler_scrobbled_queued				{text = STR_mobbler_scrobbled_queued;}
+RESOURCE STRING r_mobbler_scrobbling_off				{text = STR_mobbler_scrobbling_off;}
 
 RESOURCE STRING r_mobbler_ask_go_online					{text = STR_mobbler_ask_go_online;}
 
@@ -151,6 +152,9 @@ RESOURCE STRING r_mobbler_softkey_set				{ text = STR_mobbler_softkey_set; }
 RESOURCE STRING r_mobbler_softkey_remove			{ text = STR_mobbler_softkey_remove; }
 RESOURCE STRING r_mobbler_sleep_timer_expired		{ text = STR_mobbler_sleep_timer_expired; }
 RESOURCE STRING r_mobbler_sleep_timer_removed		{ text = STR_mobbler_sleep_timer_removed; }
+
+RESOURCE STRING r_mobbler_enable_scrobbling		{ text = STR_mobbler_enable_scrobbling; }
+RESOURCE STRING r_mobbler_disable_scrobbling	{ text = STR_mobbler_disable_scrobbling; }
 
 ///////////////////////////////////////////////////////////////////////////////
 

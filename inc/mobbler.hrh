@@ -36,6 +36,7 @@ enum TMobblerSettingItemListViewCommands
 	EMobblerCommandRadio,
 	
 	EMobblerCommandTools,
+	EMobblerCommandToggleScrobbling,
 	EMobblerCommandSleepTimer,
 	EMobblerCommandExportQueueToLogFile,
 	

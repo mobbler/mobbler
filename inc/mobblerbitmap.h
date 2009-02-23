@@ -42,7 +42,7 @@ public:
 	
 	static CMobblerBitmap* NewL(const TDesC& aMifFileName, TInt aBitmapIndex, TInt iMaskIndex);
 	static CMobblerBitmap* NewL(TUid aAppUid);
-	static CMobblerBitmap* NewL(MMobblerBitmapObserver& aObserver, const TDesC& aFileName, const TUid aImageType = KNullUid);
+	static CMobblerBitmap* NewL(MMobblerBitmapObserver& aObserver, const TDesC& aFileName, const TUid aImageType = KNullUid, const TBool aGrayscale = EFalse);
 	static CMobblerBitmap* NewL(MMobblerBitmapObserver& aObserver, const TDesC8& aData, const TUid aImageType = KNullUid);
 	~CMobblerBitmap();
 	
@@ -53,7 +53,7 @@ public:
 	TSize SizeInPixels() const;
 	
 private:
-	void ConstructL(const TDesC& aFileName, const TUid aFileUid);
+	void ConstructL(const TDesC& aFileName, const TUid aFileUid, const TBool aGrayscale);
 	void ConstructL(const TDesC8& aData, const TUid aFileUid);
 	void ConstructL(TUid aAppUid);
 	void ConstructL(const TDesC& aMifFileName, TInt aBitmapIndex, TInt iMaskIndex);

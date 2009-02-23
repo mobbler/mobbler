@@ -191,6 +191,10 @@ RESOURCE MENU_PANE r_mobbler_tools_submenu_pane
 			},
 		MENU_ITEM
 			{
+			command = EMobblerCommandToggleScrobbling;
+			},
+		MENU_ITEM
+			{
 			command = EMobblerCommandSleepTimer;
 			},
 		MENU_ITEM
