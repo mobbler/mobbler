@@ -156,6 +156,8 @@ RESOURCE STRING r_mobbler_sleep_timer_removed		{ text = STR_mobbler_sleep_timer_
 RESOURCE STRING r_mobbler_enable_scrobbling		{ text = STR_mobbler_enable_scrobbling; }
 RESOURCE STRING r_mobbler_disable_scrobbling	{ text = STR_mobbler_disable_scrobbling; }
 
+RESOURCE STRING r_mobbler_note_stop_music_player	{ text = STR_mobbler_note_stop_music_player; }
+
 ///////////////////////////////////////////////////////////////////////////////
 
 // Mobbler 0.3.5 resources above,

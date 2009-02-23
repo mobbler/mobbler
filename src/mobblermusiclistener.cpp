@@ -21,14 +21,15 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
+#include <mobbler/mobblercontentlistinginterface.h>
+#include <utf.h>
+
 #include "mobblerappui.h"
 #include "mobblermusiclistener.h"
 #include "mobblernowplayingcallback.h"
+#include "mobblerradioplayer.h"
 #include "mobblerstring.h"
 #include "mobblertrack.h"
-
-#include <mobbler/mobblercontentlistinginterface.h>
-#include <utf.h>
 
 const TUid KMobblerMusicAppImplUid = {0xA0007CAA};
 const TUid KContentListingImplUid = {0xA000BEB1};
@@ -192,6 +193,13 @@ const TDesC& CMobblerMusicAppListener::MusicAppNameL() const
 
 void CMobblerMusicAppListener::NowPlayingL()
 	{
+	if (static_cast<CMobblerAppUi*>(CEikonEnv::Static()->AppUi())->
+												RadioPlayer()->CurrentTrack())
+		{
+		static_cast<CMobblerAppUi*>(CEikonEnv::Static()->AppUi())->
+												RadioPlayer()->Stop();
+		}
+
 	if ( iCurrentTrack )
 		{
 		// We are currently listening to a track so just send the old one again
@@ -373,6 +381,11 @@ void CMobblerMusicAppListener::PlayerPositionL(TTimeIntervalSeconds aPlayerPosit
 			static_cast<CMobblerAppUi*>(CEikonEnv::Static()->AppUi())->StatusDrawDeferred();
 			}
 		}
+	}
+
+TBool CMobblerMusicAppListener::IsPlaying() const
+	{
+	return (iCurrentTrack && iMusicPlayerState == EMPlayerRCtrlPlaying);
 	}
 	
 // End of file

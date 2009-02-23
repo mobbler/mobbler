@@ -105,6 +105,8 @@ private:
 	void LoadRadioStationsL();
 	void SaveRadioStationsL();
 	void SetSleepTimer();
+	TBool RadioStartable() const;
+
 private: // from MMobblerSleepTimerNotify
 	void TimerExpiredL(TAny* aTimer, TInt aError);
 	

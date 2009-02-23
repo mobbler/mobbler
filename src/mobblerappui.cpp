@@ -366,8 +366,12 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 				}
 			break;
 		case EMobblerCommandRadioArtist:
-			// ask the user for the artist name	
+			if (!RadioStartable())
+				{
+				break;
+				}
 
+			// ask the user for the artist name	
 			if (iPreviousRadioArtist)
 				{
 				artist = *iPreviousRadioArtist;
@@ -391,6 +395,10 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 			
 			break;
 		case EMobblerCommandRadioTag:
+			if (!RadioStartable())
+				{
+				break;
+				}
 			
 			// ask the user for the tag
 			if (iPreviousRadioTag)
@@ -416,6 +424,10 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 
 			break;
 		case EMobblerCommandRadioUser:
+			if (!RadioStartable())
+				{
+				break;
+				}
 			
 			// ask the user for the user
 			if (iPreviousRadioUser)
@@ -582,6 +594,11 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 void CMobblerAppUi::RadioStartL(CMobblerLastFMConnection::TRadioStation aRadioStation, const TDesC8& aRadioOption)
 	{
 	iPreviousRadioStation = aRadioStation;
+	if (!RadioStartable())
+		{
+		return;
+		}
+
 	TInt error = iRadioPlayer->StartL(aRadioStation, aRadioOption);
 	
 	TBool startStationOnConnectCompleteCallback(EFalse);
@@ -619,13 +636,33 @@ void CMobblerAppUi::RadioStartL(CMobblerLastFMConnection::TRadioStation aRadioSt
 		}
 	}
 			
+TBool CMobblerAppUi::RadioStartable() const
+	{
+	// Can start only if the music player isn't already playing.
+	if (iMusicListener->IsPlaying())
+		{
+		// Tell the user that there was an error connecting
+		HBufC* errorText = iResourceReader->AllocReadLC(R_MOBBLER_NOTE_STOP_MUSIC_PLAYER);
+		CAknResourceNoteDialog *note = new (ELeave) CAknInformationNote(EFalse);
+		note->ExecuteLD(*errorText);
+		CleanupStack::PopAndDestroy(errorText);
+
+		return EFalse;
+		}
+	else
+		{
+		return ETrue;
+		}
+	}
 
 TBool CMobblerAppUi::RadioResumable() const
 	{
 	// Can resume only if the radio is not playing now,
+	// and if the music player isn't currently playing (paused is ok),
 	// and if a previous radio station is known.
-	if (!(RadioPlayer()->CurrentTrack()) &&
-		(iPreviousRadioStation != CMobblerLastFMConnection::EUnknown))
+	if (!iRadioPlayer->CurrentTrack() &&
+		!iMusicListener->IsPlaying() &&
+		iPreviousRadioStation != CMobblerLastFMConnection::EUnknown)
 		{
 		return ETrue;
 		}

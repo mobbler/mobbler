@@ -44,6 +44,7 @@ public:
 	CMobblerTrack* CurrentTrack();
 	void NowPlayingL();
 	const TDesC& MusicAppNameL() const;
+	TBool IsPlaying() const;
 	
 private:
 	CMobblerMusicAppListener(CMobblerLastFMConnection& aSubmitter);
