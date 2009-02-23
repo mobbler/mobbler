@@ -99,7 +99,7 @@
 }-"!:\resource\apps\mobbler.rsc"
 
 ; Strings resource file in an embedded sis
-@"mobbler-strings.sis",(0xA000B6C3)
+@"mobbler-strings.sisx",(0xA000B6C3)
 
 ; The application registration file
 "$(EPOCROOT)epoc32\data\z\private\10003a3f\apps\mobbler_reg.r01"-"!:\private\10003a3f\import\apps\mobbler_reg.rsc"
