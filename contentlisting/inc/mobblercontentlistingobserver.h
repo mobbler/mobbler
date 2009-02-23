@@ -29,6 +29,7 @@ class MMobblerContentListingObserver
 public:
 	virtual void SetAlbumL(const TDesC& aAlbum) = 0;
 	virtual void SetTrackNumber(const TInt aTrackNumber) = 0;
+	virtual void SetPathL(const TDesC& aPath) = 0;
 	};
 
 #endif // __MOBBLERCONTENTLISTINGOBSERVER_H__

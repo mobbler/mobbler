@@ -237,6 +237,12 @@ const TDesC8& CMobblerTrack::AlbumArtLocation() const
 	return *iAlbumArtLocation;
 	}
 
+void CMobblerTrack::SetAlbumArtL(const TDesC& aAlbumArt)
+	{
+	delete iAlbumArt;
+	iAlbumArt = CMobblerBitmap::NewL(*this, aAlbumArt);
+	}
+
 void CMobblerTrack::SetAlbumArtL(const TDesC8& aAlbumArt)
 	{
 	delete iAlbumArt;

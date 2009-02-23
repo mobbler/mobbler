@@ -71,6 +71,7 @@ public:
 	void BufferAdded(TInt aBufferSize);
 	TInt Buffered() const;
 	
+	void SetAlbumArtL(const TDesC& aAlbumArt);
 	void SetAlbumArtL(const TDesC8& aAlbumArt);
 	const CMobblerBitmap* AlbumArt() const;
 	

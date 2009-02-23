@@ -65,6 +65,7 @@ private: // from MMobblerMusicAppObserver
 private: // from MMobblerContentListingObserver
 	void SetAlbumL(const TDesC& aAlbum);
 	void SetTrackNumber(const TInt aTrackNumber);
+	void SetPathL(const TDesC& aPath);
     
 private:
 	// Music app observer

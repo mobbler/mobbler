@@ -586,7 +586,15 @@ void CMobblerStatusControl::Draw(const TRect& /*aRect*/) const
 				iStateText.Append(*iResTextStateOffline);
 				}
 
-			albumArt = iMobblerBitmapMusicAppIcon;
+			if (iAppUi.CurrentTrack()->AlbumArt() && iAppUi.CurrentTrack()->AlbumArt()->Bitmap())
+				{
+				// the current track has album art and it has finished loading
+				albumArt = iAppUi.CurrentTrack()->AlbumArt();
+				}
+			else
+				{
+				albumArt = iMobblerBitmapMusicAppIcon;
+				}
 			}
 	
 #ifdef _DEBUG

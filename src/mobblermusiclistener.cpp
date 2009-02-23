@@ -21,6 +21,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
+#include <bautils.h> 
 #include <mobbler/mobblercontentlistinginterface.h>
 #include <utf.h>
 
@@ -33,6 +34,23 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 const TUid KMobblerMusicAppImplUid = {0xA0007CAA};
 const TUid KContentListingImplUid = {0xA000BEB1};
+
+const TPtrC KArtExtensionArray[] =
+	{
+	_L(".jpg"),
+	_L(".gif"),
+	_L(".png"),
+	};
+
+const TPtrC KArtFileArray[] =
+	{
+	_L("cover.jpg"),
+	_L("cover.gif"),
+	_L("cover.png"),
+	_L("folder.jpg"),
+	_L("folder.gif"),
+	_L("folder.png"),
+	};
 
 CMobblerMusicAppListener* CMobblerMusicAppListener::NewL(CMobblerLastFMConnection& aSubmitter)
 	{
@@ -280,6 +298,74 @@ void CMobblerMusicAppListener::SetAlbumL(const TDesC& aAlbum)
 	if (iCurrentTrack)
 		{
 		iCurrentTrack->SetAlbumL(aAlbum);
+		}
+	}
+	
+void CMobblerMusicAppListener::SetPathL(const TDesC& aPath)
+	{
+	if (!iCurrentTrack)
+		{
+		return;
+		}
+
+	TParse parse;
+	parse.Set(aPath, NULL, NULL);
+	TFileName fileName;
+	TBool found(EFalse);
+
+	// First check for %album%.jpg/gif/png
+	if (iCurrentTrack->Album().String().Length() > 0)
+		{
+		const TInt arraySize  = sizeof(KArtExtensionArray) / sizeof(TPtrC);
+		for (TInt i(0); i < arraySize; ++i)
+			{
+			fileName.Copy(parse.DriveAndPath());
+			fileName.Append(iCurrentTrack->Album().String());
+			fileName.Append(KArtExtensionArray[i]);
+
+			if (BaflUtils::FileExists(CCoeEnv::Static()->FsSession(), fileName))
+				{
+				found = ETrue;
+				break;
+				}
+			}
+		}
+
+	// If not found, check for cover.jpg/gif/png, folder.jpg/gif/png
+	const TInt arraySize  = sizeof(KArtFileArray) / sizeof(TPtrC);
+	for (TInt i(0); i < arraySize && !found; ++i)
+		{
+		fileName.Copy(parse.DriveAndPath());
+		fileName.Append(KArtFileArray[i]);
+
+		if (BaflUtils::FileExists(CCoeEnv::Static()->FsSession(), fileName))
+			{
+			found = ETrue;
+			break;
+			}
+		}
+
+	// If still not found, check for %artist%.jpg/gif/png
+	if (!found && iCurrentTrack->Artist().String().Length() > 0)
+		{
+		const TInt arraySize  = sizeof(KArtExtensionArray) / sizeof(TPtrC);
+		for (TInt i(0); i < arraySize; ++i)
+			{
+			fileName.Copy(parse.DriveAndPath());
+			fileName.Append(iCurrentTrack->Artist().String());
+			fileName.Append(KArtExtensionArray[i]);
+
+			if (BaflUtils::FileExists(CCoeEnv::Static()->FsSession(), fileName))
+				{
+				found = ETrue;
+				break;
+				}
+			}
+		}
+
+	if (found)
+		{
+		iCurrentTrack->SetAlbumArtL(fileName);
 		}
 	}
 

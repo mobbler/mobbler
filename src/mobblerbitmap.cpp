@@ -125,14 +125,21 @@ TSize CMobblerBitmap::SizeInPixels() const
 	
 void CMobblerBitmap::ConstructL(const TDesC& aFileName, const TUid aFileUid, const TBool aGrayscale)
 	{
-	// find the drive the mobbler is installed on so that we know where the graphic file is
-	TParse parse;
 	TFileName fileName;
-	TFileName appFullName = RProcess().FileName();
-	parse.Set(appFullName, NULL, NULL);
-	fileName.Copy(parse.Drive());
-	fileName.Append(aFileName);	
-	
+	if (aFileName[0] == '\\')
+		{
+		// Find the drive the Mobbler is installed on so that we know where the graphic file is
+		TParse parse;
+		TFileName appFullName = RProcess().FileName();
+		parse.Set(appFullName, NULL, NULL);
+		fileName.Copy(parse.Drive());
+		fileName.Append(aFileName);
+		}
+	else
+		{
+		fileName.Copy(aFileName);
+		}
+
 	iImageDecoder = CImageDecoder::FileNewL(CCoeEnv::Static()->FsSession(), fileName, CImageDecoder::EOptionAlwaysThread, aFileUid, TUid::Null(), TUid::Null());
 	const TFrameInfo& info = iImageDecoder->FrameInfo();
 	iBitmap = new(ELeave) CFbsBitmap();
@@ -225,4 +232,5 @@ void CMobblerBitmap::DoCancel()
 	{
 	iImageDecoder->Cancel();
 	}
-				
+
+// End of file

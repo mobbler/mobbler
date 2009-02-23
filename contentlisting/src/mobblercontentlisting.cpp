@@ -114,11 +114,13 @@ void CMobblerContentListing::FindAndSetAlbumNameL()
 			TPtrC title;
 			TPtrC album;
 			TInt32 trackNumber;
+			TPtrC path;
 			TInt artistError(item.GetField(ECLFFieldIdArtist,  artist));
 			TInt titleError(item.GetField(ECLFFieldIdSongName, title));
 			TInt albumError(item.GetField(ECLFFieldIdAlbum,    album));
 			TInt trackNumberError(item.GetField(ECLFFieldIdTrackNumber, 
 												trackNumber));
+			TInt pathError(item.GetField(ECLFFieldIdFileNameAndPath, path));
 			TBuf16<255> artistBuf;
 			artistBuf.Copy(iArtist);
 			TBuf16<255> titleBuf;
@@ -143,6 +145,10 @@ void CMobblerContentListing::FindAndSetAlbumNameL()
 						// TCLFDefaultFieldId. Luckily Compare() is 
 						// case-sensitive and that'll discriminate on the often
 						// different "the"/"The", "In"/"in", "Of"/"of" etc.
+						}
+					if (pathError == KErrNone)
+						{
+						iObserver->SetPathL(path);
 						}
 						break;
 					}
