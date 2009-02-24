@@ -42,8 +42,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "mobblertrack.h"
 #include "mobblerutility.h"
 
-_LIT(KSearchURL, "http://astore.amazon.co.uk/mobbler-21/search/203-4425999-4423160?node=25&keywords=%S&x=0&y=0&preview=");
-
 const TUid KBrowserUid = {0x10008D39};
 
 _LIT(KRadioFile, "c:radiostations.dat");
@@ -279,50 +277,8 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 			
 			break;
 			
-		case EMobblerCommandBuy:
-			const CMobblerTrack* track = CurrentTrack();
-			
-			if (track)
-				{
-				// There is a track playing so open the browser with the Amazon link.
-				// Ask if the user wants to open the full Amazon site.
-				
-				CAknQueryDialog* dlg = CAknQueryDialog::NewL();
-				HBufC* buyAmazon = iResourceReader->AllocReadLC(R_MOBBLER_BUY_AMAZON);
-				TBool yes( dlg->ExecuteLD(R_MOBBLER_QUERY_DIALOG, *buyAmazon));
-				CleanupStack::PopAndDestroy(buyAmazon);
-				
-				if (yes)
-					{
-					// create the URL encoded search string
-					HBufC* searchString = HBufC::NewLC((track->Artist().String().Length() + track->Album().String().Length() + 1) * 4);
-					
-					for (TInt i(0) ; i < track->Artist().String().Length() ; ++i)
-						{
-						searchString->Des().AppendFormat(_L("%%%2x"), track->Artist().String()[i]);
-						}
-					
-					searchString->Des().Append(_L("%%20"));
-					
-					for (TInt i(0) ; i < track->Album().String().Length() ; ++i)
-						{
-						searchString->Des().AppendFormat(_L("%%%2x"), track->Album().String()[i]);
-						}
-					
-					TPtr searchStringPtr(searchString->Des());
-					
-					HBufC* fullURL = HBufC::NewLC(searchString->Length() + KSearchURL().Length());
-					
-					fullURL->Des().AppendFormat(KSearchURL, &searchStringPtr);
-					
-#ifndef __WINS__
-					iBrowserLauncher->LaunchBrowserEmbeddedL(*fullURL);
-#endif
-					
-					CleanupStack::PopAndDestroy(fullURL);
-					CleanupStack::PopAndDestroy(searchString);
-					}
-				}
+		case EMobblerCommandMore:
+			// TODO
 	
 			break;
 		case EMobblerCommandResumeRadio:

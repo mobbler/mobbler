@@ -51,7 +51,16 @@ CLEANLIB : do_nothing
 RESOURCE :
 
 	mifconv $(ICONTARGETFILENAME) /X /h$(HEADERFILENAME) \
-		/c32 $(ICONDIR)\mobbler.svg
+		/c32,8 $(ICONDIR)\mobbler.svg \
+		$(ICONDIR)\more.svg \
+		$(ICONDIR)\love.svg \
+		$(ICONDIR)\ban.svg \
+		$(ICONDIR)\stop.svg \
+		$(ICONDIR)\play.svg \
+		$(ICONDIR)\next.svg \
+		$(ICONDIR)\speaker_low.svg \
+		$(ICONDIR)\speaker_high.svg
+		
 FREEZE : do_nothing
 
 SAVESPACE : do_nothing

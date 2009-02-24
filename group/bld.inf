@@ -41,15 +41,8 @@ PRJ_EXPORTS
 ..\inc\mobblercontentlistinginterface.h	mobbler\mobblercontentlistinginterface.h
 
 // mobbler_gfx
-..\gfx\icon_track.png										z:\resource\apps\mobbler\icon_track.png
-..\gfx\speaker_low.png										z:\resource\apps\mobbler\speaker_low.png
-..\gfx\speaker_high.png											z:\resource\apps\mobbler\speaker_high.png
-..\gfx\scrobble.png											z:\resource\apps\mobbler\scrobble.png
-..\gfx\ban27.png											z:\resource\apps\mobbler\ban.png
-..\gfx\love27.png											z:\resource\apps\mobbler\love.png
-..\gfx\next27.png											z:\resource\apps\mobbler\next.png
-..\gfx\play27.png											z:\resource\apps\mobbler\play.png
-..\gfx\bag27.png										z:\resource\apps\mobbler\pound.png
-..\gfx\stopp27.png											z:\resource\apps\mobbler\stop.png
+..\gfx\icon_track.png						z:\resource\apps\mobbler\icon_track.png
+..\gfx\scrobble.png							z:\resource\apps\mobbler\scrobble.png
 ..\gfx\lastfm_badges\lastfm_red_small.png				z:\resource\apps\mobbler\lastfm.png
 
+// End of file

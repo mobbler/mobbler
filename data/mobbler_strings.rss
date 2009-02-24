@@ -107,7 +107,6 @@ RESOURCE STRING r_mobbler_note_no_details	{text = STR_mobbler_note_no_details;}
 
 RESOURCE STRING r_mobbler_love_track		{text = STR_mobbler_love_track;}
 RESOURCE STRING r_mobbler_ban_track			{text = STR_mobbler_ban_track;}
-RESOURCE STRING r_mobbler_buy_amazon		{text = STR_mobbler_buy_amazon;} // TODO remove from code?
 
 RESOURCE STRING r_mobbler_note_bad_station		{text = STR_mobbler_note_bad_station;}
 RESOURCE STRING r_mobbler_note_no_tracks		{text = STR_mobbler_note_no_tracks;}

@@ -27,6 +27,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <aknsdrawutils.h>
 #include <aknutils.h>
 #include <icl/imagecodecdata.h>
+#include <mobbler.mbg>
 #include <mobbler_strings.rsg>
 
 #ifdef  __S60_50__
@@ -44,16 +45,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "mobblertimeout.h"
 #include "mobblertrack.h"
 
-_LIT(KPngSpeakerLow, "\\resource\\apps\\mobbler\\speaker_low.png");
-_LIT(KPngSpeakerHigh, "\\resource\\apps\\mobbler\\speaker_high.png");
+_LIT(KMobblerMifFile, "\\resource\\apps\\mobbler.mif");
 _LIT(KPngScrobble, "\\resource\\apps\\mobbler\\scrobble.png");
 _LIT(KPngTrackIcon, "\\resource\\apps\\mobbler\\icon_track.png");
-_LIT(KPngBan, "\\resource\\apps\\mobbler\\ban.png");
-_LIT(KPngLove, "\\resource\\apps\\mobbler\\love.png");
-_LIT(KPngNext, "\\resource\\apps\\mobbler\\next.png");
-_LIT(KPngPlay, "\\resource\\apps\\mobbler\\play.png");
-_LIT(KPngPound, "\\resource\\apps\\mobbler\\pound.png");
-_LIT(KPngStop, "\\resource\\apps\\mobbler\\stop.png");
 _LIT(KPngLastFM, "\\resource\\apps\\mobbler\\lastfm.png");
 _LIT(KMusicAppNameAndConnectionSeperator, " - ");
 
@@ -197,24 +191,25 @@ void CMobblerStatusControl::DoChangePaneTextL(const TDesC& aText) const
 
 void CMobblerStatusControl::LoadGraphicsL()
 	{
-	iMobblerBitmapBan = CMobblerBitmap::NewL(*this, KPngBan, KImageTypePNGUid);
-	iMobblerBitmapPound = CMobblerBitmap::NewL(*this, KPngPound, KImageTypePNGUid);
-	iMobblerBitmapLove = CMobblerBitmap::NewL(*this, KPngLove, KImageTypePNGUid);
-	iMobblerBitmapPlay = CMobblerBitmap::NewL(*this, KPngPlay, KImageTypePNGUid);
-	iMobblerBitmapNext = CMobblerBitmap::NewL(*this, KPngNext, KImageTypePNGUid);
-	iMobblerBitmapStop = CMobblerBitmap::NewL(*this, KPngStop, KImageTypePNGUid);
 	iMobblerBitmapLastFM = CMobblerBitmap::NewL(*this, KPngLastFM, KImageTypePNGUid);
-	iMobblerBitmapSpeakerLow = CMobblerBitmap::NewL(*this, KPngSpeakerLow, KImageTypePNGUid);
-	iMobblerBitmapSpeakerHigh = CMobblerBitmap::NewL(*this, KPngSpeakerHigh, KImageTypePNGUid);
 	iMobblerBitmapScrobbleOn = CMobblerBitmap::NewL(*this, KPngScrobble, KImageTypePNGUid);
 	iMobblerBitmapScrobbleOff = CMobblerBitmap::NewL(*this, KPngScrobble, KImageTypePNGUid, ETrue);
 	iMobblerBitmapTrackIcon = CMobblerBitmap::NewL(*this, KPngTrackIcon, KImageTypePNGUid);
+	
+	iMobblerBitmapMore = CMobblerBitmap::NewL(*this, KMobblerMifFile, EMbmMobblerMore, EMbmMobblerMore_mask);
+	iMobblerBitmapLove = CMobblerBitmap::NewL(*this, KMobblerMifFile, EMbmMobblerLove, EMbmMobblerLove_mask);
+	iMobblerBitmapBan = CMobblerBitmap::NewL(*this, KMobblerMifFile, EMbmMobblerBan, EMbmMobblerBan_mask);
+	iMobblerBitmapPlay = CMobblerBitmap::NewL(*this, KMobblerMifFile, EMbmMobblerPlay, EMbmMobblerPlay_mask);
+	iMobblerBitmapNext = CMobblerBitmap::NewL(*this, KMobblerMifFile, EMbmMobblerNext, EMbmMobblerNext_mask);
+	iMobblerBitmapStop = CMobblerBitmap::NewL(*this, KMobblerMifFile, EMbmMobblerStop, EMbmMobblerStop_mask);
+	iMobblerBitmapSpeakerHigh = CMobblerBitmap::NewL(*this, KMobblerMifFile, EMbmMobblerSpeaker_high, EMbmMobblerSpeaker_high_mask);
+	iMobblerBitmapSpeakerLow = CMobblerBitmap::NewL(*this, KMobblerMifFile, EMbmMobblerSpeaker_low, EMbmMobblerSpeaker_low_mask);
     
 	// Load the Music Player icon to display when a music player track is playing
-	iMobblerBitmapMusicAppIcon = CMobblerBitmap::NewL(KMusicAppUID);
+	iMobblerBitmapMusicAppIcon = CMobblerBitmap::NewL(*this, KMusicAppUID);
 	
 	// Load the Mobbler icon to display when a music player track is not playing
-	iMobblerBitmapAppIcon = CMobblerBitmap::NewL(KMobblerUID);
+	iMobblerBitmapAppIcon = CMobblerBitmap::NewL(*this, KMobblerUID);
 	}
 
 void CMobblerStatusControl::LoadResourceFileTextL()
@@ -257,9 +252,9 @@ void CMobblerStatusControl::SetPositions()
 								
 			iRectAlbumArt = 			TRect(TPoint((3 * KTextRectHeight) / 2, 0), TSize(albumArtDimension, albumArtDimension));
 			
-			iControlSize = TSize(64, 64);
+			iControlSize = TSize(Rect().Width() / 5, Rect().Width() / 5);
 			
-			iPointBuy =					TPoint((KTextRectHeight/2) + (0 * ((Rect().Width() - KTextRectHeight - iControlSize.iWidth) / 4)), Rect().Height() - iControlSize.iHeight - KTextRectHeight);
+			iPointMore =				TPoint((KTextRectHeight/2) + (0 * ((Rect().Width() - KTextRectHeight - iControlSize.iWidth) / 4)), Rect().Height() - iControlSize.iHeight - KTextRectHeight);
 			iPointLove =				TPoint((KTextRectHeight/2) + (1 * ((Rect().Width() - KTextRectHeight - iControlSize.iWidth) / 4)), Rect().Height() - iControlSize.iHeight - KTextRectHeight);
 			iPointBan =					TPoint((KTextRectHeight/2) + (2 * ((Rect().Width() - KTextRectHeight - iControlSize.iWidth) / 4)), Rect().Height() - iControlSize.iHeight - KTextRectHeight);
 			iPointPlayStop =			TPoint((KTextRectHeight/2) + (3 * ((Rect().Width() - KTextRectHeight - iControlSize.iWidth) / 4)), Rect().Height() - iControlSize.iHeight - KTextRectHeight);
@@ -280,7 +275,7 @@ void CMobblerStatusControl::SetPositions()
 			
 			iRectAlbumArt = 			TRect(TPoint(KTextRectHeight / 2, KTextRectHeight / 2), TSize(albumArtDimension, albumArtDimension));
 			TPoint controlsTopLeft = 	TPoint(Rect().Width() - iMobblerBitmapLastFM->SizeInPixels().iWidth - (KTextRectHeight / 2), iRectAlbumArt.iBr.iY - (3 * iControlSize.iHeight) - 4);
-			iPointBuy =					TPoint(controlsTopLeft.iX + (0 * iControlSize.iWidth), controlsTopLeft.iY + (1 * iControlSize.iHeight));
+			iPointMore =				TPoint(controlsTopLeft.iX + (0 * iControlSize.iWidth), controlsTopLeft.iY + (1 * iControlSize.iHeight));
 			iPointLove =				TPoint(controlsTopLeft.iX + (1 * iControlSize.iWidth), controlsTopLeft.iY + (0 * iControlSize.iHeight));
 			iPointBan =					TPoint(controlsTopLeft.iX + (1 * iControlSize.iWidth), controlsTopLeft.iY + (2 * iControlSize.iHeight));
 			iPointSkip =				TPoint(controlsTopLeft.iX + (2 * iControlSize.iWidth), controlsTopLeft.iY + (1 * iControlSize.iHeight));
@@ -308,7 +303,7 @@ void CMobblerStatusControl::SetPositions()
 
 			iControlSize = TSize((Rect().Width() - albumArtDimension) / 5, (Rect().Width() - albumArtDimension) / 5);
 						
-			iPointBuy =					TPoint(albumArtDimension + (KTextRectHeight / 2) + (0 * (Rect().Width() - albumArtDimension - KTextRectHeight) / 5), Rect().Height() - iControlSize.iHeight - (KTextRectHeight / 2));
+			iPointMore =				TPoint(albumArtDimension + (KTextRectHeight / 2) + (0 * (Rect().Width() - albumArtDimension - KTextRectHeight) / 5), Rect().Height() - iControlSize.iHeight - (KTextRectHeight / 2));
 			iPointLove =				TPoint(albumArtDimension + (KTextRectHeight / 2) + (1 * (Rect().Width() - albumArtDimension - KTextRectHeight) / 5), Rect().Height() - iControlSize.iHeight - (KTextRectHeight / 2));
 			iPointBan =					TPoint(albumArtDimension + (KTextRectHeight / 2) + (2 * (Rect().Width() - albumArtDimension - KTextRectHeight) / 5), Rect().Height() - iControlSize.iHeight - (KTextRectHeight / 2));
 			iPointPlayStop =			TPoint(albumArtDimension + (KTextRectHeight / 2) + (3 * (Rect().Width() - albumArtDimension - KTextRectHeight) / 5), Rect().Height() - iControlSize.iHeight - (KTextRectHeight / 2));
@@ -327,14 +322,14 @@ void CMobblerStatusControl::SetPositions()
 			
 			iPointLastFM =				TPoint(albumArtDimension + ((3 * KTextRectHeight) / 2) + (3 * iMobblerBitmapPlay->SizeInPixels().iWidth), KTextRectHeight / 2);
 			
+			iControlSize = TSize(27, 27);
+			
 			TPoint controlsTopLeft = 	TPoint(albumArtDimension + KTextRectHeight, KTextRectHeight / 2);
-			iPointBuy =					TPoint(controlsTopLeft.iX + (0 * iMobblerBitmapPound->SizeInPixels().iWidth), controlsTopLeft.iY + (1 * iMobblerBitmapPound->SizeInPixels().iHeight));
-			iPointLove =				TPoint(controlsTopLeft.iX + (1 * iMobblerBitmapPound->SizeInPixels().iWidth), controlsTopLeft.iY + (0 * iMobblerBitmapPound->SizeInPixels().iHeight));
-			iPointBan =					TPoint(controlsTopLeft.iX + (1 * iMobblerBitmapPound->SizeInPixels().iWidth), controlsTopLeft.iY + (2 * iMobblerBitmapPound->SizeInPixels().iHeight));
-			iPointSkip =				TPoint(controlsTopLeft.iX + (2 * iMobblerBitmapPound->SizeInPixels().iWidth), controlsTopLeft.iY + (1 * iMobblerBitmapPound->SizeInPixels().iHeight));
-			iPointPlayStop =			TPoint(controlsTopLeft.iX + (1 * iMobblerBitmapPlay->SizeInPixels().iWidth), controlsTopLeft.iY + (1 * iMobblerBitmapPlay->SizeInPixels().iHeight));
-	
-			iControlSize = iMobblerBitmapPound->SizeInPixels();
+			iPointMore =				TPoint(controlsTopLeft.iX + (0 * iControlSize.iWidth), controlsTopLeft.iY + (1 * iControlSize.iHeight));
+			iPointLove =				TPoint(controlsTopLeft.iX + (1 * iControlSize.iWidth), controlsTopLeft.iY + (0 * iControlSize.iHeight));
+			iPointBan =					TPoint(controlsTopLeft.iX + (1 * iControlSize.iWidth), controlsTopLeft.iY + (2 * iControlSize.iHeight));
+			iPointSkip =				TPoint(controlsTopLeft.iX + (2 * iControlSize.iWidth), controlsTopLeft.iY + (1 * iControlSize.iHeight));
+			iPointPlayStop =			TPoint(controlsTopLeft.iX + (1 * iControlSize.iWidth), controlsTopLeft.iY + (1 * iControlSize.iHeight));
 			
 			iRectTrackDetailsText = 	TRect(TPoint(KTextRectHeight / 2 + iMobblerBitmapTrackIcon->SizeInPixels().iWidth, iRectAlbumArt.iBr.iY + (KTextRectHeight / 2)), TSize(Rect().Width() - KTextRectHeight - iMobblerBitmapTrackIcon->SizeInPixels().iWidth, KTextRectHeight));
 			iRectScrobbledQueuedText = 	TRect(TPoint(KTextRectHeight / 2 + iMobblerBitmapTrackIcon->SizeInPixels().iWidth, Rect().Height() - ((3 * KTextRectHeight) / 2)), TSize(Rect().Width() - KTextRectHeight, KTextRectHeight));
@@ -348,6 +343,16 @@ void CMobblerStatusControl::SetPositions()
 	
 	iMobblerBitmapMusicAppIcon->SetSize(iRectAlbumArt.Size());
 	iMobblerBitmapAppIcon->SetSize(iRectAlbumArt.Size());
+	iMobblerBitmapBan->SetSize(iControlSize);
+	iMobblerBitmapMore->SetSize(iControlSize);
+	iMobblerBitmapLove->SetSize(iControlSize);
+	iMobblerBitmapPlay->SetSize(iControlSize);
+	iMobblerBitmapNext->SetSize(iControlSize);
+	iMobblerBitmapStop->SetSize(iControlSize);
+	
+	TSize speakerSize(KTextRectHeight, KTextRectHeight);
+	iMobblerBitmapSpeakerLow->SetSize(speakerSize);
+	iMobblerBitmapSpeakerHigh->SetSize(speakerSize);
 	}
 
 void CMobblerStatusControl::HandleResourceChange(TInt aType)
@@ -452,7 +457,7 @@ CMobblerStatusControl::~CMobblerStatusControl()
 	delete iBgContext;
 	
 	delete iMobblerBitmapBan;
-	delete iMobblerBitmapPound;
+	delete iMobblerBitmapMore;
 	delete iMobblerBitmapLove;
 	delete iMobblerBitmapPlay;
 	delete iMobblerBitmapNext;
@@ -708,8 +713,8 @@ void CMobblerStatusControl::Draw(const TRect& /*aRect*/) const
 		DrawText(volumeText, iRectProgressBar, KRgbBlack, CGraphicsContext::ECenter, iMobblerFont->WidthZeroInPixels());
 		
 		// Draw the speaker icons
-		DrawMobblerBitmap(iMobblerBitmapSpeakerLow, TPoint(iRectProgressBar.iTl.iX + iMobblerFont->WidthZeroInPixels(), iRectProgressBar.iTl.iY + 2));
-		DrawMobblerBitmap(iMobblerBitmapSpeakerHigh, TPoint(iRectProgressBar.iBr.iX - iMobblerFont->WidthZeroInPixels() - iMobblerBitmapSpeakerHigh->SizeInPixels().iWidth, iRectProgressBar.iTl.iY + 2));
+		DrawMobblerBitmap(iMobblerBitmapSpeakerLow, TPoint(iRectProgressBar.iTl.iX + iMobblerFont->WidthZeroInPixels(), iRectProgressBar.iTl.iY));
+		DrawMobblerBitmap(iMobblerBitmapSpeakerHigh, TPoint(iRectProgressBar.iBr.iX - iMobblerFont->WidthZeroInPixels() - iMobblerBitmapSpeakerHigh->SizeInPixels().iWidth, iRectProgressBar.iTl.iY));
 		}
 	else
 		{
@@ -743,7 +748,7 @@ void CMobblerStatusControl::Draw(const TRect& /*aRect*/) const
 		}
 	
 	// Draw the controls
-	DrawMobblerBitmap(iMobblerBitmapPound, TRect(iPointBuy, iControlSize));
+	DrawMobblerBitmap(iMobblerBitmapMore, TRect(iPointMore, iControlSize));
 	DrawMobblerBitmap(iMobblerBitmapLove, TRect(iPointLove, iControlSize));
 	DrawMobblerBitmap(iMobblerBitmapBan, TRect(iPointBan, iControlSize));
 	DrawMobblerBitmap(iMobblerBitmapNext, TRect(iPointSkip, iControlSize));
@@ -1001,7 +1006,7 @@ TKeyResponse CMobblerStatusControl::OfferKeyEventL(const TKeyEvent& aKeyEvent, T
 			response = EKeyWasConsumed;
 			break;
 		case EKeyLeftArrow:
-			const_cast<CMobblerAppUi&>(iAppUi).HandleCommandL(EMobblerCommandBuy);
+			const_cast<CMobblerAppUi&>(iAppUi).HandleCommandL(EMobblerCommandMore);
 			response = EKeyWasConsumed;
 			break;
 /*
@@ -1062,7 +1067,7 @@ void CMobblerStatusControl::HandlePointerEventL(const TPointerEvent& aPointerEve
 	// Check if they have touched any of the buttons
 	// if so, issue a command
 	
-	TRect buyRect(iPointBuy, iControlSize);
+	TRect moreRect(iPointMore, iControlSize);
 	TRect loveRect(iPointLove, iControlSize);
 	TRect playStopRect(iPointPlayStop, iControlSize);
 	TRect banRect(iPointBan, iControlSize);
@@ -1075,7 +1080,7 @@ void CMobblerStatusControl::HandlePointerEventL(const TPointerEvent& aPointerEve
 		{
 		case TPointerEvent::EButton1Down:
 			
-			if (buyRect.Contains(aPointerEvent.iPosition))
+			if (moreRect.Contains(aPointerEvent.iPosition))
 				event.iCode = EKeyLeftArrow;
 			else if (loveRect.Contains(aPointerEvent.iPosition))
 				event.iCode = EKeyUpArrow;
@@ -1099,7 +1104,7 @@ void CMobblerStatusControl::HandlePointerEventL(const TPointerEvent& aPointerEve
 			break;
 		case TPointerEvent::EButton1Up:
 			
-			if (buyRect.Contains(aPointerEvent.iPosition) && buyRect.Contains(iLastPointerEvent.iPosition))
+			if (moreRect.Contains(aPointerEvent.iPosition) && moreRect.Contains(iLastPointerEvent.iPosition))
 				event.iCode = EKeyLeftArrow;
 			else if (loveRect.Contains(aPointerEvent.iPosition) && loveRect.Contains(iLastPointerEvent.iPosition))
 				event.iCode = EKeyUpArrow;

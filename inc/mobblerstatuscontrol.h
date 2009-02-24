@@ -131,7 +131,7 @@ private:
 	
 	// Graphics
 	CMobblerBitmap* iMobblerBitmapBan;
-	CMobblerBitmap* iMobblerBitmapPound;
+	CMobblerBitmap* iMobblerBitmapMore;
 	CMobblerBitmap* iMobblerBitmapLove;
 	CMobblerBitmap* iMobblerBitmapPlay;
 	CMobblerBitmap* iMobblerBitmapNext;
@@ -189,7 +189,7 @@ private:
 	TRect iRectAlbumArt;
 	
 	TPoint iPointLastFM;
-	TPoint iPointBuy;
+	TPoint iPointMore;
 	TPoint iPointLove;
 	TPoint iPointBan;
 	TPoint iPointSkip;

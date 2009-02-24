@@ -28,18 +28,18 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "mobblerbitmap.h"
 
-CMobblerBitmap* CMobblerBitmap::NewL(const TDesC& aMifFileName, TInt aBitmapIndex, TInt iMaskIndex)
+CMobblerBitmap* CMobblerBitmap::NewL(MMobblerBitmapObserver& aObserver, const TDesC& aMifFileName, TInt aBitmapIndex, TInt iMaskIndex)
 	{
-	CMobblerBitmap* self = new(ELeave) CMobblerBitmap(NULL);
+	CMobblerBitmap* self = new(ELeave) CMobblerBitmap(aObserver);
 	CleanupStack::PushL(self);
 	self->ConstructL(aMifFileName, aBitmapIndex, iMaskIndex);
 	CleanupStack::Pop(self);
 	return self;
 	}
 
-CMobblerBitmap* CMobblerBitmap::NewL(TUid aAppUid)
+CMobblerBitmap* CMobblerBitmap::NewL(MMobblerBitmapObserver& aObserver, TUid aAppUid)
 	{
-	CMobblerBitmap* self = new(ELeave) CMobblerBitmap(NULL);
+	CMobblerBitmap* self = new(ELeave) CMobblerBitmap(aObserver);
 	CleanupStack::PushL(self);
 	self->ConstructL(aAppUid);
 	CleanupStack::Pop(self);
@@ -48,7 +48,7 @@ CMobblerBitmap* CMobblerBitmap::NewL(TUid aAppUid)
 
 CMobblerBitmap* CMobblerBitmap::NewL(MMobblerBitmapObserver& aObserver, const TDesC& aFileName, const TUid aFileUid, const TBool aGrayscale)
 	{
-	CMobblerBitmap* self = new(ELeave) CMobblerBitmap(&aObserver);
+	CMobblerBitmap* self = new(ELeave) CMobblerBitmap(aObserver);
 	CleanupStack::PushL(self);
 	self->ConstructL(aFileName, aFileUid, aGrayscale);
 	CleanupStack::Pop(self);
@@ -57,14 +57,14 @@ CMobblerBitmap* CMobblerBitmap::NewL(MMobblerBitmapObserver& aObserver, const TD
 
 CMobblerBitmap* CMobblerBitmap::NewL(MMobblerBitmapObserver& aObserver, const TDesC8& aData, const TUid aFileUid)
 	{
-	CMobblerBitmap* self = new(ELeave) CMobblerBitmap(&aObserver);
+	CMobblerBitmap* self = new(ELeave) CMobblerBitmap(aObserver);
 	CleanupStack::PushL(self);
 	self->ConstructL(aData, aFileUid);
 	CleanupStack::Pop(self);
 	return self;
 	}
 
-CMobblerBitmap::CMobblerBitmap(MMobblerBitmapObserver* aObserver)
+CMobblerBitmap::CMobblerBitmap(MMobblerBitmapObserver& aObserver)
 	:CActive(CActive::EPriorityStandard), iObserver(aObserver)
 	{
 	CActiveScheduler::Add(this);
@@ -77,6 +77,7 @@ CMobblerBitmap::~CMobblerBitmap()
 	delete iMask;
 	delete iImageDecoder;
 	delete iData;
+	delete iMifFileName;
 	}
 	
 CFbsBitmap* CMobblerBitmap::Bitmap() const
@@ -200,17 +201,24 @@ void CMobblerBitmap::ConstructL(TUid aAppUid)
 	iBitmapLoaded = ETrue;
 	}
 	
-void CMobblerBitmap::ConstructL(const TDesC& aMifFileName, TInt aBitmapIndex, TInt iMaskIndex)
+void CMobblerBitmap::ConstructL(const TDesC& aMifFileName, TInt aBitmapIndex, TInt aMaskIndex)
 	{
+	// Find which drive the mif file is on
+	iMifFileName = HBufC::NewL(aMifFileName.Length() + 2);
 	TParse parse;
 	TFileName mifFileName;
 	TFileName appFullName = RProcess().FileName();
 	parse.Set(appFullName, NULL, NULL);
-	mifFileName.Copy(parse.Drive());
-	mifFileName.Append(aMifFileName);	
+	iMifFileName->Des().Copy(parse.Drive());
+	iMifFileName->Des().Append(aMifFileName);
 	
-	AknIconUtils::CreateIconL(iBitmap, iMask, mifFileName, aBitmapIndex, iMaskIndex);
-	iBitmapLoaded = ETrue;
+	iMifBitmapIndex = aBitmapIndex;
+	iMifMaskIndex = aMaskIndex;
+	
+	// asked to be called back to do the conversion
+	TRequestStatus* status = &iStatus;
+	User::RequestComplete(status, KErrNone);
+	SetActive();
 	}
 
 void CMobblerBitmap::RunL()
@@ -220,11 +228,15 @@ void CMobblerBitmap::RunL()
 	
 	if (iStatus.Int() == KErrNone)
 		{
-		iBitmapLoaded = ETrue;
-		if (iObserver)
+		if (iMifFileName)
 			{
-			iObserver->BitmapLoadedL(this);
+			AknIconUtils::CreateIconL(iBitmap, iMask, *iMifFileName, iMifBitmapIndex, iMifMaskIndex);
+			delete iMifFileName;
+			iMifFileName = NULL;
 			}
+		
+		iBitmapLoaded = ETrue;
+		iObserver.BitmapLoadedL(this);
 		}
 	}
 

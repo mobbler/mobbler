@@ -29,11 +29,11 @@ enum TMobblerSettingItemListViewCommands
 	EMobblerCommandOffline = 0x6000,
 	EMobblerCommandEditSettings,
 	EMobblerCommandAbout,
-	EMobblerCommandBuy,
 	
 	EMobblerCommandUser,
 	EMobblerCommandTrack,
 	EMobblerCommandRadio,
+	EMobblerCommandMore,
 	
 	EMobblerCommandTools,
 	EMobblerCommandToggleScrobbling,

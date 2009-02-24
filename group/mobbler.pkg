@@ -55,16 +55,8 @@
 "$(EPOCROOT)\epoc32\data\z\resource\plugins\mobblercontentlisting.rsc"-"!:\resource\plugins\mobblercontentlisting.rsc"
 
 ; Graphics
-"$(EPOCROOT)epoc32\data\z\resource\apps\mobbler\speaker_low.png"-	"!:\resource\apps\mobbler\speaker_low.png"
-"$(EPOCROOT)epoc32\data\z\resource\apps\mobbler\speaker_high.png"-	"!:\resource\apps\mobbler\speaker_high.png"
 "$(EPOCROOT)epoc32\data\z\resource\apps\mobbler\scrobble.png"-		"!:\resource\apps\mobbler\scrobble.png"
 "$(EPOCROOT)epoc32\data\z\resource\apps\mobbler\icon_track.png"-		"!:\resource\apps\mobbler\icon_track.png"
-"$(EPOCROOT)epoc32\data\z\resource\apps\mobbler\ban.png"-			"!:\resource\apps\mobbler\ban.png"
-"$(EPOCROOT)epoc32\data\z\resource\apps\mobbler\love.png"-			"!:\resource\apps\mobbler\love.png"
-"$(EPOCROOT)epoc32\data\z\resource\apps\mobbler\play.png"-			"!:\resource\apps\mobbler\play.png"
-"$(EPOCROOT)epoc32\data\z\resource\apps\mobbler\stop.png"-			"!:\resource\apps\mobbler\stop.png"
-"$(EPOCROOT)epoc32\data\z\resource\apps\mobbler\next.png"-			"!:\resource\apps\mobbler\next.png"
-"$(EPOCROOT)epoc32\data\z\resource\apps\mobbler\pound.png"-			"!:\resource\apps\mobbler\pound.png"
 "$(EPOCROOT)epoc32\data\z\resource\apps\mobbler\lastfm.png"-		"!:\resource\apps\mobbler\lastfm.png"
 "$(EPOCROOT)epoc32\data\z\resource\apps\mobbler.mif"-				"!:\resource\apps\mobbler.mif"
 
