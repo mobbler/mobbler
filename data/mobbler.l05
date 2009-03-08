@@ -133,14 +133,14 @@ rls_string STR_mobbler_confirm_replace_log ".scrobbler.log esiste già. Sostitui
 rls_string STR_mobbler_note_queue_exported "Coda esportata in C:\Data\Mobbler\.scrobbler.log"
 rls_string STR_mobbler_note_queue_not_exported "C'è stato un problema nell'esportare la coda"
 rls_string STR_mobbler_note_export_empty_queue "Impossibile esportare una coda vuota"
-rls_string STR_mobbler_scrobble_percent "Fai scrobbling della traccia successiva" // TOO LONG - TEXT TRUNCATED
+rls_string STR_mobbler_scrobble_percent "Scrobbling traccia successiva" // TOO LONG - TEXT TRUNCATED: "Scrobbling traccia successi..."
 rls_string STR_mobbler_percent "%U percento"
 rls_string STR_mobbler_get_latest_language "File della lingua non aggiornato, recupera l'ultima versione da code.google.com/p/mobbler"
 rls_string STR_mobbler_sleep_timer "Spegnimento automatico"
 rls_string STR_mobbler_sleep_timer_prompt "Spegnimento automatico (minuti):"
 rls_string STR_mobbler_softkey_set "Imposta"
 rls_string STR_mobbler_softkey_remove "Rimuovi"
-rls_string STR_mobbler_sleep_timer_action "Azione timer spegnimento automatico:" // TOO LONG - TEXT TRUNCATED
+rls_string STR_mobbler_sleep_timer_action "Spegnimento automatico:"
 rls_string STR_mobbler_sleep_timer_action_stop "Ferma la riproduzione"
 rls_string STR_mobbler_sleep_timer_action_offline "Vai offline"
 rls_string STR_mobbler_sleep_timer_action_exit "Esci"
