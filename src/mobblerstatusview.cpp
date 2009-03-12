@@ -71,6 +71,15 @@ void CMobblerStatusView::SetMenuItemTextL(CEikMenuPane* aMenuPane,
 										  TInt aResourceId, TInt aCommandId)
 	{
 	HBufC* menuText = static_cast<CMobblerAppUi*>(AppUi())->AllocReadLC(aResourceId);
+
+	const TInt KTextLimit = CEikMenuPaneItem::SData::ENominalTextLength;
+	if (menuText->Length() > KTextLimit)
+		{
+		TBuf<KTextLimit> newText(menuText->Left(KTextLimit));
+		CleanupStack::PopAndDestroy(menuText);
+		menuText = newText.AllocLC();
+		}
+
 	aMenuPane->SetItemTextL(aCommandId, *menuText);
 	CleanupStack::PopAndDestroy(menuText);
 	}
