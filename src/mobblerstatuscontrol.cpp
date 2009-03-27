@@ -708,7 +708,11 @@ void CMobblerStatusControl::Draw(const TRect& /*aRect*/) const
 		DrawRect(rectBufferProgress, KRgbTransparent, KRgbLastFMRed);
 		
 		TInt volumePercent = ((iAppUi.RadioPlayer()->Volume() * 100) / iAppUi.RadioPlayer()->MaxVolume());
+#ifdef __WINS__
+		TBuf<8> volumeText;
+#else
 		TBuf<6> volumeText;
+#endif
 		volumeText.AppendFormat(_L("%d%%"), volumePercent);
 		DrawText(volumeText, iRectProgressBar, KRgbBlack, CGraphicsContext::ECenter, iMobblerFont->WidthZeroInPixels());
 		
