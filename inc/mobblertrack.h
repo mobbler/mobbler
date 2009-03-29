@@ -28,16 +28,26 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <s32file.h>
 
 #include "mobblerbitmap.h"
+#include "mobblerlastfmconnection.h"
 
 class CMobblerString;
 
-class CMobblerTrack : public CBase, public MMobblerBitmapObserver
+class CMobblerTrack : public CBase, public MMobblerBitmapObserver, public MMobblerFlatDataObserver
 	{
+private:
+	enum TState
+		{
+		ENone,
+		EFetchingAlbumInfo,
+		EFetchingAlbumArt
+		};
 public:
 	static CMobblerTrack* NewL(const TDesC8& aArtist,
 								const TDesC8& aTitle,
 								const TDesC8& aAlbum,
-								const TDesC8& aAlbumArtLocation,
+								const TDesC8& aMBAlbumID,
+								const TDesC8& aMBTrackID,
+								const TDesC8& aImage,
 								const TDesC8& aMp3Location,
 								TTimeIntervalSeconds aTrackLength,
 								const TDesC8& aRadioAuth);
@@ -52,12 +62,13 @@ public:
 	
 	const CMobblerString& Artist() const;
 	const CMobblerString& Album() const;
+	const CMobblerString& MBAlbumID() const;
+	const CMobblerString& MBTrackID() const;
 	void SetAlbumL(const TDesC& aAlbum);
-	const TInt TrackNumber() const;
+	TInt TrackNumber() const;
 	void SetTrackNumber(const TInt aTrackNumber);
 	const CMobblerString& Title() const;
 	const TDesC8& Mp3Location() const;
-	const TDesC8& AlbumArtLocation() const;
 	const TDesC8& RadioAuth() const;
 	TTimeIntervalSeconds TrackLength() const;
 	TTimeIntervalSeconds ScrobbleDuration() const;
@@ -71,8 +82,7 @@ public:
 	void BufferAdded(TInt aBufferSize);
 	TInt Buffered() const;
 	
-	void SetAlbumArtL(const TDesC& aAlbumArt);
-	void SetAlbumArtL(const TDesC8& aAlbumArt);
+	void SetPathL(const TDesC& aPath);
 	const CMobblerBitmap* AlbumArt() const;
 	
 	void SetStartTimeUTC(const TTime& aStartTimeUTC);
@@ -98,19 +108,29 @@ private:
 	void ConstructL(const TDesC8& aArtist,
 						const TDesC8& aTitle,
 						const TDesC8& aAlbum,
-						const TDesC8& aAlbumArtLocation,
+						const TDesC8& aMBAlbumID,
+						const TDesC8& aMBTrackID,
+						const TDesC8& aImage,
 						const TDesC8& aMp3Location,
 						TTimeIntervalSeconds aTrackLength,
 						const TDesC8& aRadioAuth);
 	
+	TFileName AlbumArtCacheFileName();
+	
 private:
 	void BitmapLoadedL(const CMobblerBitmap* aMobblerBitmap);
+	void BitmapResizedL(const CMobblerBitmap* aMobblerBitmap);
+	
+private:
+	void DataL(const TDesC8& aData, TInt aError);
 	
 private:
 	// track details
 	CMobblerString* iArtist;
 	CMobblerString* iTitle;
 	CMobblerString* iAlbum;
+	CMobblerString* iMBAlbumID;
+	CMobblerString* iMBTrackID;
 	TInt iTrackNumber;
 	TTime iStartTimeUTC;
 	TTimeIntervalSeconds iTotalPlayed;
@@ -121,14 +141,13 @@ private:
 	TBool iLove;
 	
 	// album art
-	HBufC8* iAlbumArtLocation;
-	HBufC8* iAlbumArtBuffer;
-	
+	HBufC8* iImage;
 	CMobblerBitmap* iAlbumArt;
 	
 	// mp3 location
 	HBufC8* iMp3Location;
 	HBufC8* iRadioAuth;
+	HBufC* iPath;
 	
 	TBool iScrobbled;
 	
@@ -136,6 +155,8 @@ private:
 	
 	TInt iDataSize;
 	TInt iBuffered;
+	
+	TState iState;
 	};
 	
 #endif // __TRACKINFO_H__

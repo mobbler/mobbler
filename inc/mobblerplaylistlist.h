@@ -1,5 +1,5 @@
 /*
-mobblerwebservicesobserver.h
+mobblerplaylistlist.h
 
 mobbler, a last.fm mobile scrobbler for Symbian smartphones.
 Copyright (C) 2008  Michael Coffey
@@ -21,16 +21,33 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-#ifndef __MOBBLERWEBSERVICESOBSERVER_H__
-#define __MOBBLERWEBSERVICESOBSERVER_H__
+#ifndef __MOBBLERPLAYLISTLIST_H__
+#define __MOBBLERPLAYLISTLIST_H__
 
+#include <aknlists.h>
 #include <e32base.h>
 
-class MWebServicesObserver
+#include "mobblerbitmap.h"
+#include "mobblerlistcontrol.h"
+#include "mobblerlastfmconnection.h"
+
+class CMobblerAppUi;
+class CGulIcon;
+
+class CMobblerPlaylistList : public CMobblerListControl
 	{
 public:
-	virtual void WebServicesResponseL(const TDesC8& aXML) = 0;
+	CMobblerPlaylistList(CMobblerAppUi& aAppUi, CMobblerWebServicesControl& aWebServicesControl);
+	~CMobblerPlaylistList();
+	
+	void ConstructL();
+	
+	CMobblerListControl* HandleListCommandL(TInt aCommand);
+	void SupportedCommandsL(RArray<TInt>& aCommands);
+	void ParseL(const TDesC8& aXML);
+
+private:
+	//data
 	};
-	
-#endif
-	
+
+#endif // 

@@ -26,6 +26,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <e32base.h>
 
+class CMobblerStatusControl;
+
 class CMobblerMarquee : public CBase
 	{
 private:
@@ -36,7 +38,7 @@ private:
 		};
 	
 public:
-	static CMobblerMarquee* NewL();
+	static CMobblerMarquee* NewL(CMobblerStatusControl& aStatusControl);
 	~CMobblerMarquee();
 	
 	void Start(const TDesC& aText, TInt aInitialOffset, TInt aTextWidth, TInt aDisplayWidth);
@@ -47,7 +49,7 @@ public:
 	void Reset();
 
 private:
-	CMobblerMarquee();
+	CMobblerMarquee(CMobblerStatusControl& aStatusControl);
 	void ConstructL();
 	
 private:
@@ -55,6 +57,8 @@ private:
 	void Update();
 	
 private:
+	CMobblerStatusControl& iStatusControl;
+	
 	TBuf<255> iText;
 	
 	TInt iTextWidth;

@@ -26,6 +26,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <mobbler.rsg>
 #include <mobbler_strings.rsg>
 
+#include "mobblerstring.h"
 #include "mobblerappui.h"
 #include "mobbleraccesspointsettingitem.h"
 #include "mobblerresourcereader.h"
@@ -73,7 +74,6 @@ void CMobblerSettingItemListView::HandleCommandL(TInt aCommand)
 		// save and set details then switch back to the status view
 		iSettings->SaveSettingValuesL();
 		static_cast<CMobblerAppUi*>(AppUi())->SetDetailsL(iSettings->Username(), iSettings->Password());
-		static_cast<CMobblerAppUi*>(AppUi())->SetCheckForUpdatesL(iSettings->CheckForUpdates());
 		static_cast<CMobblerAppUi*>(AppUi())->SetIapIDL(iSettings->IapID());
 		static_cast<CMobblerAppUi*>(AppUi())->SetBufferSize(iSettings->BufferSize());
 		AppUi()->ActivateLocalViewL(TUid::Uid(0xA0007CA8));
@@ -185,6 +185,28 @@ void CMobblerSettingItemListView::SetSleepTimerMinutesL(TInt aSleepTimerMinutes)
 	iSettings->SaveSettingValuesL();
 	}
 
+TTime CMobblerSettingItemListView::NextUpdateCheck()
+	{
+	return iSettings->NextUpdateCheck();
+	}
+
+void CMobblerSettingItemListView::SetNextUpdateCheckL(TTime aNextUpdateCheck)
+	{
+	iSettings->SetNextUpdateCheck(aNextUpdateCheck);
+	iSettings->SaveSettingValuesL();
+	}
+
+CMobblerLastFMConnection::TMode CMobblerSettingItemListView::Mode()
+	{
+	return iSettings->Mode();
+	}
+
+void CMobblerSettingItemListView::SetModeL(CMobblerLastFMConnection::TMode aMode)
+	{
+	iSettings->SetMode(aMode);
+	iSettings->SaveSettingValuesL();
+	}
+
 void CMobblerSettingItemListView::HandleStatusPaneSizeChange()
 	{
 	CAknView::HandleStatusPaneSizeChange();
@@ -197,11 +219,8 @@ TBool CMobblerSettingItemListView::HandleChangeSelectedSettingItemL(TInt /*aComm
 
 void CMobblerSettingItemListView::LoadListL()
 	{
-	iResourceReader = CMobblerResourceReader::NewL();
-	iResourceReader->AddResourceFileL(KLanguageRscFile, KLanguageRscVersion);
 	iIsNumberedStyle = iMobblerSettingItemList->IsNumberedStyle();
-	iIcons = iMobblerSettingItemList->ListBox()->
-								ItemDrawer()->FormattedCellData()->IconArray();
+	iIcons = iMobblerSettingItemList->ListBox()->ItemDrawer()->FormattedCellData()->IconArray();
 
 	// Username text setting item
 	CreateTextItemL(iSettings->Username(),
@@ -250,8 +269,6 @@ void CMobblerSettingItemListView::LoadListL()
 	iMobblerSettingItemList->SettingItemArray()->RecalculateVisibleIndicesL();
 
 	iMobblerSettingItemList->HandleChangeInItemArrayOrVisibilityL();
-
-	delete iResourceReader;
 	}
 
 void CMobblerSettingItemListView::CreateTextItemL(TDes& aText,
@@ -261,10 +278,9 @@ void CMobblerSettingItemListView::CreateTextItemL(TDes& aText,
 	CAknTextSettingItem* item = new (ELeave) CAknTextSettingItem(iOrdinal, aText);
 	CleanupStack::PushL(item);
 
-	HBufC* text = iResourceReader->AllocReadLC(aTitleResource);
-	item->SetEmptyItemTextL(*text);
-	item->ConstructL(iIsNumberedStyle, iOrdinal, *text, iIcons, aPageResource, -1);
-	CleanupStack::PopAndDestroy(text);
+	const TDesC& text = static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->ResourceReader().ResourceL(aTitleResource);
+	item->SetEmptyItemTextL(text);
+	item->ConstructL(iIsNumberedStyle, iOrdinal, text, iIcons, aPageResource, -1);
 	item->SetSettingPageFlags(CAknTextSettingPage::EPredictiveTextEntryPermitted);
 
 	iMobblerSettingItemList->SettingItemArray()->AppendL(item);
@@ -280,10 +296,10 @@ void CMobblerSettingItemListView::CreatePasswordItemL(TDes& aPassword,
 						iOrdinal, CAknPasswordSettingItem::EAlpha, aPassword);
 	CleanupStack::PushL(item);
 
-	HBufC* text = iResourceReader->AllocReadLC(aTitleResource);
-	item->SetEmptyItemTextL(*text);
-	item->ConstructL(iIsNumberedStyle, iOrdinal, *text, iIcons, aPageResource, -1);
-	CleanupStack::PopAndDestroy(text);
+	const TDesC& title = static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->ResourceReader().ResourceL(aTitleResource);
+	
+	item->SetEmptyItemTextL(title);
+	item->ConstructL(iIsNumberedStyle, iOrdinal, title, iIcons, aPageResource, -1);
 
 	iMobblerSettingItemList->SettingItemArray()->AppendL(item);
 	CleanupStack::Pop(item);
@@ -303,19 +319,17 @@ void CMobblerSettingItemListView::CreateIapItemL(TInt& aIapId,
 	CleanupStack::PushL(item);
 
 	// The same resource ID can be used for multiple enumerated text setting pages
-	HBufC* text = iResourceReader->AllocReadLC(aTitleResource);
-	item->ConstructL(iIsNumberedStyle, iOrdinal, *text, iIcons, 
+	const TDesC& text = static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->ResourceReader().ResourceL(aTitleResource);
+	item->ConstructL(iIsNumberedStyle, iOrdinal, text, iIcons, 
 				aPageResource, -1, 0, R_MOBBLER_POPUP_SETTING_TEXTS_ENUM);
-	CleanupStack::PopAndDestroy(text);
 
 	CArrayPtr<CAknEnumeratedText>* texts = item->EnumeratedTextArray();
 	texts->ResetAndDestroy();
 	CAknEnumeratedText* enumText;
 
 	// "Always ask" text
-	text = iResourceReader->AllocReadLC(R_MOBBLER_ALWAYS_ASK);
-	enumText = new (ELeave) CAknEnumeratedText(0, text);
-	CleanupStack::Pop(text);
+	enumText = new (ELeave) CAknEnumeratedText(0, static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->ResourceReader().ResourceL(R_MOBBLER_ALWAYS_ASK).AllocLC());
+	CleanupStack::Pop();
 	CleanupStack::PushL(enumText);
 	texts->AppendL(enumText);
 	CleanupStack::Pop(enumText);
@@ -344,9 +358,8 @@ void CMobblerSettingItemListView::CreateSliderItemL(TInt& aSliderValue,
 				iOrdinal, aSliderValue, aResourceSingular, aResourcePlural);
 	CleanupStack::PushL(item);
 
-	HBufC* text = iResourceReader->AllocReadLC(aTitleResource);
-	item->ConstructL(iIsNumberedStyle, iOrdinal, *text, iIcons, aPageResource, -1);
-	CleanupStack::PopAndDestroy(text);
+	const TDesC& text = static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->ResourceReader().ResourceL(aTitleResource);
+	item->ConstructL(iIsNumberedStyle, iOrdinal, text, iIcons, aPageResource, -1);
 
 	iMobblerSettingItemList->SettingItemArray()->AppendL(item);
 	CleanupStack::Pop(item);
@@ -363,26 +376,25 @@ void CMobblerSettingItemListView::CreateBinaryItemL(TBool& aBinaryValue,
 				CAknBinaryPopupSettingItem(iOrdinal, aBinaryValue);
 	CleanupStack::PushL(item);
 
-	HBufC* text = iResourceReader->AllocReadLC(aTitleResource);
+	const TDesC& title = static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->ResourceReader().ResourceL(aTitleResource);
 	// The same resource ID can be used for multiple binary setting pages
-	item->ConstructL(iIsNumberedStyle, iOrdinal, *text, iIcons, 
+	item->ConstructL(iIsNumberedStyle, iOrdinal, title, iIcons, 
 				aPageResource, -1, 0, R_MOBBLER_POPUP_SETTING_BINARY_TEXTS);
-	CleanupStack::PopAndDestroy(text);
 
 	// Load text dynamically
 	CArrayPtr<CAknEnumeratedText>* texts = item->EnumeratedTextArray();
 	texts->ResetAndDestroy();
 	// Text 1
-	text = iResourceReader->AllocReadLC(aFirstEnumResource);
-	CAknEnumeratedText* enumText = new (ELeave) CAknEnumeratedText(0, text);
-	CleanupStack::Pop(text);
+	const TDesC& text1 = static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->ResourceReader().ResourceL(aFirstEnumResource);
+	CAknEnumeratedText* enumText = new (ELeave) CAknEnumeratedText(0, text1.AllocLC());
+	CleanupStack::Pop();
 	CleanupStack::PushL(enumText);
 	texts->AppendL(enumText);
 	CleanupStack::Pop(enumText);
 	// Text 2
-	text = iResourceReader->AllocReadLC(aSecondEnumResource);
-	enumText = new (ELeave) CAknEnumeratedText(1, text);
-	CleanupStack::Pop(text);
+	const TDesC& text2 = static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->ResourceReader().ResourceL(aSecondEnumResource);
+	enumText = new (ELeave) CAknEnumeratedText(1, text2.AllocLC());
+	CleanupStack::Pop();
 	CleanupStack::PushL(enumText);
 	texts->AppendL(enumText);
 	CleanupStack::Pop(enumText);

@@ -21,9 +21,6 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-PRJ_PLATFORMS
-WINSCW GCCE
-
 PRJ_MMPFILES
 // application icon makefile
 gnumakefile icons.mk
@@ -43,6 +40,7 @@ PRJ_EXPORTS
 // mobbler_gfx
 ..\gfx\icon_track.png						z:\resource\apps\mobbler\icon_track.png
 ..\gfx\scrobble.png							z:\resource\apps\mobbler\scrobble.png
-..\gfx\lastfm_badges\lastfm_red_small.png				z:\resource\apps\mobbler\lastfm.png
+..\gfx\lastfm_badges\lastfm_red_small.png					z:\resource\apps\mobbler\lastfm.png
+..\gfx\default_user_small.png								z:\resource\apps\mobbler\default_user.png
 
 // End of file

@@ -29,30 +29,60 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <barsc.h>
 
 #if defined(__WINS__)
-	_LIT(KLanguageRscFile,"Z:\\Resource\\apps\\mobbler_strings.r01");
+_LIT(KLanguageRscFile,"Z:\\Resource\\apps\\mobbler_strings.r01");
 #else
-	_LIT(KLanguageRscFile,"C:\\Resource\\apps\\mobbler_strings.rsc");
+_LIT(KLanguageRscFile,"C:\\Resource\\apps\\mobbler_strings.rsc");
 #endif
+	
 const TInt KLanguageRscVersion(1);
 
-class CMobblerResourceReader
+class CMobblerResourceReader : public CActive
 	{
+private:
+	class CMobblerResource : public CBase
+		{
+	public:
+		CMobblerResource(TInt aResourceId, HBufC* aString);
+		~CMobblerResource();
+		
+		const TDesC& String() const;
+		
+		static TInt Compare(const TInt* aResourceId, const CMobblerResource& aResource);
+		static TInt Compare(const CMobblerResource& aLeft, const CMobblerResource& aRight);
+		
+	private:
+		TInt iResourceId;
+		HBufC* iString;
+		};
+	
 public:
+	static CMobblerResourceReader* NewL(const TDesC& aName, TInt aVersion);
 	~CMobblerResourceReader();
-	static CMobblerResourceReader* NewLC();
-	static CMobblerResourceReader* NewL();
-
-	void AddResourceFileL(const TDesC& aName, TInt aVersion);
-	HBufC8* AllocRead8LC(TInt aResourceId);
-	HBufC* AllocReadLC(TInt aResourceId);
-	HBufC* AllocReadL(TInt aResourceId);
+	
+	const TDesC& ResourceL(TInt aResourceId);
 
 private:
-	void ConstructL();
+	CMobblerResourceReader(TInt aVersion);
+	void ConstructL(const TDesC& aName);
+	
+private:
+	void RunL();
+	void DoCancel();
 
 private:
+	HBufC* iName;
+	TInt iVersion;
+	
+	HBufC* iStringNotFoundInResouce;
+	
+	RTimer iTimer;
+	
 	RResourceFile iResourceFile;
-	TBool iErrorDialogShown;
+	
+	mutable TBool iErrorDialogShown;
+	mutable RPointerArray<CMobblerResource> iResources;
+	
+	TLinearOrder<CMobblerResource> iLinearOrder;
 	};
 
 #endif // __MOBBLERRESOURCEREADER_H__

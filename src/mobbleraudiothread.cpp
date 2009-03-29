@@ -240,7 +240,9 @@ void CMobblerAudioThread::FillBufferL(TBool aDataAdded)
 			{
 			// we are already playing so add the last
 			//piece of the buffer to the stream
+#ifndef __WINS__
 			iStream->WriteL(*iBuffer[iBuffer.Count() - 1]);
+#endif
 			}
 		}
 	else if (!iShared.iPlaying && iOpen && iShared.iCurrent && PreBufferFilled())
@@ -252,7 +254,9 @@ void CMobblerAudioThread::FillBufferL(TBool aDataAdded)
 		const TInt KBufferCount(iBuffer.Count());
 		for (TInt i(0) ; i < KBufferCount ; ++i)
 			{
+#ifndef __WINS__
 			iStream->WriteL(*iBuffer[i]);
+#endif
 			}
 		}
 	}

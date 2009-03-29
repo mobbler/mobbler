@@ -24,8 +24,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #ifndef __MOBBLERRADIOPLAYER_H__
 #define __MOBBLERRADIOPLAYER_H__
 
-#include <MdaAudioOutputStream.h>
-
 #include "mobblerincomingcallmonitorobserver.h"
 #include "mobblerlastfmconnection.h"
 #include "mobbleraudiocontrol.h"
@@ -34,27 +32,39 @@ class CMobblerIncomingCallMonitor;
 class CMobblerRadioPlaylist;
 class CMobblerString;
 
-class MMobblerRadioPlayer
+class MMobblerRadioStateChangeObserver
 	{
 public:
-	virtual void SetPlaylistL(CMobblerRadioPlaylist* aPlaylist) = 0;
-	virtual void NextTrackL() = 0;
-	virtual void Stop() = 0;
+	virtual void HandleRadioStateChangedL() = 0;
 	};
 
 class CMobblerRadioPlayer : public CBase,
-							public MMobblerRadioPlayer,
 							public MMobblerIncomingCallMonitorObserver,
-							public MMobblerAudioControlObserver
+							public MMobblerAudioControlObserver,
+							public MMobblerFlatDataObserver
 
 	{
+public:
+	enum TState
+		{
+		EIdle,
+		EPlaying,
+		EFetchingPlaylist,
+		ESelectingStation
+		};
+	
 public:
 	static CMobblerRadioPlayer* NewL(CMobblerLastFMConnection& aLastFMConnection, TTimeIntervalSeconds aPreBufferSize, TInt aEqualizerIndex, TInt aVolume);
 	~CMobblerRadioPlayer();
 	
-	TInt StartL(CMobblerLastFMConnection::TRadioStation aRadioStation, const TDesC8& aRadioText);
+	void AddObserverL(MMobblerRadioStateChangeObserver* aObserver);
+	void RemoveObserver(MMobblerRadioStateChangeObserver* aObserver);
+	
+	void StartL(CMobblerLastFMConnection::TRadioStation aRadioStation, const CMobblerString* aRadioText);
 	
 	CMobblerTrack* CurrentTrack();
+	
+	TState State() const;
 
 	void NextTrackL();
 	void Stop();
@@ -82,12 +92,13 @@ private:
 	
 	void DoStop(TBool aDeleteNextTrack);
 	
+	void DoChangeStateL(TState aState);
+	
 private:
 	void DialogDismissedL(TInt aButtonId);
 
 private: // MMobblerRadioPlayer	
-	void SetPlaylistL(CMobblerRadioPlaylist* aPlaylist);
-	void WriteL(const TDesC8& aData, TInt aTotalDataSize);
+	void DataL(const TDesC8& aData, TInt aError);
 	
 private:
 	void HandleIncomingCallL(TPSTelephonyCallState aPSTelephonyCallState);
@@ -108,6 +119,12 @@ private:
 	TInt iVolume;
 	TInt iMaxVolume;
 	TInt iEqualizerIndex;
+	
+	TState iState;
+	
+	CMobblerString* iStation;
+	
+	RPointerArray<MMobblerRadioStateChangeObserver> iObservers;
 	};
 
 #endif // __MOBBLERRADIOPLAYER_H__

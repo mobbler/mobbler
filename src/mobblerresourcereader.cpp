@@ -30,96 +30,162 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "mobblerappui.h"
 #include "mobblerresourcereader.h"
 
-_LIT8(KStringNotFoundInResouce, "???");
+_LIT(KStringNotFoundInResouce, "???");
 
-CMobblerResourceReader* CMobblerResourceReader::NewLC()
+const TTimeIntervalMicroSeconds32 KTimeoutPeriod(1000000);
+
+CMobblerResourceReader::CMobblerResource::CMobblerResource(TInt aResourceId, HBufC* aString)
+	:iResourceId(aResourceId), iString(aString)
 	{
-	CMobblerResourceReader* self = new (ELeave) CMobblerResourceReader;
+	}
+
+CMobblerResourceReader::CMobblerResource::~CMobblerResource()
+	{
+	delete iString;
+	}
+
+TInt CMobblerResourceReader::CMobblerResource::Compare(const TInt* aResourceId, const CMobblerResource& aResource)
+	{
+	return *aResourceId - aResource.iResourceId;
+	}
+
+TInt CMobblerResourceReader::CMobblerResource::Compare(const CMobblerResource& aLeft, const CMobblerResource& aRight)
+	{
+	return Compare(&aLeft.iResourceId, aRight);
+	}
+
+const TDesC& CMobblerResourceReader::CMobblerResource::String() const
+	{
+	return *iString;
+	}
+
+CMobblerResourceReader* CMobblerResourceReader::NewL(const TDesC& aName, TInt aVersion)
+	{
+	CMobblerResourceReader* self = new(ELeave) CMobblerResourceReader(aVersion);
 	CleanupStack::PushL(self);
-	self->ConstructL();
+	self->ConstructL(aName);
+	CleanupStack::Pop(self);
 	return self;
 	}
 
-CMobblerResourceReader* CMobblerResourceReader::NewL()
+CMobblerResourceReader::CMobblerResourceReader(TInt aVersion)
+	:CActive(CActive::EPriorityStandard), iVersion(aVersion), iLinearOrder(CMobblerResource::Compare)
 	{
-	CMobblerResourceReader* self = NewLC();
-	CleanupStack::Pop();
-	return self;
+	CActiveScheduler::Add(this);
 	}
 
-void CMobblerResourceReader::ConstructL()
+void CMobblerResourceReader::ConstructL(const TDesC& aName)
 	{
-	iErrorDialogShown = EFalse;
+	iStringNotFoundInResouce = KStringNotFoundInResouce().AllocL();
+	iName = aName.AllocL();
+	
+	User::LeaveIfError(iTimer.CreateLocal());
 	}
 
 CMobblerResourceReader::~CMobblerResourceReader()
 	{
+	Cancel();
+	iTimer.Close();
+	
 	iResourceFile.Close();
+	
+	delete iStringNotFoundInResouce;
+	delete iName;
+	iResources.ResetAndDestroy();
 	}
 
-void CMobblerResourceReader::AddResourceFileL(const TDesC& aName, TInt aVersion)
+void CMobblerResourceReader::RunL()
 	{
-	iResourceFile.OpenL(CCoeEnv::Static()->FsSession(), aName);
-	TRAPD(error, iResourceFile.ConfirmSignatureL(aVersion));
-	
-	if (error != KErrNone)
+	if (iStatus.Int() == KErrNone)
 		{
 		iResourceFile.Close();
-
-		if (!iErrorDialogShown)
-			{
-			// Warn the user
-			HBufC* text = AllocReadLC(R_MOBBLER_GET_LATEST_LANGUAGE);
-			CAknQueryDialog* dlg = CAknQueryDialog::NewL();
-			dlg->ExecuteLD(R_MOBBLER_GET_LATEST_LANGUAGE_DIALOG, *text);
-			CleanupStack::PopAndDestroy(text);
-
-			iErrorDialogShown = ETrue;
-			}
 		}
 	}
 
-HBufC8* CMobblerResourceReader::AllocRead8LC(TInt aResourceId)
+void CMobblerResourceReader::DoCancel()
 	{
-	if (iResourceFile.OwnsResourceId(aResourceId))
+	iTimer.Cancel();
+	}
+
+const TDesC& CMobblerResourceReader::ResourceL(TInt aResourceId)
+	{
+	TInt position = iResources.FindInOrder(aResourceId, CMobblerResource::Compare);
+	
+	if (position != KErrNotFound)
 		{
-		return iResourceFile.AllocReadLC(aResourceId);
+		return iResources[position]->String();
 		}
 	else
 		{
-		if (!iErrorDialogShown)
+		// The string has not already been read so do it now
+		
+		if (!IsActive())
 			{
-			// Warn the user
-			HBufC* text = AllocReadLC(R_MOBBLER_GET_LATEST_LANGUAGE);
-			CAknQueryDialog* dlg = CAknQueryDialog::NewL();
-			dlg->ExecuteLD(R_MOBBLER_GET_LATEST_LANGUAGE_DIALOG, *text);
-			CleanupStack::PopAndDestroy(text);
-
-			iErrorDialogShown = ETrue;
+			// we are not active so the file must be closed
+			
+			iResourceFile.OpenL(CCoeEnv::Static()->FsSession(), *iName);
+			
+			TRAPD(error, iResourceFile.ConfirmSignatureL(iVersion));
+			
+			if (error != KErrNone)
+				{
+				if (!iErrorDialogShown)
+					{
+					// Warn the user
+					CAknQueryDialog* dlg = CAknQueryDialog::NewL();
+					dlg->ExecuteLD(R_MOBBLER_GET_LATEST_LANGUAGE_DIALOG, ResourceL(R_MOBBLER_GET_LATEST_LANGUAGE));
+			
+					iErrorDialogShown = ETrue;
+					}
+				
+				// There was an error so just return
+				return *iStringNotFoundInResouce;
+				}
+			
+			// Close the file sometime later
+			iTimer.After(iStatus, KTimeoutPeriod);
+			SetActive();
 			}
-
-		return KStringNotFoundInResouce().AllocLC();
+		else
+			{
+			// We are active so the file must be open, but reset the timer
+			Cancel();
+			iTimer.After(iStatus, KTimeoutPeriod);
+			SetActive();
+			}
+		
+		// The resource file must be sucessfully open here
+	
+		if (iResourceFile.OwnsResourceId(aResourceId))
+			{
+			HBufC8* resource8 = iResourceFile.AllocReadLC(aResourceId);
+			TResourceReader reader;
+			reader.SetBuffer(resource8);
+			HBufC* text = reader.ReadTPtrC().AllocLC();
+			CMobblerResource* resource = new(ELeave) CMobblerResource(aResourceId, text);
+			CleanupStack::Pop(text);
+			CleanupStack::PopAndDestroy(resource8);
+			CleanupStack::PushL(resource);
+			iResources.InsertInOrderL(resource, iLinearOrder);
+			CleanupStack::Pop(resource);
+			return resource->String();
+			}
+		else
+			{
+			if (!iErrorDialogShown)
+				{
+				// Warn the user
+				CAknQueryDialog* dlg = CAknQueryDialog::NewL();
+				dlg->ExecuteLD(R_MOBBLER_GET_LATEST_LANGUAGE_DIALOG, ResourceL(R_MOBBLER_GET_LATEST_LANGUAGE));
+	
+				iErrorDialogShown = ETrue;
+				
+				return *iStringNotFoundInResouce;
+				}
+			}
 		}
-	}
-
-HBufC* CMobblerResourceReader::AllocReadLC(TInt aResourceId)
-	{
-	HBufC* textBuffer = AllocReadL(aResourceId);
-	CleanupStack::PushL(textBuffer);
-	return textBuffer;
-	}
-
-HBufC* CMobblerResourceReader::AllocReadL(TInt aResourceId)
-	{
-	HBufC8* readBuffer = AllocRead8LC(aResourceId);
-	TResourceReader reader;
-	reader.SetBuffer(readBuffer);
-	TPtrC textPtr = reader.ReadTPtrC();
-
-	HBufC* textBuffer = HBufC::NewL(textPtr.Length());
-	*textBuffer = textPtr;
-	CleanupStack::PopAndDestroy(readBuffer);
-	return textBuffer;
+	
+	return *iStringNotFoundInResouce;
 	}
 
 // End of file

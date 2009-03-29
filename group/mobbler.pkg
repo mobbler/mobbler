@@ -25,7 +25,7 @@
 &EN, FR, GE, SP, IT, SW, NO, FI, AM, TU, RU, HU, DU, CS, SK, PL, ZH, AF, AR, EL, HE, IN, LV, LT, BP, RO
 
 ; Header
-#{"Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler"}, (0xA0007648), 0, 3, 4
+#{"Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler", "Mobbler"}, (0xA0007648), 0, 4, 0
 
 ; Localised vendor names
 %{"Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey", "Coffey"}
@@ -58,37 +58,11 @@
 "$(EPOCROOT)epoc32\data\z\resource\apps\mobbler\scrobble.png"-		"!:\resource\apps\mobbler\scrobble.png"
 "$(EPOCROOT)epoc32\data\z\resource\apps\mobbler\icon_track.png"-		"!:\resource\apps\mobbler\icon_track.png"
 "$(EPOCROOT)epoc32\data\z\resource\apps\mobbler\lastfm.png"-		"!:\resource\apps\mobbler\lastfm.png"
+"$(EPOCROOT)epoc32\data\z\resource\apps\mobbler\default_user.png"-		"!:\resource\apps\mobbler\default_user.png"
 "$(EPOCROOT)epoc32\data\z\resource\apps\mobbler.mif"-				"!:\resource\apps\mobbler.mif"
 
 ; Resource file
-{
-"$(EPOCROOT)epoc32\data\z\resource\apps\mobbler.r01"
-"$(EPOCROOT)epoc32\data\z\resource\apps\mobbler.r02"
-"$(EPOCROOT)epoc32\data\z\resource\apps\mobbler.r03"
-"$(EPOCROOT)epoc32\data\z\resource\apps\mobbler.r04"
-"$(EPOCROOT)epoc32\data\z\resource\apps\mobbler.r05"
-"$(EPOCROOT)epoc32\data\z\resource\apps\mobbler.r06"
-"$(EPOCROOT)epoc32\data\z\resource\apps\mobbler.r08"
-"$(EPOCROOT)epoc32\data\z\resource\apps\mobbler.r09"
-"$(EPOCROOT)epoc32\data\z\resource\apps\mobbler.r10"
-"$(EPOCROOT)epoc32\data\z\resource\apps\mobbler.r14"
-"$(EPOCROOT)epoc32\data\z\resource\apps\mobbler.r16"
-"$(EPOCROOT)epoc32\data\z\resource\apps\mobbler.r17"
-"$(EPOCROOT)epoc32\data\z\resource\apps\mobbler.r18"
-"$(EPOCROOT)epoc32\data\z\resource\apps\mobbler.r25"
-"$(EPOCROOT)epoc32\data\z\resource\apps\mobbler.r26"
-"$(EPOCROOT)epoc32\data\z\resource\apps\mobbler.r27"
-"$(EPOCROOT)epoc32\data\z\resource\apps\mobbler.r31"
-"$(EPOCROOT)epoc32\data\z\resource\apps\mobbler.r34"
-"$(EPOCROOT)epoc32\data\z\resource\apps\mobbler.r37"
-"$(EPOCROOT)epoc32\data\z\resource\apps\mobbler.r54"
-"$(EPOCROOT)epoc32\data\z\resource\apps\mobbler.r57"
-"$(EPOCROOT)epoc32\data\z\resource\apps\mobbler.r59"
-"$(EPOCROOT)epoc32\data\z\resource\apps\mobbler.r67"
-"$(EPOCROOT)epoc32\data\z\resource\apps\mobbler.r68"
-"$(EPOCROOT)epoc32\data\z\resource\apps\mobbler.r76"
-"$(EPOCROOT)epoc32\data\z\resource\apps\mobbler.r78"
-}-"!:\resource\apps\mobbler.rsc"
+"$(EPOCROOT)epoc32\data\z\resource\apps\mobbler.r01"-"!:\resource\apps\mobbler.rsc"
 
 ; Strings resource file in an embedded sis
 @"mobbler-strings.sisx",(0xA000B6C3)

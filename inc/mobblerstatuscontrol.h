@@ -26,11 +26,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <coecntrl.h>
 #include <coedef.h>
-#include <remconcoreapitargetobserver.h>    // link against RemConCoreApi.lib
-#include <remconcoreapitarget.h>            // and
-#include <remconinterfaceselector.h>        // RemConInterfaceBase.lib
 
 #include "mobblerbitmap.h" 
+#include "mobblermusiclistener.h"
+#include "mobblerradioplayer.h" 
 
 const TInt KMaxMobblerTextSize(255);
 
@@ -45,42 +44,23 @@ class CMobblerTimeout;
 class CMobblerTouchFeedbackInterface;
 class CMobblerTrack;
 
-class CMobblerStatusControl : public CCoeControl, public MMobblerBitmapObserver, public MRemConCoreApiTargetObserver
+class CMobblerStatusControl : public CCoeControl,
+								public MMobblerBitmapObserver,
+								public MMobblerRadioStateChangeObserver,
+								public MMobblerConnectionStateObserver,
+								public MMobblerMusicAppListenerObserver
 	{
-private:
-	class CMobblerPaneTextCallback : public CActive
-		{
-	public:
-		static void ExecuteLD(const CMobblerStatusControl& aStatusControl, const TDesC& aText);
-		
-	private:
-		CMobblerPaneTextCallback(const CMobblerStatusControl& aStatusControl);
-		void ConstructL(const TDesC& aText);
-		
-		~CMobblerPaneTextCallback();
-	private: // from CActive
-		void RunL();
-		void DoCancel();
-		
-		
-		
-	private:
-		const CMobblerStatusControl& iStatusControl;
-		HBufC* iText;
-		};
-	
 public:
 	static CMobblerStatusControl* NewL(const TRect& aRect, const CMobblerAppUi& aAppUi);
 	~CMobblerStatusControl();
 	
-	//void UpdateVolume() const;
+	void VolumeChanged();
 	
 private:
 	void ConstructL(const TRect& aRect);
 	CMobblerStatusControl(const CMobblerAppUi& aAppUi);
 	
 	void LoadGraphicsL();
-	void LoadResourceFileTextL();
 	
 	void SetPositions();
 	
@@ -90,29 +70,17 @@ private:
 	
 	// callback from CMobblerBitmap when graphic is loaded
 	void BitmapLoadedL(const CMobblerBitmap* aMobblerBitmap);
+	void BitmapResizedL(const CMobblerBitmap* aMobblerBitmap);
 	
 	// Drawing helper methods
-	void DrawMobblerBitmap(const CMobblerBitmap* aMobblerBitmap, const TRect& aRect) const;
-	void DrawMobblerBitmap(const CMobblerBitmap* aMobblerBitmap, const TPoint& aPoint) const;
+	void DrawMobblerBitmap(const CMobblerBitmap* aMobblerBitmap, const TRect& aRect, TBool aGray) const;
+	void DrawMobblerBitmap(const CMobblerBitmap* aMobblerBitmap, const TPoint& aPoint, TBool aGray) const;
 	void DrawText(const TDesC& aText, const TRect& aRect, const TRgb& aPenColor, CGraphicsContext::TTextAlign aTextAlign, TInt aOffset) const;
 	void DrawRect(const TRect& aRect, const TRgb& aPenColor, const TRgb& aBrushColor) const;
 	
 	// formatting text
 	static void FormatTime(TDes& aString, TTimeIntervalSeconds aSeconds, TTimeIntervalSeconds aTotalSeconds = 0);
-	static void FormatTrackDetails(TDes& aString, const TDesC& aArtist, const TDesC& aTitle);
-#ifdef _DEBUG
-	static void FormatAlbumDetails(TDes& aString, const TDesC& aAlbum1, const TDesC& aAlbum2);
-#endif
-	
-	// Observer of media button clicks
-	void MrccatoCommand(TRemConCoreApiOperationId aOperationId, TRemConCoreApiButtonAction aButtonAct);
-	
-	void ChangePaneTextL(const TDesC& aText) const;
-	void DoChangePaneTextL(const TDesC& aText) const;
-	
-private: // auto-repeat audio button callbacks
-	static TInt VolumeUpCallBackL(TAny *self);
-	static TInt VolumeDownCallBackL(TAny *self);
+	void DoChangePaneTextL();
 	
 private: // from CCoeControl
 	void HandleResourceChange(TInt aType);
@@ -121,6 +89,11 @@ private: // from CCoeControl
 	void Draw(const TRect& aRect) const;
 	TKeyResponse OfferKeyEventL(const TKeyEvent& aKeyEvent, TEventCode aType);
 	void HandlePointerEventL(const TPointerEvent& aPointerEvent);
+	
+private: // state change observers
+	void HandleConnectionStateChangedL();
+	void HandleRadioStateChangedL();
+	void HandleMusicAppChangeL();
 	
 private:
 	const CMobblerAppUi& iAppUi;
@@ -139,22 +112,11 @@ private:
 	CMobblerBitmap* iMobblerBitmapLastFM;
 	CMobblerBitmap* iMobblerBitmapSpeakerLow;
 	CMobblerBitmap* iMobblerBitmapSpeakerHigh;
-	CMobblerBitmap* iMobblerBitmapScrobbleOn;
-	CMobblerBitmap* iMobblerBitmapScrobbleOff;
+	CMobblerBitmap* iMobblerBitmapScrobble;
 	CMobblerBitmap* iMobblerBitmapTrackIcon;
 	CMobblerBitmap* iMobblerBitmapMusicAppIcon;
 	CMobblerBitmap* iMobblerBitmapAppIcon;
-	
-	// media buttons
-	CRemConInterfaceSelector* iInterfaceSelector;
-	CRemConCoreApiTarget*     iCoreTarget;
-	
-	// timers and callbacks for media buttons autorepeat
-	CPeriodic* iVolumeUpTimer;
-	CPeriodic* iVolumeDownTimer;
-	TCallBack iVolumeUpCallBack;
-	TCallBack iVolumeDownCallBack;
-
+	CMobblerBitmap* iMobblerBitmapTwitterIcon;
 	
 	// for double buffering
     CFbsBitmap*                     iBackBuffer;
@@ -162,26 +124,11 @@ private:
     CFbsBitGc*                      iBackBufferContext;
     TSize                           iBackBufferSize;
     
-    // text from resource files
-    HBufC* iResTextScrobbledQueuedFormat;
-    HBufC* iResTextScrobblingOff;
-    HBufC* iResTextOffline;
-    HBufC* iResTextOnline;
-    HBufC* iResTextArtist;
-    HBufC* iResTextTitle;
-    HBufC* iResTextAlbum;
-    HBufC* iResTextStateOnline;
-    HBufC* iResTextStateOffline;
-    HBufC* iResTextStateConnecting;
-    HBufC* iResTextStateHandshaking;
-    HBufC* iResTextStateSelectingStation;
-    HBufC* iResTextStateFetchingPlaylist;
-    HBufC* iResTextStateCheckingForUpdates;
-    
     // text displayed
     mutable TBuf<KMaxMobblerTextSize> iScrobbledQueued;
-    mutable TBuf<KMaxMobblerTextSize> iTrackDetailsText;
-    mutable TBuf<KMaxMobblerTextSize> iStateText;
+    mutable TBuf<KMaxMobblerTextSize> iTitleText;
+    mutable TBuf<KMaxMobblerTextSize> iAlbumText;
+    mutable TBuf<KMaxMobblerTextSize> iArtistText;
 	mutable TBuf<KMaxMobblerTextSize> iPlaybackLeftText;
 	mutable TBuf<KMaxMobblerTextSize> iPlaybackGoneText;
 	
@@ -196,23 +143,28 @@ private:
 	TPoint iPointPlayStop;
 	TSize iControlSize;
 	
-	TRect iRectTrackDetailsText;
+	TBool iLandscape;
+
+	TRect iRectTitleText;
+	TRect iRectArtistText;
+	TRect iRectAlbumText;
 	TRect iRectScrobbledQueuedText;
 	TRect iRectProgressBar;
 	
-	const CFont* iMobblerFont;
+	CFbsFont* iMobblerFont;
+	CFont* iTitleFont;
 	
 	CMobblerTimeout* iMobblerVolumeTimeout;
-	CMobblerMarquee* iMobblerMarquee;
+	
+	CMobblerMarquee* iTitleMarquee;
+	CMobblerMarquee* iArtistMarquee;
+	CMobblerMarquee* iAlbumMarquee;
+	CMobblerMarquee* iTweetMarquee;
 	
 	TPointerEvent iLastPointerEvent;
 	
 	CMobblerTouchFeedbackInterface* iMobblerFeedback;
 	TUid iDtorIdKey;
-	
-#ifdef _DEBUG
-	TBool iAlbumNameInMarquee;
-#endif
 	};
 	
 #endif // __MOBBLERSTATUSCONTROL_H__

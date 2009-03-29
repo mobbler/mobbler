@@ -73,6 +73,120 @@ RESOURCE AVKON_VIEW r_mobbler_status_view
 	toolbar = 0;
 	}
 
+RESOURCE AVKON_VIEW r_mobbler_webservices_view
+	{
+	cba = R_AVKON_SOFTKEYS_OPTIONS_BACK;
+	menubar = r_mobbler_webservices_options_menu;
+	toolbar = 0;
+	}
+
+RESOURCE MENU_BAR r_mobbler_webservices_options_menu
+	{
+	titles =
+		{
+		MENU_TITLE
+			{
+			menu_pane = r_mobbler_webservices_menu_pane;
+			}
+		};
+	}
+
+RESOURCE MENU_PANE r_mobbler_webservices_menu_pane
+	{
+	items =
+		{
+		MENU_ITEM
+			{
+			command = EMobblerCommandOpen;
+			},
+		MENU_ITEM
+			{
+			command = EMobblerCommandRadioStart;
+			},
+		MENU_ITEM
+			{
+			command = EMobblerCommandRadio;
+			cascade = r_mobbler_webservices_radio_submenu_pane;
+			},
+		MENU_ITEM
+			{
+			command = EMobblerCommandTrackLove;
+			},
+		MENU_ITEM
+			{
+			command = EMobblerCommandPlaylistAddTrack;
+			},
+		MENU_ITEM
+			{
+			command = EMobblerCommandShare;
+			cascade = r_mobbler_share_submenu_pane;
+			},
+		MENU_ITEM
+			{
+			command = EMobblerCommandView;
+			cascade = r_mobbler_view_submenu_pane;
+			},
+		MENU_ITEM
+			{
+			command = EMobblerCommandShout;
+			cascade = r_mobbler_shout_submenu_pane;
+			},
+		MENU_ITEM
+			{
+			command = EAknSoftkeyExit;
+			}
+		};
+	}
+	
+RESOURCE MENU_PANE r_mobbler_shout_submenu_pane
+	{
+	items =
+		{
+		MENU_ITEM
+			{
+			command = EMobblerCommandShoutOwner;
+			},
+		MENU_ITEM
+			{
+			command = EMobblerCommandShoutUser;
+			}
+		};
+	}
+	
+RESOURCE MENU_PANE r_mobbler_webservices_radio_submenu_pane
+	{
+	items =
+		{
+		MENU_ITEM
+			{
+			command = EMobblerCommandRadioPersonal;
+			},
+		MENU_ITEM
+			{
+			command = EMobblerCommandRadioNeighbourhood;
+			},
+		MENU_ITEM
+			{
+			command = EMobblerCommandRadioLoved;
+			}
+		};
+	}	
+
+RESOURCE MENU_PANE r_mobbler_share_submenu_pane
+	{
+	items =
+		{
+		MENU_ITEM
+			{
+			command = EMobblerCommandTrackShare;
+			},
+		MENU_ITEM
+			{
+			command = EMobblerCommandArtistShare;
+			}
+		};
+	}	
+
 RESOURCE MENU_BAR r_mobbler_status_options_menu
 	{
 	titles =
@@ -107,6 +221,11 @@ RESOURCE MENU_PANE r_mobbler_status_menu_pane
 			},
 		MENU_ITEM
 			{
+			command = EMobblerCommandView;
+			cascade = r_mobbler_view_submenu_pane;
+			},
+		MENU_ITEM
+			{
 			command = EMobblerCommandEqualizer;
 			cascade = r_mobbler_equalizer_submenu_pane;
 			},
@@ -126,6 +245,89 @@ RESOURCE MENU_PANE r_mobbler_status_menu_pane
 		MENU_ITEM
 			{
 			command = EAknSoftkeyExit;
+			}
+		};
+	}
+
+RESOURCE MENU_PANE r_mobbler_view_submenu_pane
+	{
+	items =
+		{
+		MENU_ITEM
+			{
+			command = EMobblerCommandFriends;
+			},
+		MENU_ITEM
+			{
+			command = EMobblerCommandSimilarArtists;
+			},
+		MENU_ITEM
+			{
+			command = EMobblerCommandSimilarTracks;
+			},
+		MENU_ITEM
+			{
+			command = EMobblerCommandUserShoutbox;
+			},
+		MENU_ITEM
+			{
+			command = EMobblerCommandArtistShoutbox;
+			},
+		MENU_ITEM
+			{
+			command = EMobblerCommandEventShoutbox;
+			},
+		MENU_ITEM
+			{
+			command = EMobblerCommandPlaylists;
+			},
+		MENU_ITEM
+			{
+			command = EMobblerCommandRecentTracks;
+			},
+		MENU_ITEM
+			{
+			command = EMobblerCommandUserEvents;
+			},
+		MENU_ITEM
+			{
+			command = EMobblerCommandArtistEvents;
+			},
+		MENU_ITEM
+			{
+			command = EMobblerCommandRecommendedArtists;
+			},
+		MENU_ITEM
+			{
+			command = EMobblerCommandRecommendedEvents;
+			},
+		MENU_ITEM
+			{
+			command = EMobblerCommandUserTopArtists;
+			},
+		MENU_ITEM
+			{
+			command = EMobblerCommandUserTopAlbums;
+			},
+		MENU_ITEM
+			{
+			command = EMobblerCommandUserTopTracks;
+			},
+		MENU_ITEM
+			{
+			command = EMobblerCommandUserTopTags;
+			},
+		MENU_ITEM
+			{
+			command = EMobblerCommandArtistTopAlbums;
+			},
+		MENU_ITEM
+			{
+			command = EMobblerCommandArtistTopTracks;
+			},
+		MENU_ITEM
+			{
+			command = EMobblerCommandArtistTopTags;
 			}
 		};
 	}
@@ -164,7 +366,7 @@ RESOURCE MENU_PANE r_radio_submenu_pane
 			},
 		MENU_ITEM
 			{
-			command = EMobblerCommandRadioMyPlaylist;
+			command = EMobblerCommandRadioPlaylist;
 			}
 		};
 	}
@@ -204,7 +406,7 @@ RESOURCE MENU_PANE r_mobbler_tools_submenu_pane
 		};
 	}
 
-RESOURCE DIALOG r_mobbler_radio_query_dialog
+RESOURCE DIALOG r_mobbler_text_query_dialog
 	{
 	flags = EGeneralQueryFlags;
 	buttons = R_AVKON_SOFTKEYS_OK_CANCEL;
@@ -213,7 +415,7 @@ RESOURCE DIALOG r_mobbler_radio_query_dialog
 		DLG_LINE
 			{
 			type = EAknCtQuery;
-			id = EMobblerRadioQuery;
+			id = EMobblerQuery;
 			control= AVKON_DATA_QUERY
 				{
 				layout = EDataLayout;
@@ -393,7 +595,7 @@ RESOURCE DIALOG r_mobbler_downloading_dialog
 		};
 	}
 
-RESOURCE DIALOG r_mobbler_query_dialog
+RESOURCE DIALOG r_mobbler_yes_no_query_dialog
 	{
 	flags = EGeneralQueryFlags;
 	buttons = R_AVKON_SOFTKEYS_YES_NO;

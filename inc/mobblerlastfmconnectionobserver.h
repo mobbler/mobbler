@@ -41,7 +41,7 @@ public:
 	virtual void HandleTrackDequeued(const CMobblerTrack& aTrack) = 0;
 	virtual void HandleTrackSubmittedL(const CMobblerTrack& aTrack) = 0;
 	
-	virtual void HandleUpdateResponseL(TVersion aVersion, const TDesC8& aLocation) = 0;
+	virtual TBool GoOnlineL() = 0;
 	};
 	
 #endif

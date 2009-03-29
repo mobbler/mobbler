@@ -32,12 +32,22 @@ class CSenXmlReader;
 class CSenDomFragment;
 class CMobblerRadioPlaylist;
 
+class CMobblerFriendList;
+class CMobblerGroupList;
+class CMobblerEventList;
+class CMobblerPlaylistList;
+class CMobblerTagList;
+class CMobblerArtistList;
+class CMobblerAlbumList;
+class CMobblerTrackList;
+class CMobblerListItem;
+class CMobblerShoutbox;
 
 class CMobblerParser : public CBase
 	{
 public:
 	static CMobblerLastFMError* ParseHandshakeL(const TDesC8& aHandshakeResponse, HBufC8*& aSessionId, HBufC8*& aNowPlayingURL, HBufC8*& aSubmitURL);
-	static CMobblerLastFMError* ParseRadioHandshakeL(const TDesC8& aRadioHandshakeResponse, HBufC8*& aRadioSessionID, HBufC8*& aRadioStreamURL, HBufC8*& aRadioBaseURL, HBufC8*& aRadioBasePath);
+	static CMobblerLastFMError* ParseRadioHandshakeL(const TDesC8& aRadioHandshakeResponse, HBufC8*& aRadioSessionID, HBufC8*& aRadioBaseURL, HBufC8*& aRadioBasePath);
 	static CMobblerLastFMError* ParseWebServicesHandshakeL(const TDesC8& aWebServicesHandshakeResponse, HBufC8*& aWebServicesSessionKey);
 	static CMobblerLastFMError* ParseScrobbleResponseL(const TDesC8& aScrobbleResponse);
 	
@@ -46,8 +56,22 @@ public:
 
 	static TInt ParseUpdateResponseL(const TDesC8& aXML, TVersion& aVersion, TDes8& location);
 	
-	static void ParseArtistGetInfoL(const TDesC8& aXML, HBufC*& aArtistInfo);
+	static void ParseFriendListL(const TDesC8& aXML, CMobblerFriendList& aObserver, RPointerArray<CMobblerListItem>& aList);
+	static void ParseTopArtistsL(const TDesC8& aXML, CMobblerArtistList& aObserver, RPointerArray<CMobblerListItem>& aList);
+	static void ParseRecommendedArtistsL(const TDesC8& aXML, CMobblerArtistList& aObserver, RPointerArray<CMobblerListItem>& aList);
+	static void ParseSimilarArtistsL(const TDesC8& aXML, CMobblerArtistList& aObserver, RPointerArray<CMobblerListItem>& aList);
+	static void ParseEventsL(const TDesC8& aXML, CMobblerEventList& aObserver, RPointerArray<CMobblerListItem>& aList);
+	static void ParseTopAlbumsL(const TDesC8& aXML, CMobblerAlbumList& aObserver, RPointerArray<CMobblerListItem>& aList);
 	
+	static void ParseUserTopTracksL(const TDesC8& aXML, CMobblerTrackList& aObserver, RPointerArray<CMobblerListItem>& aList);
+	static void ParseArtistTopTracksL(const TDesC8& aXML, CMobblerTrackList& aObserver, RPointerArray<CMobblerListItem>& aList);
+	static void ParseRecentTracksL(const TDesC8& aXML, CMobblerTrackList& aObserver, RPointerArray<CMobblerListItem>& aList);
+	static void ParseSimilarTracksL(const TDesC8& aXML, CMobblerTrackList& aObserver, RPointerArray<CMobblerListItem>& aList);
+		
+	static void ParseTopTagsL(const TDesC8& aXML, CMobblerTagList& aObserver, RPointerArray<CMobblerListItem>& aList);
+	static void ParsePlaylistsL(const TDesC8& aXML, CMobblerPlaylistList& aObserver, RPointerArray<CMobblerListItem>& aList);
+	static void ParseShoutboxL(const TDesC8& aXML, CMobblerShoutbox& aObserver, RPointerArray<CMobblerListItem>& aList);
+		
 private:
 	static HBufC8* DecodeURIStringLC(const TDesC8& aString);
 	};

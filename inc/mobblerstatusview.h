@@ -32,10 +32,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "mobblerbitmap.h"
 
 class CMobblerStatusControl;
-class CMobblerRichTextControl;
 class CMobblerTrack;
+class CViewStack;
 
-class CMobblerStatusView : public CAknView, public MMobblerBitmapObserver, public MMdaAudioOutputStreamCallback
+class CMobblerStatusView : public CAknView, public MMobblerBitmapObserver
 	{
 public:
 	static CMobblerStatusView* NewL();
@@ -46,7 +46,7 @@ public:
 	
 	void DrawDeferred() const;
 	
-	CMobblerRichTextControl& ArtistInfoControlL();
+	CMobblerStatusControl* StatusControl();
 	
 private:
 	CMobblerStatusView();        
@@ -63,19 +63,14 @@ private:
 	void SetupStatusPaneL();
 	
 	void BitmapLoadedL(const CMobblerBitmap* aMobblerBitmap);
-    
+	void BitmapResizedL(const CMobblerBitmap* aMobblerBitmap);
+
 	void SetMenuItemTextL(CEikMenuPane* aMenuPane, TInt aResourceId, 
 						  TInt aCommandId);
-    
-private: // from MMdaAudioOutputStreamCallback, but NOT USED
-    void MaoscPlayComplete(TInt /*aError*/) {}
-    void MaoscBufferCopied(TInt /*aError*/, const TDesC8& /*aBuffer*/) {}
-    void MaoscOpenComplete(TInt /*aError*/) {}
 	
 private:
 	CAknWaitDialog* iConnectingDialog;
 	CMobblerStatusControl* iMobblerStatusControl;
-	CMobblerRichTextControl* iArtistInfoControl;
 	};
 
 #endif // __MOBBLERSTATUSVIEW_H__

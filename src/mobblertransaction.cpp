@@ -46,64 +46,184 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <chttpformencoder.h> 
 
 #include "mobblertransaction.h"
-#include "mobblerwebservicesobserver.h"
+#include "mobblerwebservicesquery.h"
 
 // The granurarity of the buffer that responses from last.fm are read into
 const TInt KBufferGranularity(256);
 
-CMobblerTransaction* CMobblerTransaction::NewL(RHTTPSession& aSession, const TUriC8& aURI, MMobblerTransactionObserver& aObserver)
+_LIT8(KRadioStationQuery, "session=%S&url=%S&lang=%S");
+_LIT8(KRadioPlaylistQuery, "sk=%S&discovery=0&desktop=1.5.1");
+
+CMobblerTransaction* CMobblerTransaction::NewL(CMobblerLastFMConnection& aConnection, CUri8* aURI)
 	{
-	CMobblerTransaction* self = new(ELeave) CMobblerTransaction(aSession, aObserver);
+	CMobblerTransaction* self = new(ELeave) CMobblerTransaction(aConnection);
 	CleanupStack::PushL(self);
 	self->ConstructL(aURI);
 	CleanupStack::Pop(self);
 	return self;
 	}
 
-CMobblerTransaction* CMobblerTransaction::NewL(RHTTPSession& aSession, const TUriC8& aURI, MMobblerTransactionObserver& aObserver, CHTTPFormEncoder* aForm)
+CMobblerTransaction* CMobblerTransaction::NewL(CMobblerLastFMConnection& aConnection, CUri8* aURI, CHTTPFormEncoder* aForm)
 	{
-	CMobblerTransaction* self = new(ELeave) CMobblerTransaction(aSession, aObserver);
+	CMobblerTransaction* self = new(ELeave) CMobblerTransaction(aConnection);
 	CleanupStack::PushL(self);
 	self->ConstructL(aURI, aForm);
 	CleanupStack::Pop(self);
 	return self;
 	}
 
-CMobblerTransaction::CMobblerTransaction(RHTTPSession& aSession, MMobblerTransactionObserver& aObserver)
-	:iSession(aSession), iObserver(aObserver)
+CMobblerTransaction* CMobblerTransaction::NewL(CMobblerLastFMConnection& aConnection, CUri8* aURI, CMobblerWebServicesQuery* aQuery)
+	{
+	CMobblerTransaction* self = new(ELeave) CMobblerTransaction(aConnection);
+	CleanupStack::PushL(self);
+	self->ConstructL(aURI, aQuery);
+	CleanupStack::Pop(self);
+	return self;
+	}
+
+CMobblerTransaction* CMobblerTransaction::NewL(CMobblerLastFMConnection& aConnection, const TDesC8& aLastFMRadioURI)
+	{
+	CMobblerTransaction* self = new(ELeave) CMobblerTransaction(aConnection);
+	CleanupStack::PushL(self);
+	self->ConstructL(aLastFMRadioURI);
+	CleanupStack::Pop(self);
+	return self;
+	}
+
+CMobblerTransaction* CMobblerTransaction::NewL(CMobblerLastFMConnection& aConnection)
+	{
+	CMobblerTransaction* self = new(ELeave) CMobblerTransaction(aConnection);
+	//CleanupStack::PushL(self);
+	//self->ConstructL();
+	//CleanupStack::Pop(self);
+	return self;
+	}
+
+CMobblerTransaction::CMobblerTransaction(CMobblerLastFMConnection& aConnection)
+	:iConnection(aConnection)
 	{
 	}
 
-void CMobblerTransaction::ConstructL(const TUriC8& aURI)
+void CMobblerTransaction::ConstructL(CUri8* aURI)
 	{
-	iBuffer = CBufFlat::NewL(KBufferGranularity);
-	
-	iTransaction = iSession.OpenTransactionL(aURI, *this);
-	iTransaction.SubmitL();
+	iURI = aURI;
 	}
 
-void CMobblerTransaction::ConstructL(const TUriC8& aURI, CHTTPFormEncoder* aForm)
+void CMobblerTransaction::ConstructL(CUri8* aURI, CHTTPFormEncoder* aForm)
 	{
-	iBuffer = CBufFlat::NewL(KBufferGranularity);
-	
-	// get the post string
-	RStringF string;
-	RStringPool stringPool = iSession.StringPool();
-	string = stringPool.StringF(HTTP::EPOST, RHTTPSession::GetTable());
-	
-	iTransaction = iSession.OpenTransactionL(aURI, *this, string);
-	iTransaction.Request().SetBody(*aForm);
-	
-	// get the header
-	RStringF contentType = stringPool.OpenFStringL(_L8("application/x-www-form-urlencoded"));
-	THTTPHdrVal accVal(contentType);
-	iTransaction.Request().GetHeaderCollection().SetFieldL(stringPool.StringF(HTTP::EContentType, RHTTPSession::GetTable()), accVal);
-	contentType.Close();
-	
-	iTransaction.SubmitL();
-	
-	// take ownership of the form
 	iForm = aForm;
+	iURI = aURI;
+	}
+
+void CMobblerTransaction::ConstructL(CUri8* aURI, CMobblerWebServicesQuery* aQuery)
+	{
+	iQuery = aQuery;
+	iURI = aURI;
+	}
+
+void CMobblerTransaction::ConstructL(const TDesC8& aLastFMRadioURI)
+	{
+	iLastFMRadioURI = aLastFMRadioURI.AllocL();
+	}
+
+void CMobblerTransaction::SubmitL()
+	{
+	delete iBuffer;
+	iBuffer = CBufFlat::NewL(KBufferGranularity);
+	
+	if (iLastFMRadioURI)
+		{
+		// this is a start radio transaction
+
+		// setup the path
+		HBufC8* path = HBufC8::NewLC(255);
+		TPtr8 pathPtr(path->Des());
+		pathPtr.Copy(*iConnection.iRadioBasePath);
+		pathPtr.Append(_L8("/adjust.php"));
+		
+		TBuf8<2> language = MobblerUtility::LanguageL();
+		
+		HBufC8* query = HBufC8::NewLC(255);
+		
+		// setup the 
+		TPtr8 radioSessionIDPtr(iConnection.iRadioSessionID->Des());
+		TPtr8 radioURLPtr(iLastFMRadioURI->Des());
+		
+		query->Des().AppendFormat(KRadioStationQuery, &radioSessionIDPtr, &radioURLPtr, &language);
+		
+		CUri8* uri = CUri8::NewLC();
+		
+		uri->SetComponentL(_L8("http"), EUriScheme);
+		uri->SetComponentL(*iConnection.iRadioBaseURL, EUriHost);
+		uri->SetComponentL(pathPtr, EUriPath);
+		uri->SetComponentL(*query, EUriQuery);
+
+		iTransaction = iConnection.iHTTPSession.OpenTransactionL(uri->Uri(), *this);
+
+		CleanupStack::PopAndDestroy(3, path);
+		}
+	else if (iURI)
+		{
+		if (iQuery)
+			{
+			// we were passed a query so add the session key
+			iQuery->AddFieldL(_L8("sk"), *iConnection.iWebServicesSessionKey);
+			
+			iForm = iQuery->GetFormLC();
+			CleanupStack::Pop(iForm);
+			delete iQuery;
+			iQuery = NULL;
+			}
+		
+		if (iForm)
+			{
+			// get the post string
+			RStringF string;
+			RStringPool stringPool = iConnection.iHTTPSession.StringPool();
+			string = stringPool.StringF(HTTP::EPOST, RHTTPSession::GetTable());
+			
+			iTransaction = iConnection.iHTTPSession.OpenTransactionL(iURI->Uri(), *this, string);
+			iTransaction.Request().SetBody(*iForm);
+			
+			// get the header
+			RStringF contentType = stringPool.OpenFStringL(_L8("application/x-www-form-urlencoded"));
+			THTTPHdrVal accVal(contentType);
+			iTransaction.Request().GetHeaderCollection().SetFieldL(stringPool.StringF(HTTP::EContentType, RHTTPSession::GetTable()), accVal);
+			contentType.Close();
+			}
+		else
+			{
+			iTransaction = iConnection.iHTTPSession.OpenTransactionL(iURI->Uri(), *this);
+			}
+		}
+	else
+		{
+		// this must be requesting a playlist
+		
+		// only try to request a playlist if we have the session id
+		HBufC8* path = HBufC8::NewLC(255);
+		TPtr8 pathPtr(path->Des());
+		pathPtr.Copy(*iConnection.iRadioBasePath);
+		pathPtr.Append(_L8("/xspf.php"));
+		
+		TPtr8 radioSessionIDPtr(iConnection.iRadioSessionID->Des());
+		
+		HBufC8* query = HBufC8::NewLC(255);
+		query->Des().AppendFormat(KRadioPlaylistQuery, &radioSessionIDPtr);
+		
+		CUri8* uri = CUri8::NewLC();
+		
+		uri->SetComponentL(_L8("http"), EUriScheme);
+		uri->SetComponentL(*iConnection.iRadioBaseURL, EUriHost);
+		uri->SetComponentL(pathPtr, EUriPath);
+		uri->SetComponentL(*query, EUriQuery);
+		
+		iTransaction = iConnection.iHTTPSession.OpenTransactionL(uri->Uri(), *this);
+		
+		CleanupStack::PopAndDestroy(3, path);
+		}
+	
+	iTransaction.SubmitL();
 	}
 
 CMobblerTransaction::~CMobblerTransaction()
@@ -111,11 +231,10 @@ CMobblerTransaction::~CMobblerTransaction()
 	iTransaction.Close();
 	delete iBuffer;
 	delete iForm;
-	}
-
-void CMobblerTransaction::SetWebServicesObserver(MWebServicesObserver& aWebServicesObserver)
-	{
-	iWebServicesObserver = &aWebServicesObserver;
+	delete iChildTransaction;
+	delete iURI;
+	delete iLastFMRadioURI;
+	delete iQuery;
 	}
 
 void CMobblerTransaction::Cancel()
@@ -137,21 +256,14 @@ void CMobblerTransaction::MHFRunL(RHTTPTransaction aTransaction, const THTTPEven
 			break;
 		case THTTPEvent::ESucceeded:
 			HBufC8* response = iBuffer->Ptr(0).AllocLC();
-			
-			iObserver.TransactionResponseL(this, *response);
-			
-			if (iWebServicesObserver)
-				{
-				iWebServicesObserver->WebServicesResponseL(*response);
-				}
-			
+			iConnection.TransactionResponseL(this, *response);
 			CleanupStack::PopAndDestroy(response);
 		case THTTPEvent::ECancel:
 		case THTTPEvent::EClosed:
-			iObserver.TransactionCompleteL(this);
+			iConnection.TransactionCompleteL(this);
 			break;
 		case THTTPEvent::EFailed:
-			iObserver.TransactionFailedL(this, iTransaction.Response().StatusText().DesC(), iTransaction.Response().StatusCode());			
+			iConnection.TransactionFailedL(this, iTransaction.Response().StatusText().DesC(), iTransaction.Response().StatusCode());
 			break;
 		default:
 			break;
@@ -161,8 +273,28 @@ void CMobblerTransaction::MHFRunL(RHTTPTransaction aTransaction, const THTTPEven
 TInt CMobblerTransaction::MHFRunError(TInt aError, RHTTPTransaction /*aTransaction*/, const THTTPEvent& /*aEvent*/)
 	{
 	_LIT8(KMHFRunError, "MHFRunError");
-	iObserver.TransactionFailedL(this, KMHFRunError, aError);
+	iConnection.TransactionFailedL(this, KMHFRunError, aError);
 	return KErrNone;
+	}
+
+void CMobblerTransaction::SetChildTransaction(CMobblerTransaction* aChildTrnsaction)
+	{
+	iChildTransaction = aChildTrnsaction;
+	}
+
+CMobblerTransaction* CMobblerTransaction::ChildTransaction()
+	{
+	return iChildTransaction;
+	}
+
+void CMobblerTransaction::SetFlatDataObserver(MMobblerFlatDataObserver* aFlatDataObserver)
+	{
+	iFlatDataObserver = aFlatDataObserver;
+	}
+
+MMobblerFlatDataObserver* CMobblerTransaction::FlatDataObserver()
+	{
+	return iFlatDataObserver;
 	}
 	
 

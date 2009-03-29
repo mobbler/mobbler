@@ -32,8 +32,9 @@ CMobblerAccessPointSettingItem::CMobblerAccessPointSettingItem(TInt aIdentifier,
 
 void CMobblerAccessPointSettingItem::LoadL()
 	{
-	CArrayPtr<CAknEnumeratedText>* texts = this->EnumeratedTextArray();
-	TInt selectedIndex = this->IndexFromValue(iValue);
+	CArrayPtr<CAknEnumeratedText>* texts = EnumeratedTextArray();
+	TInt selectedIndex = IndexFromValue(iValue);
+
 	if (selectedIndex < 0)  // no match found.
 		{
 		if (texts->Count() > 0)  
@@ -41,7 +42,7 @@ void CMobblerAccessPointSettingItem::LoadL()
 			// choose the first item as default one.
 			CAknEnumeratedText* item = texts->At(0);
 			// reset external value to the default one.
-			this->SetExternalValue(item->EnumerationValue());
+			SetExternalValue(item->EnumerationValue());
 			}
 		}
 

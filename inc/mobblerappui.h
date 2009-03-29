@@ -21,33 +21,54 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-#ifndef __MOBBLERAPPUI_h__
-#define __MOBBLERAPPUI_h__
+#ifndef __MOBBLERAPPUI_H__
+#define __MOBBLERAPPUI_H__
 
 #include <aknviewappui.h>
+#include <remconcoreapitargetobserver.h>    // link against RemConCoreApi.lib
+#include <remconcoreapitarget.h>            // and
+#include <remconinterfaceselector.h>        // RemConInterfaceBase.lib
 
 #include "mobblerdownload.h"
 #include "mobblerlastfmconnectionobserver.h"
 #include "mobblersleeptimer.h"
 
+const TVersion KVersion(0, 4, 0);
 
-_LIT(KVersionNumberDisplay,		"0.3.4");
-const TVersion version(0, 3, 4);
+_LIT(KFormatTime, "%F%D %N %-B%J%:1%T%+B"); // 21 March 11:20 am
 
+class CAknInfoPopupNoteController;
 class CBrowserLauncher;
 class CMobblerDownload;
 class CMobblerMusicAppListener;
 class CMobblerRadioPlayer;
 class CMobblerResourceReader;
 class CMobblerSettingItemListView;
+class CMobblerFriendList;
 class CMobblerStatusView;
 class CMobblerTrack;
+class CMobblerWebServicesView;
+class CBrowserLauncher;
+class CMobblerString;
 
 class CMobblerAppUi : public CAknViewAppUi,
 						public MMobblerLastFMConnectionObserver,
 						public MMobblerDownloadObserver,
-					    public MMobblerSleepTimerNotify
+					    public MMobblerSleepTimerNotify,
+						public MRemConCoreApiTargetObserver,
+						public MMobblerFlatDataObserver
 	{
+public:
+	enum TState
+		{
+		ENone,
+		ECheckingUpdates,
+		EFetchingFriendsShareTrack,
+		EFetchingFriendsShareArtist,
+		EFetchingPlaylists,
+		EFetchingTweet
+		};
+	
 public:
 	void ConstructL();
 	CMobblerAppUi();
@@ -56,11 +77,18 @@ public:
 	const CMobblerTrack* CurrentTrack() const;
 	CMobblerTrack* CurrentTrack();
 	
-	CMobblerRadioPlayer* RadioPlayer() const;
+	CMobblerRadioPlayer& RadioPlayer() const;
+	CMobblerLastFMConnection& LastFMConnection() const;
+	CMobblerMusicAppListener& MusicListener() const;
+	
+	CMobblerSettingItemListView& SettingView() const;
+	CMobblerStatusView& StatusView() const;
+	
 	const TDesC& MusicAppNameL() const;
 	
+	void RadioStartL(CMobblerLastFMConnection::TRadioStation aRadioStation, const CMobblerString* aRadioOption);
+	
 	void SetDetailsL(const TDesC& aUsername, const TDesC& aPassword);
-	void SetCheckForUpdatesL(TBool aAutoUpdatesOn);
 	void SetIapIDL(TUint32 aIapID);
 	void SetBufferSize(TTimeIntervalSeconds aBufferSize);
 	
@@ -79,7 +107,9 @@ public:
 	TInt ScrobblePercent() const;
 	void SaveVolume();
 
-	HBufC* AllocReadLC(TInt aResourceId);
+	CMobblerResourceReader& CMobblerAppUi::ResourceReader() const;
+
+	void SetSoftkeys(TInt aResource) const;
 
 public: // CEikAppUi
 	void HandleCommandL(TInt aCommand);
@@ -98,10 +128,9 @@ private:
 	void HandleTrackQueuedL(const CMobblerTrack& aTrack);
 	void HandleTrackDequeued(const CMobblerTrack& aTrack);
 	void HandleTrackNowPlayingL(const CMobblerTrack& aTrack);
-	void HandleUpdateResponseL(TVersion aVersion, const TDesC8& aLocation);
 	
-	void RadioStartL(CMobblerLastFMConnection::TRadioStation aRadioStation, const TDesC8& aRadioOption);
-
+	TBool GoOnlineL();
+	
 	void LoadRadioStationsL();
 	void SaveRadioStationsL();
 	void SetSleepTimer();
@@ -110,10 +139,21 @@ private:
 private: // from MMobblerSleepTimerNotify
 	void TimerExpiredL(TAny* aTimer, TInt aError);
 	
+private: // auto-repeat audio button callbacks
+	static TInt VolumeUpCallBackL(TAny *self);
+	static TInt VolumeDownCallBackL(TAny *self);
+	
+	// Observer of media button clicks
+	void MrccatoCommand(TRemConCoreApiOperationId aOperationId, TRemConCoreApiButtonAction aButtonAct);
+	
+private:
+	void DataL(const TDesC8& aData, TInt aError);
+	
 private:
 	// the view classes
 	CMobblerSettingItemListView* iSettingView;
 	CMobblerStatusView* iStatusView;
+	CMobblerWebServicesView* iWebServicesView;
 	
 	// The application engine classes
 	CMobblerLastFMConnection* iLastFMConnection;
@@ -124,15 +164,21 @@ private:
 	TInt iTracksSubmitted;
 	TInt iTracksQueued;
 	
-	CMobblerLastFMConnection::TRadioStation iRadioStation;
-	HBufC8* iRadioOption;
-	TBool iCheckForUpdates;
-	TBool iResumeStationOnConnectCompleteCallback;
+	// media buttons
+	CRemConInterfaceSelector* iInterfaceSelector;
+	CRemConCoreApiTarget*     iCoreTarget;
+	
+	// timers and callbacks for media buttons autorepeat
+	CPeriodic* iVolumeUpTimer;
+	CPeriodic* iVolumeDownTimer;
+	TCallBack iVolumeUpCallBack;
+	TCallBack iVolumeDownCallBack;
 
 	CMobblerLastFMConnection::TRadioStation iPreviousRadioStation;
-	HBufC* iPreviousRadioArtist;
-	HBufC* iPreviousRadioTag;
-	HBufC* iPreviousRadioUser;
+	
+	CMobblerString* iPreviousRadioArtist;
+	CMobblerString* iPreviousRadioTag;
+	CMobblerString* iPreviousRadioPersonal;
 	
 #ifndef __WINS__
 	CBrowserLauncher* iBrowserLauncher;
@@ -147,6 +193,14 @@ private:
 	CMobblerSleepTimer* iSleepTimer;
 	TTime iTimeToSleep;
 	TInt iSleepAction;
+	
+	TState iState;
+	
+	// Twitter
+	CAknInfoPopupNoteController* iTweetPopupNote;
+	TTime iTweetFetched;
+	HBufC* iTweetText;
+	HBufC* iTweetTime;
 	};
 
 #endif // __MOBBLERAPPUI_h__

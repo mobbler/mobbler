@@ -35,7 +35,11 @@ enum TMobblerSettingItemListViewCommands
 	EMobblerCommandRadio,
 	EMobblerCommandMore,
 	
+	EMobblerCommandOpen,
 	EMobblerCommandTools,
+	
+	EMobblerCommandPlus,
+	
 	EMobblerCommandToggleScrobbling,
 	EMobblerCommandSleepTimer,
 	EMobblerCommandExportQueueToLogFile,
@@ -55,21 +59,53 @@ enum TMobblerSettingItemListViewCommands
 
 	EMobblerCommandOnline = 0x8000,
 
-
-	// these commands are avaliable once connected
+	// The web services list
+	EMobblerCommandView,
+	EMobblerCommandFriends,
+	EMobblerCommandRecommendedArtists,
+	EMobblerCommandRecommendedEvents,
+	
+	EMobblerCommandUserTopArtists,
+	EMobblerCommandUserTopAlbums,
+	EMobblerCommandUserTopTracks,
+	EMobblerCommandUserTopTags,
+	
+	EMobblerCommandArtistTopAlbums,
+	EMobblerCommandArtistTopTracks,
+	EMobblerCommandArtistTopTags,
+	
+	EMobblerCommandPlaylists,
 	EMobblerCommandUserEvents,
-	EMobblerCommandUserFriends,
+	EMobblerCommandArtistEvents,
+
+	EMobblerCommandTagTopArtists,
+	
+	EMobblerCommandRecentTracks,
+	
+	EMobblerCommandSimilarArtists,
+	EMobblerCommandSimilarTracks,
+	
+	EMobblerCommandUserShoutbox,
+	EMobblerCommandArtistShoutbox,
+	EMobblerCommandEventShoutbox,
+	
+	EMobblerCommandPlaylistAddTrack,
+	EMobblerCommandPlaylistFetch,
+	
+	EMobblerCommandShout,
+	EMobblerCommandShoutOwner,
+	EMobblerCommandShoutUser,
 	
 	// most of these commands are avaliable
 	// when a track is playing
 	EMobblerCommandTrackLove,
 	EMobblerCommandTrackBan,
-	EMobblerCommandTrackSimilar,
-	EMobblerCommandArtistGetInfo,
-	EMobblerCommandArtistEvents,
-	EMobblerCommandArtistSimilar,
-	EMobblerCommandAlbumInfo,
 	
+	EMobblerCommandShare,
+	EMobblerCommandTrackShare,
+	EMobblerCommandArtistShare,
+	
+	EMobblerCommandRadioStart,
 	EMobblerCommandResumeRadio,
 	EMobblerCommandRadioArtist,
 	EMobblerCommandRadioTag,
@@ -78,9 +114,14 @@ enum TMobblerSettingItemListViewCommands
 	EMobblerCommandRadioPersonal,
 	EMobblerCommandRadioLoved,
 	EMobblerCommandRadioNeighbourhood,
-	EMobblerCommandRadioMyPlaylist,
+	EMobblerCommandRadioPlaylist,
+	EMobblerCommandRadioSearchArtist,
+	EMobblerCommandRadioSearchTrack,
+	EMobblerCommandRadioListTracks,
 	
-	EMobblerCommandCheckForUpdates
+	EMobblerCommandCheckForUpdates,
+
+	EMobblerCommandHide
 	};
 	
 enum TMobblerControls
@@ -88,7 +129,6 @@ enum TMobblerControls
 	EMobblerSettingItemListViewConnectingDialog = 0x7000,
 	EMobblerProgressNoteId,
 	EMobblerQuery,
-	EMobblerRadioQuery,
 	EMobblerGetLatestLanguageNote,
 	EMobblerSleepTimer
 	};

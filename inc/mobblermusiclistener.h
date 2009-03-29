@@ -34,12 +34,21 @@ class CMobblerNowPlayingCallback;
 class CMobblerRadioPlayer;
 class CMobblerContentListingInterface;
 
+class MMobblerMusicAppListenerObserver
+	{
+public:
+	virtual void HandleMusicAppChangeL() = 0;
+	};
+
 class CMobblerMusicAppListener : public CBase, public MMobblerMusicAppObserver,
 								 public MMobblerContentListingObserver
 	{
 public:
 	static CMobblerMusicAppListener* NewL(CMobblerLastFMConnection& aSubmitter);
 	~CMobblerMusicAppListener();
+	
+	void AddObserverL(MMobblerMusicAppListenerObserver* aObserver);
+	void RemoveObserver(MMobblerMusicAppListenerObserver* aObserver);
 	
 	CMobblerTrack* CurrentTrack();
 	void NowPlayingL();
@@ -49,6 +58,8 @@ public:
 private:
 	CMobblerMusicAppListener(CMobblerLastFMConnection& aSubmitter);
 	void ConstructL();
+	
+	void NotifyChangeL();
 	
 private: 
 	void HandleTrackChangeL(const TDesC& aTrack);
@@ -84,6 +95,8 @@ private:
 	TUid iDtorIdKey;
 
 	TMPlayerRemoteControlState iMusicPlayerState;
+	
+	RPointerArray<MMobblerMusicAppListenerObserver> iObservers;
 	};
 
 #endif // __MOBBLERMUSICLISTENER_H__

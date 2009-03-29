@@ -34,45 +34,61 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "mobblerlastfmconnection.h"
 #include "mobblerutility.h"
-#include "mobblertransactionobserver.h"
 
 class CHTTPFormEncoder;
 class CMobblerTrack;
 class MMobblerRadioPlayer;
 class CMobblerParser;
 class CMobblerTransaction;
-class MWebServicesObserver;
+class CMobblerWebServicesQuery;
 
 class CMobblerTransaction : public CBase, public MHTTPTransactionCallback
 	{
 public:
-	static CMobblerTransaction* NewL(RHTTPSession& aSession, const TUriC8& aURI, MMobblerTransactionObserver& aObserver);
-	static CMobblerTransaction* NewL(RHTTPSession& aSession, const TUriC8& aURI, MMobblerTransactionObserver& aObserver, CHTTPFormEncoder* aForm);
+	static CMobblerTransaction* NewL(CMobblerLastFMConnection& aConnection, CUri8* aURI);
+	static CMobblerTransaction* NewL(CMobblerLastFMConnection& aConnection, CUri8* aURI, CHTTPFormEncoder* aForm);
+	static CMobblerTransaction* NewL(CMobblerLastFMConnection& aConnection, CUri8* aURI, CMobblerWebServicesQuery* aQuery);
+	
+	static CMobblerTransaction* NewL(CMobblerLastFMConnection& aConnection, const TDesC8& aLastFMRadioURI);
+	static CMobblerTransaction* NewL(CMobblerLastFMConnection& aConnection);
+	
 	~CMobblerTransaction();
 	
+	void SubmitL();
 	void Cancel();
 	
-	void SetWebServicesObserver(MWebServicesObserver& aWebServicesObserver);
+	void SetChildTransaction(CMobblerTransaction* aChildTrnsaction);
+	CMobblerTransaction* ChildTransaction();
+	
+	void SetFlatDataObserver(MMobblerFlatDataObserver* aFlatDataObserver);
+	MMobblerFlatDataObserver* FlatDataObserver();
 	
 private: // from MHTTPTransactionCallback
 	void MHFRunL(RHTTPTransaction aTransaction, const THTTPEvent& aEvent);
 	TInt MHFRunError(TInt aError, RHTTPTransaction aTransaction, const THTTPEvent &aEvent);
 	
 private:
-	CMobblerTransaction(RHTTPSession& aHTTPSession, MMobblerTransactionObserver& aObserver);
-	void ConstructL(const TUriC8& aURI);
-	void ConstructL(const TUriC8& aURI, CHTTPFormEncoder* aForm);
+	CMobblerTransaction(CMobblerLastFMConnection& aConnection);
+	void ConstructL(CUri8* aURI);
+	void ConstructL(CUri8* aURI, CHTTPFormEncoder* aForm);
+	void ConstructL(CUri8* aURI, CMobblerWebServicesQuery* aQuery);
+	void ConstructL(const TDesC8& aLastFMRadioURI);
 	
 private:
-	RHTTPSession& iSession;
+	CMobblerLastFMConnection& iConnection;
+	MMobblerFlatDataObserver* iFlatDataObserver;
 	
-	MMobblerTransactionObserver& iObserver;
+	CMobblerWebServicesQuery* iQuery;
 	
 	RHTTPTransaction iTransaction;
-	CBufBase* iBuffer;
+	CUri8* iURI;
 	CHTTPFormEncoder* iForm;
 	
-	MWebServicesObserver* iWebServicesObserver;
+	HBufC8* iLastFMRadioURI;
+	
+	CBufBase* iBuffer;
+	
+	CMobblerTransaction* iChildTransaction;
 	};
 
 #endif // __MOBBLERTRANSACTION_H__

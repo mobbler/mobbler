@@ -84,7 +84,6 @@ CMobblerAudioControl::~CMobblerAudioControl()
 		{
 		// The thread is still running so destroy
 		// it and then wait for it to close
-		
 		TRequestStatus threadStatus;
 		iAudioThread.Logon(threadStatus);
 		SendCmd(ECmdDestroyAudio);
@@ -110,7 +109,7 @@ TInt CMobblerAudioControl::HandleAudioPositionChangeL(TAny* aSelf)
 	return KErrNone;
 	}
 
-void CMobblerAudioControl::WriteMp3DataL(const TDesC8& aData, TInt aTotalDataSize)
+void CMobblerAudioControl::DataPartL(const TDesC8& aData, TInt aTotalDataSize)
 	{
 	iShared.iTotalDataSize = aTotalDataSize;
 	iShared.iAudioData.Set(aData);
@@ -119,14 +118,16 @@ void CMobblerAudioControl::WriteMp3DataL(const TDesC8& aData, TInt aTotalDataSiz
 	static_cast<CMobblerAppUi*>(CEikonEnv::Static()->AppUi())->StatusDrawDeferred();
 	}
 
-void CMobblerAudioControl::SetAlbumArtL(const TDesC8& aAlbumArt)
+void CMobblerAudioControl::DataCompleteL(TInt aError)
 	{
-	iShared.iTrack->SetAlbumArtL(aAlbumArt);
-	}
-
-void CMobblerAudioControl::TrackDownloadCompleteL()
-	{
-	iShared.iDownloadComplete = ETrue;
+	if (aError == KErrNone || aError == KErrCancel)
+		{
+		iShared.iDownloadComplete = ETrue;
+		}
+	else
+		{
+		iObserver.HandleAudioFinishedL(this);
+		}
 	}
 
 void CMobblerAudioControl::SetVolume(TInt aVolume)

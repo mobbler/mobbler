@@ -26,6 +26,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <e32std.h>
 
+#include "mobblerlastfmconnection.h"
+
 _LIT(KSettingsFile, "c:settings.ini");
 
 class CMobblerSettingItemListSettings : public CBase
@@ -72,6 +74,12 @@ public:
 
 	TInt& SleepTimerMinutes();
 	void SetSleepTimerMinutes(TInt aSleepTimerMinutes);
+	
+	TTime& NextUpdateCheck();
+	void SetNextUpdateCheck(TTime aNextUpdateCheck);
+	
+	CMobblerLastFMConnection::TMode Mode();
+	void SetMode(CMobblerLastFMConnection::TMode aMode);
 
 protected:
 	TBuf<30> iUsername;
@@ -84,6 +92,8 @@ protected:
 	TInt iScrobblePercent;
 	TInt iVolume;
 	TInt iSleepTimerMinutes;
+	TTime iNextUpdateCheck;
+	CMobblerLastFMConnection::TMode iMode;
 	};
 
 #endif // __MOBBLERSETTINGITEMLISTSETTINGS_H__

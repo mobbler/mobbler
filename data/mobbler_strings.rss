@@ -157,6 +157,74 @@ RESOURCE STRING r_mobbler_disable_scrobbling	{ text = STR_mobbler_disable_scrobb
 
 RESOURCE STRING r_mobbler_note_stop_music_player	{ text = STR_mobbler_note_stop_music_player; }
 
+//
+
+RESOURCE STRING r_mobbler_view					{ text = STR_mobbler_view; }
+RESOURCE STRING r_mobbler_friends				{ text = STR_mobbler_friends; }
+RESOURCE STRING r_mobbler_top_artists			{ text = STR_mobbler_top_artists; }
+RESOURCE STRING r_mobbler_recommended_artists	{ text = STR_mobbler_recommended_artists; }
+RESOURCE STRING r_mobbler_recommended_events	{ text = STR_mobbler_recommended_events; }
+RESOURCE STRING r_mobbler_top_albums			{ text = STR_mobbler_top_albums; }
+RESOURCE STRING r_mobbler_top_tracks			{ text = STR_mobbler_top_tracks; }
+RESOURCE STRING r_mobbler_playlists				{ text = STR_mobbler_playlists; }
+RESOURCE STRING r_mobbler_events				{ text = STR_mobbler_events; }
+RESOURCE STRING r_mobbler_top_tags				{ text = STR_mobbler_top_tags; }
+RESOURCE STRING r_mobbler_open					{ text = STR_mobbler_open; }
+RESOURCE STRING r_mobbler_share					{ text = STR_mobbler_share; }
+RESOURCE STRING r_mobbler_track					{ text = STR_mobbler_track; }
+RESOURCE STRING r_mobbler_radio					{ text = STR_mobbler_radio; }
+RESOURCE STRING r_mobbler_recent_tracks			{ text = STR_mobbler_recent_tracks; }
+RESOURCE STRING r_mobbler_shoutbox				{ text = STR_mobbler_shoutbox; }
+RESOURCE STRING r_mobbler_shout					{ text = STR_mobbler_shout; }
+RESOURCE STRING r_mobbler_shout_at				{ text = STR_mobbler_shout_at; }
+
+RESOURCE STRING r_mobbler_personal_format			{ text = STR_mobbler_personal_format; }
+RESOURCE STRING r_mobbler_recommendations_format	{ text = STR_mobbler_recommendations_format; }
+RESOURCE STRING r_mobbler_neighbourhood_format		{ text = STR_mobbler_neighbourhood_format; }
+RESOURCE STRING r_mobbler_loved_tracks_format		{ text = STR_mobbler_loved_tracks_format; }
+RESOURCE STRING r_mobbler_playlist_format			{ text = STR_mobbler_playlist_format; }
+RESOURCE STRING r_mobbler_artist_format				{ text = STR_mobbler_artist_format; }
+RESOURCE STRING r_mobbler_tag_format				{ text = STR_mobbler_tag_format; }
+
+RESOURCE STRING r_mobbler_similar_artists			{ text = STR_mobbler_similar_artists; }
+RESOURCE STRING r_mobbler_similar_artists_format	{ text = STR_mobbler_similar_artists_format; }
+
+RESOURCE STRING r_mobbler_similar_tracks			{ text = STR_mobbler_similar_tracks; }
+RESOURCE STRING r_mobbler_similar_tracks_format		{ text = STR_mobbler_similar_tracks_format; }
+
+RESOURCE STRING r_mobbler_playlist_add_track		{ text = STR_mobbler_playlist_add_track; }
+
+RESOURCE STRING r_mobbler_format_play { text = STR_mobbler_format_play; }
+RESOURCE STRING r_mobbler_format_plays { text = STR_mobbler_format_plays; }
+RESOURCE STRING r_mobbler_format_time_used { text = STR_mobbler_format_time_used; }
+RESOURCE STRING r_mobbler_format_times_used { text = STR_mobbler_format_times_used; }
+RESOURCE STRING r_mobbler_format_time_ago_minute { text = STR_mobbler_format_time_ago_minute; }
+RESOURCE STRING r_mobbler_format_time_ago_minutes { text = STR_mobbler_format_time_ago_minutes; }
+RESOURCE STRING r_mobbler_format_time_ago_hour { text = STR_mobbler_format_time_ago_hour; }
+RESOURCE STRING r_mobbler_format_time_ago_hours { text = STR_mobbler_format_time_ago_hours; }
+
+RESOURCE STRING r_mobbler_format_friends { text = STR_mobbler_format_friends; }
+RESOURCE STRING r_mobbler_format_top_artists { text = STR_mobbler_format_top_artists; }
+RESOURCE STRING r_mobbler_format_recommended_artists { text = STR_mobbler_format_recommended_artists; }
+RESOURCE STRING r_mobbler_format_recommended_events { text = STR_mobbler_format_recommended_events; }
+RESOURCE STRING r_mobbler_format_similar_artists { text = STR_mobbler_format_similar_artists; }
+RESOURCE STRING r_mobbler_format_top_albums { text = STR_mobbler_format_top_albums; }
+RESOURCE STRING r_mobbler_format_top_tracks { text = STR_mobbler_format_top_tracks; }
+RESOURCE STRING r_mobbler_format_recent_tracks { text = STR_mobbler_format_recent_tracks; }
+RESOURCE STRING r_mobbler_format_similar_tracks { text = STR_mobbler_format_similar_tracks; }
+RESOURCE STRING r_mobbler_format_playlists { text = STR_mobbler_format_playlists; }
+RESOURCE STRING r_mobbler_format_events { text = STR_mobbler_format_events; }
+RESOURCE STRING r_mobbler_format_top_tags { text = STR_mobbler_format_top_tags; }
+RESOURCE STRING r_mobbler_format_shoutbox { text = STR_mobbler_format_shoutbox; }
+
+RESOURCE STRING r_mobbler_loading { text = STR_mobbler_loading; }
+RESOURCE STRING r_mobbler_failed { text = STR_mobbler_failed; }
+
+RESOURCE STRING r_mobbler_artist_shoutbox { text = STR_mobbler_artist_shoutbox; }
+RESOURCE STRING r_mobbler_current_track { text = STR_mobbler_current_track; }
+RESOURCE STRING r_mobbler_share_track { text = STR_mobbler_share_track; }
+RESOURCE STRING r_mobbler_share_artist { text = STR_mobbler_share_artist; }
+
 ///////////////////////////////////////////////////////////////////////////////
 
 // Mobbler 0.3.5 resources above,

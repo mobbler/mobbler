@@ -24,6 +24,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <coemain.h>
 #include <mobbler_strings.rsg>
 
+#include "mobblerappui.h"
+#include "mobblerstring.h"
 #include "mobblerresourcereader.h"
 #include "mobblersettingitemlistsettings.h"
 
@@ -74,6 +76,11 @@ void CMobblerSettingItemListSettings::LoadSettingValuesL()
 	TInt scrobblePercent(KDefaultScrobblePercent);
 	TInt volume(KDefaultVolume);
 	TInt sleepTimerMinutes(KDefaultSleepTimerMinutes);
+	TTime nextUpdateCheck;
+	nextUpdateCheck.UniversalTime();
+	nextUpdateCheck += TTimeIntervalDays(7); // the default update check should be 7 days after install
+	CMobblerLastFMConnection::TMode mode(CMobblerLastFMConnection::EOffline);
+	
 	if (openError == KErrNone)
 		{
 		RFileReadStream readStream(file);
@@ -81,11 +88,10 @@ void CMobblerSettingItemListSettings::LoadSettingValuesL()
 		
 		TBuf<255> username;
 		TBuf<255> password;
-		
-		readStream >> username;
-		readStream >> password;
 
 		 // Ignore KErrEof if these settings are not yet saved in the file
+		TRAP_IGNORE(readStream >> username);
+		TRAP_IGNORE(readStream >> password);
 		TRAP_IGNORE(backlight = readStream.ReadInt8L());
 		TRAP_IGNORE(autoUpdatesOn = readStream.ReadInt8L());
 		TRAP_IGNORE(iapId = readStream.ReadUint32L());
@@ -94,7 +100,19 @@ void CMobblerSettingItemListSettings::LoadSettingValuesL()
 		TRAP_IGNORE(scrobblePercent = readStream.ReadInt16L());
 		TRAP_IGNORE(volume = readStream.ReadInt16L());
 		TRAP_IGNORE(sleepTimerMinutes = readStream.ReadInt16L());
-
+		
+		TUint32 high(0);
+		TUint32 low(0);
+		TRAPD(errorHigh, high = readStream.ReadInt32L());
+		TRAPD(errorLow, low = readStream.ReadInt32L());
+		
+		if (errorHigh == KErrNone && errorLow == KErrNone )
+			{
+			nextUpdateCheck = TTime(MAKE_TINT64(high, low));
+			}
+		
+		TRAP_IGNORE(mode = static_cast<CMobblerLastFMConnection::TMode>(readStream.ReadInt8L()));
+		
 		SetUsernameL(username);
 		SetPasswordL(password);
 
@@ -103,12 +121,7 @@ void CMobblerSettingItemListSettings::LoadSettingValuesL()
 	else
 		{
 		// there was no file there so read from the resource file
-		CMobblerResourceReader* resourceReader = CMobblerResourceReader::NewL();
-		resourceReader->AddResourceFileL(KLanguageRscFile, KLanguageRscVersion);
-		HBufC* username  = resourceReader->AllocReadLC(R_MOBBLER_USERNAME);
-		delete resourceReader;
-		SetUsernameL(*username);
-		CleanupStack::PopAndDestroy(username);
+		SetUsernameL(static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->ResourceReader().ResourceL(R_MOBBLER_USERNAME));
 		SetPasswordL(_L("password"));
 		}
 
@@ -120,6 +133,8 @@ void CMobblerSettingItemListSettings::LoadSettingValuesL()
 	SetScrobblePercent(scrobblePercent);
 	SetVolume(volume);
 	SetSleepTimerMinutes(sleepTimerMinutes);
+	SetNextUpdateCheck(nextUpdateCheck);
+	SetMode(mode);
 
 	CleanupStack::PopAndDestroy(&file);
 	}
@@ -146,6 +161,9 @@ void CMobblerSettingItemListSettings::SaveSettingValuesL()
 		writeStream.WriteInt16L(ScrobblePercent());
 		writeStream.WriteInt16L(Volume());
 		writeStream.WriteInt16L(SleepTimerMinutes());
+		writeStream.WriteInt32L(I64HIGH(NextUpdateCheck().Int64()));
+		writeStream.WriteInt32L(I64LOW(NextUpdateCheck().Int64()));
+		writeStream.WriteInt8L(Mode());
 		
 		CleanupStack::PopAndDestroy(&writeStream);
 		}
@@ -251,6 +269,26 @@ TInt& CMobblerSettingItemListSettings::SleepTimerMinutes()
 void CMobblerSettingItemListSettings::SetSleepTimerMinutes(TInt aSleepTimerMinutes)
 	{
 	iSleepTimerMinutes = aSleepTimerMinutes;
+	}
+
+TTime& CMobblerSettingItemListSettings::NextUpdateCheck()
+	{
+	return iNextUpdateCheck;
+	}
+
+void CMobblerSettingItemListSettings::SetNextUpdateCheck(TTime aNextUpdateCheck)
+	{
+	iNextUpdateCheck = aNextUpdateCheck;
+	}
+
+CMobblerLastFMConnection::TMode CMobblerSettingItemListSettings::Mode()
+	{
+	return iMode;
+	}
+
+void CMobblerSettingItemListSettings::SetMode(CMobblerLastFMConnection::TMode aMode)
+	{
+	iMode = aMode;
 	}
 
 // End of file

@@ -54,6 +54,10 @@ public:
 	void SetVolumeL(TInt aVolume);
 	TInt SleepTimerMinutes() const;
 	void SetSleepTimerMinutesL(TInt aSleepTimerMinutes);
+	TTime NextUpdateCheck();
+	void SetNextUpdateCheckL(TTime aNextUpdateCheck);
+	CMobblerLastFMConnection::TMode Mode();
+	void SetModeL(CMobblerLastFMConnection::TMode aMode);
 	
 private:
 	CMobblerSettingItemListView();        
@@ -93,7 +97,6 @@ private:
 	TInt iOrdinal;
 	TBool iIsNumberedStyle;
 	CArrayPtr<CGulIcon>* iIcons;
-	CMobblerResourceReader* iResourceReader;
 	};
 
 #endif

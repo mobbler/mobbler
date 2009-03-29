@@ -29,7 +29,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 class CMobblerAccessPointSettingItem : public CAknEnumeratedTextPopupSettingItem
     {
 public:
-	CMobblerAccessPointSettingItem(TInt aIdentifier, TInt& aSliderValue);
+	CMobblerAccessPointSettingItem(TInt aIdentifier, TInt& aValue);
 	void LoadIapListL();
 	void LoadL();
  
@@ -38,7 +38,7 @@ private:
 	void CompleteConstructionL();
 	
 private:
-	TInt iValue;
+	TInt& iValue;
     };
 	
 #endif // __MOBBLERACCESSPOINTSETTINGITEM_H__

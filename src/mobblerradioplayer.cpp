@@ -26,12 +26,15 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "mobbleraudiothread.h"
 #include "mobblerincomingcallmonitor.h"
 #include "mobblerlastfmconnection.h"
+#include "mobblerparser.h"
 #include "mobblerradioplayer.h"
 #include "mobblerradioplaylist.h"
 #include "mobblertrack.h"
 #include "mobblerutility.h"
-
-const TInt KEqualizerOff(-1);
+#include "mobblerresourcereader.h"
+#include "mobblerstring.h"
+#include "mobblersettingitemlistview.h"
+#include "mobbler_strings.rsg"
 
 const TInt KDefaultMaxVolume(10);
 
@@ -60,8 +63,37 @@ CMobblerRadioPlayer::~CMobblerRadioPlayer()
 	delete iNextPlaylist;
 	delete iCurrentAudioControl;
 	delete iNextAudioControl;
+	delete iStation;
 	
 	delete iIncomingCallMonitor;
+	
+	iObservers.Close();
+	}
+
+void CMobblerRadioPlayer::AddObserverL(MMobblerRadioStateChangeObserver* aObserver)
+	{
+	iObservers.InsertInAddressOrder(aObserver);
+	}
+
+void CMobblerRadioPlayer::RemoveObserver(MMobblerRadioStateChangeObserver* aObserver)
+	{
+	TInt position = iObservers.FindInAddressOrder(aObserver);
+	
+	if (position != KErrNotFound)
+		{
+		iObservers.Remove(position);
+		}
+	}
+
+void CMobblerRadioPlayer::DoChangeStateL(TState aState)
+	{
+	iState = aState;
+	
+	const TInt KObserverCount(iObservers.Count());
+	for (TInt i(0) ; i < KObserverCount ; ++i)
+		{
+		iObservers[i]->HandleRadioStateChangedL();
+		}
 	}
 
 void CMobblerRadioPlayer::HandleAudioPositionChangeL()
@@ -86,12 +118,14 @@ void CMobblerRadioPlayer::HandleAudioPositionChangeL()
 			// There is more in the playlist so start fetching the next track
 			iNextAudioControl = CMobblerAudioControl::NewL(*this,  *(*iCurrentPlaylist)[iCurrentTrackIndex + 1], iPreBufferSize, iVolume, iEqualizerIndex);
 			iLastFMConnection.RequestMp3L(*iNextAudioControl, (*iCurrentPlaylist)[iCurrentTrackIndex + 1]);
+			DoChangeStateL(EPlaying);
 			}
 		else if (iNextPlaylist)
 			{
 			// there is another playlist so fetch the first track for that
 			iNextAudioControl = CMobblerAudioControl::NewL(*this,  *(*iNextPlaylist)[0], iPreBufferSize, iVolume, iEqualizerIndex);
 			iLastFMConnection.RequestMp3L(*iNextAudioControl, (*iNextPlaylist)[0]);
+			DoChangeStateL(EPlaying);
 			}
 		}
 	
@@ -102,11 +136,12 @@ void CMobblerRadioPlayer::HandleAudioFinishedL(CMobblerAudioControl* aAudioContr
 	{
 	if (aAudioControl == iCurrentAudioControl)
 		{
+		// The current track has finished so try to start the new one 
 		NextTrackL();
 		}
 	else if (aAudioControl == iNextAudioControl)
 		{
-		// the next audio track failed before this one so
+		// The next audio track failed before this one so
 		// delete it and remove it from the playlist
 		delete iNextAudioControl;
 		iNextAudioControl = NULL;
@@ -122,8 +157,59 @@ void CMobblerRadioPlayer::HandleAudioFinishedL(CMobblerAudioControl* aAudioContr
 		}
 	}
 
-TInt CMobblerRadioPlayer::StartL(CMobblerLastFMConnection::TRadioStation aRadioStation, const TDesC8& aRadioText)
+CMobblerRadioPlayer::TState CMobblerRadioPlayer::State() const
 	{
+	return iState;
+	}
+
+void CMobblerRadioPlayer::StartL(CMobblerLastFMConnection::TRadioStation aRadioStation, const CMobblerString* aRadioText)
+	{
+	delete iStation;
+	iStation = NULL;
+	
+	TBuf<255> station;
+	TPtrC text(KNullDesC);
+	
+	if (!aRadioText)
+		{
+		// use the user's username
+		text.Set(static_cast<CMobblerAppUi*>(CEikonEnv::Static()->AppUi())->SettingView().UserName());
+		}
+	else
+		{
+		text.Set(aRadioText->String());
+		}
+
+	switch (aRadioStation)
+		{
+		case CMobblerLastFMConnection::EPersonal:
+			station.Format(static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->ResourceReader().ResourceL(R_MOBBLER_PERSONAL_FORMAT), &text);
+			break;
+		case CMobblerLastFMConnection::ERecommendations:
+			station.Format(static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->ResourceReader().ResourceL(R_MOBBLER_RECOMMENDATIONS_FORMAT), &text);
+			break;
+		case CMobblerLastFMConnection::ENeighbourhood:
+			station.Format(static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->ResourceReader().ResourceL(R_MOBBLER_NEIGHBOURHOOD_FORMAT), &text);
+			break;
+		case CMobblerLastFMConnection::ELovedTracks:
+			station.Format(static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->ResourceReader().ResourceL(R_MOBBLER_LOVED_TRACKS_FORMAT), &text);
+			break;
+		case CMobblerLastFMConnection::EPlaylist:
+			station.Format(static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->ResourceReader().ResourceL(R_MOBBLER_PLAYLIST_FORMAT), &text);
+			break;
+		case CMobblerLastFMConnection::EArtist:
+			station.Format(static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->ResourceReader().ResourceL(R_MOBBLER_ARTIST_FORMAT), &text);
+			break;
+		case CMobblerLastFMConnection::ETag:
+			station.Format(static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->ResourceReader().ResourceL(R_MOBBLER_TAG_FORMAT), &text);
+			break;
+		case CMobblerLastFMConnection::EUnknown:
+		default:
+			break;
+		}
+
+	iStation = CMobblerString::NewL(station);
+	
 	// Stop the radio and also make sure that
 	// we get rid of any playlists hanging around
 	DoStop(ETrue);
@@ -134,25 +220,63 @@ TInt CMobblerRadioPlayer::StartL(CMobblerLastFMConnection::TRadioStation aRadioS
 	iNextPlaylist = NULL;
 	
 	// now ask for the radio to start again
-	return iLastFMConnection.RadioStartL(aRadioStation, aRadioText);
-	}
-
-void CMobblerRadioPlayer::SetPlaylistL(CMobblerRadioPlaylist* aPlaylist)
-	{
-	if (iCurrentPlaylist)
+	if (aRadioText)
 		{
-		// we are still using the current playlist
-		// so this must be the next one
-		
-		delete iNextPlaylist;
-		iNextPlaylist = aPlaylist;
+		HBufC8* urlEncoded = MobblerUtility::URLEncodeLC(aRadioText->String());
+		iLastFMConnection.RadioStartL(this, aRadioStation, *urlEncoded);
+		CleanupStack::PopAndDestroy(urlEncoded);
 		}
 	else
 		{
-		iCurrentPlaylist = aPlaylist;
+		iLastFMConnection.RadioStartL(this, aRadioStation, KNullDesC8);
+		}
+	
+	DoChangeStateL(ESelectingStation);
+	}
+
+void CMobblerRadioPlayer::DataL(const TDesC8& aData, TInt aError)
+	{
+	if (aError == KErrNone)
+		{
+		DoChangeStateL(EIdle);
 		
-		iCurrentTrackIndex = -1;
-		NextTrackL();
+		CMobblerRadioPlaylist* playlist(NULL);
+		CMobblerLastFMError* error = CMobblerParser::ParseRadioPlaylistL(aData, playlist);
+		
+		if (!error)
+			{
+			if (iCurrentPlaylist)
+				{
+				// we are still using the current playlist
+				// so this must be the next one
+				
+				delete iNextPlaylist;
+				iNextPlaylist = playlist;
+				}
+			else
+				{
+				iCurrentPlaylist = playlist;
+				
+				iCurrentTrackIndex = -1;
+				NextTrackL();
+				}
+			}
+		else
+			{
+			// TODO: display an error
+			DoChangeStateL(EIdle);
+			}
+		}
+	else if (aError == KErrOverflow)
+		{
+		// This means we have selected the radio station
+		// and the connection is now fetching the first playlist for us
+		DoChangeStateL(EFetchingPlaylist);
+		}
+	else
+		{
+		// TODO: display an error
+		DoChangeStateL(EIdle);
 		}
 	}
 
@@ -171,39 +295,49 @@ void CMobblerRadioPlayer::NextTrackL()
 				// This is the last track in the playlist so
 				// fetch the next playlist
 
-				iLastFMConnection.RequestPlaylistL();
+				iLastFMConnection.RequestPlaylistL(this);
+				DoChangeStateL(EFetchingPlaylist);
 				}
 			
-			delete iCurrentAudioControl;
-			iCurrentAudioControl = NULL;
-			
-			if (iNextAudioControl)
+			if (iCurrentPlaylist->Count() > iCurrentTrackIndex)
 				{
-				iCurrentAudioControl = iNextAudioControl;
-				iNextAudioControl = NULL;
+				// We are indexing a track in this playlist so start it
+				
+				delete iCurrentAudioControl;
+				iCurrentAudioControl = NULL;
+				
+				if (iNextAudioControl)
+					{
+					// We have already created the next audio control so use that
+					iCurrentAudioControl = iNextAudioControl;
+					iNextAudioControl = NULL;
+					}
+				else
+					{
+					// Create the next audio control and request the mp3
+					iCurrentAudioControl = CMobblerAudioControl::NewL(*this, *(*iCurrentPlaylist)[iCurrentTrackIndex], iPreBufferSize, iVolume, iEqualizerIndex);
+					iLastFMConnection.RequestMp3L(*iCurrentAudioControl, (*iCurrentPlaylist)[iCurrentTrackIndex]);
+					DoChangeStateL(EPlaying);
+					}
+				
+				// Tell the audio thread that is should start writing data to the output stream
+				iCurrentAudioControl->SetCurrent();
+				
+				// We have started playing the track so tell Last.fm
+				CMobblerTrack* track = (*iCurrentPlaylist)[iCurrentTrackIndex];
+				
+				if (track->StartTimeUTC() == Time::NullTTime())
+					{
+					// we haven't set the start time for this track yet
+					// so this must be the first time we are writing data
+					// to the output stream.  Set the start time now.
+					TTime now;
+					now.UniversalTime();
+					track->SetStartTimeUTC(now);
+					}
+				
+				iLastFMConnection.TrackStartedL(track);
 				}
-			else
-				{
-				iCurrentAudioControl = CMobblerAudioControl::NewL(*this, *(*iCurrentPlaylist)[iCurrentTrackIndex], iPreBufferSize, iVolume, iEqualizerIndex);
-				iLastFMConnection.RequestMp3L(*iCurrentAudioControl, (*iCurrentPlaylist)[iCurrentTrackIndex]);
-				}
-			
-			iCurrentAudioControl->SetCurrent();
-			
-			// We have started playing the track so tell Last.fm
-			CMobblerTrack* track = (*iCurrentPlaylist)[iCurrentTrackIndex];
-			
-			if (track->StartTimeUTC() == Time::NullTTime())
-				{
-				// we haven't set the start time for this track yet
-				// so this must be the first time we are writing data
-				// to the output stream.  Set the start time now.
-				TTime now;
-				now.UniversalTime();
-				track->SetStartTimeUTC(now);
-				}
-			
-			iLastFMConnection.TrackStartedL(track);
 			}
 		else
 			{
@@ -302,7 +436,15 @@ TInt CMobblerRadioPlayer::EqualizerIndex() const
 
 const CMobblerString& CMobblerRadioPlayer::Station() const
 	{
-	return iCurrentPlaylist->Name();
+	const CMobblerString* station = &iCurrentPlaylist->Name();
+	
+	if (station->String().Length() == 0
+			&& iStation)
+		{
+		station = iStation;
+		}
+	
+	return *station;
 	}
 
 void CMobblerRadioPlayer::SetPreBufferSize(TTimeIntervalSeconds aPreBufferSize)
@@ -355,6 +497,7 @@ void CMobblerRadioPlayer::DoStop(TBool aDeleteNextTrack)
 	delete iCurrentAudioControl;
 	iCurrentAudioControl = NULL;
 	
+	DoChangeStateL(EIdle);
 	static_cast<CMobblerAppUi*>(CEikonEnv::Static()->AppUi())->StatusDrawDeferred();
 	}
 

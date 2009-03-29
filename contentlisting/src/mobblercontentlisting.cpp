@@ -105,6 +105,8 @@ void CMobblerContentListing::FindAndSetAlbumNameL()
 		}
 	else if (iClfModelReady && iObserver && iArtist.Length() > 0)
 		{
+		TBool found(EFalse);
+		
 		// Is it worth post filtering these results with MCLFPostFilter? Probably not.
 		TInt numberOfItems(iClfModel->ItemCount());
 		for(TInt i(0); i < numberOfItems; ++i)
@@ -136,6 +138,12 @@ void CMobblerContentListing::FindAndSetAlbumNameL()
 						{
 						iObserver->SetTrackNumber(trackNumber);
 						}
+					
+					if (pathError == KErrNone)
+						{
+						iObserver->SetPathL(path);
+						}
+					
 					if (albumError == KErrNone)
 						{
 						iObserver->SetAlbumL(album);
@@ -146,14 +154,20 @@ void CMobblerContentListing::FindAndSetAlbumNameL()
 						// case-sensitive and that'll discriminate on the often
 						// different "the"/"The", "In"/"in", "Of"/"of" etc.
 						}
-					if (pathError == KErrNone)
-						{
-						iObserver->SetPathL(path);
-						}
-						break;
+					
+					found = ETrue;
+					break;
 					}
 				}
 			}
+		
+		if (!found)
+			{
+			// Always set the album, even if we don't know it
+			// CMobblerTrack needs to know that we don't know it 
+			iObserver->SetAlbumL(KNullDesC);
+			}
+		
 		iArtist = KNullDesC8;
 		iTitle  = KNullDesC8;
 		}

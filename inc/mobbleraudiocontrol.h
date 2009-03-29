@@ -38,7 +38,7 @@ public:
 	virtual void HandleAudioFinishedL(CMobblerAudioControl* aAudioControl) = 0;
 	};
 
-class CMobblerAudioControl : public CActive, public MMobblerTrackDownloadObserver
+class CMobblerAudioControl : public CActive, public MMobblerSegDataObserver
 	{
 public:
 	static CMobblerAudioControl* NewL(MMobblerAudioControlObserver& aObserver, CMobblerTrack& aTrack, TTimeIntervalSeconds aPreBufferSize, TInt aVolume, TInt aEqualizerIndex);
@@ -67,10 +67,9 @@ private: // from CActive
 	void RunL();
 	void DoCancel();
 	
-private: // from MMobblerMp3DownloadObserver
-	void WriteMp3DataL(const TDesC8& aData, TInt aTotalSize);
-	void SetAlbumArtL(const TDesC8& aAlbumArt);
-	void TrackDownloadCompleteL();
+private: // from 
+	void DataPartL(const TDesC8& aData, TInt aTotalSize);
+	void DataCompleteL(TInt aError);
 	
 private:
 	TMobblerSharedData iShared;

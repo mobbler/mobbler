@@ -25,6 +25,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <mobbler_strings.rsg>
 
+#include "mobblerappui.h"
+#include "mobblerstring.h"
 #include "mobblerresourcereader.h"
 #include "mobblerslidersettingitem.h"
 
@@ -70,23 +72,11 @@ CFbsBitmap* CMobblerSliderSettingItem::CreateBitmapL()
 
 const TDesC& CMobblerSliderSettingItem::SettingTextL()
 	{
-	CMobblerResourceReader* resourceReader = CMobblerResourceReader::NewL();
-	resourceReader->AddResourceFileL(KLanguageRscFile, KLanguageRscVersion);
-
-	HBufC* labelText;
-	if (InternalSliderValue() == 1)
-		{
-		labelText = resourceReader->AllocReadLC(iResourceIdSingular);
-		}
-	else
-		{
-		labelText = resourceReader->AllocReadLC(iResourceIdPlural);
-		}
-
-	iText.Format(*labelText, InternalSliderValue());
-	CleanupStack::PopAndDestroy(labelText);
-	delete resourceReader;
-
+	iText.Format(InternalSliderValue() == 1?
+			static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->ResourceReader().ResourceL(iResourceIdSingular):
+			static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->ResourceReader().ResourceL(iResourceIdPlural),
+			InternalSliderValue());
+	
 	return iText;
 	}
 

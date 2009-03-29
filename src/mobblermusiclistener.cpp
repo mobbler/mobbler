@@ -35,23 +35,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 const TUid KMobblerMusicAppImplUid = {0xA0007CAA};
 const TUid KContentListingImplUid = {0xA000BEB1};
 
-const TPtrC KArtExtensionArray[] =
-	{
-	_L(".jpg"),
-	_L(".gif"),
-	_L(".png"),
-	};
-
-const TPtrC KArtFileArray[] =
-	{
-	_L("cover.jpg"),
-	_L("cover.gif"),
-	_L("cover.png"),
-	_L("folder.jpg"),
-	_L("folder.gif"),
-	_L("folder.png"),
-	};
-
 CMobblerMusicAppListener* CMobblerMusicAppListener::NewL(CMobblerLastFMConnection& aSubmitter)
 	{
 	CMobblerMusicAppListener* self = new(ELeave) CMobblerMusicAppListener(aSubmitter);
@@ -134,6 +117,32 @@ CMobblerMusicAppListener::~CMobblerMusicAppListener()
 		delete iMobblerContentListing;
 		REComSession::DestroyedImplementation(iDtorIdKey);
 		}
+	
+	iObservers.Close();
+	}
+
+void CMobblerMusicAppListener::AddObserverL(MMobblerMusicAppListenerObserver* aObserver)
+	{
+	iObservers.InsertInAddressOrderL(aObserver);
+	}
+
+void CMobblerMusicAppListener::RemoveObserver(MMobblerMusicAppListenerObserver* aObserver)
+	{
+	TInt position = iObservers.FindInAddressOrder(aObserver);
+	
+	if (position != KErrNotFound)
+		{
+		iObservers.Remove(position);
+		}
+	}
+	
+void CMobblerMusicAppListener::NotifyChangeL()
+	{
+	const TInt KObserverCount(iObservers.Count());
+	for (TInt i(0) ; i < KObserverCount ; ++i)
+		{
+		iObservers[i]->HandleMusicAppChangeL();
+		}
 	}
 
 CMobblerTrack* CMobblerMusicAppListener::CurrentTrack()
@@ -150,6 +159,8 @@ void CMobblerMusicAppListener::HandleTrackChangeL(const TDesC& /*aTrack*/)
 		}
 	iLastFMConnection.TrackStoppedL();
 	ScheduleNowPlayingL();
+	
+	NotifyChangeL();
 	}
 
 void CMobblerMusicAppListener::HandleMusicStateChangeL(TInt aState)
@@ -167,6 +178,8 @@ void CMobblerMusicAppListener::HandleMusicStateChangeL(TInt aState)
 			}
 		iLastFMConnection.TrackStoppedL();
 		}
+	
+	NotifyChangeL();
 	}
 
 void CMobblerMusicAppListener::ScheduleNowPlayingL()
@@ -212,10 +225,10 @@ const TDesC& CMobblerMusicAppListener::MusicAppNameL() const
 void CMobblerMusicAppListener::NowPlayingL()
 	{
 	if (static_cast<CMobblerAppUi*>(CEikonEnv::Static()->AppUi())->
-												RadioPlayer()->CurrentTrack())
+												RadioPlayer().CurrentTrack())
 		{
 		static_cast<CMobblerAppUi*>(CEikonEnv::Static()->AppUi())->
-												RadioPlayer()->Stop();
+												RadioPlayer().Stop();
 		}
 
 	if ( iCurrentTrack )
@@ -271,7 +284,7 @@ void CMobblerMusicAppListener::NowPlayingL()
 				
 				if (trackAlbum.Length() == 0)
 					{
-					iCurrentTrack = CMobblerTrack::NewL(*artist, *title, KNullDesC8, KNullDesC8, KNullDesC8, trackLength, KNullDesC8);
+					iCurrentTrack = CMobblerTrack::NewL(*artist, *title, KNullDesC8, KNullDesC8, KNullDesC8, KNullDesC8, KNullDesC8, trackLength, KNullDesC8);
 
 					if (trackTitle.Length() != 0 && trackArtist.Length() != 0)
 						{
@@ -282,7 +295,7 @@ void CMobblerMusicAppListener::NowPlayingL()
 					{
 					HBufC8* album = CnvUtfConverter::ConvertFromUnicodeToUtf8L(trackAlbum);
 					CleanupStack::PushL(album);
-					iCurrentTrack = CMobblerTrack::NewL(*artist, *title, *album, KNullDesC8, KNullDesC8, trackLength, KNullDesC8);
+					iCurrentTrack = CMobblerTrack::NewL(*artist, *title, *album, KNullDesC8, KNullDesC8, KNullDesC8, KNullDesC8, trackLength, KNullDesC8);
 					CleanupStack::PopAndDestroy(album);
 					}
 				CleanupStack::PopAndDestroy(2, artist); // artist, title
@@ -291,6 +304,8 @@ void CMobblerMusicAppListener::NowPlayingL()
 				}
 			}
 		}
+	
+	NotifyChangeL();
 	}
 
 void CMobblerMusicAppListener::SetAlbumL(const TDesC& aAlbum)
@@ -303,69 +318,9 @@ void CMobblerMusicAppListener::SetAlbumL(const TDesC& aAlbum)
 	
 void CMobblerMusicAppListener::SetPathL(const TDesC& aPath)
 	{
-	if (!iCurrentTrack)
+	if (iCurrentTrack)
 		{
-		return;
-		}
-
-	TParse parse;
-	parse.Set(aPath, NULL, NULL);
-	TFileName fileName;
-	TBool found(EFalse);
-
-	// First check for %album%.jpg/gif/png
-	if (iCurrentTrack->Album().String().Length() > 0)
-		{
-		const TInt arraySize  = sizeof(KArtExtensionArray) / sizeof(TPtrC);
-		for (TInt i(0); i < arraySize; ++i)
-			{
-			fileName.Copy(parse.DriveAndPath());
-			fileName.Append(iCurrentTrack->Album().String());
-			fileName.Append(KArtExtensionArray[i]);
-
-			if (BaflUtils::FileExists(CCoeEnv::Static()->FsSession(), fileName))
-				{
-				found = ETrue;
-				break;
-				}
-			}
-		}
-
-	// If not found, check for cover.jpg/gif/png, folder.jpg/gif/png
-	const TInt arraySize  = sizeof(KArtFileArray) / sizeof(TPtrC);
-	for (TInt i(0); i < arraySize && !found; ++i)
-		{
-		fileName.Copy(parse.DriveAndPath());
-		fileName.Append(KArtFileArray[i]);
-
-		if (BaflUtils::FileExists(CCoeEnv::Static()->FsSession(), fileName))
-			{
-			found = ETrue;
-			break;
-			}
-		}
-
-	// If still not found, check for %artist%.jpg/gif/png
-	if (!found && iCurrentTrack->Artist().String().Length() > 0)
-		{
-		const TInt arraySize  = sizeof(KArtExtensionArray) / sizeof(TPtrC);
-		for (TInt i(0); i < arraySize; ++i)
-			{
-			fileName.Copy(parse.DriveAndPath());
-			fileName.Append(iCurrentTrack->Artist().String());
-			fileName.Append(KArtExtensionArray[i]);
-
-			if (BaflUtils::FileExists(CCoeEnv::Static()->FsSession(), fileName))
-				{
-				found = ETrue;
-				break;
-				}
-			}
-		}
-
-	if (found)
-		{
-		iCurrentTrack->SetAlbumArtL(fileName);
+		iCurrentTrack->SetPathL(aPath);
 		}
 	}
 
@@ -426,6 +381,8 @@ void CMobblerMusicAppListener::PlayerStateChangedL(TMPlayerRemoteControlState aS
 			}
 		iLastFMConnection.TrackStoppedL();
 		}
+	
+	NotifyChangeL();
 	}
 
 void CMobblerMusicAppListener::TrackInfoChangedL(const TDesC& /*aTitle*/, const TDesC& /*aArtist*/)
@@ -455,6 +412,8 @@ void CMobblerMusicAppListener::CommandReceivedL(TMPlayerRemoteControlCommands aC
 			}
 		iLastFMConnection.TrackStoppedL();
 		}
+	
+	NotifyChangeL();
 	}
 
 void CMobblerMusicAppListener::PlayerPositionL(TTimeIntervalSeconds aPlayerPosition)

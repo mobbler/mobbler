@@ -69,38 +69,48 @@ SYSTEMINCLUDE	 \epoc32\include \epoc32\include\mmf\plugin
 
 SOURCE		mobbler.cpp
 SOURCE		mobbleraccesspointsettingitem.cpp
+SOURCE		mobbleralbumlist.cpp
 SOURCE		mobblerapplication.cpp
 SOURCE		mobblerappui.cpp
+SOURCE		mobblerartistlist.cpp
 SOURCE		mobbleraudiocontrol.cpp
 SOURCE		mobbleraudiothread.cpp
 SOURCE		mobblerbitmap.cpp
 SOURCE		mobblerdocument.cpp
 SOURCE		mobblerdownload.cpp
+SOURCE		mobblereventlist.cpp
+SOURCE		mobblerfriendlist.cpp
 SOURCE		mobblerincomingcallmonitor.cpp
 SOURCE		mobblerlastfmconnection.cpp
 SOURCE		mobblerlastfmerror.cpp
+SOURCE		mobblerlistcontrol.cpp
+SOURCE		mobblerlistitem.cpp
 SOURCE		mobblermarquee.cpp
 SOURCE		mobblermusiclistener.cpp
 SOURCE		mobblernowplayingcallback.cpp
 SOURCE		mobblerparser.cpp
+SOURCE		mobblerplaylistlist.cpp
 SOURCE		mobblerradioplayer.cpp
 SOURCE		mobblerradioplaylist.cpp
 SOURCE		mobblerresourcereader.cpp
-SOURCE		mobblerrichtextcontrol.cpp
 SOURCE		mobblersettingitemlist.cpp
 SOURCE		mobblersettingitemlistsettings.cpp
 SOURCE		mobblersettingitemlistview.cpp
+SOURCE		mobblershoutbox.cpp
 SOURCE		mobblersleeptimer.cpp
 SOURCE		mobblerslidersettingitem.cpp
 SOURCE		mobblerstatuscontrol.cpp
 SOURCE		mobblerstatusview.cpp
 SOURCE		mobblerstring.cpp
+SOURCE		mobblertaglist.cpp
 SOURCE		mobblertimeout.cpp
 SOURCE		mobblertrack.cpp
+SOURCE		mobblertracklist.cpp
 SOURCE		mobblertransaction.cpp
 SOURCE		mobblerutility.cpp
+SOURCE		mobblerwebservicescontrol.cpp
 SOURCE		mobblerwebservicesquery.cpp
-
+SOURCE		mobblerwebservicesview.cpp
 
 LIBRARY		aknicon.lib
 LIBRARY		aknskins.lib
@@ -138,6 +148,8 @@ LIBRARY		RemConCoreApi.lib
 LIBRARY		RemConInterfaceBase.lib
 LIBRARY		senxml.lib
 LIBRARY		ws32.lib
+LIBRARY		egul.lib
+LIBRARY		bitmaptransforms.lib
 
 #ifndef WINS
 LIBRARY		browserlauncher.lib
@@ -152,6 +164,7 @@ EPOCSTACKSIZE 0x14000
 EPOCHEAPSIZE  0x100000 0x200000
 
 START RESOURCE	..\data\mobbler.rss
+LANG 01
 HEADER
 TARGET mobbler
 TARGETPATH resource\apps

@@ -29,31 +29,44 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 class CImageDecoder;
 class CMobblerBitmap;
+class CBitmapScaler;
 
 class MMobblerBitmapObserver
 	{
 public:
 	virtual void BitmapLoadedL(const CMobblerBitmap* aMobblerBitmap) = 0;
+	virtual void BitmapResizedL(const CMobblerBitmap* aMobblerBitmap) = 0;
 	};
 
 class CMobblerBitmap : public CActive
 	{
 public:
+	enum TMobblerScaleStatus
+		{
+		EMobblerScaleNone,
+		EMobblerScalePending
+		};
+	
+public:
 	
 	static CMobblerBitmap* NewL(MMobblerBitmapObserver& aObserver, const TDesC& aMifFileName, TInt aBitmapIndex, TInt iMaskIndex);
 	static CMobblerBitmap* NewL(MMobblerBitmapObserver& aObserver, TUid aAppUid);
-	static CMobblerBitmap* NewL(MMobblerBitmapObserver& aObserver, const TDesC& aFileName, const TUid aImageType = KNullUid, const TBool aGrayscale = EFalse);
+	static CMobblerBitmap* NewL(MMobblerBitmapObserver& aObserver, const TDesC& aFileName, const TUid aImageType = KNullUid);
 	static CMobblerBitmap* NewL(MMobblerBitmapObserver& aObserver, const TDesC8& aData, const TUid aImageType = KNullUid);
 	~CMobblerBitmap();
 	
 	CFbsBitmap* Bitmap() const;
+	CFbsBitmap* BitmapGrayL() const;
 	CFbsBitmap* Mask() const;
 	
 	void SetSize(TSize aSize);
 	TSize SizeInPixels() const;
+
+	void ScaleL(TSize aSize);
+	TMobblerScaleStatus ScaleSatus() const;
 	
 private:
-	void ConstructL(const TDesC& aFileName, const TUid aFileUid, const TBool aGrayscale);
+	void ConstructL(const TDesC& aFileName, const TUid aFileUid);
 	void ConstructL(const TDesC8& aData, const TUid aFileUid);
 	void ConstructL(TUid aAppUid);
 	void ConstructL(const TDesC& aMifFileName, TInt aBitmapIndex, TInt iMaskIndex);
@@ -70,12 +83,18 @@ private:
 	TBool iBitmapLoaded;
 	CImageDecoder* iImageDecoder;
 	CFbsBitmap* iBitmap;
+	mutable CFbsBitmap* iBitmapGray;
 	CFbsBitmap* iMask;
 	HBufC8* iData;
 	
 	HBufC* iMifFileName;
 	TInt iMifBitmapIndex;
 	TInt iMifMaskIndex;
+
+	CBitmapScaler* iBitmapScaler;
+	CFbsBitmap* iScaledBitmap;
+	CFbsBitmap* iOriginalBitmap;
+	TMobblerScaleStatus iScaleStatus;
 	};
 
 #endif

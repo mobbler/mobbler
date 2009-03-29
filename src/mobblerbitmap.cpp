@@ -25,6 +25,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <aknutils.h>
 #include <aknsutils.h>
 #include <imageconversion.h>
+#include <BitmapTransforms.h>
 
 #include "mobblerbitmap.h"
 
@@ -46,11 +47,11 @@ CMobblerBitmap* CMobblerBitmap::NewL(MMobblerBitmapObserver& aObserver, TUid aAp
 	return self;
 	}
 
-CMobblerBitmap* CMobblerBitmap::NewL(MMobblerBitmapObserver& aObserver, const TDesC& aFileName, const TUid aFileUid, const TBool aGrayscale)
+CMobblerBitmap* CMobblerBitmap::NewL(MMobblerBitmapObserver& aObserver, const TDesC& aFileName, const TUid aFileUid)
 	{
 	CMobblerBitmap* self = new(ELeave) CMobblerBitmap(aObserver);
 	CleanupStack::PushL(self);
-	self->ConstructL(aFileName, aFileUid, aGrayscale);
+	self->ConstructL(aFileName, aFileUid);
 	CleanupStack::Pop(self);
 	return self;
 	}
@@ -73,7 +74,12 @@ CMobblerBitmap::CMobblerBitmap(MMobblerBitmapObserver& aObserver)
 CMobblerBitmap::~CMobblerBitmap()
 	{
 	Cancel();
+	
 	delete iBitmap;
+	delete iBitmapGray;
+	delete iScaledBitmap;
+	delete iOriginalBitmap;
+	delete iBitmapScaler;
 	delete iMask;
 	delete iImageDecoder;
 	delete iData;
@@ -87,6 +93,35 @@ CFbsBitmap* CMobblerBitmap::Bitmap() const
 	if (iBitmapLoaded)
 		{
 		bitmap = iBitmap;
+		}
+	
+	return bitmap;
+	}
+
+CFbsBitmap* CMobblerBitmap::BitmapGrayL() const
+	{
+	CFbsBitmap* bitmap = NULL;
+	
+	if (iBitmapLoaded)
+		{
+		if (!iBitmapGray)
+			{
+			iBitmapGray = new (ELeave) CFbsBitmap();
+			TSize picSize = iBitmap->SizeInPixels();
+			iBitmapGray->Create(picSize, EGray256);
+			CFbsBitmap* src = const_cast<CFbsBitmap*>(iBitmap);
+			CFbsBitmapDevice* device = CFbsBitmapDevice::NewL(iBitmapGray);
+			CleanupStack::PushL(device);
+			CFbsBitGc* gc = NULL;
+			User::LeaveIfError(device->CreateContext(gc));
+			CleanupStack::PushL(gc);
+			gc->BitBlt(TPoint(0, 0), src);
+			CleanupStack::PopAndDestroy(2);
+			
+			bitmap = iBitmapGray;
+			}
+		
+		bitmap = iBitmapGray;
 		}
 	
 	return bitmap;
@@ -109,6 +144,8 @@ void CMobblerBitmap::SetSize(TSize aSize)
 	if (this)
 		{
 		AknIconUtils::SetSize(iBitmap, aSize);
+		delete iBitmapGray;
+		iBitmapGray = NULL;
 		}
 	}
 
@@ -124,7 +161,7 @@ TSize CMobblerBitmap::SizeInPixels() const
 	return returnSize;
 	}
 	
-void CMobblerBitmap::ConstructL(const TDesC& aFileName, const TUid aFileUid, const TBool aGrayscale)
+void CMobblerBitmap::ConstructL(const TDesC& aFileName, const TUid aFileUid)
 	{
 	TFileName fileName;
 	if (aFileName[0] == '\\')
@@ -144,14 +181,8 @@ void CMobblerBitmap::ConstructL(const TDesC& aFileName, const TUid aFileUid, con
 	iImageDecoder = CImageDecoder::FileNewL(CCoeEnv::Static()->FsSession(), fileName, CImageDecoder::EOptionAlwaysThread, aFileUid, TUid::Null(), TUid::Null());
 	const TFrameInfo& info = iImageDecoder->FrameInfo();
 	iBitmap = new(ELeave) CFbsBitmap();
-	if (aGrayscale)
-		{
-		iBitmap->Create(info.iOverallSizeInPixels, EGray256);	
-		}
-	else
-		{
-		iBitmap->Create(info.iOverallSizeInPixels, info.iFrameDisplayMode);
-		}
+
+	iBitmap->Create(info.iOverallSizeInPixels, info.iFrameDisplayMode);
 	
 	if (info.iFlags & TFrameInfo::ETransparencyPossible)
 		{
@@ -223,16 +254,44 @@ void CMobblerBitmap::ConstructL(const TDesC& aMifFileName, TInt aBitmapIndex, TI
 
 void CMobblerBitmap::RunL()
 	{
-	delete iImageDecoder;
-	iImageDecoder = NULL;
-	
-	if (iStatus.Int() == KErrNone)
+	if (!iBitmapScaler)
 		{
-		if (iMifFileName)
+		delete iImageDecoder;
+		iImageDecoder = NULL;
+	
+		if (iStatus.Int() == KErrNone)
 			{
-			AknIconUtils::CreateIconL(iBitmap, iMask, *iMifFileName, iMifBitmapIndex, iMifMaskIndex);
-			delete iMifFileName;
-			iMifFileName = NULL;
+			if (iMifFileName)
+				{
+				AknIconUtils::CreateIconL(iBitmap, iMask, *iMifFileName, iMifBitmapIndex, iMifMaskIndex);
+				delete iMifFileName;
+				iMifFileName = NULL;
+				}
+		
+			iBitmapLoaded = ETrue;
+			iObserver.BitmapLoadedL(this);
+			}
+		}
+	else
+		{
+		delete iBitmapScaler;
+		iBitmapScaler = NULL;
+		
+		if (iStatus.Int() == KErrNone)
+			{
+			if (!iOriginalBitmap)
+				{
+				// Save a handle to the original bitmap
+				iOriginalBitmap = iBitmap;
+				}
+			
+			iBitmap = iScaledBitmap;
+			iScaledBitmap = NULL;
+			iScaleStatus = EMobblerScaleNone;
+			
+			TSize size = iBitmap->SizeInPixels();
+			
+			iObserver.BitmapResizedL(this);
 			}
 		
 		iBitmapLoaded = ETrue;
@@ -242,7 +301,49 @@ void CMobblerBitmap::RunL()
 
 void CMobblerBitmap::DoCancel()
 	{
-	iImageDecoder->Cancel();
+	if (iImageDecoder)
+		{
+		iImageDecoder->Cancel();
+		}
+	
+	if (iBitmapScaler)
+		{
+		iBitmapScaler->Cancel();
+		}
 	}
 
+void CMobblerBitmap::ScaleL(TSize aSize)
+	{
+	if (iBitmapLoaded && iScaleStatus != EMobblerScalePending)
+		{
+		// Delete and stop any previous attempt to scale and create a new scaler
+		delete iBitmapScaler;
+		iBitmapScaler = NULL;
+		iBitmapScaler = CBitmapScaler::NewL();
+		iBitmapScaler->SetQualityAlgorithm(CBitmapScaler::EMaximumQuality);
+		
+		// Create the new bitmap at the correct size and start scaling
+		iScaledBitmap = new(ELeave) CFbsBitmap();
+		iScaledBitmap->Create(aSize, EColor16M);
+		
+		if (iOriginalBitmap)
+			{
+			iBitmapScaler->Scale(&iStatus, *iOriginalBitmap, *iScaledBitmap, ETrue);
+			}
+		else
+			{
+			iBitmapScaler->Scale(&iStatus, *iBitmap, *iScaledBitmap, ETrue);
+			}
+		SetActive();
+		
+		iScaleStatus = EMobblerScalePending;
+		}
+	}
+
+CMobblerBitmap::TMobblerScaleStatus CMobblerBitmap::ScaleSatus() const
+	{
+	return iScaleStatus;
+	}
+
+				
 // End of file

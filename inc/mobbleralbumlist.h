@@ -1,5 +1,5 @@
 /*
-mobblertransactionobserver.h
+mobbleralbumlist.h
 
 mobbler, a last.fm mobile scrobbler for Symbian smartphones.
 Copyright (C) 2008  Michael Coffey
@@ -21,20 +21,32 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-#ifndef __MOBBLERTRANSACTIONOBSERVER_H__
-#define __MOBBLERTRANSACTIONOBSERVER_H__
+#ifndef __MOBBLERALBUMLIST_H__
+#define __MOBBLERALBUMLIST_H__
 
+#include <aknlists.h>
 #include <e32base.h>
 
-class CMobblerTransaction;
+#include "mobblerbitmap.h"
+#include "mobblerlistcontrol.h"
+#include "mobblerlastfmconnection.h"
 
-class MMobblerTransactionObserver
+class CMobblerAppUi;
+class CMobblerString;
+class CGulIcon;
+
+class CMobblerAlbumList : public CMobblerListControl
 	{
 public:
-	virtual void TransactionResponseL(CMobblerTransaction* aTransaction, const TDesC8& aResponse) = 0;
-	virtual void TransactionCompleteL(CMobblerTransaction* aTransaction) = 0;
-	virtual void TransactionFailedL(CMobblerTransaction* aTransaction, const TDesC8& aStatus, TInt aStatusCode) = 0;
+	CMobblerAlbumList(CMobblerAppUi& aAppUi, CMobblerWebServicesControl& aWebServicesControl);
+	~CMobblerAlbumList();
+	
+	void ConstructL();
+	CMobblerListControl* HandleListCommandL(TInt aCommand);
+	void SupportedCommandsL(RArray<TInt>& aCommands);
+	void ParseL(const TDesC8& aXML);
+
+private:
 	};
-	
-#endif
-	
+
+#endif // __MOBBLERARTISTLIST_H__

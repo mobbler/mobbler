@@ -23,20 +23,22 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "mobblerappui.h"
 #include "mobblermarquee.h"
+#include "mobblerstatuscontrol.h"
 
 const TTimeIntervalMicroSeconds32 KDelay(2000000);
 const TTimeIntervalMicroSeconds32 KInterval(100000);
 
-CMobblerMarquee* CMobblerMarquee::NewL()
+CMobblerMarquee* CMobblerMarquee::NewL(CMobblerStatusControl& aStatusControl)
 	{
-	CMobblerMarquee* self = new(ELeave) CMobblerMarquee;
+	CMobblerMarquee* self = new(ELeave) CMobblerMarquee(aStatusControl);
 	CleanupStack::PushL(self);
 	self->ConstructL();
 	CleanupStack::Pop(self);
 	return self;
 	}
 
-CMobblerMarquee::CMobblerMarquee()
+CMobblerMarquee::CMobblerMarquee(CMobblerStatusControl& aStatusControl)
+	:iStatusControl(aStatusControl)
 	{
 	}
 
@@ -146,7 +148,7 @@ void CMobblerMarquee::Update()
 			break;
 		}
 	
-	static_cast<CMobblerAppUi*>(CEikonEnv::Static()->AppUi())->StatusDrawDeferred();
+	iStatusControl.DrawNow();
 	}
 
 // End of file
