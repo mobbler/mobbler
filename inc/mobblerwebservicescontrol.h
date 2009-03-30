@@ -26,12 +26,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <e32base.h>
 
-#include "mobblerlastfmconnection.h"
-
-class CMobblerAppUi;
-class CMobblerListControl;
 class CAknNavigationControlContainer;
 class CAknNavigationDecorator;
+class CMobblerAppUi;
+class CMobblerListControl;
 
 class CMobblerWebServicesControl : public CCoeControl, public MMobblerConnectionStateObserver
 	{
@@ -71,3 +69,5 @@ private:
 	};
 
 #endif // __MOBBLERWEBSERVICESCONTROL_H__
+
+// End of file

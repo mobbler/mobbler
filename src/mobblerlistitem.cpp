@@ -2,7 +2,7 @@
 mobblerlistitem.cpp
 
 Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
-Copyright (C) 2008  Michael Coffey
+Copyright (C) 2009  Michael Coffey
 
 http://code.google.com/p/mobbler
 
@@ -135,3 +135,5 @@ void CMobblerListItem::BitmapResizedL(const CMobblerBitmap* /*aMobblerBitmap*/)
 	{
 	iObserver.HandleLoadedL();
 	}
+
+// End of file

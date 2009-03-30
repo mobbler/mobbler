@@ -21,6 +21,8 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
+#include <mobbler_strings.rsg>
+
 #include "mobblerappui.h"
 #include "mobbleraudiocontrol.h"
 #include "mobbleraudiothread.h"
@@ -29,12 +31,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "mobblerparser.h"
 #include "mobblerradioplayer.h"
 #include "mobblerradioplaylist.h"
+#include "mobblerresourcereader.h"
 #include "mobblertrack.h"
 #include "mobblerutility.h"
-#include "mobblerresourcereader.h"
-#include "mobblerstring.h"
 #include "mobblersettingitemlistview.h"
-#include "mobbler_strings.rsg"
+#include "mobblerstring.h"
 
 const TInt KDefaultMaxVolume(10);
 
@@ -90,7 +91,7 @@ void CMobblerRadioPlayer::DoChangeStateL(TState aState)
 	iState = aState;
 	
 	const TInt KObserverCount(iObservers.Count());
-	for (TInt i(0) ; i < KObserverCount ; ++i)
+	for (TInt i(0); i < KObserverCount; ++i)
 		{
 		iObservers[i]->HandleRadioStateChangedL();
 		}
@@ -173,7 +174,7 @@ void CMobblerRadioPlayer::StartL(CMobblerLastFMConnection::TRadioStation aRadioS
 	if (!aRadioText)
 		{
 		// use the user's username
-		text.Set(static_cast<CMobblerAppUi*>(CEikonEnv::Static()->AppUi())->SettingView().UserName());
+		text.Set(static_cast<CMobblerAppUi*>(CEikonEnv::Static()->AppUi())->SettingView().Username());
 		}
 	else
 		{

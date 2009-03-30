@@ -121,6 +121,7 @@ LIBRARY		audioequalizerutility.lib
 LIBRARY		avkon.lib
 LIBRARY		bafl.lib
 LIBRARY		bitgdi.lib
+LIBRARY		bitmaptransforms.lib
 LIBRARY		centralrepository.lib
 LIBRARY		charconv.lib
 LIBRARY		commdb.lib
@@ -129,6 +130,7 @@ LIBRARY		cone.lib
 LIBRARY		downloadmgr.lib
 LIBRARY		ecom.lib
 LIBRARY		efsrv.lib
+LIBRARY		egul.lib
 LIBRARY		eikcoctl.lib
 LIBRARY		eikcore.lib
 LIBRARY		eikctl.lib 
@@ -147,8 +149,6 @@ LIBRARY		RemConCoreApi.lib
 LIBRARY		RemConInterfaceBase.lib
 LIBRARY		senxml.lib
 LIBRARY		ws32.lib
-LIBRARY		egul.lib
-LIBRARY		bitmaptransforms.lib
 
 #ifndef WINS
 LIBRARY		browserlauncher.lib

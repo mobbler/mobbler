@@ -38,48 +38,47 @@ public:
 		
 private:
 	CMobblerSettingItemListSettings();
-	void ConstructL();
 
 public:
 	void LoadSettingValuesL();
 	void SaveSettingValuesL();
 	
 public:
-	TDes& Username();
-	void SetUsernameL(const TDesC& aUserName);
+	TDes& Username() { return iUsername; }
+	void SetUsername(const TDesC& aUsername) { iUsername.Copy(aUsername); }
 	
-	TDes& Password();
-	void SetPasswordL(const TDesC& aPassword);
+	TDes& Password() { return iPassword; }
+	void SetPassword(const TDesC& aPassword) { iPassword.Copy(aPassword); }
 	
-	TBool& Backlight();
-	void SetBacklight(TBool aBacklight);
+	TBool& Backlight() { return iBacklight; }
+	void SetBacklight(TBool aBacklight) { iBacklight = aBacklight; }
 	
-	TBool& CheckForUpdates();
-	void SetCheckForUpdates(TBool aCheckForUpdates);
+	TBool& CheckForUpdates() { return iCheckForUpdates; }
+	void SetCheckForUpdates(TBool aCheckForUpdates) { iCheckForUpdates = aCheckForUpdates; }
 	
-	TInt& IapID();
-	void SetIapID(TInt aIapID);
+	TInt& IapID() { return iIapID; }
+	void SetIapID(TInt aIapID) { iIapID = aIapID; }
 	
-	TInt& BufferSize();
-	void SetBufferSize(TInt aBufferSize);
+	TInt& BufferSize() { return iBufferSize; }
+	void SetBufferSize(TInt aBufferSize) { iBufferSize = aBufferSize; }
 	
-	TInt& EqualizerIndex();
-	void SetEqualizerIndex(TInt aIndex);
+	TInt& EqualizerIndex() { return iEqualizerIndex; }
+	void SetEqualizerIndex(TInt aIndex) { iEqualizerIndex = aIndex; }
 	
-	TInt& ScrobblePercent();
-	void SetScrobblePercent(TInt aIndex);
+	TInt& ScrobblePercent() { return iScrobblePercent; }
+	void SetScrobblePercent(TInt aPercent) { iScrobblePercent = aPercent; }
 
-	TInt& Volume();
-	void SetVolume(TInt aVolume);
+	TInt& Volume() { return iVolume; }
+	void SetVolume(TInt aVolume) { iVolume = aVolume; }
 
-	TInt& SleepTimerMinutes();
-	void SetSleepTimerMinutes(TInt aSleepTimerMinutes);
+	TInt& SleepTimerMinutes() { return iSleepTimerMinutes; }
+	void SetSleepTimerMinutes(TInt aSleepTimerMinutes) { iSleepTimerMinutes = aSleepTimerMinutes; }
 	
-	TTime& NextUpdateCheck();
-	void SetNextUpdateCheck(TTime aNextUpdateCheck);
+	TTime& NextUpdateCheck() { return iNextUpdateCheck; }
+	void SetNextUpdateCheck(TTime aNextUpdateCheck) { iNextUpdateCheck = aNextUpdateCheck; }
 	
-	CMobblerLastFMConnection::TMode Mode();
-	void SetMode(CMobblerLastFMConnection::TMode aMode);
+	CMobblerLastFMConnection::TMode Mode() { return iMode; }
+	void SetMode(CMobblerLastFMConnection::TMode aMode) { iMode = aMode; }
 
 protected:
 	TBuf<30> iUsername;

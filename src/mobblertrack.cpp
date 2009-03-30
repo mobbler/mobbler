@@ -21,10 +21,9 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-#include <sendomfragment.h>
-#include <sennamespace.h> 
-#include <senxmlutils.h> 
 #include <bautils.h>
+#include <sendomfragment.h>
+#include <senxmlutils.h> 
 
 #include "mobblerappui.h"
 #include "mobblerstring.h"
@@ -51,8 +50,8 @@ const TPtrC KArtFileArray[] =
 CMobblerTrack* CMobblerTrack::NewL(const TDesC8& aArtist,
 									const TDesC8& aTitle,
 									const TDesC8& aAlbum,
-									const TDesC8& aMBAlbumID,
-									const TDesC8& aMBTrackID,
+									const TDesC8& aMbAlbumId,
+									const TDesC8& aMbTrackId,
 									const TDesC8& aImage,
 									const TDesC8& aMp3Location,
 									TTimeIntervalSeconds aTrackLength,
@@ -60,7 +59,7 @@ CMobblerTrack* CMobblerTrack::NewL(const TDesC8& aArtist,
 	{
 	CMobblerTrack* self = new(ELeave) CMobblerTrack;
 	CleanupStack::PushL(self);
-	self->ConstructL(aArtist, aTitle, aAlbum, aMBAlbumID, aMBTrackID, aImage, aMp3Location, aTrackLength, aRadioAuth);
+	self->ConstructL(aArtist, aTitle, aAlbum, aMbAlbumId, aMbTrackId, aImage, aMp3Location, aTrackLength, aRadioAuth);
 	CleanupStack::Pop(self);
 	return self;
 	}
@@ -82,8 +81,8 @@ CMobblerTrack::CMobblerTrack()
 void CMobblerTrack::ConstructL(const TDesC8& aArtist,
 		const TDesC8& aTitle,
 		const TDesC8& aAlbum,
-		const TDesC8& aMBAlbumID,
-		const TDesC8& aMBTrackID,
+		const TDesC8& aMbAlbumId,
+		const TDesC8& aMbTrackId,
 		const TDesC8& aImage,
 		const TDesC8& aMp3Location,
 		TTimeIntervalSeconds aTrackLength,
@@ -92,8 +91,8 @@ void CMobblerTrack::ConstructL(const TDesC8& aArtist,
 	iArtist = CMobblerString::NewL(aArtist);
 	iTitle = CMobblerString::NewL(aTitle);
 	iAlbum = CMobblerString::NewL(aAlbum);
-	iMBAlbumID = CMobblerString::NewL(aMBAlbumID);
-	iMBTrackID = CMobblerString::NewL(aMBTrackID);
+	iMbAlbumId = CMobblerString::NewL(aMbAlbumId);
+	iMbTrackId = CMobblerString::NewL(aMbTrackId);
 	iMp3Location = aMp3Location.AllocL();
 	iTrackLength = aTrackLength;
 	iRadioAuth = aRadioAuth.AllocL();
@@ -129,8 +128,8 @@ CMobblerTrack::~CMobblerTrack()
 	delete iArtist;
 	delete iTitle;
 	delete iAlbum;
-	delete iMBTrackID;
-	delete iMBAlbumID;
+	delete iMbTrackId;
+	delete iMbAlbumId;
 	delete iMp3Location;
 	delete iRadioAuth;
 	delete iAlbumArt;
@@ -275,7 +274,7 @@ void CMobblerTrack::SetAlbumL(const TDesC& aAlbum)
 		TFileName albumArtFileNameCache = AlbumArtCacheFileName();
 		if (BaflUtils::FileExists(CCoeEnv::Static()->FsSession(), albumArtFileNameCache))
 			{
-			// This album exitst in the cache so load the album art from there
+			// This album exists in the cache so load the album art from there
 			iAlbumArt = CMobblerBitmap::NewL(*this, albumArtFileNameCache);
 			}
 		else if (static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->LastFMConnection().Mode() == CMobblerLastFMConnection::EOnline)
@@ -295,9 +294,9 @@ void CMobblerTrack::SetAlbumL(const TDesC& aAlbum)
 		}
 	}
 
-const CMobblerString& CMobblerTrack::MBAlbumID() const
+const CMobblerString& CMobblerTrack::MbAlbumId() const
 	{
-	return *iMBAlbumID;
+	return *iMbAlbumId;
 	}
 
 TInt CMobblerTrack::TrackNumber() const
@@ -336,7 +335,7 @@ void CMobblerTrack::SetPathL(const TDesC& aPath)
 	// First check for %album%.jpg/gif/png
 	if (iAlbum->String().Length() > 0)
 		{
-		const TInt arraySize  = sizeof(KArtExtensionArray) / sizeof(TPtrC);
+		const TInt arraySize = sizeof(KArtExtensionArray) / sizeof(TPtrC);
 		for (TInt i(0); i < arraySize; ++i)
 			{
 			fileName.Copy(parse.DriveAndPath());
@@ -352,7 +351,7 @@ void CMobblerTrack::SetPathL(const TDesC& aPath)
 		}
 
 	// If not found, check for cover.jpg/gif/png, folder.jpg/gif/png
-	const TInt arraySize  = sizeof(KArtFileArray) / sizeof(TPtrC);
+	const TInt arraySize = sizeof(KArtFileArray) / sizeof(TPtrC);
 	for (TInt i(0); i < arraySize && !found; ++i)
 		{
 		fileName.Copy(parse.DriveAndPath());
@@ -368,7 +367,7 @@ void CMobblerTrack::SetPathL(const TDesC& aPath)
 	// If still not found, check for %artist%.jpg/gif/png
 	if (!found && iArtist->String().Length() > 0)
 		{
-		const TInt arraySize  = sizeof(KArtExtensionArray) / sizeof(TPtrC);
+		const TInt arraySize = sizeof(KArtExtensionArray) / sizeof(TPtrC);
 		for (TInt i(0); i < arraySize; ++i)
 			{
 			fileName.Copy(parse.DriveAndPath());
@@ -424,9 +423,9 @@ const CMobblerBitmap* CMobblerTrack::AlbumArt() const
 	return iAlbumArt;
 	}
 
-const CMobblerString& CMobblerTrack::MBTrackID() const
+const CMobblerString& CMobblerTrack::MbTrackId() const
 	{
-	return *iMBTrackID;
+	return *iMbTrackId;
 	}
 
 const TDesC8& CMobblerTrack::RadioAuth() const

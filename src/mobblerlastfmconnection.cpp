@@ -40,7 +40,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "mobblertransaction.h"
 #include "mobblerutility.h"
 #include "mobblerwebservicesquery.h"
-#include "mobbler.hrh"
 
 // the scheme of the Last.fm handshake
 _LIT8(KScheme, "http");
@@ -73,7 +72,7 @@ _LIT8(KLogFileListenedRating, "L");
 _LIT8(KLogFileFieldSeperator, "\t");
 _LIT8(KLogFileEndOfLine, "\n");
 
-_LIT8(KURLMobblerTwitterXML, "http://twitter.com/statuses/show/1395486987.xml");
+_LIT8(KUrlMobblerTwitterXml, "http://twitter.com/statuses/show/1395486987.xml");
 
 // Last.fm can accept up to this many track in one submission
 const TInt KMaxSubmitTracks(50);
@@ -408,7 +407,7 @@ void CMobblerLastFMConnection::CheckForUpdateL(MMobblerFlatDataObserver& aObserv
 void CMobblerLastFMConnection::GetLatestTweetL(MMobblerFlatDataObserver& aObserver)
 	{
 	TUriParser8 uriParser;
-	uriParser.Parse(KURLMobblerTwitterXML);
+	uriParser.Parse(KUrlMobblerTwitterXml);
 	CUri8* uri = CUri8::NewLC(uriParser);
 	CMobblerTransaction* transaction = CMobblerTransaction::NewL(*this, uri);
 	CleanupStack::Pop(uri);
@@ -721,7 +720,7 @@ void CMobblerLastFMConnection::TracksOrAlbumsByArtistL(TDesC& aArtist, TBool aAl
 	AppendAndSubmitTransactionL(transaction);
 	}
 
-void CMobblerLastFMConnection::TracksOnAlbumL(const TDesC& aAlbumID, MMobblerFlatDataObserver& aObserver)
+/*void CMobblerLastFMConnection::TracksOnAlbumL(const TDesC& aAlbumID, MMobblerFlatDataObserver& aObserver)
 	{
 	CUri8* uri = CUri8::NewL();
 	CleanupStack::PushL(uri);
@@ -748,7 +747,7 @@ void CMobblerLastFMConnection::TracksOnAlbumL(const TDesC& aAlbumID, MMobblerFla
 	CleanupStack::Pop(uri);
 	
 	AppendAndSubmitTransactionL(transaction);
-	}
+	}*/
 
 void CMobblerLastFMConnection::AlbumGetInfoL(const TDesC& aAlbum, const TDesC& aArtist, MMobblerFlatDataObserver& aObserver)
 	{

@@ -21,25 +21,22 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-#include <aknnavilabel.h>
 #include <aknnavide.h>
-#include <aknnavi.h>
-#include <aknsbasicbackgroundcontrolcontext.h>
-#include <mobbler_strings.rsg>
+#include <aknnavilabel.h>
 
-#include "mobblerappui.h"
-#include "mobblerfriendlist.h"
-#include "mobblerartistlist.h"
 #include "mobbleralbumlist.h"
-#include "mobblertracklist.h"
-#include "mobblerplaylistlist.h"
+#include "mobblerappui.h"
+#include "mobblerartistlist.h"
 #include "mobblereventlist.h"
-#include "mobblershoutbox.h"
-#include "mobblertaglist.h"
+#include "mobblerfriendlist.h"
 #include "mobblerlistcontrol.h"
-#include "mobblerwebservicescontrol.h"
-#include "mobblertrack.h"
+#include "mobblerplaylistlist.h"
+#include "mobblershoutbox.h"
 #include "mobblerstring.h"
+#include "mobblertaglist.h"
+#include "mobblertrack.h"
+#include "mobblertracklist.h"
+#include "mobblerwebservicescontrol.h"
 
 #include "mobbler.hrh"
 

@@ -39,7 +39,6 @@ class CHTTPFormEncoder;
 class CMobblerParser;
 class CMobblerTrack;
 class MMobblerLastFMConnectionObserver;
-class CArtistGeneral;
 class CMobblerTransaction;
 
 class MMobblerSegDataObserver
@@ -94,7 +93,6 @@ public:
 public:
 	static CMobblerLastFMConnection* NewL(MMobblerLastFMConnectionObserver& aObserver, const TDesC& aUsername, const TDesC& aPassword, TUint32 aIapID);
 	~CMobblerLastFMConnection();
-	
 	
 	void SetDetailsL(const TDesC& aUsername, const TDesC& aPassword);
 	void SetModeL(TMode aMode);
@@ -152,7 +150,7 @@ public:
 	void AlbumGetInfoL(const CMobblerTrack& aTrack, MMobblerFlatDataObserver& aObserver);
 	void AlbumGetInfoL(const TDesC& aAlbum, const TDesC& aArtist, MMobblerFlatDataObserver& aObserver);
 	void TracksOrAlbumsByArtistL(TDesC& aArtist, TBool aAlbums, MMobblerFlatDataObserver& aObserver);
-	void TracksOnAlbumL(const TDesC& aAlbumID, MMobblerFlatDataObserver& aObserver);
+	//void TracksOnAlbumL(const TDesC& aAlbumID, MMobblerFlatDataObserver& aObserver);
 	//void AddToLibrary(const TDesC& aArtist, const TDesC& aTrack, const TDesC& aAlbum, TInt aCommand);
 	
 	void PlaylistAddTrackL(const TDesC8& aPlaylistId, const TDesC8& aArtist, const TDesC8& aTrack);
@@ -201,7 +199,6 @@ private:  // utilities
 	
 	// track queue methods
 	void LoadTrackQueueL();
-	void DoLoadTrackQueueL();
 	void SaveTrackQueue();
 
 	void ConnectL();

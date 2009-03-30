@@ -88,7 +88,7 @@ void CMobblerAppUi::ConstructL()
 	AddViewL(iStatusView);
 	ActivateLocalViewL(iStatusView->Id());
 	
-	iLastFMConnection = CMobblerLastFMConnection::NewL(*this, iSettingView->UserName(), iSettingView->Password(), iSettingView->IapID());
+	iLastFMConnection = CMobblerLastFMConnection::NewL(*this, iSettingView->Username(), iSettingView->Password(), iSettingView->IapID());
 	iRadioPlayer = CMobblerRadioPlayer::NewL(*iLastFMConnection, iSettingView->BufferSize(), iSettingView->EqualizerIndex(), iSettingView->Volume());
 	iMusicListener = CMobblerMusicAppListener::NewL(*iLastFMConnection);
 	
@@ -305,11 +305,6 @@ CMobblerMusicAppListener& CMobblerAppUi::MusicListener() const
 	return *iMusicListener;
 	}
 
-CMobblerStatusView& CMobblerAppUi::StatusView() const
-	{
-	return *iStatusView;
-	}
-
 CMobblerSettingItemListView& CMobblerAppUi::SettingView() const
 	{
 	return *iSettingView;
@@ -449,7 +444,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 				
 			if (iLastFMConnection->Mode() == CMobblerLastFMConnection::EOnline)
 				{
-				CMobblerString* username = CMobblerString::NewL(iSettingView->UserName());
+				CMobblerString* username = CMobblerString::NewL(iSettingView->Username());
 				CleanupStack::PushL(username);
 				ActivateLocalViewL(iWebServicesView->Id(), TUid::Uid(aCommand), username->String8());
 				CleanupStack::PopAndDestroy(username);
@@ -728,7 +723,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 				    		case 0:
 				    			{
 				    			// Share
-				    			CMobblerString* username = CMobblerString::NewL(iSettingView->UserName());
+				    			CMobblerString* username = CMobblerString::NewL(iSettingView->Username());
 				    			CleanupStack::PushL(username);
 				    			iLastFMConnection->WebServicesCallL(_L8("user"), _L8("getfriends"), username->String8(), *this);
 				    			CleanupStack::PopAndDestroy(username);
@@ -740,7 +735,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 				    		case 1:
 				    			{
 				    			// Share
-				    			CMobblerString* username = CMobblerString::NewL(iSettingView->UserName());
+				    			CMobblerString* username = CMobblerString::NewL(iSettingView->Username());
 				    			CleanupStack::PushL(username);
 				    			iLastFMConnection->WebServicesCallL(_L8("user"), _L8("getfriends"), username->String8(), *this);
 				    			CleanupStack::PopAndDestroy(username);
@@ -752,7 +747,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 					    	case 2:
 					    		{
 					    		// Playlists
-					    		CMobblerString* username = CMobblerString::NewL(iSettingView->UserName());
+					    		CMobblerString* username = CMobblerString::NewL(iSettingView->Username());
 					    		CleanupStack::PushL(username);
 					    		iLastFMConnection->WebServicesCallL(_L8("user"), _L8("getplaylists"), username->String8(), *this);
 					    		CleanupStack::PopAndDestroy(username);
@@ -765,7 +760,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 				    			ActivateLocalViewL(iWebServicesView->Id(), TUid::Uid(EMobblerCommandSimilarArtists), currentTrack->Artist().String8());
 				    			break;
 				    		case 4:
-				    			ActivateLocalViewL(iWebServicesView->Id(), TUid::Uid(EMobblerCommandSimilarTracks), currentTrack->MBTrackID().String8());
+				    			ActivateLocalViewL(iWebServicesView->Id(), TUid::Uid(EMobblerCommandSimilarTracks), currentTrack->MbTrackId().String8());
 				    			break;
 				    		case 5:
 				    			ActivateLocalViewL(iWebServicesView->Id(), TUid::Uid(EMobblerCommandArtistEvents), currentTrack->Artist().String8());
@@ -1604,13 +1599,6 @@ void CMobblerAppUi::TimerExpiredL(TAny* /*aTimer*/, TInt aError)
 		// Reset the timer
 		iSleepTimer->AtUTC(iTimeToSleep);
 		}	
-	}
-
-void CMobblerAppUi::SetSoftkeys(TInt aResource) const
-	{
-    CEikButtonGroupContainer* cba = CEikButtonGroupContainer::Current();
-    cba->SetCommandSetL(aResource);
-    cba->DrawNow();
 	}
 
 // End of File

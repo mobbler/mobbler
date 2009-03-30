@@ -1,8 +1,8 @@
 /*
 mobblershoutbox.cpp
 
-mobbler, a last.fm mobile scrobbler for Symbian smartphones.
-Copyright (C) 2008  Michael Coffey
+Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
+Copyright (C) 2009  Michael Coffey
 
 http://code.google.com/p/mobbler
 
@@ -22,9 +22,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
 #include <aknquerydialog.h>
-#include <gulicon.h>
-#include <eikclbd.h>
+#include <mobbler_strings.rsg>
+#include <mobbler.rsg>
 
+#include "mobbler.hrh"
 #include "mobblerappui.h"
 #include "mobblershoutbox.h"
 #include "mobblereventlist.h"
@@ -33,13 +34,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "mobblerlastfmconnection.h"
 #include "mobblerlistitem.h"
 #include "mobblerresourcereader.h"
-#include "mobblerstring.h"
 #include "mobblersettingitemlistview.h"
-
-#include "mobbler_strings.rsg"
-#include "mobbler.rsg"
-
-#include "mobbler.hrh"
+#include "mobblerstring.h"
 
 _LIT(KDefaultImage, "\\resource\\apps\\mobbler\\default_user.png");
 
@@ -78,7 +74,7 @@ HBufC* CMobblerShoutbox::ShoutAtTextOwnerLC()
 
 	if (iText1->String().Length() == 0)
 		{
-		CMobblerString* name = CMobblerString::NewL(iAppUi.SettingView().UserName());
+		CMobblerString* name = CMobblerString::NewL(iAppUi.SettingView().Username());
 		CleanupStack::PushL(name);
 		shoutAtText = ShoutAtTextLC(name->String8());
 		CleanupStack::Pop(shoutAtText);
@@ -165,7 +161,7 @@ CMobblerListControl* CMobblerShoutbox::HandleListCommandL(TInt aCommand)
 			
 			break;
 		default:
-			break;	
+			break;
 		}
 	
 	return list;
@@ -183,5 +179,4 @@ void CMobblerShoutbox::ParseL(const TDesC8& aXML)
 	CMobblerParser::ParseShoutboxL(aXML, *this, iList);
 	}
 
-
-
+// End of file

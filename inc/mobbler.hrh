@@ -30,8 +30,6 @@ enum TMobblerSettingItemListViewCommands
 	EMobblerCommandEditSettings,
 	EMobblerCommandAbout,
 	
-	EMobblerCommandMore,
-	
 	EMobblerCommandTools,
 	
 	EMobblerCommandPlus,
@@ -118,8 +116,6 @@ enum TMobblerSettingItemListViewCommands
 	
 	EMobblerCommandCheckForUpdates,
 
-	EMobblerCommandHide,
-	
 	EMobblerCommandLast
 	};
 	

@@ -2,7 +2,7 @@
 mobblerlistcontrol.cpp
 
 Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
-Copyright (C) 2008  Michael Coffey
+Copyright (C) 2009  Michael Coffey
 
 http://code.google.com/p/mobbler
 
@@ -22,31 +22,29 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
 #include <gulicon.h>
-#include <eikclbd.h> 
 #include <mobbler_strings.rsg>
 
+#include "mobbler.hrh"
+#include "mobbleralbumlist.h"
 #include "mobblerappui.h"
+#include "mobblerartistlist.h"
 #include "mobblerbitmap.h"
+#include "mobblereventlist.h"
+#include "mobblerfriendlist.h"
 #include "mobblerlistcontrol.h"
 #include "mobblerlistitem.h"
-#include "mobblerstring.h"
-#include "mobblerwebservicescontrol.h"
-#include "mobbler.hrh"
-
-#include "mobblerfriendlist.h"
-#include "mobblerartistlist.h"
-#include "mobbleralbumlist.h"
-#include "mobblertracklist.h"
 #include "mobblerplaylistlist.h"
-#include "mobblereventlist.h"
 #include "mobblerresourcereader.h"
-#include "mobblertaglist.h"
 #include "mobblershoutbox.h"
+#include "mobblerstring.h"
+#include "mobblertaglist.h"
+#include "mobblertracklist.h"
+#include "mobblerwebservicescontrol.h"
 
 _LIT(KDoubleLargeStyleListBoxTextFormat, "%d\t%S\t%S");
 _LIT(KRecentTracksTitleFormat, "%S - %S");
 
-const TTimeIntervalMinutes KMinuteInAnHour(60);
+const TTimeIntervalMinutes KMinutesInAnHour(60);
 const TTimeIntervalHours KHoursInOneDay(24);
 
 CMobblerListControl* CMobblerListControl::CreateListL(CMobblerAppUi& aAppUi, CMobblerWebServicesControl& aWebServicesControl, TInt aType, const TDesC8& aText1, const TDesC8& aText2)
@@ -149,8 +147,8 @@ CMobblerListControl::~CMobblerListControl()
 	{
 	iAppUi.LastFMConnection().CancelTransaction(this);
 	
-	const TInt KFriendListCount(iList.Count());
-	for (TInt i(0) ; i < KFriendListCount ; ++i)
+	const TInt KListCount(iList.Count());
+	for (TInt i(0); i < KListCount ; ++i)
 		{
 		iAppUi.LastFMConnection().CancelTransaction(iList[i]);
 		}
@@ -244,7 +242,7 @@ void CMobblerListControl::UpdateIconArrayL()
 			iListBox->ItemDrawer()->ColumnData()->IconArray()->ResetAndDestroy();
 			}
 		
-		for (TInt i(0) ; i < KListCount ; ++i)
+		for (TInt i(0); i < KListCount; ++i)
 			{
 			CGulIcon* icon = NULL;
 			
@@ -276,7 +274,7 @@ void CMobblerListControl::DataL(const TDesC8& aXML, TInt aError)
 		ParseL(aXML);
 		
 		const TInt KListCount(iList.Count());
-		for (TInt i(0) ; i < KListCount ; ++i)
+		for (TInt i(0); i < KListCount; ++i)
 			{
 			// add the formatted text to the array
 			
@@ -349,7 +347,7 @@ void CMobblerListControl::DataL(const TDesC8& aXML, TInt aError)
 						TTimeIntervalHours hoursAgo;
 						User::LeaveIfError(now.HoursFrom(itemTime, hoursAgo));
 						
-						if (minutesAgo < KMinuteInAnHour)
+						if (minutesAgo < KMinutesInAnHour)
 							{
 							description->Des().Format( (minutesAgo.Int() == 1)?
 															iAppUi.ResourceReader().ResourceL(R_MOBBLER_FORMAT_TIME_AGO_MINUTE):
@@ -424,7 +422,7 @@ void CMobblerListControl::RequestImagesL() const
 		{
 		// We have recieved items for the list
 		
-		for (TInt i(Max(iListBox->TopItemIndex() - 2, 0)) ; i <= Min(iListBox->BottomItemIndex() + 2, iList.Count() - 1) ; ++i)
+		for (TInt i(Max(iListBox->TopItemIndex() - 2, 0)); i <= Min(iListBox->BottomItemIndex() + 2, iList.Count() - 1); ++i)
 			{
 			if (!iList[i]->ImageRequested())
 				{
@@ -487,5 +485,4 @@ TInt CMobblerListControl::CountComponentControls() const
 	return 1;
 	}
 
-
-	
+// End of file

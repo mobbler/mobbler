@@ -24,8 +24,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <akniconutils.h>
 #include <aknutils.h>
 #include <aknsutils.h>
-#include <imageconversion.h>
 #include <BitmapTransforms.h>
+#include <imageconversion.h>
 
 #include "mobblerbitmap.h"
 

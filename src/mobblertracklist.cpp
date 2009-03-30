@@ -1,8 +1,8 @@
 /*
 mobblertracklist.cpp
 
-mobbler, a last.fm mobile scrobbler for Symbian smartphones.
-Copyright (C) 2008  Michael Coffey
+Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
+Copyright (C) 2009  Michael Coffey
 
 http://code.google.com/p/mobbler
 
@@ -21,19 +21,16 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-#include <gulicon.h>
-#include <eikclbd.h>
-
-#include "mobblerappui.h"
-#include "mobblertracklist.h"
-#include "mobblerparser.h"
-#include "mobblerlastfmconnection.h"
-#include "mobblerstring.h"
-#include "mobblerlistitem.h"
 
 #include "mobbler.hrh"
+#include "mobblerappui.h"
+#include "mobblerlastfmconnection.h"
+#include "mobblerlistitem.h"
+#include "mobblerparser.h"
+#include "mobblerstring.h"
+#include "mobblertracklist.h"
 
-_LIT(KDefaultImage, "\\resource\\apps\\mobbler\\default_user.png");
+_LIT(KDefaultImage, "\\resource\\apps\\mobbler\\default_track.png");
 
 CMobblerTrackList::CMobblerTrackList(CMobblerAppUi& aAppUi, CMobblerWebServicesControl& aWebServicesControl)
 	:CMobblerListControl(aAppUi, aWebServicesControl)
@@ -121,5 +118,4 @@ void CMobblerTrackList::ParseL(const TDesC8& aXML)
     	}
 	}
 
-
-
+// End of file

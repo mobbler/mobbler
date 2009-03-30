@@ -1,8 +1,8 @@
 /*
 mobblerlistitem.h
 
-mobbler, a last.fm mobile scrobbler for Symbian smartphones.
-Copyright (C) 2008  Michael Coffey
+Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
+Copyright (C) 2009  Michael Coffey
 
 http://code.google.com/p/mobbler
 
@@ -79,4 +79,6 @@ private:
 	TTime iLocalTime;
 	};
 
-#endif // 
+#endif // __MOBBLERLISTITEM_H__
+
+// End of file

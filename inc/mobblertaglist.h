@@ -1,8 +1,8 @@
 /*
 mobblertaglist.h
 
-mobbler, a last.fm mobile scrobbler for Symbian smartphones.
-Copyright (C) 2008  Michael Coffey
+Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
+Copyright (C) 2009  Michael Coffey
 
 http://code.google.com/p/mobbler
 
@@ -24,16 +24,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #ifndef __MOBBLERTAGLIST_H__
 #define __MOBBLERTAGLIST_H__
 
-#include <aknlists.h>
-#include <e32base.h>
-
-#include "mobblerbitmap.h"
 #include "mobblerlistcontrol.h"
-#include "mobblerlastfmconnection.h"
 
 class CMobblerAppUi;
-class CMobblerString;
-class CGulIcon;
 
 class CMobblerTagList : public CMobblerListControl
 	{
@@ -50,4 +43,6 @@ public:
 private:
 	};
 
-#endif // 
+#endif // __MOBBLERTAGLIST_H__
+
+// End of file

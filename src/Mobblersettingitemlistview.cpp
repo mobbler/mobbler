@@ -26,7 +26,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <mobbler.rsg>
 #include <mobbler_strings.rsg>
 
-#include "mobblerstring.h"
 #include "mobblerappui.h"
 #include "mobbleraccesspointsettingitem.h"
 #include "mobblerresourcereader.h"
@@ -117,55 +116,10 @@ void CMobblerSettingItemListView::DoDeactivate()
 		}
 	}
 
-const TDesC& CMobblerSettingItemListView::UserName() const
-	{
-	return iSettings->Username();
-	}
-
-const TDesC& CMobblerSettingItemListView::Password() const
-	{
-	return iSettings->Password();
-	}
-
-TBool CMobblerSettingItemListView::Backlight() const
-	{
-	return iSettings->Backlight();
-	}
-
-TBool CMobblerSettingItemListView::CheckForUpdates() const
-	{
-	return iSettings->CheckForUpdates();
-	}
-
-TUint32 CMobblerSettingItemListView::IapID() const
-	{
-	return iSettings->IapID();
-	}
-
-TUint8 CMobblerSettingItemListView::BufferSize() const
-	{
-	return iSettings->BufferSize();
-	}
-
-TInt CMobblerSettingItemListView::EqualizerIndex() const
-	{
-	return iSettings->EqualizerIndex();
-	}
-
 void CMobblerSettingItemListView::SetEqualizerIndexL(TInt aIndex)
 	{
 	iSettings->SetEqualizerIndex(aIndex);
 	iSettings->SaveSettingValuesL();
-	}
-
-TInt CMobblerSettingItemListView::ScrobblePercent() const
-	{
-	return iSettings->ScrobblePercent();
-	}
-
-TInt CMobblerSettingItemListView::Volume() const
-	{
-	return iSettings->Volume();
 	}
 
 void CMobblerSettingItemListView::SetVolumeL(TInt aVolume)
@@ -174,31 +128,16 @@ void CMobblerSettingItemListView::SetVolumeL(TInt aVolume)
 	iSettings->SaveSettingValuesL();
 	}
 
-TInt CMobblerSettingItemListView::SleepTimerMinutes() const
-	{
-	return iSettings->SleepTimerMinutes();
-	}
-
 void CMobblerSettingItemListView::SetSleepTimerMinutesL(TInt aSleepTimerMinutes)
 	{
 	iSettings->SetSleepTimerMinutes(aSleepTimerMinutes);
 	iSettings->SaveSettingValuesL();
 	}
 
-TTime CMobblerSettingItemListView::NextUpdateCheck()
-	{
-	return iSettings->NextUpdateCheck();
-	}
-
 void CMobblerSettingItemListView::SetNextUpdateCheckL(TTime aNextUpdateCheck)
 	{
 	iSettings->SetNextUpdateCheck(aNextUpdateCheck);
 	iSettings->SaveSettingValuesL();
-	}
-
-CMobblerLastFMConnection::TMode CMobblerSettingItemListView::Mode()
-	{
-	return iSettings->Mode();
 	}
 
 void CMobblerSettingItemListView::SetModeL(CMobblerLastFMConnection::TMode aMode)

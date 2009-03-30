@@ -45,8 +45,8 @@ public:
 	static CMobblerTrack* NewL(const TDesC8& aArtist,
 								const TDesC8& aTitle,
 								const TDesC8& aAlbum,
-								const TDesC8& aMBAlbumID,
-								const TDesC8& aMBTrackID,
+								const TDesC8& aMbAlbumId,
+								const TDesC8& aMbTrackId,
 								const TDesC8& aImage,
 								const TDesC8& aMp3Location,
 								TTimeIntervalSeconds aTrackLength,
@@ -62,8 +62,8 @@ public:
 	
 	const CMobblerString& Artist() const;
 	const CMobblerString& Album() const;
-	const CMobblerString& MBAlbumID() const;
-	const CMobblerString& MBTrackID() const;
+	const CMobblerString& MbAlbumId() const;
+	const CMobblerString& MbTrackId() const;
 	void SetAlbumL(const TDesC& aAlbum);
 	TInt TrackNumber() const;
 	void SetTrackNumber(const TInt aTrackNumber);
@@ -98,8 +98,8 @@ public:
 
 	void SetTotalPlayed(TTimeIntervalSeconds aTotalPlayed);
 	TTimeIntervalSeconds TotalPlayed() const;
-	void CMobblerTrack::SetTrackPlaying(TBool aTrackPlaying);
-	TBool CMobblerTrack::TrackPlaying() const;
+	void SetTrackPlaying(TBool aTrackPlaying);
+	TBool TrackPlaying() const;
 	
 private:
 	CMobblerTrack();
@@ -108,8 +108,8 @@ private:
 	void ConstructL(const TDesC8& aArtist,
 						const TDesC8& aTitle,
 						const TDesC8& aAlbum,
-						const TDesC8& aMBAlbumID,
-						const TDesC8& aMBTrackID,
+						const TDesC8& aMbAlbumId,
+						const TDesC8& aMbTrackId,
 						const TDesC8& aImage,
 						const TDesC8& aMp3Location,
 						TTimeIntervalSeconds aTrackLength,
@@ -129,8 +129,8 @@ private:
 	CMobblerString* iArtist;
 	CMobblerString* iTitle;
 	CMobblerString* iAlbum;
-	CMobblerString* iMBAlbumID;
-	CMobblerString* iMBTrackID;
+	CMobblerString* iMbAlbumId;
+	CMobblerString* iMbTrackId;
 	TInt iTrackNumber;
 	TTime iStartTimeUTC;
 	TTimeIntervalSeconds iTotalPlayed;

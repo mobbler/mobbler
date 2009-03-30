@@ -139,7 +139,7 @@ void CMobblerMusicAppListener::RemoveObserver(MMobblerMusicAppListenerObserver* 
 void CMobblerMusicAppListener::NotifyChangeL()
 	{
 	const TInt KObserverCount(iObservers.Count());
-	for (TInt i(0) ; i < KObserverCount ; ++i)
+	for (TInt i(0); i < KObserverCount; ++i)
 		{
 		iObservers[i]->HandleMusicAppChangeL();
 		}

@@ -1,8 +1,8 @@
 /*
 mobblerfriendlist.cpp
 
-mobbler, a last.fm mobile scrobbler for Symbian smartphones.
-Copyright (C) 2008  Michael Coffey
+Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
+Copyright (C) 2009  Michael Coffey
 
 http://code.google.com/p/mobbler
 
@@ -22,27 +22,21 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
 #include <aknquerydialog.h>
-#include <gulicon.h>
-#include <eikclbd.h>
+#include <mobbler.rsg>
+#include <mobbler_strings.rsg>
 
+#include "mobbler.hrh"
 #include "mobblerappui.h"
 #include "mobblerfriendlist.h"
 #include "mobblereventlist.h"
-#include "mobblerplaylistlist.h"
-#include "mobblertracklist.h"
-#include "mobblerparser.h"
 #include "mobblerlastfmconnection.h"
 #include "mobblerlistitem.h"
+#include "mobblerplaylistlist.h"
+#include "mobblerparser.h"
 #include "mobblerresourcereader.h"
 #include "mobblershoutbox.h"
 #include "mobblerstring.h"
-#include "mobblersettingitemlistview.h"
 #include "mobblertrack.h"
-
-#include "mobbler_strings.rsg"
-#include "mobbler.rsg"
-
-#include "mobbler.hrh"
 
 _LIT(KDefaultImage, "\\resource\\apps\\mobbler\\default_user.png");
 
@@ -154,5 +148,4 @@ void CMobblerFriendList::ParseL(const TDesC8& aXML)
 	CMobblerParser::ParseFriendListL(aXML, *this, iList);
 	}
 
-
-
+// End of file

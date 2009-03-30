@@ -41,6 +41,12 @@ PRJ_EXPORTS
 ..\gfx\icon_track.png						z:\resource\apps\mobbler\icon_track.png
 ..\gfx\scrobble.png							z:\resource\apps\mobbler\scrobble.png
 ..\gfx\lastfm_badges\lastfm_red_small.png					z:\resource\apps\mobbler\lastfm.png
+..\gfx\cover_small.gif										z:\resource\apps\mobbler\default_album.gif
+..\gfx\default_artist_small.png								z:\resource\apps\mobbler\default_artist.png
+..\gfx\office-calendar.png									z:\resource\apps\mobbler\default_event.png
+..\gfx\default_album_small.png								z:\resource\apps\mobbler\default_playlist.png
+..\gfx\default_tag_small.png								z:\resource\apps\mobbler\default_tag.png
+..\gfx\audio-x-generic.png									z:\resource\apps\mobbler\default_track.png
 ..\gfx\default_user_small.png								z:\resource\apps\mobbler\default_user.png
 
 // End of file

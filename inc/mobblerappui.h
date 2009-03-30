@@ -46,15 +46,14 @@ class CMobblerResourceReader;
 class CMobblerSettingItemListView;
 class CMobblerFriendList;
 class CMobblerStatusView;
+class CMobblerString;
 class CMobblerTrack;
 class CMobblerWebServicesView;
-class CBrowserLauncher;
-class CMobblerString;
 
 class CMobblerAppUi : public CAknViewAppUi,
 						public MMobblerLastFMConnectionObserver,
 						public MMobblerDownloadObserver,
-					    public MMobblerSleepTimerNotify,
+						public MMobblerSleepTimerNotify,
 						public MRemConCoreApiTargetObserver,
 						public MMobblerFlatDataObserver
 	{
@@ -82,8 +81,6 @@ public:
 	CMobblerMusicAppListener& MusicListener() const;
 	
 	CMobblerSettingItemListView& SettingView() const;
-	CMobblerStatusView& StatusView() const;
-	
 	const TDesC& MusicAppNameL() const;
 	
 	void RadioStartL(CMobblerLastFMConnection::TRadioStation aRadioStation, const CMobblerString* aRadioOption);
@@ -108,8 +105,6 @@ public:
 	void SaveVolume();
 
 	CMobblerResourceReader& CMobblerAppUi::ResourceReader() const;
-
-	void SetSoftkeys(TInt aResource) const;
 
 public: // CEikAppUi
 	void HandleCommandL(TInt aCommand);

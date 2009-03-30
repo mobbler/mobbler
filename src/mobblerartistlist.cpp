@@ -1,8 +1,8 @@
 /*
 mobblerartistlist.cpp
 
-mobbler, a last.fm mobile scrobbler for Symbian smartphones.
-Copyright (C) 2008  Michael Coffey
+Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
+Copyright (C) 2009  Michael Coffey
 
 http://code.google.com/p/mobbler
 
@@ -21,24 +21,15 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-#include <gulicon.h>
-#include <eikclbd.h>
-
-#include "mobbleralbumlist.h"
+#include "mobbler.hrh"
 #include "mobblerappui.h"
 #include "mobblerartistlist.h"
-#include "mobblereventlist.h"
 #include "mobblerlastfmconnection.h"
 #include "mobblerlistitem.h"
 #include "mobblerparser.h"
-#include "mobblershoutbox.h"
 #include "mobblerstring.h"
-#include "mobblertaglist.h"
-#include "mobblertracklist.h"
 
-#include "mobbler.hrh"
-
-_LIT(KDefaultImage, "\\resource\\apps\\mobbler\\default_user.png");
+_LIT(KDefaultImage, "\\resource\\apps\\mobbler\\default_artist.png");
 
 CMobblerArtistList::CMobblerArtistList(CMobblerAppUi& aAppUi, CMobblerWebServicesControl& aWebServicesControl)
 	:CMobblerListControl(aAppUi, aWebServicesControl)
@@ -140,3 +131,4 @@ void CMobblerArtistList::ParseL(const TDesC8& aXML)
 	    }
 	}
 
+// End of file

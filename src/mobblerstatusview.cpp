@@ -30,11 +30,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <mobbler.rsg>
 #include <mobbler_strings.rsg>
 
-#include "mobblerresourcereader.h"
-#include "mobblerstring.h"
 #include "mobbler.hrh"
 #include "mobblerappui.h"
 #include "mobblerradioplayer.h"
+#include "mobblerresourcereader.h"
 #include "mobblerstatuscontrol.h"
 #include "mobblerstatusview.h"
 

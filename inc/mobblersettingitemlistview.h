@@ -41,22 +41,23 @@ public:
 	TUid Id() const;
 	void HandleCommandL(TInt aCommand);
 	
-	const TDesC& UserName() const;
-	const TDesC& Password() const;
-	TBool Backlight() const;
-	TBool CheckForUpdates() const;
-	TUint32 IapID() const;
-	TUint8 BufferSize() const;
-	TBool EqualizerIndex() const;
-	TInt ScrobblePercent() const;
+	const TDesC& Username() const	{ return iSettings->Username(); }
+	const TDesC& Password() const	{ return iSettings->Password(); }
+	TBool Backlight() const			{ return iSettings->Backlight(); }
+	TBool CheckForUpdates() const	{ return iSettings->CheckForUpdates(); }
+	TUint32 IapID() const			{ return iSettings->IapID(); };
+	TUint8 BufferSize() const		{ return iSettings->BufferSize(); }
+	TBool EqualizerIndex() const	{ return iSettings->EqualizerIndex(); }
+	TInt ScrobblePercent() const	{ return iSettings->ScrobblePercent(); }
+	TInt Volume() const				{ return iSettings->Volume(); }
+	TInt SleepTimerMinutes() const 	{ return iSettings->SleepTimerMinutes(); }
+	TTime NextUpdateCheck()			{ return iSettings->NextUpdateCheck(); }
+	CMobblerLastFMConnection::TMode Mode() { return iSettings->Mode(); }
+
 	void SetEqualizerIndexL(TInt aIndex);
-	TInt Volume() const;
 	void SetVolumeL(TInt aVolume);
-	TInt SleepTimerMinutes() const;
 	void SetSleepTimerMinutesL(TInt aSleepTimerMinutes);
-	TTime NextUpdateCheck();
 	void SetNextUpdateCheckL(TTime aNextUpdateCheck);
-	CMobblerLastFMConnection::TMode Mode();
 	void SetModeL(CMobblerLastFMConnection::TMode aMode);
 	
 private:

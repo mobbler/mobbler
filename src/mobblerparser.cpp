@@ -26,30 +26,27 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <sennamespace.h> 
 #include <senxmlutils.h> 
 
-#include "mobblerfriendlist.h"
-#include "mobblerplaylistlist.h"
-#include "mobblereventlist.h"
-#include "mobblertaglist.h"
-#include "mobblerartistlist.h"
 #include "mobbleralbumlist.h"
-#include "mobblertracklist.h"
-#include "mobblershoutbox.h"
 #include "mobblerappui.h"
-
+#include "mobblerartistlist.h"
+#include "mobblereventlist.h"
+#include "mobblerfriendlist.h"
 #include "mobblerlistitem.h"
-
 #include "mobblerparser.h"
+#include "mobblerplaylistlist.h"
 #include "mobblerradioplaylist.h"
 #include "mobblerresourcereader.h"
+#include "mobblershoutbox.h"
 #include "mobblerstring.h"
+#include "mobblertaglist.h"
 #include "mobblertrack.h"
+#include "mobblertracklist.h"
 
 _LIT8(KElementTitle, "title");
 _LIT8(KElementTrack, "track");
 _LIT8(KElementLocation, "location");
 _LIT8(KElementId, "id");
 _LIT8(KElementAlbum, "album");
-_LIT8(KElementAlbumID, "lastfm:albumId");
 _LIT8(KElementCreator, "creator");
 _LIT8(KElementDuration, "duration");
 _LIT8(KElementImage, "image");
@@ -913,7 +910,7 @@ void CMobblerParser::ParseRecentTracksL(const TDesC8& aXML, CMobblerTrackList& a
 		if (tracks[i]->AttrValue(_L8("nowplaying"))
 				&& tracks[i]->AttrValue(_L8("nowplaying"))->Compare(_L8("true")) == 0)
 			{
-			// We set null as a constance meaning 'now'
+			// We set null as a constant meaning 'now'
 			track->SetTimeL(KNullDesC8);
 			}
 		else

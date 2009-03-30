@@ -42,9 +42,6 @@ const TInt KDefaultSleepTimerMinutes(30);
 CMobblerSettingItemListSettings* CMobblerSettingItemListSettings::NewL()
 	{
 	CMobblerSettingItemListSettings* self = new(ELeave) CMobblerSettingItemListSettings;
-	CleanupStack::PushL(self);
-	self->ConstructL();
-	CleanupStack::Pop(self);
 	return self;
 	}
 
@@ -54,10 +51,6 @@ CMobblerSettingItemListSettings::CMobblerSettingItemListSettings()
 	}
 
 CMobblerSettingItemListSettings::~CMobblerSettingItemListSettings()
-	{
-	}
-
-void CMobblerSettingItemListSettings::ConstructL()
 	{
 	}
 
@@ -105,24 +98,23 @@ void CMobblerSettingItemListSettings::LoadSettingValuesL()
 		TUint32 low(0);
 		TRAPD(errorHigh, high = readStream.ReadInt32L());
 		TRAPD(errorLow, low = readStream.ReadInt32L());
-		
-		if (errorHigh == KErrNone && errorLow == KErrNone )
+		if (errorHigh == KErrNone && errorLow == KErrNone)
 			{
 			nextUpdateCheck = TTime(MAKE_TINT64(high, low));
 			}
 		
 		TRAP_IGNORE(mode = static_cast<CMobblerLastFMConnection::TMode>(readStream.ReadInt8L()));
 		
-		SetUsernameL(username);
-		SetPasswordL(password);
+		SetUsername(username);
+		SetPassword(password);
 
 		CleanupStack::PopAndDestroy(&readStream);
 		}
 	else
 		{
 		// there was no file there so read from the resource file
-		SetUsernameL(static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->ResourceReader().ResourceL(R_MOBBLER_USERNAME));
-		SetPasswordL(_L("password"));
+		SetUsername(static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->ResourceReader().ResourceL(R_MOBBLER_USERNAME));
+		SetPassword(_L("password"));
 		}
 
 	SetBacklight(backlight);
@@ -171,124 +163,4 @@ void CMobblerSettingItemListSettings::SaveSettingValuesL()
 	CleanupStack::PopAndDestroy(&file);
 	}
 	
-TDes& CMobblerSettingItemListSettings::Username()
-	{
-	return iUsername;
-	}
-
-void CMobblerSettingItemListSettings::SetUsernameL(const TDesC& aUsername)
-	{
-	iUsername.Copy(aUsername);
-	}
-
-TDes& CMobblerSettingItemListSettings::Password()
-	{
-	return iPassword;
-	}
-
-void CMobblerSettingItemListSettings::SetPasswordL(const TDesC& aPassword)
-	{
-	iPassword.Copy(aPassword);
-	}
-
-TBool& CMobblerSettingItemListSettings::Backlight()
-	{
-	return iBacklight;
-	}
-
-void CMobblerSettingItemListSettings::SetBacklight(TBool aBacklight)
-	{
-	iBacklight = aBacklight;
-	}
-
-TBool& CMobblerSettingItemListSettings::CheckForUpdates()
-	{
-	return iCheckForUpdates;
-	}
-
-void CMobblerSettingItemListSettings::SetCheckForUpdates(TBool aCheckForUpdates)
-	{
-	iCheckForUpdates = aCheckForUpdates;
-	}
-
-TInt& CMobblerSettingItemListSettings::IapID()
-	{
-	return iIapID;
-	}
-
-void CMobblerSettingItemListSettings::SetIapID(TInt aIapID)
-	{
-	iIapID = aIapID;
-	}
-
-TInt& CMobblerSettingItemListSettings::BufferSize()
-	{
-	return iBufferSize;
-	}
-
-void CMobblerSettingItemListSettings::SetBufferSize(TInt aBufferSize)
-	{
-	iBufferSize = aBufferSize;
-	}
-
-TInt& CMobblerSettingItemListSettings::EqualizerIndex()
-	{
-	return iEqualizerIndex;
-	}
-
-void CMobblerSettingItemListSettings::SetEqualizerIndex(TInt aIndex)
-	{
-	iEqualizerIndex = aIndex;
-	}
-
-TInt& CMobblerSettingItemListSettings::ScrobblePercent()
-	{
-	return iScrobblePercent;
-	}
-
-void CMobblerSettingItemListSettings::SetScrobblePercent(TInt aScrobblePercent)
-	{
-	iScrobblePercent = aScrobblePercent;
-	}
-
-TInt& CMobblerSettingItemListSettings::Volume()
-	{
-	return iVolume;
-	}
-
-void CMobblerSettingItemListSettings::SetVolume(TInt aVolume)
-	{
-	iVolume = aVolume;
-	}
-
-TInt& CMobblerSettingItemListSettings::SleepTimerMinutes()
-	{
-	return iSleepTimerMinutes;
-	}
-
-void CMobblerSettingItemListSettings::SetSleepTimerMinutes(TInt aSleepTimerMinutes)
-	{
-	iSleepTimerMinutes = aSleepTimerMinutes;
-	}
-
-TTime& CMobblerSettingItemListSettings::NextUpdateCheck()
-	{
-	return iNextUpdateCheck;
-	}
-
-void CMobblerSettingItemListSettings::SetNextUpdateCheck(TTime aNextUpdateCheck)
-	{
-	iNextUpdateCheck = aNextUpdateCheck;
-	}
-
-CMobblerLastFMConnection::TMode CMobblerSettingItemListSettings::Mode()
-	{
-	return iMode;
-	}
-
-void CMobblerSettingItemListSettings::SetMode(CMobblerLastFMConnection::TMode aMode)
-	{
-	iMode = aMode;
-	}
-
 // End of file

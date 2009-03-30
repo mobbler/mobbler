@@ -116,7 +116,6 @@ private:
 	CMobblerBitmap* iMobblerBitmapTrackIcon;
 	CMobblerBitmap* iMobblerBitmapMusicAppIcon;
 	CMobblerBitmap* iMobblerBitmapAppIcon;
-	CMobblerBitmap* iMobblerBitmapTwitterIcon;
 	
 	// for double buffering
     CFbsBitmap*                     iBackBuffer;
@@ -152,7 +151,6 @@ private:
 	TRect iRectProgressBar;
 	
 	CFbsFont* iMobblerFont;
-	CFont* iTitleFont;
 	
 	CMobblerTimeout* iMobblerVolumeTimeout;
 	

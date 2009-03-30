@@ -34,11 +34,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "mobblerappui.h"
 #include "mobblerlistcontrol.h"
 #include "mobblerradioplayer.h"
+#include "mobblerresourcereader.h"
 #include "mobblerwebservicescontrol.h"
 #include "mobblerwebservicesview.h"
-#include "mobblerresourcereader.h"
 #include "mobblershoutbox.h"
-#include "mobblerstring.h"
 
 CMobblerWebServicesView* CMobblerWebServicesView::NewL()
 	{
@@ -65,7 +64,18 @@ void CMobblerWebServicesView::ConstructL()
 
 void CMobblerWebServicesView::SetMenuItemTextL(CEikMenuPane* aMenuPane, TInt aResourceId, TInt aCommandId)
 	{
-	aMenuPane->SetItemTextL(aCommandId, static_cast<CMobblerAppUi*>(AppUi())->ResourceReader().ResourceL(aResourceId));
+	HBufC* menuText = static_cast<CMobblerAppUi*>(AppUi())->ResourceReader().ResourceL(aResourceId).AllocLC();
+
+	const TInt KTextLimit = CEikMenuPaneItem::SData::ENominalTextLength;
+	if (menuText->Length() > KTextLimit)
+		{
+		TBuf<KTextLimit> newText(menuText->Left(KTextLimit));
+		CleanupStack::PopAndDestroy(menuText);
+		menuText = newText.AllocLC();
+		}
+
+	aMenuPane->SetItemTextL(aCommandId, *menuText);
+	CleanupStack::PopAndDestroy(menuText);
 	}
 
 void CMobblerWebServicesView::DynInitMenuPaneL(TInt aResourceId, CEikMenuPane* aMenuPane)
@@ -138,7 +148,7 @@ void CMobblerWebServicesView::DynInitMenuPaneL(TInt aResourceId, CEikMenuPane* a
 		iWebServicesControl->TopControl()->SupportedCommandsL(supportedCommands);
 		}
 	
-	for (TInt i(EMobblerCommandOnline) ; i < EMobblerCommandLast ; ++i)
+	for (TInt i(EMobblerCommandOnline); i < EMobblerCommandLast; ++i)
 		{
 		TInt position(0);
 		if (aMenuPane->MenuItemExists(i, position))

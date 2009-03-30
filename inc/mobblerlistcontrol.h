@@ -30,10 +30,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "mobblerlastfmconnection.h"
 
 class CMobblerAppUi;
-class CMobblerListItem;
 class CMobblerBitmap;
-class CMobblerWebServicesControl;
+class CMobblerListItem;
 class CMobblerString;
+class CMobblerWebServicesControl;
 
 class CMobblerListControl : public CCoeControl, public MMobblerBitmapObserver, public MMobblerFlatDataObserver
 								, public MEikScrollBarObserver
@@ -109,4 +109,6 @@ protected:
 	CMobblerString* iText2;
 	};
 
-#endif // __MOBBLERFRIENDS_H__
+#endif // __MOBBLERLISTCONTROL_H__
+
+// End of file

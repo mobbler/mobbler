@@ -22,21 +22,22 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
 #include "mobblerutility.h"
+#include <bautils.h>
+#include <coemain.h>
 #include <hash.h>
-#include <bautils.h> 
-#include <coemain.h> 
 
+_LIT8(KChineseLangCode, "cn");
 _LIT8(KEnglishLangCode, "en");
 _LIT8(KFrenchLangCode, "fr");
 _LIT8(KGermanLangCode, "de");
-_LIT8(KSpanishLangCode, "es");
 _LIT8(KItalianLangCode, "it");
-_LIT8(KSwedishLangCode, "sv");
+_LIT8(KJapaneseLangCode, "jp");
+_LIT8(KPolishLangCode, "pl");
 _LIT8(KPortugueseLangCode, "pt");
 _LIT8(KRussianLangCode, "ru");
-_LIT8(KPolishLangCode, "pl");
-_LIT8(KChineseLangCode, "cn");
-_LIT8(KJapaneseLangCode, "jp");
+_LIT8(KSpanishLangCode, "es");
+_LIT8(KSwedishLangCode, "sv");
+_LIT8(KTurkishLangCode, "tu");
 
 HBufC8* MobblerUtility::MD5LC(const TDesC8& aSource)
 	{
@@ -46,7 +47,7 @@ HBufC8* MobblerUtility::MD5LC(const TDesC8& aSource)
 	TPtrC8 hash = md5->Hash(aSource);
 	HBufC8* hashResult = HBufC8::NewLC(hash.Length() * 2); 
 	
-	for (TInt i(0) ; i < hash.Length() ; ++i)
+	for (TInt i(0); i < hash.Length(); ++i)
 		{
 		hashResult->Des().AppendFormat(_L8("%02x"), hash[i]);
 		}
@@ -62,7 +63,7 @@ HBufC8* MobblerUtility::URLEncodeLC(const TDesC8& aString)
 	HBufC8* urlEncoded = HBufC8::NewLC(aString.Length() * 3);
 	// sanitise the input string
 	const TInt KCharCount(aString.Length());
-	for (TInt i(0) ; i < KCharCount; ++i)
+	for (TInt i(0); i < KCharCount; ++i)
 		{
 		urlEncoded->Des().AppendFormat(_L8("%%%2x"), aString[i]);
 		}
@@ -75,7 +76,7 @@ HBufC8* MobblerUtility::URLEncodeLC(const TDesC& aString)
 	HBufC8* urlEncoded = HBufC8::NewLC(aString.Length() * 3);
 	// sanitise the input string
 	const TInt KCharCount(aString.Length());
-	for (TInt i(0) ; i < KCharCount; ++i)
+	for (TInt i(0); i < KCharCount; ++i)
 		{
 		urlEncoded->Des().AppendFormat(_L8("%%%2x"), aString[i]);
 		}
@@ -86,7 +87,7 @@ HBufC8* MobblerUtility::URLEncodeLC(const TDesC& aString)
 TBuf8<2> MobblerUtility::LanguageL()
 	{
 	TBuf8<2> language;
-	language.Copy(KEnglishLangCode); // default to english
+	language.Copy(KEnglishLangCode); // default to English
 	
 	RArray<TLanguage> downgradePath;
 	CleanupClosePushL(downgradePath);
@@ -95,7 +96,7 @@ TBuf8<2> MobblerUtility::LanguageL()
 	TBool languageFound(EFalse);
 	
 	const TInt KLanguageCount(downgradePath.Count());
-	for (TInt i(0) ; i < KLanguageCount && !languageFound ; ++i)
+	for (TInt i(0); i < KLanguageCount && !languageFound; ++i)
 		{
 		languageFound = ETrue;
 		
@@ -134,6 +135,9 @@ TBuf8<2> MobblerUtility::LanguageL()
 			case ELangJapanese: 
 				language.Copy(KJapaneseLangCode);
 				break;
+			case ELangTurkish:
+				language.Copy(KTurkishLangCode);
+				break;
 			default:
 				// carry on iterating through the downgrade path
 				languageFound = EFalse;
@@ -146,3 +150,5 @@ TBuf8<2> MobblerUtility::LanguageL()
 	return language;
 	}
 
+
+// End of file

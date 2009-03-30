@@ -46,7 +46,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "mobblerstring.h"
 #include "mobblertimeout.h"
 #include "mobblertrack.h"
-#include "mobblerstatusview.h"
 
 _LIT(KMobblerMifFile, "\\resource\\apps\\mobbler.mif");
 _LIT(KPngScrobble, "\\resource\\apps\\mobbler\\scrobble.png");
@@ -260,7 +259,7 @@ void CMobblerStatusControl::SetPositions()
 			
 			iControlSize = TSize(Rect().Width() / 6, Rect().Width() / 6);
 			
-			iPointMore =					TPoint((KTextRectHeight/2) + (0 * ((Rect().Width() - KTextRectHeight - iControlSize.iWidth) / 4)), Rect().Height() - iControlSize.iHeight - (KTextRectHeight / 2));
+			iPointMore =				TPoint((KTextRectHeight/2) + (0 * ((Rect().Width() - KTextRectHeight - iControlSize.iWidth) / 4)), Rect().Height() - iControlSize.iHeight - (KTextRectHeight / 2));
 			iPointLove =				TPoint((KTextRectHeight/2) + (1 * ((Rect().Width() - KTextRectHeight - iControlSize.iWidth) / 4)), Rect().Height() - iControlSize.iHeight - (KTextRectHeight / 2));
 			iPointBan =					TPoint((KTextRectHeight/2) + (2 * ((Rect().Width() - KTextRectHeight - iControlSize.iWidth) / 4)), Rect().Height() - iControlSize.iHeight - (KTextRectHeight / 2));
 			iPointPlayStop =			TPoint((KTextRectHeight/2) + (3 * ((Rect().Width() - KTextRectHeight - iControlSize.iWidth) / 4)), Rect().Height() - iControlSize.iHeight - (KTextRectHeight / 2));
@@ -473,13 +472,6 @@ void CMobblerStatusControl::CreateBackBufferL()
 	fontSpec.iFontStyle.SetBitmapType(EAntiAliasedGlyphBitmap);
 	iBackBufferDevice->GetNearestFontInTwips(iMobblerFont, fontSpec);
 	iBackBufferContext->UseFont(iMobblerFont);
-	
-
-	iTitleFont = NULL;
-	TFontSpec fontSpec2(fontName, 135);
-	fontSpec2.iFontStyle = TFontStyle(EPostureUpright, EStrokeWeightBold, EPrintPosNormal);
-	fontSpec2.iFontStyle.SetBitmapType(EAntiAliasedGlyphBitmap);
-	iBackBufferDevice->GetNearestFontInTwips(iTitleFont, fontSpec2);
 	}
  
 void CMobblerStatusControl::ReleaseBackBuffer()
@@ -489,13 +481,6 @@ void CMobblerStatusControl::ReleaseBackBuffer()
 		iBackBufferContext->DiscardFont();
 		iBackBufferDevice->ReleaseFont(iMobblerFont);
 		iMobblerFont = NULL;
-		}
-
-	if (iTitleFont)
-		{
-		iBackBufferContext->DiscardFont();
-		iBackBufferDevice->ReleaseFont(iTitleFont);
-		iTitleFont = NULL;
 		}
 
 	// Release double buffering classes
@@ -543,7 +528,6 @@ CMobblerStatusControl::~CMobblerStatusControl()
 	delete iMobblerBitmapScrobble;
 	delete iMobblerBitmapTrackIcon;
 	delete iMobblerBitmapAppIcon;
-	delete iMobblerBitmapTwitterIcon;
 	
 	delete iMobblerBitmapMusicAppIcon;
 	

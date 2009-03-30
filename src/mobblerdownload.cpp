@@ -28,8 +28,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <mobbler_strings.rsg>
 
 #include "mobblerappui.h"
-#include "mobblerstring.h"
-#include "mobblerdownload.h"
 #include "mobblerresourcereader.h"
 
 TUid KMobblerAppUid = {0xA0007648};
