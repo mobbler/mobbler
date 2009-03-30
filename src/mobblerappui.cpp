@@ -915,7 +915,7 @@ void CMobblerAppUi::DataL(const TDesC8& aData, TInt aError)
 				// so don't do it again for another week
 				TTime now;
 				now.UniversalTime();
-				now += TTimeIntervalDays(7);
+				now += TTimeIntervalDays(KUpdateIntervalDays);
 				iSettingView->SetNextUpdateCheckL(now);
 				
 				TVersion version;

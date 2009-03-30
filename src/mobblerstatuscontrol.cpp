@@ -691,12 +691,12 @@ void CMobblerStatusControl::Draw(const TRect& /*aRect*/) const
 	
 	// Draw the album art
     //DrawRect(iRectAlbumArt, KRgbWhite, KRgbWhite);
-	DrawMobblerBitmap(albumArt, iRectAlbumArt, EFalse);
+	DrawMobblerBitmap(albumArt, iRectAlbumArt);
 	
 	// If the track has been loved, draw the love icon in the bottom right corner
 	if (love)
 		{
-		DrawMobblerBitmap(iMobblerBitmapLove, TPoint(iRectAlbumArt.iBr.iX - iMobblerBitmapLove->SizeInPixels().iWidth - 4, iRectAlbumArt.iBr.iX - iMobblerBitmapLove->SizeInPixels().iHeight - 4), EFalse);
+		DrawMobblerBitmap(iMobblerBitmapLove, TPoint(iRectAlbumArt.iBr.iX - iMobblerBitmapLove->SizeInPixels().iWidth - 4, iRectAlbumArt.iBr.iX - iMobblerBitmapLove->SizeInPixels().iHeight - 4));
 		}
 	
 	if (iAppUi.ScrobblingOn())
@@ -734,8 +734,8 @@ void CMobblerStatusControl::Draw(const TRect& /*aRect*/) const
 		DrawText(volumeText, iRectProgressBar, KRgbBlack, CGraphicsContext::ECenter, iMobblerFont->WidthZeroInPixels());
 		
 		// Draw the speaker icons
-		DrawMobblerBitmap(iMobblerBitmapSpeakerLow, TPoint(iRectProgressBar.iTl.iX + iMobblerFont->WidthZeroInPixels(), iRectProgressBar.iTl.iY), EFalse);
-		DrawMobblerBitmap(iMobblerBitmapSpeakerHigh, TPoint(iRectProgressBar.iBr.iX - iMobblerFont->WidthZeroInPixels() - iMobblerBitmapSpeakerHigh->SizeInPixels().iWidth, iRectProgressBar.iTl.iY), EFalse);
+		DrawMobblerBitmap(iMobblerBitmapSpeakerLow, TPoint(iRectProgressBar.iTl.iX + iMobblerFont->WidthZeroInPixels(), iRectProgressBar.iTl.iY));
+		DrawMobblerBitmap(iMobblerBitmapSpeakerHigh, TPoint(iRectProgressBar.iBr.iX - iMobblerFont->WidthZeroInPixels() - iMobblerBitmapSpeakerHigh->SizeInPixels().iWidth, iRectProgressBar.iTl.iY));
 		}
 	else
 		{
@@ -746,7 +746,10 @@ void CMobblerStatusControl::Draw(const TRect& /*aRect*/) const
 		
 		TRect rectPlaybackProgress = iRectProgressBar;
 		rectPlaybackProgress.SetWidth((playbackPosition * iRectProgressBar.Width()) / playbackTotal);
-		DrawRect(rectPlaybackProgress, KRgbTransparent, KRgbProgressBarPlayback);
+
+		iAppUi.ScrobblingOn() ?
+			DrawRect(rectPlaybackProgress, KRgbTransparent, KRgbProgressBarPlayback) :
+			DrawRect(rectPlaybackProgress, KRgbTransparent, KRgbDarkGray);
 		
 		TInt scrobbleTime(playbackTotal);
 		if (iAppUi.CurrentTrack())
@@ -787,7 +790,7 @@ void CMobblerStatusControl::Draw(const TRect& /*aRect*/) const
 		}
 	
 	// Draw the Last.fm graphic
-	DrawMobblerBitmap(iMobblerBitmapLastFM, iPointLastFM, EFalse);
+	DrawMobblerBitmap(iMobblerBitmapLastFM, iPointLastFM);
 		
 	// Draw the title details line
 	iTitleMarquee->Start(iTitleText, iMobblerFont->WidthZeroInPixels(), iMobblerFont->TextWidthInPixels(iTitleText), iRectTitleText.Width());
@@ -813,7 +816,7 @@ void CMobblerStatusControl::Draw(const TRect& /*aRect*/) const
 		DrawText(iArtistText, iRectArtistText, textColor, CGraphicsContext::ELeft, iArtistMarquee->GetPosition2());
 		}
 	
-	DrawMobblerBitmap(infoIcon, TPoint(iRectTitleText.iTl.iX -  infoIcon->SizeInPixels().iWidth, iRectTitleText.iTl.iY + 3), EFalse);
+	DrawMobblerBitmap(infoIcon, TPoint(iRectTitleText.iTl.iX -  infoIcon->SizeInPixels().iWidth, iRectTitleText.iTl.iY + 3));
 		
 	SystemGc().BitBlt(TPoint(0, 0), iBackBuffer);
 	}

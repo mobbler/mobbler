@@ -63,7 +63,11 @@ _LIT8(KRadioStationTag, "lastfm://globaltags/%S");
 _LIT8(KRadioStationNeighbours, "lastfm://user/%S/neighbours");
 _LIT8(KRadioStationRecommended, "lastfm://user/%S/recommended/100");
 
+#ifdef BETA_BUILD
+_LIT8(KLatesverFileLocation, "http://www.mobbler.co.uk/insertbetafilenamehere.xml");
+#else
 _LIT8(KLatesverFileLocation, "http://www.mobbler.co.uk/latestver.xml");
+#endif
 
 // The file name to store the queue of listened tracks
 _LIT(KTracksFile, "c:track_queue.dat");

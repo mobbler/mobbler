@@ -37,6 +37,13 @@ const TVersion KVersion(0, 4, 0);
 
 _LIT(KFormatTime, "%F%D %N %-B%J%:1%T%+B"); // 21 March 11:20 am
 
+//#define BETA_BUILD
+#ifdef BETA_BUILD
+const TInt KUpdateIntervalDays(1);
+#else
+const TInt KUpdateIntervalDays(7);
+#endif
+
 class CAknInfoPopupNoteController;
 class CBrowserLauncher;
 class CMobblerDownload;

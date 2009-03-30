@@ -71,7 +71,7 @@ void CMobblerSettingItemListSettings::LoadSettingValuesL()
 	TInt sleepTimerMinutes(KDefaultSleepTimerMinutes);
 	TTime nextUpdateCheck;
 	nextUpdateCheck.UniversalTime();
-	nextUpdateCheck += TTimeIntervalDays(7); // the default update check should be 7 days after install
+	nextUpdateCheck += TTimeIntervalDays(KUpdateIntervalDays); // the default update check should be 7 days after install
 	CMobblerLastFMConnection::TMode mode(CMobblerLastFMConnection::EOffline);
 	
 	if (openError == KErrNone)
@@ -98,10 +98,20 @@ void CMobblerSettingItemListSettings::LoadSettingValuesL()
 		TUint32 low(0);
 		TRAPD(errorHigh, high = readStream.ReadInt32L());
 		TRAPD(errorLow, low = readStream.ReadInt32L());
+
+#ifdef BETA_BUILD
+		TTime thisTimeTomorrow(nextUpdateCheck);
+#endif
 		if (errorHigh == KErrNone && errorLow == KErrNone)
 			{
 			nextUpdateCheck = TTime(MAKE_TINT64(high, low));
 			}
+#ifdef BETA_BUILD
+		if (nextUpdateCheck > thisTimeTomorrow)
+			{
+			nextUpdateCheck = thisTimeTomorrow;
+			}
+#endif
 		
 		TRAP_IGNORE(mode = static_cast<CMobblerLastFMConnection::TMode>(readStream.ReadInt8L()));
 		
