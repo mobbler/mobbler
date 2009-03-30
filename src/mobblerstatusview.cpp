@@ -75,7 +75,7 @@ void CMobblerStatusView::BitmapResizedL(const CMobblerBitmap* /*aMobblerBitmap*/
 void CMobblerStatusView::SetMenuItemTextL(CEikMenuPane* aMenuPane,
 										  TInt aResourceId, TInt aCommandId)
 	{
-	HBufC* menuText = static_cast<CMobblerAppUi*>(AppUi())->ResourceReader().ResourceL(aResourceId).AllocL();
+	HBufC* menuText = static_cast<CMobblerAppUi*>(AppUi())->ResourceReader().ResourceL(aResourceId).AllocLC();
 
 	const TInt KTextLimit = CEikMenuPaneItem::SData::ENominalTextLength;
 	if (menuText->Length() > KTextLimit)

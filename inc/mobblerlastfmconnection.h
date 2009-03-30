@@ -25,7 +25,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #define __MOBBLERLASTFMCONNECTION_H__
 
 #include <badesca.h>
-#include <cmmanager.h>
 #include <e32base.h>
 #include <es_sock.h>
 #include <http/rhttpsession.h>

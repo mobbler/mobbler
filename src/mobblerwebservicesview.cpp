@@ -138,12 +138,13 @@ void CMobblerWebServicesView::DynInitMenuPaneL(TInt aResourceId, CEikMenuPane* a
 		iWebServicesControl->TopControl()->SupportedCommandsL(supportedCommands);
 		}
 	
-	const TInt KItemCount = aMenuPane->NumberOfItemsInPane();
-	
-	for (TInt i(0) ; i < KItemCount ; ++i)
+	for (TInt i(EMobblerCommandOnline) ; i < EMobblerCommandLast ; ++i)
 		{
-		TInt commandId = aMenuPane->MenuItemCommandId(i);
-		aMenuPane->SetItemDimmed(commandId, supportedCommands.Find(commandId) == KErrNotFound);
+		TInt position(0);
+		if (aMenuPane->MenuItemExists(i, position))
+			{
+			aMenuPane->SetItemDimmed(i, supportedCommands.Find(i) == KErrNotFound);
+			}
 		}
 	
 	CleanupStack::PopAndDestroy(&supportedCommands);

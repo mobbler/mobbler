@@ -30,12 +30,8 @@ enum TMobblerSettingItemListViewCommands
 	EMobblerCommandEditSettings,
 	EMobblerCommandAbout,
 	
-	EMobblerCommandUser,
-	EMobblerCommandTrack,
-	EMobblerCommandRadio,
 	EMobblerCommandMore,
 	
-	EMobblerCommandOpen,
 	EMobblerCommandTools,
 	
 	EMobblerCommandPlus,
@@ -58,8 +54,9 @@ enum TMobblerSettingItemListViewCommands
 	// note is shown.
 
 	EMobblerCommandOnline = 0x8000,
-
-	// The web services list
+	
+	EMobblerCommandRadio,
+	EMobblerCommandOpen,
 	EMobblerCommandView,
 	EMobblerCommandFriends,
 	EMobblerCommandRecommendedArtists,
@@ -121,7 +118,9 @@ enum TMobblerSettingItemListViewCommands
 	
 	EMobblerCommandCheckForUpdates,
 
-	EMobblerCommandHide
+	EMobblerCommandHide,
+	
+	EMobblerCommandLast
 	};
 	
 enum TMobblerControls

@@ -347,9 +347,8 @@ void CMobblerStatusControl::SetPositions()
 			TInt albumArtDimension = 	Rect().Height() - ((3 * KTextRectHeight) / 2) - iMobblerBitmapLastFM->SizeInPixels().iHeight;
 			iRectAlbumArt =				TRect(TPoint(KTextRectHeight / 2, KTextRectHeight / 2), TSize(albumArtDimension, albumArtDimension));
 			
-			iControlSize = TSize(20, 20);
-			
-			iControlSize = TSize(27, 27);
+			TInt controlDimension((Rect().Width() - albumArtDimension - iMobblerBitmapLastFM->SizeInPixels().iWidth - (2 * KTextRectHeight)) / 3);
+			iControlSize = TSize(controlDimension, controlDimension);
 			
 			TPoint controlsTopLeft = 	TPoint(albumArtDimension + KTextRectHeight, KTextRectHeight / 2);
 			iPointMore =				TPoint(controlsTopLeft.iX + (0 * iControlSize.iWidth), controlsTopLeft.iY + (1 * iControlSize.iHeight));
@@ -360,8 +359,8 @@ void CMobblerStatusControl::SetPositions()
 			
 			iPointLastFM =				TPoint(albumArtDimension + ((3 * KTextRectHeight) / 2) + (3 * iControlSize.iWidth), KTextRectHeight / 2);
 			
-			TInt textX(albumArtDimension + KTextRectHeight + iMobblerBitmapTrackIcon->SizeInPixels().iWidth);
-			TInt infoY((3 * iControlSize.iHeight) + KTextRectHeight / 2);
+			TInt textX(albumArtDimension + (KTextRectHeight / 2) + iMobblerBitmapTrackIcon->SizeInPixels().iWidth);
+			TInt infoY((3 * iControlSize.iHeight) + KTextRectHeight);
 			TInt infoHeight(albumArtDimension - (3 * iControlSize.iHeight));
 			TSize infoSize(Rect().Width() - textX - (KTextRectHeight / 2), KTextRectHeight);
 						

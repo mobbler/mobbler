@@ -289,13 +289,8 @@ void CMobblerBitmap::RunL()
 			iScaledBitmap = NULL;
 			iScaleStatus = EMobblerScaleNone;
 			
-			TSize size = iBitmap->SizeInPixels();
-			
 			iObserver.BitmapResizedL(this);
 			}
-		
-		iBitmapLoaded = ETrue;
-		iObserver.BitmapLoadedL(this);
 		}
 	}
 
@@ -314,7 +309,8 @@ void CMobblerBitmap::DoCancel()
 
 void CMobblerBitmap::ScaleL(TSize aSize)
 	{
-	if (iBitmapLoaded && iScaleStatus != EMobblerScalePending)
+	if (iBitmapLoaded && iScaleStatus != EMobblerScalePending
+			&& iBitmap->SizeInPixels() != aSize)
 		{
 		// Delete and stop any previous attempt to scale and create a new scaler
 		delete iBitmapScaler;

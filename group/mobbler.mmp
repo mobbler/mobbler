@@ -126,7 +126,6 @@ LIBRARY		charconv.lib
 LIBRARY		commdb.lib
 LIBRARY		commonengine.lib
 LIBRARY		cone.lib
-LIBRARY		ContentListingFramework.lib
 LIBRARY		downloadmgr.lib
 LIBRARY		ecom.lib
 LIBRARY		efsrv.lib

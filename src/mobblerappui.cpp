@@ -27,7 +27,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <aknnotewrappers.h>
 #include <aknsutils.h>
 #include <bautils.h> 
+
+#ifndef __WINS__
 #include <browserlauncher.h>
+#endif
+
 #include <mobbler.rsg>
 #include <mobbler_strings.rsg>
 
@@ -1030,9 +1034,8 @@ void CMobblerAppUi::DataL(const TDesC8& aData, TInt aError)
 					
 					delete iTweetTime;
 					iTweetTime = HBufC::NewL(30);
-					TLocale locale;
 					TPtr tweetTimePtr = iTweetTime->Des();
-					tweetTimeLocal.FormatL(tweetTimePtr, KFormatTime, locale);
+					tweetTimeLocal.FormatL(tweetTimePtr, KFormatTime);
 					
 					CleanupStack::PopAndDestroy(timeString);
 					

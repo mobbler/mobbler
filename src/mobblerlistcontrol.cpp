@@ -365,9 +365,8 @@ void CMobblerListControl::DataL(const TDesC8& aXML, TInt aError)
 							}
 						else
 							{
-							TLocale locale;
 							TPtr yeah = description->Des();
-							iList[i]->TimeLocal().FormatL(yeah, KFormatTime, locale);
+							iList[i]->TimeLocal().FormatL(yeah, KFormatTime);
 							}
 						}
 					
