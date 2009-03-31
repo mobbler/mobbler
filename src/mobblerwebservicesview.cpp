@@ -124,23 +124,12 @@ void CMobblerWebServicesView::DynInitMenuPaneL(TInt aResourceId, CEikMenuPane* a
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_TOP_TRACKS,		EMobblerCommandArtistTopTracks);
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_TOP_TAGS,			EMobblerCommandArtistTopTags);
 		}
-	else if (aResourceId == R_MOBBLER_SHOUT_SUBMENU_PANE)
-		{
-		// this must be a shoutbox
-		CMobblerShoutbox* shoutbox = static_cast<CMobblerShoutbox*>(iWebServicesControl->TopControl());
-		
-		aMenuPane->SetItemTextL(EMobblerCommandShoutUser, *shoutbox->ShoutAtTextUserLC());
-		CleanupStack::PopAndDestroy(); // ShoutAtTextUserLC
-			
-		aMenuPane->SetItemTextL(EMobblerCommandShoutOwner, *shoutbox->ShoutAtTextOwnerLC());
-		CleanupStack::PopAndDestroy(); // ShoutAtTextOwnerLC
-		}
 	
 	// Now the menu text is set, dimming logic is next
 	RArray<TInt> supportedCommands;
 	CleanupClosePushL(supportedCommands);
 	
-	// always support the exit command
+	// Always support the exit command
 	supportedCommands.Append(EAknSoftkeyExit);
 	
 	if (iWebServicesControl->TopControl()->Count() > 0)
@@ -164,6 +153,23 @@ void CMobblerWebServicesView::DynInitMenuPaneL(TInt aResourceId, CEikMenuPane* a
 		{
 		aMenuPane->SetItemDimmed(EMobblerCommandShare, 
 						!static_cast<CMobblerAppUi*>(AppUi())->CurrentTrack());
+		}
+	else if (aResourceId == R_MOBBLER_SHOUT_SUBMENU_PANE)
+		{
+		// This must be a shoutbox
+		CMobblerShoutbox* shoutbox = static_cast<CMobblerShoutbox*>(iWebServicesControl->TopControl());
+		
+		HBufC* shoutTextUser = shoutbox->ShoutAtTextUserLC();
+		HBufC* shoutTextOwner = shoutbox->ShoutAtTextOwnerLC();
+
+		aMenuPane->SetItemTextL(EMobblerCommandShoutUser, *shoutTextUser);
+
+		shoutTextUser->Compare(*shoutTextOwner) == 0 ?
+			aMenuPane->SetItemDimmed(EMobblerCommandShoutOwner, ETrue) :
+			aMenuPane->SetItemTextL(EMobblerCommandShoutOwner, *shoutTextOwner);
+
+		CleanupStack::PopAndDestroy(shoutTextOwner);
+		CleanupStack::PopAndDestroy(shoutTextUser);
 		}
 	}
 
