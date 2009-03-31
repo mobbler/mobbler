@@ -142,8 +142,6 @@ private:
 	TPoint iPointPlayStop;
 	TSize iControlSize;
 	
-	TBool iLandscape;
-
 	TRect iRectTitleText;
 	TRect iRectArtistText;
 	TRect iRectAlbumText;

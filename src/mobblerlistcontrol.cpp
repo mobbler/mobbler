@@ -334,7 +334,7 @@ void CMobblerListControl::DataL(const TDesC8& aXML, TInt aError)
 					if (itemTime == Time::NullTTime())
 						{
 						// this means that the track is playling now
-						description->Des().Copy(_L("Now listening"));
+						description->Des().Copy(_L("Now listening")); // TODO localise
 						}
 					else
 						{

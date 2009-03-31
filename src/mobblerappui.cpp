@@ -36,19 +36,17 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <mobbler_strings.rsg>
 
 #include <sendomfragment.h>
-#include <sennamespace.h> 
 #include <senxmlutils.h> 
 
 #include "mobbler.hrh"
 #include "mobblerappui.h"
-#include "mobblerfriendlist.h"
 #include "mobblermusiclistener.h"
 #include "mobblerparser.h"
 #include "mobblerradioplayer.h"
 #include "mobblerresourcereader.h"
 #include "mobblersettingitemlistview.h"
-#include "mobblerstatusview.h"
 #include "mobblerstatuscontrol.h"
+#include "mobblerstatusview.h"
 #include "mobblerstring.h"
 #include "mobblertrack.h"
 #include "mobblerutility.h"
@@ -425,17 +423,17 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 			iLastFMConnection->SetModeL(CMobblerLastFMConnection::EOffline);
 			iSettingView->SetModeL(CMobblerLastFMConnection::EOffline);
 			break;
-		case EMobblerCommandFriends:
-		case EMobblerCommandUserTopArtists:
-		case EMobblerCommandRecommendedArtists:
-		case EMobblerCommandRecommendedEvents:
-		case EMobblerCommandUserTopAlbums:
-		case EMobblerCommandUserTopTracks:
-		case EMobblerCommandPlaylists:
-		case EMobblerCommandUserEvents:
-		case EMobblerCommandUserTopTags:
-		case EMobblerCommandRecentTracks:
-		case EMobblerCommandUserShoutbox:
+		case EMobblerCommandFriends:			// intentional fall-through
+		case EMobblerCommandUserTopArtists:		// intentional fall-through
+		case EMobblerCommandRecommendedArtists:	// intentional fall-through
+		case EMobblerCommandRecommendedEvents:	// intentional fall-through
+		case EMobblerCommandUserTopAlbums:		// intentional fall-through
+		case EMobblerCommandUserTopTracks:		// intentional fall-through
+		case EMobblerCommandPlaylists:			// intentional fall-through
+		case EMobblerCommandUserEvents:			// intentional fall-through
+		case EMobblerCommandUserTopTags:		// intentional fall-through
+		case EMobblerCommandRecentTracks:		// intentional fall-through
+		case EMobblerCommandUserShoutbox:		// intentional fall-through
 		
 			if (iLastFMConnection->Mode() != CMobblerLastFMConnection::EOnline && GoOnlineL())
 				{
@@ -924,7 +922,14 @@ void CMobblerAppUi::DataL(const TDesC8& aData, TInt aError)
 				
 				if (error == KErrNone)
 					{
-					if (version.Name().Compare(version.Name()) > 0)
+					if ((version.iMajor > KVersion.iMajor)
+						|| 
+						(version.iMajor == KVersion.iMajor && 
+						 version.iMinor > KVersion.iMinor)
+						|| 
+						(version.iMajor == KVersion.iMajor && 
+						 version.iMinor == KVersion.iMinor && 
+						 version.iBuild > KVersion.iBuild))
 						{
 						CAknQueryDialog* dlg = CAknQueryDialog::NewL();
 						TBool yes( dlg->ExecuteLD(R_MOBBLER_YES_NO_QUERY_DIALOG, iResourceReader->ResourceL(R_MOBBLER_UPDATE)));
@@ -1495,7 +1500,6 @@ void CMobblerAppUi::SetSleepTimer()
 		}
 
 	TBool removeTimer(EFalse);
-
 	if (sleepDlg->RunLD())
 		{
 		CEikTextListBox* list = new(ELeave) CAknSinglePopupMenuStyleListBox;
@@ -1526,13 +1530,13 @@ void CMobblerAppUi::SetSleepTimer()
 		CTextListBoxModel* model = list->Model();
 		model->SetItemTextArray(items);
 		model->SetOwnershipType(ELbmOwnsItemArray);
-		CleanupStack::Pop();
+		CleanupStack::Pop(items);
 
 		popupList->SetTitleL(iResourceReader->ResourceL(R_MOBBLER_SLEEP_TIMER_ACTION));
 		
 		list->SetCurrentItemIndex(iSleepAction);
 		TInt popupOk = popupList->ExecuteLD();
-		CleanupStack::Pop();
+		CleanupStack::Pop(popupList);
 		
 		if (popupOk)
 			{

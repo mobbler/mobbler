@@ -25,7 +25,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #define __MOBBLERUTILITY_H__
 
 #include <e32base.h>
-#include <s32file.h>
 
 class MobblerUtility
 	{
@@ -38,3 +37,5 @@ public:
 	};
 
 #endif // __MOBBLERUTILITY_H__
+
+// End of file

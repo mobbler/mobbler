@@ -28,8 +28,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <aknutils.h>
 #include <icl/imagecodecdata.h>
 #include <mobbler.mbg>
-#include <mobbler.rsg>
-#include <stringloader.h>
 #include <mobbler_strings.rsg>
 
 #ifdef  __S60_50__
@@ -593,7 +591,6 @@ void CMobblerStatusControl::Draw(const TRect& /*aRect*/) const
 	TBool moreDisabled(EFalse);
 	
 	const CMobblerBitmap* albumArt(iMobblerBitmapAppIcon);
-	const CMobblerBitmap* infoIcon(iMobblerBitmapTrackIcon);
 	
 	TBool love(EFalse);
 			
@@ -816,7 +813,7 @@ void CMobblerStatusControl::Draw(const TRect& /*aRect*/) const
 		DrawText(iArtistText, iRectArtistText, textColor, CGraphicsContext::ELeft, iArtistMarquee->GetPosition2());
 		}
 	
-	DrawMobblerBitmap(infoIcon, TPoint(iRectTitleText.iTl.iX -  infoIcon->SizeInPixels().iWidth, iRectTitleText.iTl.iY + 3));
+	DrawMobblerBitmap(iMobblerBitmapTrackIcon, TPoint(iRectTitleText.iTl.iX -  iMobblerBitmapTrackIcon->SizeInPixels().iWidth, iRectTitleText.iTl.iY + 3));
 		
 	SystemGc().BitBlt(TPoint(0, 0), iBackBuffer);
 	}

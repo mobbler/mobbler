@@ -51,7 +51,6 @@ class CMobblerMusicAppListener;
 class CMobblerRadioPlayer;
 class CMobblerResourceReader;
 class CMobblerSettingItemListView;
-class CMobblerFriendList;
 class CMobblerStatusView;
 class CMobblerString;
 class CMobblerTrack;

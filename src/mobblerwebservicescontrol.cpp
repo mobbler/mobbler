@@ -172,13 +172,13 @@ void CMobblerWebServicesControl::ChangePaneTextL()
 			switch (iAppUi.LastFMConnection().State())
 				{
 				case CMobblerLastFMConnection::EConnecting:
-					text.Append(_L("Connecting"));
+					text.Append(_L("Connecting"));	// TODO localise
 					break;
 				case CMobblerLastFMConnection::EHandshaking:
-					text.Append(_L("Handshaking"));
+					text.Append(_L("Handshaking"));	// TODO localise
 					break;
 				case CMobblerLastFMConnection::ENone:
-					text.Append(_L("Loading"));
+					text.Append(_L("Loading"));		// TODO localise
 					break;
 				}
 			break;
@@ -191,7 +191,7 @@ void CMobblerWebServicesControl::ChangePaneTextL()
 				}
 			break;
 		case CMobblerListControl::EFailed:
-			text.Append(_L("Failed"));
+			text.Append(_L("Failed"));				// TODO localise
 			break;
 		default:
 			break;
