@@ -35,9 +35,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "mobblerlistcontrol.h"
 #include "mobblerradioplayer.h"
 #include "mobblerresourcereader.h"
+#include "mobblershoutbox.h"
 #include "mobblerwebservicescontrol.h"
 #include "mobblerwebservicesview.h"
-#include "mobblershoutbox.h"
 
 CMobblerWebServicesView* CMobblerWebServicesView::NewL()
 	{
@@ -93,38 +93,38 @@ void CMobblerWebServicesView::DynInitMenuPaneL(TInt aResourceId, CEikMenuPane* a
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_LOVE_TRACK,			EMobblerCommandTrackLove);
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_PLAYLIST_ADD_TRACK,	EMobblerCommandPlaylistAddTrack);
 		}
-	else if(aResourceId == R_MOBBLER_WEBSERVICES_RADIO_SUBMENU_PANE)
+	else if (aResourceId == R_MOBBLER_WEBSERVICES_RADIO_SUBMENU_PANE)
 		{
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_RADIO_PERSONAL,		EMobblerCommandRadioPersonal);
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_RADIO_NEIGHBOURHOOD,	EMobblerCommandRadioNeighbourhood);
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_RADIO_LOVED,			EMobblerCommandRadioLoved);
 		}
-	else if(aResourceId == R_MOBBLER_SHARE_SUBMENU_PANE)
+	else if (aResourceId == R_MOBBLER_SHARE_SUBMENU_PANE)
 		{
-		SetMenuItemTextL(aMenuPane, R_MOBBLER_TRACK,				EMobblerCommandTrackShare);
-		SetMenuItemTextL(aMenuPane, R_MOBBLER_ARTIST,				EMobblerCommandArtistShare);
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_TRACK,			EMobblerCommandTrackShare);
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_ARTIST,			EMobblerCommandArtistShare);
 		}	
-	else if(aResourceId == R_MOBBLER_VIEW_SUBMENU_PANE)
+	else if (aResourceId == R_MOBBLER_VIEW_SUBMENU_PANE)
 		{		
-		SetMenuItemTextL(aMenuPane, R_MOBBLER_FRIENDS,					EMobblerCommandFriends);
-		SetMenuItemTextL(aMenuPane, R_MOBBLER_TOP_ARTISTS,				EMobblerCommandUserTopArtists);
-		SetMenuItemTextL(aMenuPane, R_MOBBLER_TOP_ALBUMS,				EMobblerCommandUserTopAlbums);
-		SetMenuItemTextL(aMenuPane, R_MOBBLER_TOP_TRACKS,				EMobblerCommandUserTopTracks);
-		SetMenuItemTextL(aMenuPane, R_MOBBLER_PLAYLISTS,				EMobblerCommandPlaylists);
-		SetMenuItemTextL(aMenuPane, R_MOBBLER_EVENTS,					EMobblerCommandUserEvents);
-		SetMenuItemTextL(aMenuPane, R_MOBBLER_EVENTS,					EMobblerCommandArtistEvents);
-		SetMenuItemTextL(aMenuPane, R_MOBBLER_TOP_TAGS,					EMobblerCommandUserTopTags);
-		SetMenuItemTextL(aMenuPane, R_MOBBLER_RECENT_TRACKS,			EMobblerCommandRecentTracks);
-		SetMenuItemTextL(aMenuPane, R_MOBBLER_SHOUTBOX,					EMobblerCommandUserShoutbox);
-		SetMenuItemTextL(aMenuPane, R_MOBBLER_SHOUTBOX,					EMobblerCommandArtistShoutbox);
-		SetMenuItemTextL(aMenuPane, R_MOBBLER_SHOUTBOX,					EMobblerCommandEventShoutbox);
-		SetMenuItemTextL(aMenuPane, R_MOBBLER_SIMILAR_ARTISTS,			EMobblerCommandSimilarArtists);
-		SetMenuItemTextL(aMenuPane, R_MOBBLER_SIMILAR_TRACKS,			EMobblerCommandSimilarTracks);
-		SetMenuItemTextL(aMenuPane, R_MOBBLER_TOP_ALBUMS,				EMobblerCommandArtistTopAlbums);
-		SetMenuItemTextL(aMenuPane, R_MOBBLER_TOP_TRACKS,				EMobblerCommandArtistTopTracks);
-		SetMenuItemTextL(aMenuPane, R_MOBBLER_TOP_TAGS,					EMobblerCommandArtistTopTags);
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_FRIENDS,			EMobblerCommandFriends);
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_TOP_ARTISTS,		EMobblerCommandUserTopArtists);
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_TOP_ALBUMS,		EMobblerCommandUserTopAlbums);
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_TOP_TRACKS,		EMobblerCommandUserTopTracks);
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_PLAYLISTS,		EMobblerCommandPlaylists);
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_EVENTS,			EMobblerCommandUserEvents);
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_EVENTS,			EMobblerCommandArtistEvents);
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_TOP_TAGS,			EMobblerCommandUserTopTags);
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_RECENT_TRACKS,	EMobblerCommandRecentTracks);
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_SHOUTBOX,			EMobblerCommandUserShoutbox);
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_SHOUTBOX,			EMobblerCommandArtistShoutbox);
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_SHOUTBOX,			EMobblerCommandEventShoutbox);
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_SIMILAR_ARTISTS,	EMobblerCommandSimilarArtists);
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_SIMILAR_TRACKS,	EMobblerCommandSimilarTracks);
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_TOP_ALBUMS,		EMobblerCommandArtistTopAlbums);
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_TOP_TRACKS,		EMobblerCommandArtistTopTracks);
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_TOP_TAGS,			EMobblerCommandArtistTopTags);
 		}
-	else if(aResourceId == R_MOBBLER_SHOUT_SUBMENU_PANE)
+	else if (aResourceId == R_MOBBLER_SHOUT_SUBMENU_PANE)
 		{
 		// this must be a shoutbox
 		CMobblerShoutbox* shoutbox = static_cast<CMobblerShoutbox*>(iWebServicesControl->TopControl());
@@ -136,6 +136,7 @@ void CMobblerWebServicesView::DynInitMenuPaneL(TInt aResourceId, CEikMenuPane* a
 		CleanupStack::PopAndDestroy(); // ShoutAtTextOwnerLC
 		}
 	
+	// Now the menu text is set, dimming logic is next
 	RArray<TInt> supportedCommands;
 	CleanupClosePushL(supportedCommands);
 	
@@ -158,6 +159,12 @@ void CMobblerWebServicesView::DynInitMenuPaneL(TInt aResourceId, CEikMenuPane* a
 		}
 	
 	CleanupStack::PopAndDestroy(&supportedCommands);
+	
+	if (aResourceId == R_MOBBLER_WEBSERVICES_MENU_PANE)
+		{
+		aMenuPane->SetItemDimmed(EMobblerCommandShare, 
+						!static_cast<CMobblerAppUi*>(AppUi())->CurrentTrack());
+		}
 	}
 
 TUid CMobblerWebServicesView::Id() const
