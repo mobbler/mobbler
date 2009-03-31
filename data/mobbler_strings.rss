@@ -32,7 +32,7 @@ RESOURCE SIGNATURE { version = 1; }
 
 ///////////////////////////////////////////////////////////////////////////////
 
-// Mobbler 0.3.5 resources below
+// Mobbler 0.4.0 resources below
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -67,7 +67,6 @@ RESOURCE STRING r_mobbler_equalizer_profile_default	{ text = STR_mobbler_equaliz
 
 RESOURCE STRING r_mobbler_check_for_updates		{ text = STR_mobbler_check_for_updates; }
 RESOURCE STRING r_mobbler_sleep_timer			{ text = STR_mobbler_sleep_timer; }
-RESOURCE STRING r_mobbler_set_sleep_timer		{ text = STR_mobbler_set_sleep_timer; }
 RESOURCE STRING r_mobbler_export_queue_to_log	{ text = STR_mobbler_export_queue_to_log; }
 
 // Settings resources
@@ -87,10 +86,10 @@ RESOURCE STRING r_mobbler_check_for_updates_no			{ text = STR_mobbler_check_for_
 RESOURCE STRING r_mobbler_backlight						{ text = STR_mobbler_backlight; }
 RESOURCE STRING r_mobbler_backlight_on_when_active		{ text = STR_mobbler_backlight_on_when_active; }
 RESOURCE STRING r_mobbler_backlight_system_default		{ text = STR_mobbler_backlight_system_default; }
-RESOURCE STRING r_mobbler_sleep_timer_action			{ text = STR_mobbler_sleep_timer_action; }
-RESOURCE STRING r_mobbler_sleep_timer_action_stop		{ text = STR_mobbler_sleep_timer_action_stop; }
-RESOURCE STRING r_mobbler_sleep_timer_action_offline	{ text = STR_mobbler_sleep_timer_action_offline; }
-RESOURCE STRING r_mobbler_sleep_timer_action_exit		{ text = STR_mobbler_sleep_timer_action_exit; }
+RESOURCE STRING r_mobbler_download_album_art			{ text = STR_mobbler_download_album_art; }
+RESOURCE STRING r_mobbler_download_album_art_never		{ text = STR_mobbler_download_album_art_never; }
+RESOURCE STRING r_mobbler_download_album_art_radio_only	{ text = STR_mobbler_download_album_art_radio_only; }
+RESOURCE STRING r_mobbler_download_album_art_always_when_online	{ text = STR_mobbler_download_album_art_always_when_online; }
 
 // Other resources
 
@@ -146,11 +145,16 @@ RESOURCE STRING r_mobbler_note_queue_not_exported	{text = STR_mobbler_note_queue
 RESOURCE STRING r_mobbler_note_export_empty_queue	{text = STR_mobbler_note_export_empty_queue;}
 
 RESOURCE STRING r_mobbler_get_latest_language		{ text = STR_mobbler_get_latest_language; }
-RESOURCE STRING r_mobbler_sleep_timer_prompt		{ text = STR_mobbler_sleep_timer_prompt; }
 RESOURCE STRING r_mobbler_softkey_set				{ text = STR_mobbler_softkey_set; }
 RESOURCE STRING r_mobbler_softkey_remove			{ text = STR_mobbler_softkey_remove; }
-RESOURCE STRING r_mobbler_sleep_timer_expired		{ text = STR_mobbler_sleep_timer_expired; }
-RESOURCE STRING r_mobbler_sleep_timer_removed		{ text = STR_mobbler_sleep_timer_removed; }
+
+RESOURCE STRING r_mobbler_sleep_timer_prompt			{ text = STR_mobbler_sleep_timer_prompt; }
+RESOURCE STRING r_mobbler_sleep_timer_expired			{ text = STR_mobbler_sleep_timer_expired; }
+RESOURCE STRING r_mobbler_sleep_timer_removed			{ text = STR_mobbler_sleep_timer_removed; }
+RESOURCE STRING r_mobbler_sleep_timer_action			{ text = STR_mobbler_sleep_timer_action; }
+RESOURCE STRING r_mobbler_sleep_timer_action_stop		{ text = STR_mobbler_sleep_timer_action_stop; }
+RESOURCE STRING r_mobbler_sleep_timer_action_offline	{ text = STR_mobbler_sleep_timer_action_offline; }
+RESOURCE STRING r_mobbler_sleep_timer_action_exit		{ text = STR_mobbler_sleep_timer_action_exit; }
 
 RESOURCE STRING r_mobbler_enable_scrobbling		{ text = STR_mobbler_enable_scrobbling; }
 RESOURCE STRING r_mobbler_disable_scrobbling	{ text = STR_mobbler_disable_scrobbling; }
@@ -227,8 +231,8 @@ RESOURCE STRING r_mobbler_share_artist { text = STR_mobbler_share_artist; }
 
 ///////////////////////////////////////////////////////////////////////////////
 
-// Mobbler 0.3.5 resources above,
-// Mobbler 0.3.6 resources below
+// Mobbler 0.4.0 resources above,
+// Mobbler 0.4.1 resources below
 
 ///////////////////////////////////////////////////////////////////////////////
 

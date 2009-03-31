@@ -183,6 +183,11 @@ void CMobblerSettingItemListView::LoadListL()
 					  R_MOBBLER_BUFFER_SIZE_SECOND,
 					  R_MOBBLER_BUFFER_SIZE_SECONDS);
 
+	// Download album art enumerated setting item
+	CreateEnumItemL(iSettings->DownloadAlbumArt(),
+					R_MOBBLER_DOWNLOAD_ALBUM_ART,
+					R_MOBBLER_SETTING_PAGE_ENUM);
+	
 	// Scrobble percent slider setting item
 	CreateSliderItemL(iSettings->ScrobblePercent(),
 					  R_MOBBLER_SCROBBLE_PERCENT,
@@ -346,5 +351,61 @@ void CMobblerSettingItemListView::CreateBinaryItemL(TBool& aBinaryValue,
 	++iOrdinal;
 	}
 
+void CMobblerSettingItemListView::CreateEnumItemL(TInt& aEnumId, 
+												 const TInt aTitleResource, 
+												 const TInt aPageResource)
+	{
+
+	// To avoid "Setting Item Lis 6" panic. If it occurs, double check settings
+	// are loaded from file in the same order they're saved.
+	TInt tempEnumId = aEnumId;
+	aEnumId = 0;
+
+	CAknEnumeratedTextPopupSettingItem* item = new (ELeave) 
+						CAknEnumeratedTextPopupSettingItem(iOrdinal, aEnumId);
+	CleanupStack::PushL(item);
+
+	// The same resource ID can be used for multiple enumerated text setting pages
+	const TDesC& title = static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->ResourceReader().ResourceL(aTitleResource);
+	item->ConstructL(iIsNumberedStyle, iOrdinal, title, iIcons, aPageResource, 
+									-1, 0, R_MOBBLER_POPUP_SETTING_TEXTS_ENUM);
+
+	CArrayPtr<CAknEnumeratedText>* texts = item->EnumeratedTextArray();
+	texts->ResetAndDestroy();
+	CAknEnumeratedText* enumText;
+
+	// Text 1
+	const TDesC& text1 = static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->ResourceReader().ResourceL(R_MOBBLER_DOWNLOAD_ALBUM_ART_NEVER);
+	enumText = new (ELeave) CAknEnumeratedText(0, text1.AllocLC());
+	CleanupStack::Pop();
+	CleanupStack::PushL(enumText);
+	texts->AppendL(enumText);
+	CleanupStack::Pop(enumText);
+
+	// Text 2
+	const TDesC& text2 = static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->ResourceReader().ResourceL(R_MOBBLER_DOWNLOAD_ALBUM_ART_RADIO_ONLY);
+	enumText = new (ELeave) CAknEnumeratedText(1, text2.AllocLC());
+	CleanupStack::Pop();
+	CleanupStack::PushL(enumText);
+	texts->AppendL(enumText);
+	CleanupStack::Pop(enumText);
+
+	// Text 3
+	const TDesC& text3 = static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->ResourceReader().ResourceL(R_MOBBLER_DOWNLOAD_ALBUM_ART_ALWAYS_WHEN_ONLINE);
+	enumText = new (ELeave) CAknEnumeratedText(2, text3.AllocLC());
+	CleanupStack::Pop();
+	CleanupStack::PushL(enumText);
+	texts->AppendL(enumText);
+	CleanupStack::Pop(enumText);
+
+	// Set the real value for the item
+	aEnumId = tempEnumId;
+	// Tell the control to load in the value
+	item->LoadL();
+
+	iMobblerSettingItemList->SettingItemArray()->AppendL(item);
+	CleanupStack::Pop(item);
+	++iOrdinal;
+	}
 
 // End of file

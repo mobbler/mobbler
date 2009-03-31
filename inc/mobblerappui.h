@@ -109,6 +109,7 @@ public:
 	TBool Foreground() const;
 	TBool Backlight() const;
 	TInt ScrobblePercent() const;
+	TInt DownloadAlbumArt() const;
 	void SaveVolume();
 
 	CMobblerResourceReader& CMobblerAppUi::ResourceReader() const;

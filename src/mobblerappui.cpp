@@ -1353,6 +1353,11 @@ TInt CMobblerAppUi::ScrobblePercent() const
 	return iSettingView->ScrobblePercent();
 	}
 
+TInt CMobblerAppUi::DownloadAlbumArt() const
+	{
+	return iSettingView->DownloadAlbumArt();
+	}
+
 void CMobblerAppUi::SaveVolume()
 	{
 	iSettingView->SetVolumeL(RadioPlayer().Volume());

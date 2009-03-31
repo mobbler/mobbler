@@ -38,6 +38,7 @@ const TInt KDefaultVolume(0);
 const TInt KDefaultVolume(5);
 #endif
 const TInt KDefaultSleepTimerMinutes(30);
+const TInt KDefaultDownloadAlbumArt(1);
 
 CMobblerSettingItemListSettings* CMobblerSettingItemListSettings::NewL()
 	{
@@ -73,6 +74,7 @@ void CMobblerSettingItemListSettings::LoadSettingValuesL()
 	nextUpdateCheck.UniversalTime();
 	nextUpdateCheck += TTimeIntervalDays(KUpdateIntervalDays); // the default update check should be 7 days after install
 	CMobblerLastFMConnection::TMode mode(CMobblerLastFMConnection::EOffline);
+	TInt downloadAlbumArt(KDefaultDownloadAlbumArt);
 	
 	if (openError == KErrNone)
 		{
@@ -114,6 +116,7 @@ void CMobblerSettingItemListSettings::LoadSettingValuesL()
 #endif
 		
 		TRAP_IGNORE(mode = static_cast<CMobblerLastFMConnection::TMode>(readStream.ReadInt8L()));
+		TRAP_IGNORE(downloadAlbumArt = readStream.ReadInt16L());
 		
 		SetUsername(username);
 		SetPassword(password);
@@ -137,6 +140,7 @@ void CMobblerSettingItemListSettings::LoadSettingValuesL()
 	SetSleepTimerMinutes(sleepTimerMinutes);
 	SetNextUpdateCheck(nextUpdateCheck);
 	SetMode(mode);
+	SetDownloadAlbumArt(downloadAlbumArt);
 
 	CleanupStack::PopAndDestroy(&file);
 	}
@@ -166,6 +170,7 @@ void CMobblerSettingItemListSettings::SaveSettingValuesL()
 		writeStream.WriteInt32L(I64HIGH(NextUpdateCheck().Int64()));
 		writeStream.WriteInt32L(I64LOW(NextUpdateCheck().Int64()));
 		writeStream.WriteInt8L(Mode());
+		writeStream.WriteInt16L(DownloadAlbumArt());
 		
 		CleanupStack::PopAndDestroy(&writeStream);
 		}

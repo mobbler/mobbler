@@ -53,6 +53,7 @@ public:
 	TInt SleepTimerMinutes() const 	{ return iSettings->SleepTimerMinutes(); }
 	TTime NextUpdateCheck()			{ return iSettings->NextUpdateCheck(); }
 	CMobblerLastFMConnection::TMode Mode() { return iSettings->Mode(); }
+	TInt DownloadAlbumArt() const	{ return iSettings->DownloadAlbumArt(); }
 
 	void SetEqualizerIndexL(TInt aIndex);
 	void SetVolumeL(TInt aVolume);
@@ -90,6 +91,10 @@ private:
 							const TInt aPageResource,
 							const TInt aFirstEnumResource,
 							const TInt aSecondEnumResource);
+	void CreateEnumItemL(TInt& aEnumId, 
+							const TInt aTitleResource, 
+							const TInt aPageResource);
+
 private:
 	CMobblerSettingItemList* iMobblerSettingItemList;
 	CMobblerSettingItemListSettings* iSettings;

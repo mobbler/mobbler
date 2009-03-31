@@ -80,6 +80,9 @@ public:
 	CMobblerLastFMConnection::TMode Mode() { return iMode; }
 	void SetMode(CMobblerLastFMConnection::TMode aMode) { iMode = aMode; }
 
+	TInt& DownloadAlbumArt() { return iDownloadAlbumArt; }
+	void SetDownloadAlbumArt(TInt aDownloadAlbumArt) { iDownloadAlbumArt = aDownloadAlbumArt; }
+
 protected:
 	TBuf<30> iUsername;
 	TBuf<30> iPassword;
@@ -93,6 +96,7 @@ protected:
 	TInt iSleepTimerMinutes;
 	TTime iNextUpdateCheck;
 	CMobblerLastFMConnection::TMode iMode;
+	TInt iDownloadAlbumArt;
 	};
 
 #endif // __MOBBLERSETTINGITEMLISTSETTINGS_H__
