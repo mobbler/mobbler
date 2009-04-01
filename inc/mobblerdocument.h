@@ -1,7 +1,7 @@
 /*
 mobblerdocument.h
 
-mobbler, a last.fm mobile scrobbler for Symbian smartphones.
+Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
 Copyright (C) 2008  Michael Coffey
 
 http://code.google.com/p/mobbler
@@ -21,12 +21,11 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-#ifndef __MOBBLERDOCUMENT_h__
-#define __MOBBLERDOCUMENT_h__
+#ifndef __MOBBLERDOCUMENT_H__
+#define __MOBBLERDOCUMENT_H__
 
 #include <akndoc.h>
 
-class CMobblerAppUi;
 class CEikApplication;
 
 class CMobblerDocument : public CAknDocument
@@ -43,4 +42,6 @@ private:
 	CMobblerDocument(CEikApplication& aApp);
 	};
 
-#endif // __MOBBLERDOCUMENT_h__
+#endif // __MOBBLERDOCUMENT_H__
+
+// End of file

@@ -1,7 +1,7 @@
 /*
 mobblerwebservicescontrol.cpp
 
-mobbler, a last.fm mobile scrobbler for Symbian smartphones.
+Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
 Copyright (C) 2008  Michael Coffey
 
 http://code.google.com/p/mobbler
@@ -24,18 +24,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <aknnavide.h>
 #include <aknnavilabel.h>
 
-#include "mobbleralbumlist.h"
 #include "mobblerappui.h"
-#include "mobblerartistlist.h"
-#include "mobblereventlist.h"
-#include "mobblerfriendlist.h"
 #include "mobblerlistcontrol.h"
-#include "mobblerplaylistlist.h"
-#include "mobblershoutbox.h"
 #include "mobblerstring.h"
-#include "mobblertaglist.h"
 #include "mobblertrack.h"
-#include "mobblertracklist.h"
 #include "mobblerwebservicescontrol.h"
 
 #include "mobbler.hrh"
@@ -136,7 +128,7 @@ void CMobblerWebServicesControl::HandleListCommandL(TInt aCommand)
 		// remove the old top control from the stack
 		iAppUi.RemoveFromStack(iControls[iControls.Count() - 1]);
 		
-		// add and activte the new list 
+		// add and activate the new list 
 		iControls.AppendL(list);
 		list->SetMopParent(&iAppUi);
 		list->ActivateL();
@@ -280,3 +272,5 @@ TInt CMobblerWebServicesControl::CountComponentControls() const
 	{
 	return 1;
 	}
+
+// End of file

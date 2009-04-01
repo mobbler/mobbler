@@ -24,7 +24,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #ifndef __MOBBLERSTATUSCONTROL_H__
 #define __MOBBLERSTATUSCONTROL_H__
 
-#include <coecntrl.h>
+//#include <coecntrl.h>
 #include <coedef.h>
 
 #include "mobblerbitmap.h" 
@@ -155,7 +155,6 @@ private:
 	CMobblerMarquee* iTitleMarquee;
 	CMobblerMarquee* iArtistMarquee;
 	CMobblerMarquee* iAlbumMarquee;
-	CMobblerMarquee* iTweetMarquee;
 	
 	TPointerEvent iLastPointerEvent;
 	
@@ -164,3 +163,5 @@ private:
 	};
 	
 #endif // __MOBBLERSTATUSCONTROL_H__
+
+// End of file

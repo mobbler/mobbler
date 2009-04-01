@@ -34,7 +34,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <mobbler.rsg>
 #include <mobbler_strings.rsg>
-
 #include <sendomfragment.h>
 #include <senxmlutils.h> 
 
@@ -53,8 +52,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "mobblerwebservicesview.h"
 
 _LIT(KRadioFile, "c:radiostations.dat");
-
-const TTimeIntervalMinutes KTweetFetchInterval(30);
 
 enum TSleepTimerAction
 	{
@@ -315,8 +312,6 @@ const TDesC& CMobblerAppUi::MusicAppNameL() const
 
 CMobblerAppUi::CMobblerAppUi()
 	{
-	iTweetFetched.UniversalTime();
-	iTweetFetched -= KTweetFetchInterval;
 	}
 
 CMobblerAppUi::~CMobblerAppUi()
@@ -337,10 +332,6 @@ CMobblerAppUi::~CMobblerAppUi()
 #endif
 	delete iResourceReader;
 	delete iSleepTimer;
-	
-	delete iTweetText;
-	delete iTweetTime;
-	delete iTweetPopupNote;
 	}
 
 void CMobblerAppUi::HandleInstallStartedL()
@@ -350,29 +341,6 @@ void CMobblerAppUi::HandleInstallStartedL()
 
 void CMobblerAppUi::HandleCommandL(TInt aCommand)
 	{
-	// There has been some activity so try to update the tweet
-	if (iLastFMConnection->Mode() == CMobblerLastFMConnection::EOnline &&
-			iLastFMConnection->State() != CMobblerLastFMConnection::EHandshaking && iLastFMConnection->State() != CMobblerLastFMConnection::EConnecting &&
-			iState != EFetchingTweet && iState != ECheckingUpdates)
-		{
-		// We are online and not doing any connecting, already fetching a tweet, or checking for updates
-		
-		// We check for a new tweet every time there is user input and KTweetFetchInterval has passed
-
-		TTime now;
-		now.UniversalTime();
-		
-		TTimeIntervalHours hoursSinceLastTweetFetch;
-		User::LeaveIfError(now.HoursFrom(iTweetFetched, hoursSinceLastTweetFetch));
-		
-		if (hoursSinceLastTweetFetch >= KTweetFetchInterval)
-			{
-			iLastFMConnection->GetLatestTweetL(*this);
-			iState = EFetchingTweet;
-			}
-		}
-	
-	
 	TApaTask task(iEikonEnv->WsSession());
 	const CMobblerTrack* const currentTrack(CurrentTrack());
 	const CMobblerTrack* const currentRadioTrack(iRadioPlayer->CurrentTrack());
@@ -962,117 +930,6 @@ void CMobblerAppUi::DataL(const TDesC8& aData, TInt aError)
 				}
 			}
 			break;
-		case EFetchingTweet:
-			{
-			iTweetFetched.UniversalTime();
-			
-			// create the xml reader and dom fragement and associate them with each other 
-		    CSenXmlReader* xmlReader = CSenXmlReader::NewL();
-			CleanupStack::PushL(xmlReader);
-			CSenDomFragment* domFragment = CSenDomFragment::NewL();
-			CleanupStack::PushL(domFragment);
-			xmlReader->SetContentHandler(*domFragment);
-			domFragment->SetReader(*xmlReader);
-			
-			// parse the xml into the dom fragment
-			xmlReader->ParseL(aData);			
-			
-			CSenElement* textElement = domFragment->AsElement().Element(_L8("text"));
-			
-			if (textElement)
-				{
-				CMobblerString* tweetString = CMobblerString::NewL(textElement->Content());
-				CleanupStack::PushL(tweetString);
-				HBufC* tweetText = tweetString->String().AllocL();
-				CleanupStack::PopAndDestroy(tweetString);
-				CleanupStack::PushL(tweetText);
-				
-				if (!iTweetText
-						|| iTweetText && iTweetText->Compare(*tweetText) != 0)
-					{
-					// We haven't fetched a tweet yet or the new tweet is different
-					delete iTweetText;
-					iTweetText = tweetText->AllocL();
-					
-					
-					CMobblerString* timeString = CMobblerString::NewL(domFragment->AsElement().Element(_L8("created_at"))->Content());
-					CleanupStack::PushL(timeString);
-					
-					TMonth month(EJanuary);
-					TInt day;
-					TInt hours;
-					TInt minutes;
-					TInt seconds;
-					TInt utcOffset;
-					TInt year;
-
-					// Get all the seperate components of the time
-					TPtrC monthString = timeString->String().Mid(4, 3);
-					TPtrC dayString = timeString->String().Mid(8, 2);
-					TPtrC hoursString = timeString->String().Mid(11, 2);
-					TPtrC minutesString = timeString->String().Mid(14, 2);
-					TPtrC secondsString = timeString->String().Mid(17, 2);
-					TPtrC utcOffsetSignString = timeString->String().Mid(20, 1);
-					TPtrC utcOffsetString = timeString->String().Mid(21, 4);
-					TPtrC yearString = timeString->String().Right(4);
-					
-					TLex lex(dayString);
-					lex.Val(day);
-					lex.Assign(hoursString);
-					lex.Val(hours);
-					lex.Assign(minutesString);
-					lex.Val(minutes);
-					lex.Assign(secondsString);
-					lex.Val(seconds);
-					lex.Assign(utcOffsetString);
-					lex.Val(utcOffset);
-					lex.Assign(yearString);
-					lex.Val(year);
-					
-					if (monthString.CompareF(_L("Jan")) == 0) month = EJanuary;
-					else if (monthString.CompareF(_L("Feb")) == 0) month = EFebruary;
-					else if (monthString.CompareF(_L("Mar")) == 0) month = EMarch;
-					else if (monthString.CompareF(_L("Apr")) == 0) month = EApril;
-					else if (monthString.CompareF(_L("May")) == 0) month = EMay;
-					else if (monthString.CompareF(_L("Jun")) == 0) month = EJune;
-					else if (monthString.CompareF(_L("Jul")) == 0) month = EJuly;
-					else if (monthString.CompareF(_L("Aug")) == 0) month = EAugust;
-					else if (monthString.CompareF(_L("Sep")) == 0) month = ESeptember;
-					else if (monthString.CompareF(_L("Oct")) == 0) month = EOctober;
-					else if (monthString.CompareF(_L("Nov")) == 0) month = ENovember;
-					else if (monthString.CompareF(_L("Dec")) == 0) month = EDecember;
-					
-					TTime tweetTimeLocal = TTime(TDateTime(year, month, day - 1, hours, minutes, seconds, 0))
-					+ TTimeIntervalMinutes((utcOffsetSignString.Compare(_L("+")) == 0) ? -utcOffset : utcOffset)
-					+ User::UTCOffset();
-					
-					delete iTweetTime;
-					iTweetTime = HBufC::NewL(30);
-					TPtr tweetTimePtr = iTweetTime->Des();
-					tweetTimeLocal.FormatL(tweetTimePtr, KFormatTime);
-					
-					CleanupStack::PopAndDestroy(timeString);
-					
-					iStatusView->DrawDeferred();
-					
-					_LIT(KTweetFormat, "Mobbler on Twitter:\n%S\n%S");
-					
-					TBuf<255> tweetText;
-					tweetText.Format(KTweetFormat, iTweetText, iTweetTime);
-					
-					// display the tweet in an info popup note
-				    delete iTweetPopupNote;
-				    iTweetPopupNote = CAknInfoPopupNoteController::NewL();
-				    iTweetPopupNote->SetTextL(tweetText);
-				    iTweetPopupNote->ShowInfoPopupNote();
-					}
-				
-				CleanupStack::PopAndDestroy(tweetText);
-				}
-			
-			CleanupStack::PopAndDestroy(2, xmlReader);
-			}
-			break;
 		case EFetchingFriendsShareArtist:
 		case EFetchingFriendsShareTrack:
 			{
@@ -1250,11 +1107,6 @@ void CMobblerAppUi::HandleConnectCompleteL(TInt aError)
 				// do an update check
 				iLastFMConnection->CheckForUpdateL(*this);
 				iState = ECheckingUpdates;
-				}
-			else
-				{
-				iLastFMConnection->GetLatestTweetL(*this);
-				iState = EFetchingTweet;
 				}
 			}
 		}

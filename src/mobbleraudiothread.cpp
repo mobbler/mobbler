@@ -240,7 +240,7 @@ void CMobblerAudioThread::FillBufferL(TBool aDataAdded)
 			{
 			// we are already playing so add the last
 			//piece of the buffer to the stream
-#ifndef __WINS__
+#if !defined (__WINS__) && !defined (__S60_50__)
 			iStream->WriteL(*iBuffer[iBuffer.Count() - 1]);
 #endif
 			}
@@ -252,9 +252,9 @@ void CMobblerAudioThread::FillBufferL(TBool aDataAdded)
 		
 		// write all the data we have to the audio output stream
 		const TInt KBufferCount(iBuffer.Count());
-		for (TInt i(0) ; i < KBufferCount ; ++i)
+		for (TInt i(0); i < KBufferCount; ++i)
 			{
-#ifndef __WINS__
+#if !defined (__WINS__) && !defined (__S60_50__)
 			iStream->WriteL(*iBuffer[i]);
 #endif
 			}

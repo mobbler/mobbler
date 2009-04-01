@@ -76,8 +76,6 @@ _LIT8(KLogFileListenedRating, "L");
 _LIT8(KLogFileFieldSeperator, "\t");
 _LIT8(KLogFileEndOfLine, "\n");
 
-_LIT8(KUrlMobblerTwitterXml, "http://twitter.com/statuses/show/1395486987.xml");
-
 // Last.fm can accept up to this many track in one submission
 const TInt KMaxSubmitTracks(50);
 
@@ -401,17 +399,6 @@ void CMobblerLastFMConnection::CheckForUpdateL(MMobblerFlatDataObserver& aObserv
 	{	
 	TUriParser8 uriParser;
 	uriParser.Parse(KLatesverFileLocation);
-	CUri8* uri = CUri8::NewLC(uriParser);
-	CMobblerTransaction* transaction = CMobblerTransaction::NewL(*this, uri);
-	CleanupStack::Pop(uri);
-	transaction->SetFlatDataObserver(&aObserver);
-	AppendAndSubmitTransactionL(transaction);
-	}
-
-void CMobblerLastFMConnection::GetLatestTweetL(MMobblerFlatDataObserver& aObserver)
-	{
-	TUriParser8 uriParser;
-	uriParser.Parse(KUrlMobblerTwitterXml);
 	CUri8* uri = CUri8::NewLC(uriParser);
 	CMobblerTransaction* transaction = CMobblerTransaction::NewL(*this, uri);
 	CleanupStack::Pop(uri);

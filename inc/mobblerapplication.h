@@ -1,7 +1,7 @@
 /*
 mobblerapplication.h
 
-mobbler, a last.fm mobile scrobbler for Symbian smartphones.
+Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
 Copyright (C) 2008  Michael Coffey
 
 http://code.google.com/p/mobbler
@@ -26,10 +26,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <aknapp.h>
 
-#include "mobbler.hrh"
-
-const TUid KUidMobblerApp = {0xA0007648};
-
 class CMobblerApplication : public CAknApplication
 	{
 public:
@@ -40,3 +36,5 @@ protected:
 	};
 
 #endif
+
+// End of file

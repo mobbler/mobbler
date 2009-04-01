@@ -27,9 +27,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <badesca.h>
 #include <e32base.h>
 #include <es_sock.h>
-#include <http/rhttpsession.h>
 #include <http/mhttpdatasupplier.h>
 #include <http/mhttptransactioncallback.h> 
+#include <http/rhttpsession.h>
 
 #include "mobblerlastfmerror.h"
 
@@ -108,9 +108,6 @@ public:
 	
 	// Updates
 	void CheckForUpdateL(MMobblerFlatDataObserver& aObserver);
-	
-	// Twitter
-	void GetLatestTweetL(MMobblerFlatDataObserver& aObserver);
 	
 	// Scrobbling methods
 	void TrackStartedL(CMobblerTrack* aCurrentTrack);

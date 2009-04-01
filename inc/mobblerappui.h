@@ -44,7 +44,6 @@ const TInt KUpdateIntervalDays(1);
 const TInt KUpdateIntervalDays(7);
 #endif
 
-class CAknInfoPopupNoteController;
 class CBrowserLauncher;
 class CMobblerDownload;
 class CMobblerMusicAppListener;
@@ -70,8 +69,7 @@ public:
 		ECheckingUpdates,
 		EFetchingFriendsShareTrack,
 		EFetchingFriendsShareArtist,
-		EFetchingPlaylists,
-		EFetchingTweet
+		EFetchingPlaylists
 		};
 	
 public:
@@ -199,14 +197,8 @@ private:
 	TInt iSleepAction;
 	
 	TState iState;
-	
-	// Twitter
-	CAknInfoPopupNoteController* iTweetPopupNote;
-	TTime iTweetFetched;
-	HBufC* iTweetText;
-	HBufC* iTweetTime;
 	};
 
-#endif // __MOBBLERAPPUI_h__
+#endif // __MOBBLERAPPUI_H__
 
 // End of file

@@ -108,7 +108,6 @@ void CMobblerStatusControl::ConstructL(const TRect& aRect)
 	iTitleMarquee = CMobblerMarquee::NewL(*this);
 	iAlbumMarquee = CMobblerMarquee::NewL(*this);
 	iArtistMarquee = CMobblerMarquee::NewL(*this);
-	iTweetMarquee = CMobblerMarquee::NewL(*this);
 	
 	iAppUi.RadioPlayer().AddObserverL(this);
 	iAppUi.LastFMConnection().AddStateChangeObserverL(this);
@@ -538,7 +537,6 @@ CMobblerStatusControl::~CMobblerStatusControl()
 	delete iTitleMarquee;
 	delete iAlbumMarquee;
 	delete iArtistMarquee;
-	delete iTweetMarquee;
 	
 #ifdef  __S60_50__
 	if (iMobblerFeedback)
