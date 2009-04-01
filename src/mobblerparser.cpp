@@ -42,21 +42,21 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "mobblertrack.h"
 #include "mobblertracklist.h"
 
-_LIT8(KElementTitle, "title");
-_LIT8(KElementTrack, "track");
-_LIT8(KElementLocation, "location");
-_LIT8(KElementId, "id");
 _LIT8(KElementAlbum, "album");
 _LIT8(KElementCreator, "creator");
 _LIT8(KElementDuration, "duration");
-_LIT8(KElementImage, "image");
-_LIT8(KElementTrackList, "trackList");
-_LIT8(KElementStatus, "status");
-_LIT8(KElementSession, "session");
-_LIT8(KElementKey, "key");
-_LIT8(KElementRadioAuth, "trackauth");
 _LIT8(KElementError, "error");
+_LIT8(KElementId, "id");
+_LIT8(KElementImage, "image");
+_LIT8(KElementKey, "key");
 _LIT8(KElementLink, "link");
+_LIT8(KElementLocation, "location");
+_LIT8(KElementRadioAuth, "trackauth");
+_LIT8(KElementSession, "session");
+_LIT8(KElementStatus, "status");
+_LIT8(KElementTitle, "title");
+//_LIT8(KElementTrack, "track");
+_LIT8(KElementTrackList, "trackList");
 
 _LIT8(KUpdateVersionMajor,		"major");
 _LIT8(KUpdateVersionMinor,		"minor");
@@ -172,7 +172,7 @@ CMobblerLastFMError* CMobblerParser::ParseRadioHandshakeL(const TDesC8& aRadioHa
 			
 			const TInt KLines(7);
 			
-			for (TInt i(0) ; i < KLines ; ++i)
+			for (TInt i(0); i < KLines; ++i)
 				{
 				_LIT(KDelimeter, "\n");
 				
@@ -340,7 +340,7 @@ CMobblerLastFMError* CMobblerParser::ParseRadioPlaylistL(const TDesC8& aXML, CMo
 	RPointerArray<CSenElement>& tracks = domFragment->AsElement().Element(KElementTrackList)->ElementsL();
 	
 	const TInt KTrackCount(tracks.Count());
-	for (TInt i(0) ; i < KTrackCount; ++i)
+	for (TInt i(0); i < KTrackCount; ++i)
 		{
 		// get the duration as a number
 		TLex8 lex(tracks[i]->Element(KElementDuration)->Content());
@@ -357,7 +357,7 @@ CMobblerLastFMError* CMobblerParser::ParseRadioPlaylistL(const TDesC8& aXML, CMo
 		TPtrC8 album = tracks[i]->Element(KElementAlbum)->Content();
 		HBufC8* albumBuf = HBufC8::NewLC(album.Length());
 		SenXmlUtils::DecodeHttpCharactersL(album, albumBuf);
-		RPointerArray<CSenElement>& Elems = tracks[i]->ElementsL();
+/*		RPointerArray<CSenElement>& Elems = tracks[i]->ElementsL();
 		HBufC8* albumIDBuf = NULL;
 		for (TInt x = 0; x < Elems.Count(); x++)
 			{
@@ -368,13 +368,13 @@ CMobblerLastFMError* CMobblerParser::ParseRadioPlaylistL(const TDesC8& aXML, CMo
 				SenXmlUtils::DecodeHttpCharactersL(albumID, albumIDBuf);
 				break;
 				}
-			}
+			}*/
 		TPtrC8 image = tracks[i]->Element(KElementImage)->Content();
 		TPtrC8 location = tracks[i]->Element(KElementLocation)->Content();
 		TPtrC8 radioAuth = tracks[i]->Element(KNamespace, KElementRadioAuth)->Content();
 		TPtrC8 musicBrainzId = tracks[i]->Element(KElementId)->Content();
 		
-		CMobblerTrack* track = CMobblerTrack::NewL(*creatorBuf, *titleBuf, *albumBuf, *albumIDBuf, musicBrainzId, image, location, durationSeconds, radioAuth);
+		CMobblerTrack* track = CMobblerTrack::NewL(*creatorBuf, *titleBuf, *albumBuf, /**albumIDBuf,*/ musicBrainzId, image, location, durationSeconds, radioAuth);
 		CleanupStack::PushL(track);
 		playlist->AppendTrackL(track);
 		CleanupStack::Pop(track);
@@ -487,25 +487,25 @@ void CMobblerParser::ParseFriendListL(const TDesC8& aXML, CMobblerFriendList& aO
 	// parse the xml into the dom fragment
 	xmlReader->ParseL(aXML);
 	
-	RPointerArray<CSenElement>& users = domFragment->AsElement().Element(_L8("friends"))->ElementsL();
+	RPointerArray<CSenElement>& items = domFragment->AsElement().Element(_L8("friends"))->ElementsL();
 		
-	const TInt KUserCount(users.Count());
-	for (TInt i(0) ; i < KUserCount; ++i)
+	const TInt KCount(items.Count());
+	for (TInt i(0); i < KCount; ++i)
 		{
-		HBufC8* image = (users[i]->Element(KElementImage) == NULL) ?
+		HBufC8* image = (items[i]->Element(KElementImage) == NULL) ?
 												KNullDesC8().AllocLC() :
-												users[i]->Element(KElementImage)->Content().AllocLC();
+												items[i]->Element(KElementImage)->Content().AllocLC();
 		
-		CMobblerListItem* user = CMobblerListItem::NewL(aObserver,
-														users[i]->Element(_L8("name"))->Content(),
-														users[i]->Element(_L8("realname"))->Content(),
+		CMobblerListItem* item = CMobblerListItem::NewL(aObserver,
+														items[i]->Element(_L8("name"))->Content(),
+														items[i]->Element(_L8("realname"))->Content(),
 														*image);
 														
 		CleanupStack::PopAndDestroy(1);
 														
-		CleanupStack::PushL(user);
-		aList.AppendL(user);
-		CleanupStack::Pop(user);
+		CleanupStack::PushL(item);
+		aList.AppendL(item);
+		CleanupStack::Pop(item);
 		}
 	
 	CleanupStack::PopAndDestroy(2, xmlReader);
@@ -532,24 +532,24 @@ void CMobblerParser::ParseTopArtistsL(const TDesC8& aXML, CMobblerArtistList& aO
 	// parse the xml into the dom fragment
 	xmlReader->ParseL(aXML);
 	
-	RPointerArray<CSenElement>& users = domFragment->AsElement().Element(_L8("topartists"))->ElementsL();
+	RPointerArray<CSenElement>& items = domFragment->AsElement().Element(_L8("topartists"))->ElementsL();
 		
-	const TInt KUserCount(users.Count());
-	for (TInt i(0) ; i < KUserCount; ++i)
+	const TInt KCount(items.Count());
+	for (TInt i(0); i < KCount; ++i)
 		{
-		HBufC8* image = (users[i]->Element(KElementImage) == NULL) ?
+		HBufC8* image = (items[i]->Element(KElementImage) == NULL) ?
 										KNullDesC8().AllocLC() :
-										users[i]->Element(KElementImage)->Content().AllocLC();
+										items[i]->Element(KElementImage)->Content().AllocLC();
 		
-		CMobblerListItem* artist = CMobblerListItem::NewL(aObserver,
-																		*SenXmlUtils::DecodeHttpCharactersLC(users[i]->Element(_L8("name"))->Content()),
-																		*SenXmlUtils::DecodeHttpCharactersLC(users[i]->Element(_L8("playcount"))->Content()),
-																		*image);
+		CMobblerListItem* item = CMobblerListItem::NewL(aObserver,
+														*SenXmlUtils::DecodeHttpCharactersLC(items[i]->Element(_L8("name"))->Content()),
+														*SenXmlUtils::DecodeHttpCharactersLC(items[i]->Element(_L8("playcount"))->Content()),
+														*image);
 		CleanupStack::PopAndDestroy(3);
 		
-		CleanupStack::PushL(artist);
-		aList.AppendL(artist);
-		CleanupStack::Pop(artist);
+		CleanupStack::PushL(item);
+		aList.AppendL(item);
+		CleanupStack::Pop(item);
 		}
 	
 	CleanupStack::PopAndDestroy(2, xmlReader);
@@ -577,24 +577,24 @@ void CMobblerParser::ParseRecommendedArtistsL(const TDesC8& aXML, CMobblerArtist
 	// parse the xml into the dom fragment
 	xmlReader->ParseL(aXML);
 	
-	RPointerArray<CSenElement>& users = domFragment->AsElement().Element(_L8("recommendations"))->ElementsL();
+	RPointerArray<CSenElement>& items = domFragment->AsElement().Element(_L8("recommendations"))->ElementsL();
 		
-	const TInt KUserCount(users.Count());
-	for (TInt i(0) ; i < KUserCount; ++i)
+	const TInt KCount(items.Count());
+	for (TInt i(0); i < KCount; ++i)
 		{
-		HBufC8* image = (users[i]->Element(KElementImage) == NULL) ?
+		HBufC8* image = (items[i]->Element(KElementImage) == NULL) ?
 								KNullDesC8().AllocLC() :
-								users[i]->Element(KElementImage)->Content().AllocLC();
+								items[i]->Element(KElementImage)->Content().AllocLC();
 		
-		CMobblerListItem* artist = CMobblerListItem::NewL(aObserver,
-																		*SenXmlUtils::DecodeHttpCharactersLC(users[i]->Element(_L8("name"))->Content()),
-																		KNullDesC8,
-																		*image);
+		CMobblerListItem* item = CMobblerListItem::NewL(aObserver,
+														*SenXmlUtils::DecodeHttpCharactersLC(items[i]->Element(_L8("name"))->Content()),
+														KNullDesC8,
+														*image);
 		CleanupStack::PopAndDestroy(2);
 		
-		CleanupStack::PushL(artist);
-		aList.AppendL(artist);
-		CleanupStack::Pop(artist);
+		CleanupStack::PushL(item);
+		aList.AppendL(item);
+		CleanupStack::Pop(item);
 		}
 	
 	CleanupStack::PopAndDestroy(2, xmlReader);
@@ -621,24 +621,24 @@ void CMobblerParser::ParseSimilarArtistsL(const TDesC8& aXML, CMobblerArtistList
 	// parse the xml into the dom fragment
 	xmlReader->ParseL(aXML);
 	
-	RPointerArray<CSenElement>& users = domFragment->AsElement().Element(_L8("similarartists"))->ElementsL();
+	RPointerArray<CSenElement>& items = domFragment->AsElement().Element(_L8("similarartists"))->ElementsL();
 		
-	const TInt KUserCount(users.Count());
-	for (TInt i(0) ; i < KUserCount; ++i)
+	const TInt KCount(items.Count());
+	for (TInt i(0); i < KCount; ++i)
 		{
-		HBufC8* image = (users[i]->Element(KElementImage) == NULL) ?
+		HBufC8* image = (items[i]->Element(KElementImage) == NULL) ?
 						KNullDesC8().AllocLC() :
-						users[i]->Element(KElementImage)->Content().AllocLC();
+						items[i]->Element(KElementImage)->Content().AllocLC();
 		
-		CMobblerListItem* artist = CMobblerListItem::NewL(aObserver,
-																		*SenXmlUtils::DecodeHttpCharactersLC(users[i]->Element(_L8("name"))->Content()),
-																		*SenXmlUtils::DecodeHttpCharactersLC(users[i]->Element(_L8("match"))->Content()),
-																		*image);
+		CMobblerListItem* item = CMobblerListItem::NewL(aObserver,
+														*SenXmlUtils::DecodeHttpCharactersLC(items[i]->Element(_L8("name"))->Content()),
+														*SenXmlUtils::DecodeHttpCharactersLC(items[i]->Element(_L8("match"))->Content()),
+														*image);
 		CleanupStack::PopAndDestroy(3);
 		
-		CleanupStack::PushL(artist);
-		aList.AppendL(artist);
-		CleanupStack::Pop(artist);
+		CleanupStack::PushL(item);
+		aList.AppendL(item);
+		CleanupStack::Pop(item);
 		}
 	
 	CleanupStack::PopAndDestroy(2, xmlReader);
@@ -666,26 +666,26 @@ void CMobblerParser::ParseEventsL(const TDesC8& aXML, CMobblerEventList& aObserv
 	// parse the xml into the dom fragment
 	xmlReader->ParseL(aXML);
 	
-	RPointerArray<CSenElement>& events = domFragment->AsElement().Element(_L8("events"))->ElementsL();
+	RPointerArray<CSenElement>& items = domFragment->AsElement().Element(_L8("events"))->ElementsL();
 		
-	const TInt KEventsCount(events.Count());
-	for (TInt i(0) ; i < KEventsCount; ++i)
+	const TInt KCount(items.Count());
+	for (TInt i(0); i < KCount; ++i)
 		{
-		HBufC8* image = (events[i]->Element(KElementImage) == NULL) ?
+		HBufC8* image = (items[i]->Element(KElementImage) == NULL) ?
 				KNullDesC8().AllocLC() :
-				events[i]->Element(KElementImage)->Content().AllocLC();
+				items[i]->Element(KElementImage)->Content().AllocLC();
 		
-		CMobblerListItem* event = CMobblerListItem::NewL(aObserver,
-																	*SenXmlUtils::DecodeHttpCharactersLC(events[i]->Element(_L8("title"))->Content()),
-																	*SenXmlUtils::DecodeHttpCharactersLC(events[i]->Element(_L8("venue"))->Element(_L8("name"))->Content()),
-																	*image);
+		CMobblerListItem* item = CMobblerListItem::NewL(aObserver,
+														*SenXmlUtils::DecodeHttpCharactersLC(items[i]->Element(_L8("title"))->Content()),
+														*SenXmlUtils::DecodeHttpCharactersLC(items[i]->Element(_L8("venue"))->Element(_L8("name"))->Content()),
+														*image);
 		
-		event->SetIdL(events[i]->Element(_L8("id"))->Content());
+		item->SetIdL(items[i]->Element(_L8("id"))->Content());
 		
 		CleanupStack::PopAndDestroy(3);
-		CleanupStack::PushL(event);
-		aList.AppendL(event);
-		CleanupStack::Pop(event);
+		CleanupStack::PushL(item);
+		aList.AppendL(item);
+		CleanupStack::Pop(item);
 		}
 	
 	CleanupStack::PopAndDestroy(2, xmlReader);
@@ -712,24 +712,24 @@ void CMobblerParser::ParseTopAlbumsL(const TDesC8& aXML, CMobblerAlbumList& aObs
 	// parse the xml into the dom fragment
 	xmlReader->ParseL(aXML);
 	
-	RPointerArray<CSenElement>& users = domFragment->AsElement().Element(_L8("topalbums"))->ElementsL();
+	RPointerArray<CSenElement>& items = domFragment->AsElement().Element(_L8("topalbums"))->ElementsL();
 		
-	const TInt KUserCount(users.Count());
-	for (TInt i(0) ; i < KUserCount; ++i)
+	const TInt KCount(items.Count());
+	for (TInt i(0); i < KCount; ++i)
 		{
-		HBufC8* image = (users[i]->Element(KElementImage) == NULL) ?
+		HBufC8* image = (items[i]->Element(KElementImage) == NULL) ?
 				KNullDesC8().AllocLC() :
-				users[i]->Element(KElementImage)->Content().AllocLC();
+				items[i]->Element(KElementImage)->Content().AllocLC();
 		
-		CMobblerListItem* album = CMobblerListItem::NewL(aObserver,
-																		*SenXmlUtils::DecodeHttpCharactersLC(users[i]->Element(_L8("name"))->Content()),
-																		*SenXmlUtils::DecodeHttpCharactersLC(users[i]->Element(_L8("artist"))->Element(_L8("name"))->Content()),
-																		*image);
+		CMobblerListItem* item = CMobblerListItem::NewL(aObserver,
+														*SenXmlUtils::DecodeHttpCharactersLC(items[i]->Element(_L8("name"))->Content()),
+														*SenXmlUtils::DecodeHttpCharactersLC(items[i]->Element(_L8("artist"))->Element(_L8("name"))->Content()),
+														*image);
 		CleanupStack::PopAndDestroy(3);
 		
-		CleanupStack::PushL(album);
-		aList.AppendL(album);
-		CleanupStack::Pop(album);
+		CleanupStack::PushL(item);
+		aList.AppendL(item);
+		CleanupStack::Pop(item);
 		}
 	
 	CleanupStack::PopAndDestroy(2, xmlReader);
@@ -757,24 +757,24 @@ void CMobblerParser::ParseArtistTopTracksL(const TDesC8& aXML, CMobblerTrackList
 	// parse the xml into the dom fragment
 	xmlReader->ParseL(aXML);
 	
-	RPointerArray<CSenElement>& tracks = domFragment->AsElement().Element(_L8("toptracks"))->ElementsL();
+	RPointerArray<CSenElement>& items = domFragment->AsElement().Element(_L8("toptracks"))->ElementsL();
 		
-	const TInt KTrackCount(tracks.Count());
-	for (TInt i(0) ; i < KTrackCount; ++i)
+	const TInt KCount(items.Count());
+	for (TInt i(0); i < KCount; ++i)
 		{
-		HBufC8* image = (tracks[i]->Element(_L8("image")) == NULL) ?
+		HBufC8* image = (items[i]->Element(_L8("image")) == NULL) ?
 				KNullDesC8().AllocLC() :
-				tracks[i]->Element(_L8("image"))->Content().AllocLC();
+				items[i]->Element(_L8("image"))->Content().AllocLC();
 		
-		CMobblerListItem* track = CMobblerListItem::NewL(aObserver,
-															*SenXmlUtils::DecodeHttpCharactersLC(tracks[i]->Element(_L8("name"))->Content()),
-															tracks[i]->Element(_L8("playcount"))->Content(),
+		CMobblerListItem* item = CMobblerListItem::NewL(aObserver,
+															*SenXmlUtils::DecodeHttpCharactersLC(items[i]->Element(_L8("name"))->Content()),
+															items[i]->Element(_L8("playcount"))->Content(),
 															*image);
 		CleanupStack::PopAndDestroy(2);
 		
-		CleanupStack::PushL(track);
-		aList.AppendL(track);
-		CleanupStack::Pop(track);
+		CleanupStack::PushL(item);
+		aList.AppendL(item);
+		CleanupStack::Pop(item);
 		}
 	
 	CleanupStack::PopAndDestroy(2, xmlReader);
@@ -801,24 +801,24 @@ void CMobblerParser::ParseUserTopTracksL(const TDesC8& aXML, CMobblerTrackList& 
 	// parse the xml into the dom fragment
 	xmlReader->ParseL(aXML);
 	
-	RPointerArray<CSenElement>& tracks = domFragment->AsElement().Element(_L8("toptracks"))->ElementsL();
+	RPointerArray<CSenElement>& items = domFragment->AsElement().Element(_L8("toptracks"))->ElementsL();
 		
-	const TInt KTrackCount(tracks.Count());
-	for (TInt i(0) ; i < KTrackCount; ++i)
+	const TInt KCount(items.Count());
+	for (TInt i(0); i < KCount; ++i)
 		{
-		HBufC8* image = (tracks[i]->Element(KElementImage) == NULL) ?
+		HBufC8* image = (items[i]->Element(KElementImage) == NULL) ?
 						KNullDesC8().AllocLC() :
-						tracks[i]->Element(KElementImage)->Content().AllocLC();
+						items[i]->Element(KElementImage)->Content().AllocLC();
 						
-		CMobblerListItem* track = CMobblerListItem::NewL(aObserver,
-															*SenXmlUtils::DecodeHttpCharactersLC(tracks[i]->Element(_L8("name"))->Content()),
-															*SenXmlUtils::DecodeHttpCharactersLC(tracks[i]->Element(_L8("artist"))->Element(_L8("name"))->Content()),
-															*image);
+		CMobblerListItem* item = CMobblerListItem::NewL(aObserver,
+														*SenXmlUtils::DecodeHttpCharactersLC(items[i]->Element(_L8("name"))->Content()),
+														*SenXmlUtils::DecodeHttpCharactersLC(items[i]->Element(_L8("artist"))->Element(_L8("name"))->Content()),
+														*image);
 		CleanupStack::PopAndDestroy(3);
 		
-		CleanupStack::PushL(track);
-		aList.AppendL(track);
-		CleanupStack::Pop(track);
+		CleanupStack::PushL(item);
+		aList.AppendL(item);
+		CleanupStack::Pop(item);
 		}
 	
 	CleanupStack::PopAndDestroy(2, xmlReader);
@@ -845,28 +845,28 @@ void CMobblerParser::ParseSimilarTracksL(const TDesC8& aXML, CMobblerTrackList& 
 	// parse the xml into the dom fragment
 	xmlReader->ParseL(aXML);
 	
-	RPointerArray<CSenElement>& tracks = domFragment->AsElement().Element(_L8("similartracks"))->ElementsL();
+	RPointerArray<CSenElement>& items = domFragment->AsElement().Element(_L8("similartracks"))->ElementsL();
 		
-	const TInt KTrackCount(tracks.Count());
-	for (TInt i(0) ; i < KTrackCount; ++i)
+	const TInt KCount(items.Count());
+	for (TInt i(0); i < KCount; ++i)
 		{
-		HBufC8* artistName = (tracks[i]->Element(_L8("artist")) == NULL) ?
+		HBufC8* artistName = (items[i]->Element(_L8("artist")) == NULL) ?
 				KNullDesC8().AllocLC() :
-				SenXmlUtils::DecodeHttpCharactersLC(tracks[i]->Element(_L8("artist"))->Element(_L8("name"))->Content());
+				SenXmlUtils::DecodeHttpCharactersLC(items[i]->Element(_L8("artist"))->Element(_L8("name"))->Content());
 				
-		HBufC8* image = (tracks[i]->Element(KElementImage) == NULL) ?
+		HBufC8* image = (items[i]->Element(KElementImage) == NULL) ?
 				KNullDesC8().AllocLC() :
-				tracks[i]->Element(KElementImage)->Content().AllocLC();
+				items[i]->Element(KElementImage)->Content().AllocLC();
 		
-		CMobblerListItem* track = CMobblerListItem::NewL(aObserver,
-															*SenXmlUtils::DecodeHttpCharactersLC(tracks[i]->Element(_L8("name"))->Content()),
-															*artistName,
-															*image);
+		CMobblerListItem* item = CMobblerListItem::NewL(aObserver,
+														*SenXmlUtils::DecodeHttpCharactersLC(items[i]->Element(_L8("name"))->Content()),
+														*artistName,
+														*image);
 		CleanupStack::PopAndDestroy(3);
 		
-		CleanupStack::PushL(track);
-		aList.AppendL(track);
-		CleanupStack::Pop(track);
+		CleanupStack::PushL(item);
+		aList.AppendL(item);
+		CleanupStack::Pop(item);
 		}
 	
 	CleanupStack::PopAndDestroy(2, xmlReader);
@@ -893,36 +893,36 @@ void CMobblerParser::ParseRecentTracksL(const TDesC8& aXML, CMobblerTrackList& a
 	// parse the xml into the dom fragment
 	xmlReader->ParseL(aXML);
 	
-	RPointerArray<CSenElement>& tracks = domFragment->AsElement().Element(_L8("recenttracks"))->ElementsL();
+	RPointerArray<CSenElement>& items = domFragment->AsElement().Element(_L8("recenttracks"))->ElementsL();
 		
-	const TInt KTracksCount(tracks.Count());
-	for (TInt i(0) ; i < KTracksCount; ++i)
+	const TInt KCount(items.Count());
+	for (TInt i(0); i < KCount; ++i)
 		{
-		HBufC8* image = (tracks[i]->Element(_L8("image")) == NULL) ?
+		HBufC8* image = (items[i]->Element(_L8("image")) == NULL) ?
 				KNullDesC8().AllocLC():
-				tracks[i]->Element(_L8("image"))->Content().AllocLC();
+				items[i]->Element(_L8("image"))->Content().AllocLC();
 		
-		CMobblerListItem* track = CMobblerListItem::NewL(aObserver,
-															*SenXmlUtils::DecodeHttpCharactersLC(tracks[i]->Element(_L8("name"))->Content()),
-															*SenXmlUtils::DecodeHttpCharactersLC(tracks[i]->Element(_L8("artist"))->Content()),
-															*image);
+		CMobblerListItem* item = CMobblerListItem::NewL(aObserver,
+														*SenXmlUtils::DecodeHttpCharactersLC(items[i]->Element(_L8("name"))->Content()),
+														*SenXmlUtils::DecodeHttpCharactersLC(items[i]->Element(_L8("artist"))->Content()),
+														*image);
 		
-		if (tracks[i]->AttrValue(_L8("nowplaying"))
-				&& tracks[i]->AttrValue(_L8("nowplaying"))->Compare(_L8("true")) == 0)
+		if (items[i]->AttrValue(_L8("nowplaying"))
+				&& items[i]->AttrValue(_L8("nowplaying"))->Compare(_L8("true")) == 0)
 			{
 			// We set null as a constant meaning 'now'
-			track->SetTimeL(KNullDesC8);
+			item->SetTimeL(KNullDesC8);
 			}
 		else
 			{
-			track->SetTimeL(*tracks[i]->Element(_L8("date"))->AttrValue(_L8("uts")));
+			item->SetTimeL(*items[i]->Element(_L8("date"))->AttrValue(_L8("uts")));
 			}
 		
 		CleanupStack::PopAndDestroy(3);
 		
-		CleanupStack::PushL(track);
-		aList.AppendL(track);
-		CleanupStack::Pop(track);
+		CleanupStack::PushL(item);
+		aList.AppendL(item);
+		CleanupStack::Pop(item);
 		}
 	
 	CleanupStack::PopAndDestroy(2, xmlReader);
@@ -949,26 +949,26 @@ void CMobblerParser::ParsePlaylistsL(const TDesC8& aXML, CMobblerPlaylistList& a
 	// parse the xml into the dom fragment
 	xmlReader->ParseL(aXML);
 	
-	RPointerArray<CSenElement>& playlists = domFragment->AsElement().Element(_L8("playlists"))->ElementsL();
+	RPointerArray<CSenElement>& items = domFragment->AsElement().Element(_L8("playlists"))->ElementsL();
 		
-	const TInt KPlaylistCount(playlists.Count());
-	for (TInt i(0) ; i < KPlaylistCount ; ++i)
+	const TInt KCount(items.Count());
+	for (TInt i(0); i < KCount; ++i)
 		{
-		HBufC8* image = (playlists[i]->Element(KElementImage) == NULL) ?
+		HBufC8* image = (items[i]->Element(KElementImage) == NULL) ?
 												KNullDesC8().AllocLC() :
-												playlists[i]->Element(KElementImage)->Content().AllocLC();
+												items[i]->Element(KElementImage)->Content().AllocLC();
 		
-		CMobblerListItem* playlist = CMobblerListItem::NewL(aObserver,
-																		*SenXmlUtils::DecodeHttpCharactersLC(playlists[i]->Element(_L8("title"))->Content()),
-																		*SenXmlUtils::DecodeHttpCharactersLC(playlists[i]->Element(_L8("description"))->Content()),
-																		*image);
+		CMobblerListItem* item = CMobblerListItem::NewL(aObserver,
+															*SenXmlUtils::DecodeHttpCharactersLC(items[i]->Element(_L8("title"))->Content()),
+															*SenXmlUtils::DecodeHttpCharactersLC(items[i]->Element(_L8("description"))->Content()),
+															*image);
 		CleanupStack::PopAndDestroy(3);
 		
-		playlist->SetIdL(playlists[i]->Element(_L8("id"))->Content());
+		item->SetIdL(items[i]->Element(_L8("id"))->Content());
 		
-		CleanupStack::PushL(playlist);
-		aList.AppendL(playlist);
-		CleanupStack::Pop(playlist);
+		CleanupStack::PushL(item);
+		aList.AppendL(item);
+		CleanupStack::Pop(item);
 		}
 	
 	CleanupStack::PopAndDestroy(2, xmlReader);
@@ -996,20 +996,20 @@ void CMobblerParser::ParseShoutboxL(const TDesC8& aXML, CMobblerShoutbox& aObser
 	// parse the xml into the dom fragment
 	xmlReader->ParseL(aXML);
 	
-	RPointerArray<CSenElement>& shouts = domFragment->AsElement().Element(_L8("shouts"))->ElementsL();
+	RPointerArray<CSenElement>& items = domFragment->AsElement().Element(_L8("shouts"))->ElementsL();
 		
-	const TInt KShoutsCount(shouts.Count());
-	for (TInt i(0) ; i < Min(KShoutsCount, 25) ; ++i)
+	const TInt KCount(items.Count());
+	for (TInt i(0); i < Min(KCount, 25); ++i)
 		{
-		CMobblerListItem* shout = CMobblerListItem::NewL(aObserver,
-																		*SenXmlUtils::DecodeHttpCharactersLC(shouts[i]->Element(_L8("author"))->Content()),
-																		*SenXmlUtils::DecodeHttpCharactersLC(shouts[i]->Element(_L8("body"))->Content()),
-																		KNullDesC8);
+		CMobblerListItem* item = CMobblerListItem::NewL(aObserver,
+														*SenXmlUtils::DecodeHttpCharactersLC(items[i]->Element(_L8("author"))->Content()),
+														*SenXmlUtils::DecodeHttpCharactersLC(items[i]->Element(_L8("body"))->Content()),
+														KNullDesC8);
 		CleanupStack::PopAndDestroy(2);
 		
-		CleanupStack::PushL(shout);
-		aList.AppendL(shout);
-		CleanupStack::Pop(shout);
+		CleanupStack::PushL(item);
+		aList.AppendL(item);
+		CleanupStack::Pop(item);
 		}
 	
 	CleanupStack::PopAndDestroy(2, xmlReader);
@@ -1036,20 +1036,20 @@ void CMobblerParser::ParseTopTagsL(const TDesC8& aXML, CMobblerTagList& aObserve
 	// parse the xml into the dom fragment
 	xmlReader->ParseL(aXML);
 	
-	RPointerArray<CSenElement>& tags = domFragment->AsElement().Element(_L8("toptags"))->ElementsL();
+	RPointerArray<CSenElement>& items = domFragment->AsElement().Element(_L8("toptags"))->ElementsL();
 		
-	const TInt KTagCount(tags.Count());
-	for (TInt i(0) ; i < KTagCount ; ++i)
+	const TInt KCount(items.Count());
+	for (TInt i(0); i < KCount; ++i)
 		{
-		CMobblerListItem* tag = CMobblerListItem::NewL(aObserver,
-														*SenXmlUtils::DecodeHttpCharactersLC(tags[i]->Element(_L8("name"))->Content()),
-														tags[i]->Element(_L8("count"))->Content(),
+		CMobblerListItem* item = CMobblerListItem::NewL(aObserver,
+														*SenXmlUtils::DecodeHttpCharactersLC(items[i]->Element(_L8("name"))->Content()),
+														items[i]->Element(_L8("count"))->Content(),
 														KNullDesC8);
 		CleanupStack::PopAndDestroy(1);
 		
-		CleanupStack::PushL(tag);
-		aList.AppendL(tag);
-		CleanupStack::Pop(tag);
+		CleanupStack::PushL(item);
+		aList.AppendL(item);
+		CleanupStack::Pop(item);
 		}
 	
 	CleanupStack::PopAndDestroy(2, xmlReader);

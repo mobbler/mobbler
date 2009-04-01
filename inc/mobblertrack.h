@@ -45,7 +45,7 @@ public:
 	static CMobblerTrack* NewL(const TDesC8& aArtist,
 								const TDesC8& aTitle,
 								const TDesC8& aAlbum,
-								const TDesC8& aMbAlbumId,
+								//const TDesC8& aMbAlbumId,
 								const TDesC8& aMbTrackId,
 								const TDesC8& aImage,
 								const TDesC8& aMp3Location,
@@ -62,7 +62,7 @@ public:
 	
 	const CMobblerString& Artist() const;
 	const CMobblerString& Album() const;
-	const CMobblerString& MbAlbumId() const;
+	//const CMobblerString& MbAlbumId() const;
 	const CMobblerString& MbTrackId() const;
 	void SetAlbumL(const TDesC& aAlbum);
 	TInt TrackNumber() const;
@@ -108,7 +108,7 @@ private:
 	void ConstructL(const TDesC8& aArtist,
 						const TDesC8& aTitle,
 						const TDesC8& aAlbum,
-						const TDesC8& aMbAlbumId,
+						//const TDesC8& aMbAlbumId,
 						const TDesC8& aMbTrackId,
 						const TDesC8& aImage,
 						const TDesC8& aMp3Location,
@@ -129,7 +129,7 @@ private:
 	CMobblerString* iArtist;
 	CMobblerString* iTitle;
 	CMobblerString* iAlbum;
-	CMobblerString* iMbAlbumId;
+	//CMobblerString* iMbAlbumId;
 	CMobblerString* iMbTrackId;
 	TInt iTrackNumber;
 	TTime iStartTimeUTC;

@@ -50,7 +50,7 @@ const TPtrC KArtFileArray[] =
 CMobblerTrack* CMobblerTrack::NewL(const TDesC8& aArtist,
 									const TDesC8& aTitle,
 									const TDesC8& aAlbum,
-									const TDesC8& aMbAlbumId,
+									//const TDesC8& aMbAlbumId,
 									const TDesC8& aMbTrackId,
 									const TDesC8& aImage,
 									const TDesC8& aMp3Location,
@@ -59,7 +59,7 @@ CMobblerTrack* CMobblerTrack::NewL(const TDesC8& aArtist,
 	{
 	CMobblerTrack* self = new(ELeave) CMobblerTrack;
 	CleanupStack::PushL(self);
-	self->ConstructL(aArtist, aTitle, aAlbum, aMbAlbumId, aMbTrackId, aImage, aMp3Location, aTrackLength, aRadioAuth);
+	self->ConstructL(aArtist, aTitle, aAlbum, /*aMbAlbumId,*/ aMbTrackId, aImage, aMp3Location, aTrackLength, aRadioAuth);
 	CleanupStack::Pop(self);
 	return self;
 	}
@@ -81,7 +81,7 @@ CMobblerTrack::CMobblerTrack()
 void CMobblerTrack::ConstructL(const TDesC8& aArtist,
 		const TDesC8& aTitle,
 		const TDesC8& aAlbum,
-		const TDesC8& aMbAlbumId,
+		//const TDesC8& aMbAlbumId,
 		const TDesC8& aMbTrackId,
 		const TDesC8& aImage,
 		const TDesC8& aMp3Location,
@@ -91,7 +91,7 @@ void CMobblerTrack::ConstructL(const TDesC8& aArtist,
 	iArtist = CMobblerString::NewL(aArtist);
 	iTitle = CMobblerString::NewL(aTitle);
 	iAlbum = CMobblerString::NewL(aAlbum);
-	iMbAlbumId = CMobblerString::NewL(aMbAlbumId);
+	//iMbAlbumId = CMobblerString::NewL(aMbAlbumId);
 	iMbTrackId = CMobblerString::NewL(aMbTrackId);
 	iMp3Location = aMp3Location.AllocL();
 	iTrackLength = aTrackLength;
@@ -129,7 +129,7 @@ CMobblerTrack::~CMobblerTrack()
 	delete iTitle;
 	delete iAlbum;
 	delete iMbTrackId;
-	delete iMbAlbumId;
+	//delete iMbAlbumId;
 	delete iMp3Location;
 	delete iRadioAuth;
 	delete iAlbumArt;
@@ -294,11 +294,11 @@ void CMobblerTrack::SetAlbumL(const TDesC& aAlbum)
 		}
 	}
 
-const CMobblerString& CMobblerTrack::MbAlbumId() const
+/*const CMobblerString& CMobblerTrack::MbAlbumId() const
 	{
 	return *iMbAlbumId;
 	}
-
+*/
 TInt CMobblerTrack::TrackNumber() const
 	{
 	return iTrackNumber;

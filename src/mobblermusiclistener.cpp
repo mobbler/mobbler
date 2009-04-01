@@ -284,7 +284,7 @@ void CMobblerMusicAppListener::NowPlayingL()
 				
 				if (trackAlbum.Length() == 0)
 					{
-					iCurrentTrack = CMobblerTrack::NewL(*artist, *title, KNullDesC8, KNullDesC8, KNullDesC8, KNullDesC8, KNullDesC8, trackLength, KNullDesC8);
+					iCurrentTrack = CMobblerTrack::NewL(*artist, *title, KNullDesC8, /*KNullDesC8,*/ KNullDesC8, KNullDesC8, KNullDesC8, trackLength, KNullDesC8);
 
 					if (trackTitle.Length() != 0 && trackArtist.Length() != 0)
 						{
@@ -295,7 +295,7 @@ void CMobblerMusicAppListener::NowPlayingL()
 					{
 					HBufC8* album = CnvUtfConverter::ConvertFromUnicodeToUtf8L(trackAlbum);
 					CleanupStack::PushL(album);
-					iCurrentTrack = CMobblerTrack::NewL(*artist, *title, *album, KNullDesC8, KNullDesC8, KNullDesC8, KNullDesC8, trackLength, KNullDesC8);
+					iCurrentTrack = CMobblerTrack::NewL(*artist, *title, *album, /*KNullDesC8,*/ KNullDesC8, KNullDesC8, KNullDesC8, trackLength, KNullDesC8);
 					CleanupStack::PopAndDestroy(album);
 					}
 				CleanupStack::PopAndDestroy(2, artist); // artist, title

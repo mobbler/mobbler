@@ -26,22 +26,16 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <e32base.h>
 
-#include "mobblerlastfmconnection.h"
-
-class CSenXmlReader;
-class CSenDomFragment;
-class CMobblerRadioPlaylist;
-
-class CMobblerFriendList;
-class CMobblerGroupList;
-class CMobblerEventList;
-class CMobblerPlaylistList;
-class CMobblerTagList;
-class CMobblerArtistList;
 class CMobblerAlbumList;
-class CMobblerTrackList;
+class CMobblerArtistList;
+class CMobblerEventList;
+class CMobblerFriendList;
 class CMobblerListItem;
+class CMobblerPlaylistList;
+class CMobblerRadioPlaylist;
 class CMobblerShoutbox;
+class CMobblerTagList;
+class CMobblerTrackList;
 
 class CMobblerParser : public CBase
 	{
@@ -77,3 +71,5 @@ private:
 	};
 
 #endif // __MOBBLERPARSER_H__
+
+// End of file

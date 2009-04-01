@@ -747,7 +747,7 @@ void CMobblerLastFMConnection::AlbumGetInfoL(const TDesC& aAlbum, const TDesC& a
 	CMobblerString* album = CMobblerString::NewL(aAlbum);
 	CleanupStack::PushL(album);
 	
-	CMobblerTrack* track = CMobblerTrack::NewL(artist->String8(), album->String8(), KNullDesC8, KNullDesC8, KNullDesC8, KNullDesC8, KNullDesC8, 0, KNullDesC8);
+	CMobblerTrack* track = CMobblerTrack::NewL(artist->String8(), album->String8(), /*KNullDesC8,*/ KNullDesC8, KNullDesC8, KNullDesC8, KNullDesC8, 0, KNullDesC8);
 	
 	CleanupStack::PopAndDestroy(2, artist);
 	
