@@ -77,6 +77,25 @@ void CMobblerStatusView::SetMenuItemTextL(CEikMenuPane* aMenuPane,
 	HBufC* menuText = static_cast<CMobblerAppUi*>(AppUi())->ResourceReader().ResourceL(aResourceId).AllocLC();
 
 	const TInt KTextLimit = CEikMenuPaneItem::SData::ENominalTextLength;
+
+	// Shortcut keys
+	if (aCommandId == EMobblerCommandToggleScrobbling)
+		{
+		_LIT(KShortcut5, " (5)");
+		TBuf<KTextLimit> newText(menuText->Left(KTextLimit - KShortcut5().Length()));
+		newText.Append(KShortcut5);
+		CleanupStack::PopAndDestroy(menuText);
+		menuText = newText.AllocLC();
+		}
+	else if (aCommandId == EMobblerCommandEditSettings)
+		{
+		_LIT(KShortcut8, " (8)");
+		TBuf<KTextLimit> newText(menuText->Left(KTextLimit - KShortcut8().Length()));
+		newText.Append(KShortcut8);
+		CleanupStack::PopAndDestroy(menuText);
+		menuText = newText.AllocLC();
+		}
+
 	if (menuText->Length() > KTextLimit)
 		{
 		TBuf<KTextLimit> newText(menuText->Left(KTextLimit));
@@ -238,6 +257,7 @@ void CMobblerStatusView::DynInitMenuPaneL(TInt aResourceId, CEikMenuPane* aMenuP
 		aMenuPane->SetItemDimmed(EMobblerCommandArtistTopTracks, ETrue);
 		aMenuPane->SetItemDimmed(EMobblerCommandArtistTopTags, ETrue);
 		}
+	aMenuPane->EnableMarqueeL(ETrue);
 	}
 
 TUid CMobblerStatusView::Id() const

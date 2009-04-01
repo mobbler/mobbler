@@ -927,13 +927,11 @@ TKeyResponse CMobblerStatusControl::OfferKeyEventL(const TKeyEvent& aKeyEvent, T
 			const_cast<CMobblerAppUi&>(iAppUi).HandleCommandL(EMobblerCommandPlus);
 			response = EKeyWasConsumed;
 			break;
-#ifdef _DEBUG
 		case '5':
 			const_cast<CMobblerAppUi&>(iAppUi).HandleCommandL(EMobblerCommandToggleScrobbling);
 			DrawDeferred();
 			response = EKeyWasConsumed;
 			break;
-#endif
 #ifdef _DEBUG
 		case '7':
 			if (iAppUi.Backlight())
@@ -947,6 +945,10 @@ TKeyResponse CMobblerStatusControl::OfferKeyEventL(const TKeyEvent& aKeyEvent, T
 			response = EKeyWasConsumed;
 			break;
 #endif
+		case '8':
+			const_cast<CMobblerAppUi&>(iAppUi).HandleCommandL(EMobblerCommandEditSettings);
+			response = EKeyWasConsumed;
+			break;
 		default:
 			break;
 		}

@@ -89,7 +89,9 @@ public:
 	CMobblerSettingItemListView& SettingView() const;
 	const TDesC& MusicAppNameL() const;
 	
-	void RadioStartL(CMobblerLastFMConnection::TRadioStation aRadioStation, const CMobblerString* aRadioOption);
+	void RadioStartL(CMobblerLastFMConnection::TRadioStation aRadioStation, 
+					 const CMobblerString* aRadioOption, 
+					 TBool aSaveStations = ETrue);
 	
 	void SetDetailsL(const TDesC& aUsername, const TDesC& aPassword);
 	void SetIapIDL(TUint32 aIapID);

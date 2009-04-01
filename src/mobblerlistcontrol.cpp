@@ -293,7 +293,7 @@ void CMobblerListControl::DataL(const TDesC8& aXML, TInt aError)
 					description->Des().Format(descriptionFormat, &iList[i]->Description()->String());
 					
 					HBufC* format = HBufC::NewLC(KDoubleLargeStyleListBoxTextFormat().Length() + iList[i]->Title()->String().Length() + description->Length());
-					format->Des().Format(KDoubleLargeStyleListBoxTextFormat, i, &iList[i]->Title()->String(), &description->Des());
+					format->Des().Format(KDoubleLargeStyleListBoxTextFormat, i, &iList[i]->Title()->String(), description);
 					iListBoxItems->AppendL(*format);
 					CleanupStack::PopAndDestroy(format);
 					CleanupStack::PopAndDestroy(description);
@@ -313,7 +313,7 @@ void CMobblerListControl::DataL(const TDesC8& aXML, TInt aError)
 										
 					
 					HBufC* format = HBufC::NewLC(KDoubleLargeStyleListBoxTextFormat().Length() + iList[i]->Title()->String().Length() + description->Length());
-					format->Des().Format(KDoubleLargeStyleListBoxTextFormat, i, &iList[i]->Title()->String(), &description->Des());
+					format->Des().Format(KDoubleLargeStyleListBoxTextFormat, i, &iList[i]->Title()->String(), description);
 					iListBoxItems->AppendL(*format);
 					CleanupStack::PopAndDestroy(format);
 					CleanupStack::PopAndDestroy(description);
@@ -369,7 +369,7 @@ void CMobblerListControl::DataL(const TDesC8& aXML, TInt aError)
 						}
 					
 					HBufC* itemText = HBufC::NewLC(KDoubleLargeStyleListBoxTextFormat().Length() + title->Length() + description->Length());
-					itemText->Des().Format(KDoubleLargeStyleListBoxTextFormat, i, &title->Des(), &description->Des());
+					itemText->Des().Format(KDoubleLargeStyleListBoxTextFormat, i, title, description);
 					
 					iListBoxItems->AppendL(*itemText);
 					

@@ -1,7 +1,7 @@
 /*
 mobblerstring.h
 
-mobbler, a last.fm mobile scrobbler for Symbian smartphones.
+Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
 Copyright (C) 2008  Michael Coffey
 
 http://code.google.com/p/mobbler
@@ -48,4 +48,6 @@ private:
 	TPtrC8 iString8Ptr;
 	};
 	
-#endif // __TRACKINFO_H__
+#endif // __MOBBLERSTRING_H__
+
+// End of file
