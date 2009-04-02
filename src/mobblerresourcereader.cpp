@@ -22,13 +22,21 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
 #include <aknnotewrappers.h>
-#include <aknutils.h>
 #include <barsread.h>
 #include <mobbler.rsg>
 #include <mobbler_strings.rsg>
 
-#include "mobblerappui.h"
 #include "mobblerresourcereader.h"
+
+#if defined(__WINS__)
+_LIT(KLanguageRscFile, "Z:\\Resource\\apps\\mobbler_strings.r01");
+_LIT(KLanguageRscFile2,"Z:\\Resource\\apps\\mobbler_strings2.r01");
+#else
+_LIT(KLanguageRscFile, "C:\\Resource\\apps\\mobbler_strings.rsc");
+_LIT(KLanguageRscFile2,"C:\\Resource\\apps\\mobbler_strings2.rsc");
+#endif
+	
+const TInt KLanguageRscVersion(1);
 
 _LIT(KStringNotFoundInResouce, "???");
 
@@ -59,25 +67,24 @@ const TDesC& CMobblerResourceReader::CMobblerResource::String() const
 	return *iString;
 	}
 
-CMobblerResourceReader* CMobblerResourceReader::NewL(const TDesC& aName, TInt aVersion)
+CMobblerResourceReader* CMobblerResourceReader::NewL()
 	{
-	CMobblerResourceReader* self = new(ELeave) CMobblerResourceReader(aVersion);
+	CMobblerResourceReader* self = new(ELeave) CMobblerResourceReader();
 	CleanupStack::PushL(self);
-	self->ConstructL(aName);
+	self->ConstructL();
 	CleanupStack::Pop(self);
 	return self;
 	}
 
-CMobblerResourceReader::CMobblerResourceReader(TInt aVersion)
-	:CActive(CActive::EPriorityStandard), iVersion(aVersion), iLinearOrder(CMobblerResource::Compare)
+CMobblerResourceReader::CMobblerResourceReader()
+	:CActive(CActive::EPriorityStandard), iLinearOrder(CMobblerResource::Compare)
 	{
 	CActiveScheduler::Add(this);
 	}
 
-void CMobblerResourceReader::ConstructL(const TDesC& aName)
+void CMobblerResourceReader::ConstructL()
 	{
 	iStringNotFoundInResouce = KStringNotFoundInResouce().AllocL();
-	iName = aName.AllocL();
 	
 	User::LeaveIfError(iTimer.CreateLocal());
 	}
@@ -90,7 +97,6 @@ CMobblerResourceReader::~CMobblerResourceReader()
 	iResourceFile.Close();
 	
 	delete iStringNotFoundInResouce;
-	delete iName;
 	iResources.ResetAndDestroy();
 	}
 
@@ -121,11 +127,15 @@ const TDesC& CMobblerResourceReader::ResourceL(TInt aResourceId)
 		
 		if (!IsActive())
 			{
-			// we are not active so the file must be closed
+			// We are not active so the file must be closed
 			
-			iResourceFile.OpenL(CCoeEnv::Static()->FsSession(), *iName);
+			TRAPD(error, iResourceFile.OpenL(CCoeEnv::Static()->FsSession(), KLanguageRscFile2));
+			if (error != KErrNone)
+				{
+				iResourceFile.OpenL(CCoeEnv::Static()->FsSession(), KLanguageRscFile);
+				}
 			
-			TRAPD(error, iResourceFile.ConfirmSignatureL(iVersion));
+			TRAP(error, iResourceFile.ConfirmSignatureL(KLanguageRscVersion));
 			
 			if (error != KErrNone)
 				{
@@ -133,7 +143,8 @@ const TDesC& CMobblerResourceReader::ResourceL(TInt aResourceId)
 					{
 					// Warn the user
 					CAknQueryDialog* dlg = CAknQueryDialog::NewL();
-					dlg->ExecuteLD(R_MOBBLER_GET_LATEST_LANGUAGE_DIALOG, ResourceL(R_MOBBLER_GET_LATEST_LANGUAGE));
+					dlg->ExecuteLD(R_MOBBLER_GET_LATEST_LANGUAGE_DIALOG, 
+								   ResourceL(R_MOBBLER_GET_LATEST_LANGUAGE));
 			
 					iErrorDialogShown = ETrue;
 					}
@@ -176,7 +187,8 @@ const TDesC& CMobblerResourceReader::ResourceL(TInt aResourceId)
 				{
 				// Warn the user
 				CAknQueryDialog* dlg = CAknQueryDialog::NewL();
-				dlg->ExecuteLD(R_MOBBLER_GET_LATEST_LANGUAGE_DIALOG, ResourceL(R_MOBBLER_GET_LATEST_LANGUAGE));
+				dlg->ExecuteLD(R_MOBBLER_GET_LATEST_LANGUAGE_DIALOG, 
+							   ResourceL(R_MOBBLER_GET_LATEST_LANGUAGE));
 	
 				iErrorDialogShown = ETrue;
 				

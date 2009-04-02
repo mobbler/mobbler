@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <coemain.h>
 #include <mobbler_strings.rsg>
+#include <s32file.h>
 
 #include "mobblerappui.h"
 #include "mobblerstring.h"

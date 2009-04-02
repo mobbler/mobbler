@@ -24,18 +24,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #ifndef __MOBBLERRESOURCEREADER_H__
 #define __MOBBLERRESOURCEREADER_H__
 
-#include <e32base.h>
-#include <s32file.h>
-#include <barsc.h>
-
-#if defined(__WINS__)
-_LIT(KLanguageRscFile,"Z:\\Resource\\apps\\mobbler_strings.r01");
-#else
-_LIT(KLanguageRscFile,"C:\\Resource\\apps\\mobbler_strings.rsc");
-#endif
-	
-const TInt KLanguageRscVersion(1);
-
 class CMobblerResourceReader : public CActive
 	{
 private:
@@ -56,23 +44,20 @@ private:
 		};
 	
 public:
-	static CMobblerResourceReader* NewL(const TDesC& aName, TInt aVersion);
+	static CMobblerResourceReader* NewL();
 	~CMobblerResourceReader();
 	
 	const TDesC& ResourceL(TInt aResourceId);
 
 private:
-	CMobblerResourceReader(TInt aVersion);
-	void ConstructL(const TDesC& aName);
+	CMobblerResourceReader();
+	void ConstructL();
 	
 private:
 	void RunL();
 	void DoCancel();
 
 private:
-	HBufC* iName;
-	TInt iVersion;
-	
 	HBufC* iStringNotFoundInResouce;
 	
 	RTimer iTimer;

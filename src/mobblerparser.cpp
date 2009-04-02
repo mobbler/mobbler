@@ -387,7 +387,7 @@ CMobblerLastFMError* CMobblerParser::ParseRadioPlaylistL(const TDesC8& aXML, CMo
 			track->SetAlbumL(KNullDesC);
 			}
 		
-		CleanupStack::PopAndDestroy(4, creatorBuf);
+		CleanupStack::PopAndDestroy(3, creatorBuf);
 		}
 	
 	CleanupStack::PopAndDestroy(2, xmlReader);

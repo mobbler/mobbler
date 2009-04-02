@@ -62,7 +62,7 @@ enum TSleepTimerAction
 
 void CMobblerAppUi::ConstructL()
 	{
-	iResourceReader = CMobblerResourceReader::NewL(KLanguageRscFile, KLanguageRscVersion);
+	iResourceReader = CMobblerResourceReader::NewL();
 	
 	iVolumeUpCallBack = TCallBack(CMobblerAppUi::VolumeUpCallBackL, this);
 	iVolumeDownCallBack = TCallBack(CMobblerAppUi::VolumeDownCallBackL, this);
