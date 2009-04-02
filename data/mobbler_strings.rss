@@ -202,6 +202,7 @@ RESOURCE STRING r_mobbler_format_play { text = STR_mobbler_format_play; }
 RESOURCE STRING r_mobbler_format_plays { text = STR_mobbler_format_plays; }
 RESOURCE STRING r_mobbler_format_time_used { text = STR_mobbler_format_time_used; }
 RESOURCE STRING r_mobbler_format_times_used { text = STR_mobbler_format_times_used; }
+RESOURCE STRING r_mobbler_now_listening { text = STR_mobbler_now_listening; }
 RESOURCE STRING r_mobbler_format_time_ago_minute { text = STR_mobbler_format_time_ago_minute; }
 RESOURCE STRING r_mobbler_format_time_ago_minutes { text = STR_mobbler_format_time_ago_minutes; }
 RESOURCE STRING r_mobbler_format_time_ago_hour { text = STR_mobbler_format_time_ago_hour; }

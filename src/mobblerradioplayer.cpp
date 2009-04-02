@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
 #include <mobbler_strings.rsg>
+#include <aknnotewrappers.h>
 
 #include "mobblerappui.h"
 #include "mobbleraudiocontrol.h"
@@ -39,6 +40,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 const TInt KDefaultMaxVolume(10);
 
+// The radio should timeout and delete its playlists after 5 minutes
+// so that we do not get tracks that can't be dowloaded when restarting
+const TTimeIntervalMicroSeconds32 KRadioTimeout(5 * 60 * 1000000);
+
 CMobblerRadioPlayer* CMobblerRadioPlayer::NewL(CMobblerLastFMConnection& aSubmitter, TTimeIntervalSeconds aPreBufferSize, TInt aEqualizerIndex, TInt aVolume)
 	{
 	CMobblerRadioPlayer* self = new(ELeave) CMobblerRadioPlayer(aSubmitter, aPreBufferSize, aEqualizerIndex, aVolume);
@@ -49,17 +54,23 @@ CMobblerRadioPlayer* CMobblerRadioPlayer::NewL(CMobblerLastFMConnection& aSubmit
 	}
 
 CMobblerRadioPlayer::CMobblerRadioPlayer(CMobblerLastFMConnection& aLastFMConnection, TTimeIntervalSeconds aPreBufferSize, TInt aEqualizerIndex, TInt aVolume)
-	:iLastFMConnection(aLastFMConnection), iPreBufferSize(aPreBufferSize), iVolume(aVolume), iMaxVolume(KDefaultMaxVolume), iEqualizerIndex(aEqualizerIndex)
+	:CActive(CActive::EPriorityStandard), iLastFMConnection(aLastFMConnection), iPreBufferSize(aPreBufferSize), iVolume(aVolume), iMaxVolume(KDefaultMaxVolume), iEqualizerIndex(aEqualizerIndex)
 	{
+	CActiveScheduler::Add(this);
 	}
 
 void CMobblerRadioPlayer::ConstructL()
 	{
 	iIncomingCallMonitor = CMobblerIncomingCallMonitor::NewL(*this);
+	
+	User::LeaveIfError(iTimer.CreateLocal());
 	}
 
 CMobblerRadioPlayer::~CMobblerRadioPlayer()
 	{
+	Cancel();
+	iTimer.Close();
+	
 	delete iCurrentPlaylist;
 	delete iNextPlaylist;
 	delete iCurrentAudioControl;
@@ -69,6 +80,23 @@ CMobblerRadioPlayer::~CMobblerRadioPlayer()
 	delete iIncomingCallMonitor;
 	
 	iObservers.Close();
+	}
+
+void CMobblerRadioPlayer::RunL()
+	{
+	if (iStatus.Int() == KErrNone)
+		{
+		// The radio has not been playing for 5 minutes delete the playlists
+		delete iCurrentPlaylist;
+		iCurrentPlaylist = NULL;
+		delete iNextPlaylist;
+		iNextPlaylist = NULL;
+		}
+	}
+
+void CMobblerRadioPlayer::DoCancel()
+	{
+	iTimer.Cancel();
 	}
 
 void CMobblerRadioPlayer::AddObserverL(MMobblerRadioStateChangeObserver* aObserver)
@@ -92,6 +120,32 @@ void CMobblerRadioPlayer::DoChangeStateL(TState aState)
 	
 	const TInt KObserverCount(iObservers.Count());
 	for (TInt i(0); i < KObserverCount; ++i)
+		{
+		iObservers[i]->HandleRadioStateChangedL();
+		}
+	
+	if (iState == EIdle)
+		{
+		// make sure the timeout timer has started  
+		if (!IsActive())
+			{
+			iTimer.After(iStatus, KRadioTimeout);
+			SetActive();
+			}
+		}
+	else
+		{
+		// cancel the timeout timer
+		Cancel();
+		}
+	}
+
+void CMobblerRadioPlayer::DoChangeTransactionStateL(TTransactionState aTransactionState)
+	{
+	iTransactionState = aTransactionState;
+	
+	const TInt KObserverCount(iObservers.Count());
+	for (TInt i(0) ; i < KObserverCount ; ++i)
 		{
 		iObservers[i]->HandleRadioStateChangedL();
 		}
@@ -133,27 +187,35 @@ void CMobblerRadioPlayer::HandleAudioPositionChangeL()
 	static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->StatusDrawDeferred();
 	}
 
-void CMobblerRadioPlayer::HandleAudioFinishedL(CMobblerAudioControl* aAudioControl)
+void CMobblerRadioPlayer::HandleAudioFinishedL(CMobblerAudioControl* aAudioControl, TInt aError)
 	{
-	if (aAudioControl == iCurrentAudioControl)
+	if (aError == KErrCancel)
 		{
-		// The current track has finished so try to start the new one 
-		NextTrackL();
+		// The mp3 was cancelled so change to idle 
+		DoChangeStateL(EIdle);
 		}
-	else if (aAudioControl == iNextAudioControl)
+	else
 		{
-		// The next audio track failed before this one so
-		// delete it and remove it from the playlist
-		delete iNextAudioControl;
-		iNextAudioControl = NULL;
-		
-		if (iCurrentPlaylist->Count() > iCurrentTrackIndex + 1)
+		if (aAudioControl == iCurrentAudioControl)
 			{
-			iCurrentPlaylist->RemoveAndReleaseTrack(iCurrentTrackIndex + 1);
+			// The current track has finished so try to start the new one 
+			NextTrackL();
 			}
-		else if (iNextPlaylist && iNextPlaylist->Count() > 0)
+		else if (aAudioControl == iNextAudioControl)
 			{
-			iNextPlaylist->RemoveAndReleaseTrack(0);
+			// The next audio track failed before this one so
+			// delete it and remove it from the playlist
+			delete iNextAudioControl;
+			iNextAudioControl = NULL;
+			
+			if (iCurrentPlaylist->Count() > iCurrentTrackIndex + 1)
+				{
+				iCurrentPlaylist->RemoveAndReleaseTrack(iCurrentTrackIndex + 1);
+				}
+			else if (iNextPlaylist && iNextPlaylist->Count() > 0)
+				{
+				iNextPlaylist->RemoveAndReleaseTrack(0);
+				}
 			}
 		}
 	}
@@ -161,6 +223,11 @@ void CMobblerRadioPlayer::HandleAudioFinishedL(CMobblerAudioControl* aAudioContr
 CMobblerRadioPlayer::TState CMobblerRadioPlayer::State() const
 	{
 	return iState;
+	}
+
+CMobblerRadioPlayer::TTransactionState CMobblerRadioPlayer::TransactionState() const
+	{
+	return iTransactionState;
 	}
 
 void CMobblerRadioPlayer::StartL(CMobblerLastFMConnection::TRadioStation aRadioStation, const CMobblerString* aRadioText)
@@ -232,7 +299,7 @@ void CMobblerRadioPlayer::StartL(CMobblerLastFMConnection::TRadioStation aRadioS
 		iLastFMConnection.RadioStartL(this, aRadioStation, KNullDesC8);
 		}
 	
-	DoChangeStateL(ESelectingStation);
+	DoChangeTransactionStateL(ESelectingStation);
 	}
 
 void CMobblerRadioPlayer::DataL(const TDesC8& aData, TInt aError)
@@ -240,6 +307,7 @@ void CMobblerRadioPlayer::DataL(const TDesC8& aData, TInt aError)
 	if (aError == KErrNone)
 		{
 		DoChangeStateL(EIdle);
+		DoChangeTransactionStateL(ENone);
 		
 		CMobblerRadioPlaylist* playlist(NULL);
 		CMobblerLastFMError* error = CMobblerParser::ParseRadioPlaylistL(aData, playlist);
@@ -264,20 +332,34 @@ void CMobblerRadioPlayer::DataL(const TDesC8& aData, TInt aError)
 			}
 		else
 			{
-			// TODO: display an error
 			DoChangeStateL(EIdle);
+			DoChangeTransactionStateL(ENone);
+			
+			CAknInformationNote* note = new (ELeave) CAknInformationNote(EFalse);
+			note->ExecuteLD(error->Text());
 			}
 		}
 	else if (aError == KErrOverflow)
 		{
 		// This means we have selected the radio station
 		// and the connection is now fetching the first playlist for us
-		DoChangeStateL(EFetchingPlaylist);
+		DoChangeTransactionStateL(EFetchingPlaylist);
 		}
 	else
 		{
-		// TODO: display an error
 		DoChangeStateL(EIdle);
+		DoChangeTransactionStateL(ENone);
+		
+		if (aData.Length() != 0)
+			{
+			// Display an error if we were given some text because this is a fale response from Last.fm
+			
+			CMobblerString* errorText = CMobblerString::NewL(aData);
+			CleanupStack::PushL(errorText);
+			CAknInformationNote* note = new (ELeave) CAknInformationNote(EFalse);
+			note->ExecuteLD(errorText->String());
+			CleanupStack::PopAndDestroy(errorText);
+			}
 		}
 	}
 
@@ -297,7 +379,7 @@ void CMobblerRadioPlayer::NextTrackL()
 				// fetch the next playlist
 
 				iLastFMConnection.RequestPlaylistL(this);
-				DoChangeStateL(EFetchingPlaylist);
+				DoChangeTransactionStateL(EFetchingPlaylist);
 				}
 			
 			if (iCurrentPlaylist->Count() > iCurrentTrackIndex)
@@ -531,15 +613,24 @@ void CMobblerRadioPlayer::HandleIncomingCallL(TPSTelephonyCallState aPSTelephony
 		case EPSTelephonyCallStateAnswering:
 		case EPSTelephonyCallStateConnected:
 			// There was an incoming call so stop playing the radio
-			DoStop(ETrue);
+			if (iState == EPlaying)
+				{
+				DoStop(ETrue);
+				iRestartRadioOnCallDisconnect = ETrue;
+				}
+			break;
+		case EPSTelephonyCallStateDisconnecting:
+			if (iRestartRadioOnCallDisconnect)
+				{
+				iRestartRadioOnCallDisconnect = EFalse;
+				NextTrackL();
+				}
 			break;
 		case EPSTelephonyCallStateUninitialized:
 		case EPSTelephonyCallStateNone:
-		case EPSTelephonyCallStateDisconnecting:
 		case EPSTelephonyCallStateHold:
 		default:
-			// The normal S60 behaviour seems to be to pause and then restart
-			// music when the call finishes, but we have some problems with this
+			// do nothing	
 			break;
 		}
 	}

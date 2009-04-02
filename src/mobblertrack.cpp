@@ -595,7 +595,7 @@ TFileName CMobblerTrack::AlbumArtCacheFileName()
 	{
 	_LIT(KCoverCacheFolder, "e:\\data\\mobbler\\");
 	
-	HBufC8* md5Input8 = HBufC8::NewLC(iArtist->String().Length() + iAlbum->String().Length()); 
+	HBufC8* md5Input8 = HBufC8::NewLC(iArtist->String8().Length() + iAlbum->String8().Length()); 
 	md5Input8->Des().Append(iArtist->String8());
 	md5Input8->Des().Append(iAlbum->String8());
 	

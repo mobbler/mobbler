@@ -35,7 +35,7 @@ class MMobblerAudioControlObserver
 	{
 public:
 	virtual void HandleAudioPositionChangeL() = 0;
-	virtual void HandleAudioFinishedL(CMobblerAudioControl* aAudioControl) = 0;
+	virtual void HandleAudioFinishedL(CMobblerAudioControl* aAudioControl, TInt aError) = 0;
 	};
 
 class CMobblerAudioControl : public CActive, public MMobblerSegDataObserver

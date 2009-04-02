@@ -40,6 +40,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "mobblertaglist.h"
 #include "mobblertracklist.h"
 #include "mobblerwebservicescontrol.h"
+#include "mobblerstring.h"
+#include "mobblertaglist.h"
+#include "mobblertracklist.h"
+#include "mobblerwebservicescontrol.h"
 
 _LIT(KDoubleLargeStyleListBoxTextFormat, "%d\t%S\t%S");
 _LIT(KRecentTracksTitleFormat, "%S - %S");
@@ -121,6 +125,8 @@ void CMobblerListControl::ConstructListL(TInt aType, const TDesC8& aText1, const
 	
 	iListBox->ConstructL(this, EAknListBoxSelectionList | EAknListBoxLoopScrolling );    
 	iListBox->SetContainerWindowL(*this);
+	
+	iListBox->SetListBoxObserver(this);
 	
 	// Set scrollbars
 	iListBox->CreateScrollBarFrameL(ETrue);
@@ -334,7 +340,7 @@ void CMobblerListControl::DataL(const TDesC8& aXML, TInt aError)
 					if (itemTime == Time::NullTTime())
 						{
 						// this means that the track is playling now
-						description->Des().Copy(_L("Now listening")); // TODO localise
+						description->Des().Copy(iAppUi.ResourceReader().ResourceL(R_MOBBLER_NOW_LISTENING));
 						}
 					else
 						{
@@ -454,18 +460,41 @@ void CMobblerListControl::BitmapResizedL(const CMobblerBitmap* /*aMobblerBitmap*
 	UpdateIconArrayL();
 	}
 
+void CMobblerListControl::HandleListBoxEventL(CEikListBox* aListBox, TListBoxEvent aEventType)
+	{
+	switch (aEventType)
+		{
+		case EEventEnterKeyPressed:
+			HandleListCommandL(EMobblerCommandOpen);
+			break;
+		case EEventItemDoubleClicked:
+			HandleListCommandL(EMobblerCommandOpen);
+			break;
+		default:
+			break;
+		}
+	}
+
 TKeyResponse CMobblerListControl::OfferKeyEventL(const TKeyEvent& aKeyEvent, TEventCode aEventCode)
 	{
-	RequestImagesL();
-	
-	if ( aKeyEvent.iCode == EKeyLeftArrow 
-		|| aKeyEvent.iCode == EKeyRightArrow )
+	if(aEventCode != EEventKey)
 		{
-		// allow the web services control to get the arrow keys
 		return EKeyWasNotConsumed;
 		}
+
+	switch(aKeyEvent.iCode)
+		{
+		case EKeyUpArrow:
+		case EKeyDownArrow:
+			{
+			// Forward up and down key press events to the list box
+			return iListBox->OfferKeyEventL(aKeyEvent, aEventCode);
+			}
+		default:
+			break;
+		}
 	
-	return iListBox->OfferKeyEventL(aKeyEvent, aEventCode);
+	return EKeyWasNotConsumed;
 	}
 
 

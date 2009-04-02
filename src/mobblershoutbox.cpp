@@ -21,6 +21,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
+#include <aknmessagequerydialog.h>
 #include <aknquerydialog.h>
 #include <mobbler_strings.rsg>
 #include <mobbler.rsg>
@@ -35,6 +36,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "mobblerlistitem.h"
 #include "mobblerresourcereader.h"
 #include "mobblersettingitemlistview.h"
+#include "mobblerstring.h"
 #include "mobblerstring.h"
 
 _LIT(KDefaultImage, "\\resource\\apps\\mobbler\\default_user.png");
@@ -118,6 +120,16 @@ CMobblerListControl* CMobblerShoutbox::HandleListCommandL(TInt aCommand)
 	
 	switch (aCommand)
 		{	
+		case EMobblerCommandOpen:
+			{
+			// Show the shout in a dialog box
+			CAknMessageQueryDialog* dlg = new(ELeave) CAknMessageQueryDialog();
+			dlg->PrepareLC(R_MOBBLER_ABOUT_BOX);
+			dlg->QueryHeading()->SetTextL(iList[iListBox->CurrentItemIndex()]->Title()->String());
+			dlg->SetMessageTextL(iList[iListBox->CurrentItemIndex()]->Description()->String());
+			dlg->RunLD();
+			}
+			break;
 		case EMobblerCommandShoutUser:
 		case EMobblerCommandShoutOwner:
 			
@@ -169,6 +181,7 @@ CMobblerListControl* CMobblerShoutbox::HandleListCommandL(TInt aCommand)
 
 void CMobblerShoutbox::SupportedCommandsL(RArray<TInt>& aCommands)
 	{
+	aCommands.AppendL(EMobblerCommandOpen);
 	aCommands.AppendL(EMobblerCommandShout);
 	aCommands.AppendL(EMobblerCommandShoutUser);
 	aCommands.AppendL(EMobblerCommandShoutOwner);

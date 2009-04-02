@@ -1733,16 +1733,25 @@ void CMobblerLastFMConnection::MHFRunL(RHTTPTransaction aTransaction, const THTT
 			if (iTrackDownloadObserver)
 				{
 				iTrackDownloadObserver->DataCompleteL(KErrGeneral);
+				iTrackDownloadObserver = NULL;
 				}
 			iTrackDownloadObserver = NULL;
 			break;
-		case THTTPEvent::ESucceeded:
 		case THTTPEvent::ECancel:
 		case THTTPEvent::EClosed:
 			// tell the radio player that the track has finished downloading
 			if (iTrackDownloadObserver)
 				{
+				iTrackDownloadObserver->DataCompleteL(KErrCancel);
+				iTrackDownloadObserver = NULL;
+				}
+			break;
+		case THTTPEvent::ESucceeded:
+			// tell the radio player that the track has finished downloading
+			if (iTrackDownloadObserver)
+				{
 				iTrackDownloadObserver->DataCompleteL(KErrNone);
+				iTrackDownloadObserver = NULL;
 				}
 			iTrackDownloadObserver = NULL;
 			break;

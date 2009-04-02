@@ -38,7 +38,7 @@ public:
 	virtual void HandleRadioStateChangedL() = 0;
 	};
 
-class CMobblerRadioPlayer : public CBase,
+class CMobblerRadioPlayer : public CActive,
 							public MMobblerIncomingCallMonitorObserver,
 							public MMobblerAudioControlObserver,
 							public MMobblerFlatDataObserver
@@ -48,7 +48,12 @@ public:
 	enum TState
 		{
 		EIdle,
-		EPlaying,
+		EPlaying
+		};
+	
+	enum TTransactionState
+		{
+		ENone,
 		EFetchingPlaylist,
 		ESelectingStation
 		};
@@ -65,6 +70,7 @@ public:
 	CMobblerTrack* CurrentTrack();
 	
 	TState State() const;
+	TTransactionState TransactionState() const;
 
 	void NextTrackL();
 	void Stop();
@@ -82,7 +88,7 @@ public:
 	
 private: // from MMobblerAudioControlObserver
 	void HandleAudioPositionChangeL();
-	void HandleAudioFinishedL(CMobblerAudioControl* aAudioControl);
+	void HandleAudioFinishedL(CMobblerAudioControl* aAudioControl, TInt aError);
 	
 private:
 	CMobblerRadioPlayer(CMobblerLastFMConnection& aSubmitter, TTimeIntervalSeconds aPreBufferSize, TInt aEqualizerIndex, TInt aVolume);
@@ -93,6 +99,7 @@ private:
 	void DoStop(TBool aDeleteNextTrack);
 	
 	void DoChangeStateL(TState aState);
+	void DoChangeTransactionStateL(TTransactionState aState);
 	
 private:
 	void DialogDismissedL(TInt aButtonId);
@@ -102,6 +109,10 @@ private: // MMobblerRadioPlayer
 	
 private:
 	void HandleIncomingCallL(TPSTelephonyCallState aPSTelephonyCallState);
+	
+private:
+	void RunL();
+	void DoCancel();
 
 private:
 	TInt iCurrentTrackIndex;
@@ -121,10 +132,15 @@ private:
 	TInt iEqualizerIndex;
 	
 	TState iState;
+	TTransactionState iTransactionState;
 	
 	CMobblerString* iStation;
 	
 	RPointerArray<MMobblerRadioStateChangeObserver> iObservers;
+	
+	RTimer iTimer;
+	
+	TBool iRestartRadioOnCallDisconnect;
 	};
 
 #endif // __MOBBLERRADIOPLAYER_H__

@@ -39,6 +39,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "mobbler.hrh"
 #include "mobblerappui.h"
+#include "mobblerbitmapcollection.h"
 #include "mobblermusiclistener.h"
 #include "mobblerparser.h"
 #include "mobblerradioplayer.h"
@@ -64,6 +65,8 @@ void CMobblerAppUi::ConstructL()
 	{
 	iResourceReader = CMobblerResourceReader::NewL();
 	
+	iBitmapCollection = CMobblerBitmapCollection::NewL();
+	
 	iVolumeUpCallBack = TCallBack(CMobblerAppUi::VolumeUpCallBackL, this);
 	iVolumeDownCallBack = TCallBack(CMobblerAppUi::VolumeDownCallBackL, this);
 	
@@ -71,7 +74,7 @@ void CMobblerAppUi::ConstructL()
 	iCoreTarget = CRemConCoreApiTarget::NewL(*iInterfaceSelector, *this);
 	iInterfaceSelector->OpenTargetL();
 		
-	BaseConstructL(EAknEnableSkin);
+	BaseConstructL(EAknTouchCompatible | EAknEnableSkin);
 	
 	AknsUtils::InitSkinSupportL();
 	
@@ -332,6 +335,7 @@ CMobblerAppUi::~CMobblerAppUi()
 #endif
 	delete iResourceReader;
 	delete iSleepTimer;
+	delete iBitmapCollection;
 	}
 
 void CMobblerAppUi::HandleInstallStartedL()
@@ -741,6 +745,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 			break;
 		case EMobblerCommandToggleScrobbling:
 			iLastFMConnection->ToggleScrobbling();
+			iStatusView->DrawDeferred();
 			break;
 		case EMobblerCommandSleepTimer:
 			SetSleepTimer();
@@ -1331,6 +1336,11 @@ void CMobblerAppUi::SaveRadioStationsL()
 CMobblerResourceReader& CMobblerAppUi::ResourceReader() const
 	{
 	return *iResourceReader;
+	}
+
+CMobblerBitmapCollection& CMobblerAppUi::BitmapCollection() const
+	{
+	return *iBitmapCollection;
 	}
 
 void CMobblerAppUi::SetSleepTimer()

@@ -26,8 +26,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <aknsbasicbackgroundcontrolcontext.h>
 #include <aknsdrawutils.h>
 #include <aknutils.h>
-#include <icl/imagecodecdata.h>
-#include <mobbler.mbg>
 #include <mobbler_strings.rsg>
 
 #ifdef  __S60_50__
@@ -37,6 +35,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "mobbler.hrh"
 #include "mobblerappui.h"
+#include "mobblerbitmapcollection.h"
 #include "mobblermarquee.h"
 #include "mobblerradioplayer.h"
 #include "mobblerresourcereader.h"
@@ -45,10 +44,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "mobblertimeout.h"
 #include "mobblertrack.h"
 
-_LIT(KMobblerMifFile, "\\resource\\apps\\mobbler.mif");
-_LIT(KPngScrobble, "\\resource\\apps\\mobbler\\scrobble.png");
-_LIT(KPngTrackIcon, "\\resource\\apps\\mobbler\\icon_track.png");
-_LIT(KPngLastFM, "\\resource\\apps\\mobbler\\lastfm.png");
 _LIT(KMusicAppNameAndConnectionSeperator, " - ");
 
 const TRgb KRgbLastFMRed(0xD5, 0x10, 0x07, 0xFF);
@@ -57,9 +52,6 @@ const TRgb KRgbProgressBarBack(0xE7, 0xED, 0xEF, 0xFF);
 const TRgb KRgbProgressBarBuffer(0xAF, 0xBE, 0xCC, 0xFF);
 const TRgb KRgbProgressBarPlayback(0xD5, 0x10, 0x07, 0xFF);
 const TRgb KRgbTransparent(0x00, 0x00, 0x00, 0x00);
-
-const TUid KMusicAppUID = {0x102072C3};
-const TUid KMobblerUID = {0xA0007648};
 
 const TUid KTouchFeedbackImplUID = {0xA000B6CD};
 
@@ -173,29 +165,36 @@ void CMobblerStatusControl::DoChangePaneTextL()
 				{
 				switch (iAppUi.RadioPlayer().State())
 					{
-					case CMobblerRadioPlayer::ESelectingStation:
-						stateText.Copy(iAppUi.ResourceReader().ResourceL(R_MOBBLER_STATE_SELECTING_STATION));
-						break;
-					case CMobblerRadioPlayer::EFetchingPlaylist:
-						stateText.Copy(iAppUi.ResourceReader().ResourceL(R_MOBBLER_STATE_FETCHING_PLAYLIST));
-						break;
 					case CMobblerRadioPlayer::EIdle:
 						{
-						if (iAppUi.Mode() == CMobblerLastFMConnection::EOnline)
+						switch (iAppUi.RadioPlayer().TransactionState())
 							{
-							stateText.Copy(iAppUi.ResourceReader().ResourceL(R_MOBBLER_STATE_ONLINE));
+							case CMobblerRadioPlayer::ENone:
+								{
+								if (iAppUi.Mode() == CMobblerLastFMConnection::EOnline)
+									{
+									stateText.Copy(iAppUi.ResourceReader().ResourceL(R_MOBBLER_STATE_ONLINE));
+									}
+								else
+									{
+									stateText.Copy(iAppUi.ResourceReader().ResourceL(R_MOBBLER_STATE_OFFLINE));
+									}
+								}
+								break;
+							case CMobblerRadioPlayer::ESelectingStation:
+								stateText.Copy(iAppUi.ResourceReader().ResourceL(R_MOBBLER_STATE_SELECTING_STATION));
+								break;
+							case CMobblerRadioPlayer::EFetchingPlaylist:
+								stateText.Copy(iAppUi.ResourceReader().ResourceL(R_MOBBLER_STATE_FETCHING_PLAYLIST));
+								break;
 							}
-						else
-							{
-							stateText.Copy(iAppUi.ResourceReader().ResourceL(R_MOBBLER_STATE_OFFLINE));
-							}
-						}
 						break;
 					case CMobblerRadioPlayer::EPlaying:
 						stateText.Copy(iAppUi.RadioPlayer().Station().String());
 						break;
 					default:
 						break;
+						}
 					}
 				}
 				break;
@@ -217,24 +216,25 @@ void CMobblerStatusControl::DoChangePaneTextL()
 
 void CMobblerStatusControl::LoadGraphicsL()
 	{
-	iMobblerBitmapLastFM = CMobblerBitmap::NewL(*this, KPngLastFM, KImageTypePNGUid);
-	iMobblerBitmapScrobble = CMobblerBitmap::NewL(*this, KPngScrobble, KImageTypePNGUid);
-	iMobblerBitmapTrackIcon = CMobblerBitmap::NewL(*this, KPngTrackIcon, KImageTypePNGUid);
-	
-	iMobblerBitmapMore = CMobblerBitmap::NewL(*this, KMobblerMifFile, EMbmMobblerMore, EMbmMobblerMore_mask);
-	iMobblerBitmapLove = CMobblerBitmap::NewL(*this, KMobblerMifFile, EMbmMobblerLove, EMbmMobblerLove_mask);
-	iMobblerBitmapBan = CMobblerBitmap::NewL(*this, KMobblerMifFile, EMbmMobblerBan, EMbmMobblerBan_mask);
-	iMobblerBitmapPlay = CMobblerBitmap::NewL(*this, KMobblerMifFile, EMbmMobblerPlay, EMbmMobblerPlay_mask);
-	iMobblerBitmapNext = CMobblerBitmap::NewL(*this, KMobblerMifFile, EMbmMobblerNext, EMbmMobblerNext_mask);
-	iMobblerBitmapStop = CMobblerBitmap::NewL(*this, KMobblerMifFile, EMbmMobblerStop, EMbmMobblerStop_mask);
-	iMobblerBitmapSpeakerHigh = CMobblerBitmap::NewL(*this, KMobblerMifFile, EMbmMobblerSpeaker_high, EMbmMobblerSpeaker_high_mask);
-	iMobblerBitmapSpeakerLow = CMobblerBitmap::NewL(*this, KMobblerMifFile, EMbmMobblerSpeaker_low, EMbmMobblerSpeaker_low_mask);
+	iMobblerBitmapLastFM = &iAppUi.BitmapCollection().BitmapL(*this, CMobblerBitmapCollection::EBitmapLastFM);
+	iMobblerBitmapScrobble = &iAppUi.BitmapCollection().BitmapL(*this, CMobblerBitmapCollection::EBitmapScrobble);
+	iMobblerBitmapTrackIcon = &iAppUi.BitmapCollection().BitmapL(*this, CMobblerBitmapCollection::EBitmapTrackIcon);
+	iMobblerBitmapMore = &iAppUi.BitmapCollection().BitmapL(*this, CMobblerBitmapCollection::EBitmapMore);
+	iMobblerBitmapLove = &iAppUi.BitmapCollection().BitmapL(*this, CMobblerBitmapCollection::EBitmapLove);
+	iMobblerBitmapBan = &iAppUi.BitmapCollection().BitmapL(*this, CMobblerBitmapCollection::EBitmapBan);
+	iMobblerBitmapPlay = &iAppUi.BitmapCollection().BitmapL(*this, CMobblerBitmapCollection::EBitmapPlay);
+	iMobblerBitmapNext = &iAppUi.BitmapCollection().BitmapL(*this, CMobblerBitmapCollection::EBitmapNext);
+	iMobblerBitmapStop = &iAppUi.BitmapCollection().BitmapL(*this, CMobblerBitmapCollection::EBitmapStop);
+	iMobblerBitmapSpeakerHigh = &iAppUi.BitmapCollection().BitmapL(*this, CMobblerBitmapCollection::EBitmapSpeakerHigh);
+	iMobblerBitmapSpeakerLow = &iAppUi.BitmapCollection().BitmapL(*this, CMobblerBitmapCollection::EBitmapSpeakerLow);
     
 	// Load the Music Player icon to display when a music player track is playing
-	iMobblerBitmapMusicAppIcon = CMobblerBitmap::NewL(*this, KMusicAppUID);
+	iMobblerBitmapMusicAppIcon = &iAppUi.BitmapCollection().BitmapL(*this, CMobblerBitmapCollection::EBitmapMusicApp);
 	
 	// Load the Mobbler icon to display when a music player track is not playing
-	iMobblerBitmapAppIcon = CMobblerBitmap::NewL(*this, KMobblerUID);
+	iMobblerBitmapAppIcon = &iAppUi.BitmapCollection().BitmapL(*this, CMobblerBitmapCollection::EBitmapMobblerApp);
+	
+	SetPositions();
 	}
 
 void CMobblerStatusControl::SetPositions()
@@ -512,21 +512,6 @@ CMobblerStatusControl::~CMobblerStatusControl()
 	iAppUi.MusicListener().RemoveObserver(this);
 	
 	delete iBgContext;
-	
-	delete iMobblerBitmapBan;
-	delete iMobblerBitmapMore;
-	delete iMobblerBitmapLove;
-	delete iMobblerBitmapPlay;
-	delete iMobblerBitmapNext;
-	delete iMobblerBitmapStop;
-	delete iMobblerBitmapLastFM;
-	delete iMobblerBitmapSpeakerLow;
-	delete iMobblerBitmapSpeakerHigh;
-	delete iMobblerBitmapScrobble;
-	delete iMobblerBitmapTrackIcon;
-	delete iMobblerBitmapAppIcon;
-	
-	delete iMobblerBitmapMusicAppIcon;
 	
 	ReleaseBackBuffer();
 	

@@ -95,7 +95,7 @@ CMobblerAudioControl::~CMobblerAudioControl()
 
 void CMobblerAudioControl::RunL()
 	{
-	iObserver.HandleAudioFinishedL(this);	
+	iObserver.HandleAudioFinishedL(this, iStatus.Int());	
 	}
 
 void CMobblerAudioControl::DoCancel()
@@ -120,13 +120,13 @@ void CMobblerAudioControl::DataPartL(const TDesC8& aData, TInt aTotalDataSize)
 
 void CMobblerAudioControl::DataCompleteL(TInt aError)
 	{
-	if (aError == KErrNone || aError == KErrCancel)
+	iShared.iDownloadComplete = ETrue;
+	
+	if (aError != KErrNone)
 		{
-		iShared.iDownloadComplete = ETrue;
-		}
-	else
-		{
-		iObserver.HandleAudioFinishedL(this);
+		// KErrNone means that the download completed sucesfully
+		// therfore HandleAudioFinishedL will be called in RunL when the thread closes
+		iObserver.HandleAudioFinishedL(this, aError);
 		}
 	}
 

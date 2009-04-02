@@ -33,6 +33,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "mobblerlastfmconnectionobserver.h"
 #include "mobblersleeptimer.h"
 
+class CMobblerBitmapCollection;
+
 const TVersion KVersion(0, 4, 0);
 
 _LIT(KFormatTime, "%F%D %N %-B%J%:1%T%+B"); // 21 March 11:20 am
@@ -83,6 +85,7 @@ public:
 	CMobblerRadioPlayer& RadioPlayer() const;
 	CMobblerLastFMConnection& LastFMConnection() const;
 	CMobblerMusicAppListener& MusicListener() const;
+	CMobblerBitmapCollection& BitmapCollection() const;
 	
 	CMobblerSettingItemListView& SettingView() const;
 	const TDesC& MusicAppNameL() const;
@@ -181,6 +184,8 @@ private:
 	CMobblerString* iPreviousRadioArtist;
 	CMobblerString* iPreviousRadioTag;
 	CMobblerString* iPreviousRadioPersonal;
+	
+	CMobblerBitmapCollection* iBitmapCollection;
 	
 #ifndef __WINS__
 	CBrowserLauncher* iBrowserLauncher;

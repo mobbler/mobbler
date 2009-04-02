@@ -35,8 +35,11 @@ class CMobblerListItem;
 class CMobblerString;
 class CMobblerWebServicesControl;
 
-class CMobblerListControl : public CCoeControl, public MMobblerBitmapObserver, public MMobblerFlatDataObserver
-								, public MEikScrollBarObserver
+class CMobblerListControl : public CCoeControl,
+								public MMobblerBitmapObserver,
+								public MMobblerFlatDataObserver,
+								public MEikScrollBarObserver,
+								public MEikListBoxObserver
 	{
 public:
 	enum TState
@@ -90,6 +93,9 @@ private:
 	
 private:
 	void HandleScrollEventL(CEikScrollBar* aScrollBar, TEikScrollEvent aEventType);
+	
+private:
+	void HandleListBoxEventL(CEikListBox* aListBox, TListBoxEvent aEventType);
 	
 protected:
 	CMobblerAppUi& iAppUi;

@@ -152,7 +152,7 @@ void CMobblerWebServicesView::DynInitMenuPaneL(TInt aResourceId, CEikMenuPane* a
 	if (aResourceId == R_MOBBLER_WEBSERVICES_MENU_PANE)
 		{
 		aMenuPane->SetItemDimmed(EMobblerCommandShare, 
-						!static_cast<CMobblerAppUi*>(AppUi())->CurrentTrack());
+						!static_cast<CMobblerAppUi*>(AppUi())->CurrentTrack() || supportedCommands.Find(EMobblerCommandShare) == KErrNotFound);
 		}
 	else if (aResourceId == R_MOBBLER_SHOUT_SUBMENU_PANE)
 		{

@@ -24,8 +24,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <aknnavide.h>
 #include <aknnavilabel.h>
 
+#include <mobbler_strings.rsg>
+
 #include "mobblerappui.h"
 #include "mobblerlistcontrol.h"
+#include "mobblerresourcereader.h"
 #include "mobblerstring.h"
 #include "mobblertrack.h"
 #include "mobblerwebservicescontrol.h"
@@ -164,13 +167,13 @@ void CMobblerWebServicesControl::ChangePaneTextL()
 			switch (iAppUi.LastFMConnection().State())
 				{
 				case CMobblerLastFMConnection::EConnecting:
-					text.Append(_L("Connecting"));	// TODO localise
+					text.Append(iAppUi.ResourceReader().ResourceL(R_MOBBLER_STATE_CONNECTING));
 					break;
 				case CMobblerLastFMConnection::EHandshaking:
-					text.Append(_L("Handshaking"));	// TODO localise
+					text.Append(iAppUi.ResourceReader().ResourceL(R_MOBBLER_STATE_HANDSHAKING));
 					break;
 				case CMobblerLastFMConnection::ENone:
-					text.Append(_L("Loading"));		// TODO localise
+					text.Append(iAppUi.ResourceReader().ResourceL(R_MOBBLER_LOADING));
 					break;
 				}
 			break;
@@ -183,7 +186,7 @@ void CMobblerWebServicesControl::ChangePaneTextL()
 				}
 			break;
 		case CMobblerListControl::EFailed:
-			text.Append(_L("Failed"));				// TODO localise
+			text.Append(iAppUi.ResourceReader().ResourceL(R_MOBBLER_FAILED));
 			break;
 		default:
 			break;
