@@ -24,9 +24,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #ifndef __MOBBLERRADIOPLAYER_H__
 #define __MOBBLERRADIOPLAYER_H__
 
-#include "mobblerincomingcallmonitorobserver.h"
-#include "mobblerlastfmconnection.h"
 #include "mobbleraudiocontrol.h"
+#include "mobblerincomingcallmonitorobserver.h"
 
 class CMobblerIncomingCallMonitor;
 class CMobblerRadioPlaylist;

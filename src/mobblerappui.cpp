@@ -74,7 +74,11 @@ void CMobblerAppUi::ConstructL()
 	iCoreTarget = CRemConCoreApiTarget::NewL(*iInterfaceSelector, *this);
 	iInterfaceSelector->OpenTargetL();
 		
+#ifdef  __S60_50__
 	BaseConstructL(EAknTouchCompatible | EAknEnableSkin);
+#else
+	BaseConstructL(EAknEnableSkin);
+#endif
 	
 	AknsUtils::InitSkinSupportL();
 	

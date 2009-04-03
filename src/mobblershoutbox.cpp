@@ -37,7 +37,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "mobblerresourcereader.h"
 #include "mobblersettingitemlistview.h"
 #include "mobblerstring.h"
-#include "mobblerstring.h"
 
 _LIT(KDefaultImage, "\\resource\\apps\\mobbler\\default_user.png");
 

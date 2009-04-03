@@ -40,10 +40,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "mobblertaglist.h"
 #include "mobblertracklist.h"
 #include "mobblerwebservicescontrol.h"
-#include "mobblerstring.h"
-#include "mobblertaglist.h"
-#include "mobblertracklist.h"
-#include "mobblerwebservicescontrol.h"
 
 _LIT(KDoubleLargeStyleListBoxTextFormat, "%d\t%S\t%S");
 _LIT(KRecentTracksTitleFormat, "%S - %S");
@@ -460,7 +456,7 @@ void CMobblerListControl::BitmapResizedL(const CMobblerBitmap* /*aMobblerBitmap*
 	UpdateIconArrayL();
 	}
 
-void CMobblerListControl::HandleListBoxEventL(CEikListBox* aListBox, TListBoxEvent aEventType)
+void CMobblerListControl::HandleListBoxEventL(CEikListBox* /*aListBox*/, TListBoxEvent aEventType)
 	{
 	switch (aEventType)
 		{

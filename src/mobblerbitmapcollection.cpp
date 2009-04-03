@@ -2,7 +2,7 @@
 mobblerbitmapcontainer.cpp
 
 Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
-Copyright (C) 2008  Michael Coffey
+Copyright (C) 2009  Michael Coffey
 
 http://code.google.com/p/mobbler
 
@@ -31,10 +31,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 _LIT(KMobblerMifFile, "\\resource\\apps\\mobbler.mif");
 _LIT(KPngScrobble, "\\resource\\apps\\mobbler\\scrobble.png");
 _LIT(KPngTrackIcon, "\\resource\\apps\\mobbler\\icon_track.png");
-_LIT(KPngLastFM, "\\resource\\apps\\mobbler\\lastfm.png");
+_LIT(KPngLastFm, "\\resource\\apps\\mobbler\\lastfm.png");
 
-const TUid KMusicAppUID = {0x102072C3};
-const TUid KMobblerUID = {0xA0007648};
+const TUid KMusicAppUid = {0x102072C3};
+const TUid KMobblerUid = {0xA0007648};
 
 CMobblerBitmapCollection::CBitmapCollectionItem* CMobblerBitmapCollection::CBitmapCollectionItem::NewLC(CMobblerBitmap* aBitmap, TInt aBitmapId)
 	{
@@ -45,8 +45,8 @@ CMobblerBitmapCollection::CBitmapCollectionItem* CMobblerBitmapCollection::CBitm
 	return self;
 	}
 
-CMobblerBitmapCollection::CBitmapCollectionItem::CBitmapCollectionItem(TInt aBitmapID)
-	:iID(aBitmapID)
+CMobblerBitmapCollection::CBitmapCollectionItem::CBitmapCollectionItem(TInt aBitmapId)
+	:iId(aBitmapId)
 	{
 	}
 
@@ -62,12 +62,12 @@ CMobblerBitmapCollection::CBitmapCollectionItem::~CBitmapCollectionItem()
 		
 TInt CMobblerBitmapCollection::CBitmapCollectionItem::Compare(const CBitmapCollectionItem& aLeft, const CBitmapCollectionItem& aRight)
 	{
-	return Compare(&aLeft.iID, aRight);
+	return Compare(&aLeft.iId, aRight);
 	}
 
 TInt CMobblerBitmapCollection::CBitmapCollectionItem::Compare(const TInt* aKey, const CBitmapCollectionItem& aItem)
 	{
-	return *aKey - aItem.iID;
+	return *aKey - aItem.iId;
 	}
 
 CMobblerBitmap& CMobblerBitmapCollection::CBitmapCollectionItem::Bitmap() const
@@ -97,19 +97,19 @@ CMobblerBitmapCollection::~CMobblerBitmapCollection()
 	iBitmaps.ResetAndDestroy();
 	}
 	
-CMobblerBitmap& CMobblerBitmapCollection::BitmapL(MMobblerBitmapObserver& aObserver, TInt aID) const
+CMobblerBitmap& CMobblerBitmapCollection::BitmapL(MMobblerBitmapObserver& aObserver, TInt aId) const
 	{
 	CMobblerBitmap* bitmap;
 	
-	TInt position = iBitmaps.FindInOrder(aID, CBitmapCollectionItem::Compare);
+	TInt position = iBitmaps.FindInOrder(aId, CBitmapCollectionItem::Compare);
 	
 	if (position == KErrNotFound)
 		{
 		// The bitmap was not found so load it
-		switch (aID)
+		switch (aId)
 			{
-			case EBitmapLastFM:
-				bitmap = CMobblerBitmap::NewL(aObserver, KPngLastFM, KImageTypePNGUid);
+			case EBitmapLastFm:
+				bitmap = CMobblerBitmap::NewL(aObserver, KPngLastFm, KImageTypePNGUid);
 				break;
 			case EBitmapScrobble:
 				bitmap = CMobblerBitmap::NewL(aObserver, KPngScrobble, KImageTypePNGUid);
@@ -142,16 +142,16 @@ CMobblerBitmap& CMobblerBitmapCollection::BitmapL(MMobblerBitmapObserver& aObser
 				bitmap = CMobblerBitmap::NewL(aObserver, KMobblerMifFile, EMbmMobblerSpeaker_low, EMbmMobblerSpeaker_low_mask);
 				break;
 			case EBitmapMusicApp:
-				bitmap = CMobblerBitmap::NewL(aObserver, KMusicAppUID);
+				bitmap = CMobblerBitmap::NewL(aObserver, KMusicAppUid);
 				break;
 			case EBitmapMobblerApp:
-				bitmap = CMobblerBitmap::NewL(aObserver, KMobblerUID);
+				bitmap = CMobblerBitmap::NewL(aObserver, KMobblerUid);
 				break;
 			default:
 				break;
 			}
 		
-		CBitmapCollectionItem* item = CBitmapCollectionItem::NewLC(bitmap, aID);
+		CBitmapCollectionItem* item = CBitmapCollectionItem::NewLC(bitmap, aId);
 		TLinearOrder<CBitmapCollectionItem> linearOrder(CBitmapCollectionItem::Compare);
 		iBitmaps.InsertInOrderL(item, linearOrder);
 		CleanupStack::Pop(item);

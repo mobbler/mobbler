@@ -24,9 +24,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #ifndef __MOBBLERSTATUSCONTROL_H__
 #define __MOBBLERSTATUSCONTROL_H__
 
-//#include <coecntrl.h>
-#include <coedef.h>
-
 #include "mobblerbitmap.h" 
 #include "mobblermusiclistener.h"
 #include "mobblerradioplayer.h" 
@@ -109,7 +106,7 @@ private:
 	CMobblerBitmap* iMobblerBitmapPlay;
 	CMobblerBitmap* iMobblerBitmapNext;
 	CMobblerBitmap* iMobblerBitmapStop;
-	CMobblerBitmap* iMobblerBitmapLastFM;
+	CMobblerBitmap* iMobblerBitmapLastFm;
 	CMobblerBitmap* iMobblerBitmapSpeakerLow;
 	CMobblerBitmap* iMobblerBitmapSpeakerHigh;
 	CMobblerBitmap* iMobblerBitmapScrobble;
@@ -134,7 +131,7 @@ private:
 	// graphics and text positions
 	TRect iRectAlbumArt;
 	
-	TPoint iPointLastFM;
+	TPoint iPointLastFm;
 	TPoint iPointMore;
 	TPoint iPointLove;
 	TPoint iPointBan;

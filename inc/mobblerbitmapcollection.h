@@ -1,8 +1,8 @@
 /*
 mobblerbitmapcollection.h
 
-mobbler, a last.fm mobile scrobbler for Symbian smartphones.
-Copyright (C) 2008  Michael Coffey
+Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
+Copyright (C) 2009  Michael Coffey
 
 http://code.google.com/p/mobbler
 
@@ -34,7 +34,7 @@ class CMobblerBitmapCollection : public CBase
 public:
 	enum TBitmapID
 		{
-		EBitmapLastFM,
+		EBitmapLastFm,
 		EBitmapScrobble,
 		EBitmapTrackIcon,
 		EBitmapMore,
@@ -66,7 +66,7 @@ private:
 		void ConstructL(CMobblerBitmap* aBitmap);
 		
 	private:
-		TInt iID;
+		TInt iId;
 		CMobblerBitmap* iBitmap;
 		};
 	
@@ -86,3 +86,4 @@ private:
 
 #endif
 
+// End of file

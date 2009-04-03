@@ -100,6 +100,7 @@ public:
 	TTimeIntervalSeconds TotalPlayed() const;
 	void SetTrackPlaying(TBool aTrackPlaying);
 	TBool TrackPlaying() const;
+	TBool IsMusicPlayerTrack() const;
 	
 private:
 	CMobblerTrack();
@@ -115,7 +116,7 @@ private:
 						TTimeIntervalSeconds aTrackLength,
 						const TDesC8& aRadioAuth);
 	
-	TFileName AlbumArtCacheFileName();
+//	TFileName AlbumArtCacheFileName();
 	
 private:
 	void BitmapLoadedL(const CMobblerBitmap* aMobblerBitmap);

@@ -1,7 +1,7 @@
 /*
-mobblertimout.h
+mobblertimeout.h
 
-mobbler, a last.fm mobile scrobbler for Symbian smartphones.
+Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
 Copyright (C) 2008  Michael Coffey
 
 http://code.google.com/p/mobbler
@@ -49,3 +49,5 @@ private:
 	};
 	
 #endif // __MOBBLERTIMEOUT_H__
+
+// End of file

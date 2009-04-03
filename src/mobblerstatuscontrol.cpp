@@ -216,7 +216,7 @@ void CMobblerStatusControl::DoChangePaneTextL()
 
 void CMobblerStatusControl::LoadGraphicsL()
 	{
-	iMobblerBitmapLastFM = &iAppUi.BitmapCollection().BitmapL(*this, CMobblerBitmapCollection::EBitmapLastFM);
+	iMobblerBitmapLastFm = &iAppUi.BitmapCollection().BitmapL(*this, CMobblerBitmapCollection::EBitmapLastFm);
 	iMobblerBitmapScrobble = &iAppUi.BitmapCollection().BitmapL(*this, CMobblerBitmapCollection::EBitmapScrobble);
 	iMobblerBitmapTrackIcon = &iAppUi.BitmapCollection().BitmapL(*this, CMobblerBitmapCollection::EBitmapTrackIcon);
 	iMobblerBitmapMore = &iAppUi.BitmapCollection().BitmapL(*this, CMobblerBitmapCollection::EBitmapMore);
@@ -262,7 +262,7 @@ void CMobblerStatusControl::SetPositions()
 			iPointPlayStop =			TPoint((KTextRectHeight/2) + (3 * ((Rect().Width() - KTextRectHeight - iControlSize.iWidth) / 4)), Rect().Height() - iControlSize.iHeight - (KTextRectHeight / 2));
 			iPointSkip =				TPoint((KTextRectHeight/2) + (4 * ((Rect().Width() - KTextRectHeight - iControlSize.iWidth) / 4)), Rect().Height() - iControlSize.iHeight - (KTextRectHeight / 2));
 			
-			iPointLastFM = 				TPoint(-200, -200);
+			iPointLastFm = 				TPoint(-200, -200);
 						
 			TSize infoSize(Rect().Width() - KTextRectHeight - iMobblerBitmapTrackIcon->SizeInPixels().iWidth, KTextRectHeight);
 						
@@ -277,19 +277,19 @@ void CMobblerStatusControl::SetPositions()
 		else
 			{
 			// 3rd edition
-			TInt albumArtDimension = Rect().Width() - iMobblerBitmapLastFM->SizeInPixels().iWidth - ((3 * KTextRectHeight) / 2);
+			TInt albumArtDimension = Rect().Width() - iMobblerBitmapLastFm->SizeInPixels().iWidth - ((3 * KTextRectHeight) / 2);
 			
 			iControlSize = TSize(27, 27);
 			
 			iRectAlbumArt = 			TRect(TPoint(KTextRectHeight / 2, KTextRectHeight / 2), TSize(albumArtDimension, albumArtDimension));
-			TPoint controlsTopLeft = 	TPoint(Rect().Width() - iMobblerBitmapLastFM->SizeInPixels().iWidth - (KTextRectHeight / 2), iRectAlbumArt.iBr.iY - (3 * iControlSize.iHeight) - 4);
+			TPoint controlsTopLeft = 	TPoint(Rect().Width() - iMobblerBitmapLastFm->SizeInPixels().iWidth - (KTextRectHeight / 2), iRectAlbumArt.iBr.iY - (3 * iControlSize.iHeight) - 4);
 			iPointMore =				TPoint(controlsTopLeft.iX + (0 * iControlSize.iWidth), controlsTopLeft.iY + (1 * iControlSize.iHeight));
 			iPointLove =				TPoint(controlsTopLeft.iX + (1 * iControlSize.iWidth), controlsTopLeft.iY + (0 * iControlSize.iHeight));
 			iPointBan =					TPoint(controlsTopLeft.iX + (1 * iControlSize.iWidth), controlsTopLeft.iY + (2 * iControlSize.iHeight));
 			iPointSkip =				TPoint(controlsTopLeft.iX + (2 * iControlSize.iWidth), controlsTopLeft.iY + (1 * iControlSize.iHeight));
 			iPointPlayStop =			TPoint(controlsTopLeft.iX + (1 * iControlSize.iWidth), controlsTopLeft.iY + (1 * iControlSize.iHeight));
 			
-			iPointLastFM = 				TPoint(Rect().Width() - iMobblerBitmapLastFM->SizeInPixels().iWidth -  (KTextRectHeight / 2), iRectAlbumArt.iTl.iY + 4);
+			iPointLastFm = 				TPoint(Rect().Width() - iMobblerBitmapLastFm->SizeInPixels().iWidth -  (KTextRectHeight / 2), iRectAlbumArt.iTl.iY + 4);
 			
 			
 			iRectProgressBar = 				TRect(TPoint(KTextRectHeight / 2, Rect().Height() -  (2 * KTextRectHeight)), TSize(Rect().Width() - KTextRectHeight, KTextRectHeight));				
@@ -315,7 +315,7 @@ void CMobblerStatusControl::SetPositions()
 						
 			iRectAlbumArt =				TRect(TPoint(0, (3 * KTextRectHeight) / 2), TSize(albumArtDimension, albumArtDimension));
 			
-			iPointLastFM =				TPoint(albumArtDimension + (KTextRectHeight / 2), iRectAlbumArt.iTl.iY);
+			iPointLastFm =				TPoint(albumArtDimension + (KTextRectHeight / 2), iRectAlbumArt.iTl.iY);
 
 			iControlSize = TSize((Rect().Width() - albumArtDimension) / 6, (Rect().Width() - albumArtDimension) / 6);
 						
@@ -329,21 +329,21 @@ void CMobblerStatusControl::SetPositions()
 						
 			TInt textX(albumArtDimension + (KTextRectHeight / 2) + iMobblerBitmapTrackIcon->SizeInPixels().iWidth);
 			
-			TInt infoHeight(Rect().Height() - iControlSize.iHeight - ((3 * KTextRectHeight) / 2) - iPointLastFM.iY - iMobblerBitmapLastFM->SizeInPixels().iHeight);
+			TInt infoHeight(Rect().Height() - iControlSize.iHeight - ((3 * KTextRectHeight) / 2) - iPointLastFm.iY - iMobblerBitmapLastFm->SizeInPixels().iHeight);
 						
-			iRectTitleText = 				TRect(TPoint(textX, iPointLastFM.iY + iMobblerBitmapLastFM->SizeInPixels().iHeight + (KTextRectHeight / 2) + ((0 * (infoHeight)) / 5) ), infoSize);
-			iRectArtistText = 				TRect(TPoint(textX, iPointLastFM.iY + iMobblerBitmapLastFM->SizeInPixels().iHeight + (KTextRectHeight / 2) + ((1 * (infoHeight)) / 5) ), infoSize);
-			iRectAlbumText = 				TRect(TPoint(textX, iPointLastFM.iY + iMobblerBitmapLastFM->SizeInPixels().iHeight + (KTextRectHeight / 2) + ((2 * (infoHeight)) / 5) ), infoSize);
-			iRectProgressBar = 				TRect(TPoint(albumArtDimension + (KTextRectHeight / 2), iPointLastFM.iY + iMobblerBitmapLastFM->SizeInPixels().iHeight + (KTextRectHeight / 2) + ((3 * (infoHeight)) / 5) ), TSize(Rect().Width() - albumArtDimension - KTextRectHeight, KTextRectHeight));				
-			iRectScrobbledQueuedText = 		TRect(TPoint(textX, iPointLastFM.iY + iMobblerBitmapLastFM->SizeInPixels().iHeight + (KTextRectHeight / 2) + ((4 * (infoHeight)) / 5) ), infoSize);
+			iRectTitleText = 				TRect(TPoint(textX, iPointLastFm.iY + iMobblerBitmapLastFm->SizeInPixels().iHeight + (KTextRectHeight / 2) + ((0 * (infoHeight)) / 5) ), infoSize);
+			iRectArtistText = 				TRect(TPoint(textX, iPointLastFm.iY + iMobblerBitmapLastFm->SizeInPixels().iHeight + (KTextRectHeight / 2) + ((1 * (infoHeight)) / 5) ), infoSize);
+			iRectAlbumText = 				TRect(TPoint(textX, iPointLastFm.iY + iMobblerBitmapLastFm->SizeInPixels().iHeight + (KTextRectHeight / 2) + ((2 * (infoHeight)) / 5) ), infoSize);
+			iRectProgressBar = 				TRect(TPoint(albumArtDimension + (KTextRectHeight / 2), iPointLastFm.iY + iMobblerBitmapLastFm->SizeInPixels().iHeight + (KTextRectHeight / 2) + ((3 * (infoHeight)) / 5) ), TSize(Rect().Width() - albumArtDimension - KTextRectHeight, KTextRectHeight));				
+			iRectScrobbledQueuedText = 		TRect(TPoint(textX, iPointLastFm.iY + iMobblerBitmapLastFm->SizeInPixels().iHeight + (KTextRectHeight / 2) + ((4 * (infoHeight)) / 5) ), infoSize);
 			}
 		else
 			{
 			// 3rd edition
-			TInt albumArtDimension = 	Rect().Height() - ((3 * KTextRectHeight) / 2) - iMobblerBitmapLastFM->SizeInPixels().iHeight;
+			TInt albumArtDimension = 	Rect().Height() - ((3 * KTextRectHeight) / 2) - iMobblerBitmapLastFm->SizeInPixels().iHeight;
 			iRectAlbumArt =				TRect(TPoint(KTextRectHeight / 2, KTextRectHeight / 2), TSize(albumArtDimension, albumArtDimension));
 			
-			TInt controlDimension((Rect().Width() - albumArtDimension - iMobblerBitmapLastFM->SizeInPixels().iWidth - (2 * KTextRectHeight)) / 3);
+			TInt controlDimension((Rect().Width() - albumArtDimension - iMobblerBitmapLastFm->SizeInPixels().iWidth - (2 * KTextRectHeight)) / 3);
 			iControlSize = TSize(controlDimension, controlDimension);
 			
 			TPoint controlsTopLeft = 	TPoint(albumArtDimension + KTextRectHeight, KTextRectHeight / 2);
@@ -353,7 +353,7 @@ void CMobblerStatusControl::SetPositions()
 			iPointSkip =				TPoint(controlsTopLeft.iX + (2 * iControlSize.iWidth), controlsTopLeft.iY + (1 * iControlSize.iHeight));
 			iPointPlayStop =			TPoint(controlsTopLeft.iX + (1 * iControlSize.iWidth), controlsTopLeft.iY + (1 * iControlSize.iHeight));
 			
-			iPointLastFM =				TPoint(albumArtDimension + ((3 * KTextRectHeight) / 2) + (3 * iControlSize.iWidth), KTextRectHeight / 2);
+			iPointLastFm =				TPoint(albumArtDimension + ((3 * KTextRectHeight) / 2) + (3 * iControlSize.iWidth), KTextRectHeight / 2);
 			
 			TInt textX(albumArtDimension + (KTextRectHeight / 2) + iMobblerBitmapTrackIcon->SizeInPixels().iWidth);
 			TInt infoY((3 * iControlSize.iHeight) + KTextRectHeight);
@@ -770,7 +770,7 @@ void CMobblerStatusControl::Draw(const TRect& /*aRect*/) const
 		}
 	
 	// Draw the Last.fm graphic
-	DrawMobblerBitmap(iMobblerBitmapLastFM, iPointLastFM);
+	DrawMobblerBitmap(iMobblerBitmapLastFm, iPointLastFm);
 		
 	// Draw the title details line
 	iTitleMarquee->Start(iTitleText, iMobblerFont->WidthZeroInPixels(), iMobblerFont->TextWidthInPixels(iTitleText), iRectTitleText.Width());

@@ -21,8 +21,8 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-#include <mobbler_strings.rsg>
 #include <aknnotewrappers.h>
+#include <mobbler_strings.rsg>
 
 #include "mobblerappui.h"
 #include "mobbleraudiocontrol.h"
@@ -41,7 +41,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 const TInt KDefaultMaxVolume(10);
 
 // The radio should timeout and delete its playlists after 5 minutes
-// so that we do not get tracks that can't be dowloaded when restarting
+// so that we do not get tracks that can't be downloaded when restarting
 const TTimeIntervalMicroSeconds32 KRadioTimeout(5 * 60 * 1000000);
 
 CMobblerRadioPlayer* CMobblerRadioPlayer::NewL(CMobblerLastFMConnection& aSubmitter, TTimeIntervalSeconds aPreBufferSize, TInt aEqualizerIndex, TInt aVolume)
@@ -86,7 +86,7 @@ void CMobblerRadioPlayer::RunL()
 	{
 	if (iStatus.Int() == KErrNone)
 		{
-		// The radio has not been playing for 5 minutes delete the playlists
+		// The radio has not been playing for 5 minutes - delete the playlists
 		delete iCurrentPlaylist;
 		iCurrentPlaylist = NULL;
 		delete iNextPlaylist;
@@ -145,7 +145,7 @@ void CMobblerRadioPlayer::DoChangeTransactionStateL(TTransactionState aTransacti
 	iTransactionState = aTransactionState;
 	
 	const TInt KObserverCount(iObservers.Count());
-	for (TInt i(0) ; i < KObserverCount ; ++i)
+	for (TInt i(0); i < KObserverCount; ++i)
 		{
 		iObservers[i]->HandleRadioStateChangedL();
 		}
@@ -352,7 +352,7 @@ void CMobblerRadioPlayer::DataL(const TDesC8& aData, TInt aError)
 		
 		if (aData.Length() != 0)
 			{
-			// Display an error if we were given some text because this is a fale response from Last.fm
+			// Display an error if we were given some text because this is a false response from Last.fm
 			
 			CMobblerString* errorText = CMobblerString::NewL(aData);
 			CleanupStack::PushL(errorText);

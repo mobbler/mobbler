@@ -1,7 +1,7 @@
 /*
-mobblertrack.cpp
+mobblertimeout.cpp
 
-mobbler, a last.fm mobile scrobbler for Symbian smartphones.
+Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
 Copyright (C) 2008  Michael Coffey
 
 http://code.google.com/p/mobbler
@@ -21,8 +21,8 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-#include "mobblertimeout.h"
 #include "mobblerappui.h"
+#include "mobblertimeout.h"
 
 CMobblerTimeout* CMobblerTimeout::NewL(const TTimeIntervalMicroSeconds32& aTimeoutTime)
 	{
@@ -71,3 +71,5 @@ void CMobblerTimeout::DoCancel()
 	{
 	iTimer.Cancel();
 	}
+
+// End of file
