@@ -39,7 +39,9 @@ private:
 		{
 		ENone,
 		EFetchingAlbumInfo,
-		EFetchingAlbumArt
+		EFetchingAlbumArt,
+		EFetchingArtistInfo,
+		EFetchingArtistImage
 		};
 public:
 	static CMobblerTrack* NewL(const TDesC8& aArtist,

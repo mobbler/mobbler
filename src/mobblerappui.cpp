@@ -519,7 +519,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 				CMobblerString* artistString = CMobblerString::NewL(artist);
 				CleanupStack::PushL(artistString);
 				RadioStartL(CMobblerLastFMConnection::EArtist, artistString);
-				CleanupStack::Pop(artistString);
+				CleanupStack::PopAndDestroy(artistString);
 				}
 			}
 			break;
@@ -546,7 +546,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 				CMobblerString* tagString = CMobblerString::NewL(tag);
 				CleanupStack::PushL(tagString);
 				RadioStartL(CMobblerLastFMConnection::ETag, tagString);
-				CleanupStack::Pop(tagString);
+				CleanupStack::PopAndDestroy(tagString);
 				}
 			}
 			break;
@@ -573,7 +573,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 				CMobblerString* userString = CMobblerString::NewL(user);
 				CleanupStack::PushL(userString);
 				RadioStartL(CMobblerLastFMConnection::EPersonal, userString);
-				CleanupStack::Pop(userString);
+				CleanupStack::PopAndDestroy(userString);
 				}
 			}
 			break;

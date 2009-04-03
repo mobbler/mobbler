@@ -623,6 +623,7 @@ void CMobblerLastFMConnection::ArtistGetInfoL(const TDesC& aArtist, MMobblerFlat
 	CMobblerTransaction* transaction = CMobblerTransaction::NewL(*this, uri);
 	transaction->SetFlatDataObserver(&aObserver);
 	
+	CleanupStack::PopAndDestroy(query);
 	CleanupStack::Pop(uri);
 	
 	AppendAndSubmitTransactionL(transaction);

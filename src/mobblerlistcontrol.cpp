@@ -422,7 +422,7 @@ void CMobblerListControl::RequestImagesL() const
 	
 	if (iList.Count() > 0)
 		{
-		// We have recieved items for the list
+		// We have received items for the list
 		
 		for (TInt i(Max(iListBox->TopItemIndex() - 2, 0)); i <= Min(iListBox->BottomItemIndex() + 2, iList.Count() - 1); ++i)
 			{
