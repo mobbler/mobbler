@@ -540,7 +540,6 @@ RESOURCE ARRAY r_mobbler_texts_enum
 RESOURCE AVKON_SETTING_PAGE r_mobbler_setting_page_accelerometer
 	{
 	number = 0;
-	label = STR_mobbler_accelerometer; 
 	type = EAknCtPopupSettingList;
 	editor_resource_id = r_mobbler_binary_popup_setting_list_accelerometer;
 	}
@@ -561,8 +560,8 @@ RESOURCE ARRAY r_mobbler_on_off_texts_accelerometer
 	{
 	items =
 		{
-		AVKON_ENUMERATED_TEXT { value = 0; text = STR_mobbler_accelerometer_off; },
-		AVKON_ENUMERATED_TEXT { value = 1; text = STR_mobbler_accelerometer_on; }
+		AVKON_ENUMERATED_TEXT { value = 0; text = "" },
+		AVKON_ENUMERATED_TEXT { value = 1; text = "" }
 		};
 	}
 
@@ -570,8 +569,8 @@ RESOURCE ARRAY r_mobbler_popped_up_on_off_texts_accelerometer
 	{
 	items =
 		{
-		LBUF { txt = STR_mobbler_accelerometer_off; },
-		LBUF { txt = STR_mobbler_accelerometer_on; }
+		LBUF { txt = ""; },
+		LBUF { txt = ""; }
 		};
 	}
 
