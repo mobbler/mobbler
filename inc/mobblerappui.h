@@ -32,9 +32,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "mobblerdownload.h"
 #include "mobblerlastfmconnectionobserver.h"
 #include "mobblersleeptimer.h"
+#include "mobblergesturesinterface.h"
 
 const TVersion KVersion(0, 4, 0);
-
 _LIT(KFormatTime, "%F%D %N %-B%J%:1%T%+B"); // 21 March 11:20 am
 
 //#define BETA_BUILD
@@ -61,7 +61,8 @@ class CMobblerAppUi : public CAknViewAppUi,
 						public MMobblerDownloadObserver,
 						public MMobblerSleepTimerNotify,
 						public MRemConCoreApiTargetObserver,
-						public MMobblerFlatDataObserver
+						public MMobblerFlatDataObserver,
+						public MMobblerGestures
 	{
 public:
 	enum TState
@@ -96,6 +97,7 @@ public:
 	void SetDetailsL(const TDesC& aUsername, const TDesC& aPassword);
 	void SetIapIDL(TUint32 aIapID);
 	void SetBufferSize(TTimeIntervalSeconds aBufferSize);
+	void SetAccelerometerGestures(TBool aAccelerometerGestures);
 	
 	TInt Scrobbled() const;
 	TInt Queued() const;
@@ -146,6 +148,12 @@ private: // from MMobblerSleepTimerNotify
 private: // auto-repeat audio button callbacks
 	static TInt VolumeUpCallBackL(TAny *self);
 	static TInt VolumeDownCallBackL(TAny *self);
+
+private:
+	void LoadGesturesPluginL();
+
+	// Gestures, from MMobblerGestures
+	void HandleSingleShakeL(TMobblerShakeGestureDirection aDirection);
 	
 	// Observer of media button clicks
 	void MrccatoCommand(TRemConCoreApiOperationId aOperationId, TRemConCoreApiButtonAction aButtonAct);
@@ -164,6 +172,10 @@ private:
 	CMobblerRadioPlayer* iRadioPlayer;
 	CMobblerMusicAppListener* iMusicListener;
 
+	// Gesture observer plugin
+	TUid iGesturePluginDtorUid;
+	CMobblerGesturesInterface* iGesturePlugin;
+	
 	// The current track submit and queue count
 	TInt iTracksSubmitted;
 	TInt iTracksQueued;

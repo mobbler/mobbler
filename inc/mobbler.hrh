@@ -122,6 +122,7 @@ enum TMobblerSettingItemListViewCommands
 enum TMobblerControls
 	{
 	EMobblerSettingItemListViewConnectingDialog = 0x7000,
+	EMobblerSettingItemAccelerometer,
 	EMobblerProgressNoteId,
 	EMobblerQuery,
 	EMobblerGetLatestLanguageNote,

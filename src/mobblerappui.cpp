@@ -61,6 +61,9 @@ enum TSleepTimerAction
 	ExitMobber
 	};
 
+// Gesture interface
+const TUid KGesturesInterfaceUid = {0xA000B6CF};
+
 void CMobblerAppUi::ConstructL()
 	{
 	iResourceReader = CMobblerResourceReader::NewL();
@@ -110,6 +113,14 @@ void CMobblerAppUi::ConstructL()
 	AddViewL(iWebServicesView);
 	
 	iLastFMConnection->SetModeL(iSettingView->Mode());
+
+	// Attempt to load gesture plug-in
+	iGesturePlugin = NULL;
+	TRAP_IGNORE(LoadGesturesPluginL());
+	if (iGesturePlugin && iSettingView->AccelerometerGestures())
+		{
+		SetAccelerometerGestures(ETrue);
+		}
 	}
 
 TInt CMobblerAppUi::VolumeUpCallBackL(TAny *aSelf)
@@ -268,6 +279,18 @@ void CMobblerAppUi::SetBufferSize(TTimeIntervalSeconds aBufferSize)
 	iRadioPlayer->SetPreBufferSize(aBufferSize);
 	}
 
+void CMobblerAppUi::SetAccelerometerGestures(TBool aAccelerometerGestures)
+	{
+	if (iGesturePlugin && aAccelerometerGestures)
+		{
+		iGesturePlugin->ObserveGesturesL(*this);
+		}
+	else if (iGesturePlugin)
+		{
+		iGesturePlugin->StopObserverL(*this);
+		}
+	}
+
 const CMobblerTrack* CMobblerAppUi::CurrentTrack() const
 	{
 	const CMobblerTrack* track = iRadioPlayer->CurrentTrack();
@@ -322,7 +345,13 @@ CMobblerAppUi::CMobblerAppUi()
 	}
 
 CMobblerAppUi::~CMobblerAppUi()
-	{	
+	{
+	if (iGesturePlugin)
+		{
+		REComSession::DestroyedImplementation(iGesturePluginDtorUid);
+		delete iGesturePlugin;
+		}
+
 	delete iPreviousRadioArtist;
 	delete iPreviousRadioTag;
 	delete iPreviousRadioPersonal;
@@ -1493,6 +1522,98 @@ void CMobblerAppUi::TimerExpiredL(TAny* /*aTimer*/, TInt aError)
 		// Reset the timer
 		iSleepTimer->AtUTC(iTimeToSleep);
 		}	
+	}
+
+
+// Gesture plug-in functions
+void CMobblerAppUi::LoadGesturesPluginL()
+	{
+	// Finding implementations of the gesture plug-in interface.
+	// Preferably, we should load the 5th edition plug-in, as it provides
+	// extra functionality.
+	// Failing this, load the 3rd edition plugin.
+	// Otherwise, accelerometer support is not available.
+	
+	const TUid KMobblerGesturePlugin5xUid = {0xA000B6C2};
+	
+	RImplInfoPtrArray implInfoPtrArray;
+	CleanupClosePushL(implInfoPtrArray);
+	
+	REComSession::ListImplementationsL(KGesturesInterfaceUid, implInfoPtrArray);
+	
+	const TInt KImplCount(implInfoPtrArray.Count());
+	if (KImplCount < 1)
+		{		
+		// Plug-in not found.
+		User::Leave(KErrNotFound);
+		}
+	
+	TUid dtorIdKey;
+	CMobblerGesturesInterface* mobblerGestures(NULL);
+
+	// Search for the preferred plug-in implementation
+	TBool fifthEditionPluginLoaded(EFalse);
+	for (TInt i(0); i < KImplCount; ++i)
+		{
+		TUid currentImplUid(implInfoPtrArray[i]->ImplementationUid());	
+		if (currentImplUid == KMobblerGesturePlugin5xUid)
+			{
+			// Found it, attempt to load it
+			TRAPD(error, mobblerGestures = static_cast<CMobblerGesturesInterface*>(REComSession::CreateImplementationL(currentImplUid, dtorIdKey)));
+			if (error == KErrNone)
+				{
+				fifthEditionPluginLoaded = ETrue;
+				iGesturePlugin = mobblerGestures;
+				iGesturePluginDtorUid = dtorIdKey;
+				}
+			else
+				{
+				REComSession::DestroyedImplementation(dtorIdKey);
+				}
+			}
+		}
+	
+	// If we didn't load the preferred plug-in, try all other plug-ins
+	if (! fifthEditionPluginLoaded)
+		{
+		for (TInt i(0); i < KImplCount; ++i)
+			{
+			TUid currentImplUid(implInfoPtrArray[i]->ImplementationUid());
+			if (currentImplUid != KMobblerGesturePlugin5xUid)
+				{
+				TRAPD(error, mobblerGestures = static_cast<CMobblerGesturesInterface*>(REComSession::CreateImplementationL(currentImplUid, dtorIdKey)));
+				if (error == KErrNone)
+					{
+					iGesturePlugin = mobblerGestures;
+					iGesturePluginDtorUid = dtorIdKey;
+					}
+				else
+					{
+					REComSession::DestroyedImplementation(dtorIdKey);
+					}
+				}
+			}
+		}
+	
+	implInfoPtrArray.ResetAndDestroy();
+	CleanupStack::PopAndDestroy(&implInfoPtrArray);
+	}
+
+void CMobblerAppUi::HandleSingleShakeL(TMobblerShakeGestureDirection aDirection)
+	{
+	switch(aDirection)
+		{
+		case EShakeRight:
+			// Using shake to the right for skip gesture
+			if (RadioPlayer().CurrentTrack())
+					{
+					RadioPlayer().NextTrackL();
+					}
+			break;
+		default:
+			// Other directions currently do nothing.
+			break;
+		}
 	}
 
 // End of File

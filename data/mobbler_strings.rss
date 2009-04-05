@@ -90,6 +90,9 @@ RESOURCE STRING r_mobbler_download_album_art			{ text = STR_mobbler_download_alb
 RESOURCE STRING r_mobbler_download_album_art_never		{ text = STR_mobbler_download_album_art_never; }
 RESOURCE STRING r_mobbler_download_album_art_radio_only	{ text = STR_mobbler_download_album_art_radio_only; }
 RESOURCE STRING r_mobbler_download_album_art_always_when_online	{ text = STR_mobbler_download_album_art_always_when_online; }
+RESOURCE STRING r_mobbler_accelerometer_gestures		{ text = STR_mobbler_accelerometer_gestures; }
+RESOURCE STRING r_mobbler_accelerometer_gestures_on		{ text = STR_mobbler_accelerometer_gestures_on; }
+RESOURCE STRING r_mobbler_accelerometer_gestures_off	{ text = STR_mobbler_accelerometer_gestures_off; }
 
 // Other resources
 

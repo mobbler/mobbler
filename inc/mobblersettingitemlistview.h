@@ -54,7 +54,8 @@ public:
 	TTime NextUpdateCheck()			{ return iSettings->NextUpdateCheck(); }
 	CMobblerLastFMConnection::TMode Mode() { return iSettings->Mode(); }
 	TInt DownloadAlbumArt() const	{ return iSettings->DownloadAlbumArt(); }
-
+	TBool AccelerometerGestures() { return iSettings->AccelerometerGestures(); }
+	
 	void SetEqualizerIndexL(TInt aIndex);
 	void SetVolumeL(TInt aVolume);
 	void SetSleepTimerMinutesL(TInt aSleepTimerMinutes);

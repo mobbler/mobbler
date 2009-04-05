@@ -54,6 +54,12 @@
 "$(EPOCROOT)\epoc32\release\$(PLATFORM)\$(TARGET)\mobblercontentlisting.dll"-"!:\sys\bin\mobblercontentlisting.dll"
 "$(EPOCROOT)\epoc32\data\z\resource\plugins\mobblercontentlisting.rsc"-"!:\resource\plugins\mobblercontentlisting.rsc"
 
+; Gesture plugin (uses sensor framework)
+"$(EPOCROOT)epoc32\release\$(PLATFORM)\$(TARGET)\gestureobserver3x.dll"-"!:\sys\bin\gestureobserver3x.dll"
+"$(EPOCROOT)epoc32\data\z\resource\plugins\gestureobserver3x.rsc"-"!:\resource\plugins\gestureobserver3x.rsc"
+"$(EPOCROOT)epoc32\release\$(PLATFORM)\$(TARGET)\gestureobserver5x.dll"-"!:\sys\bin\gestureobserver5x.dll"
+"$(EPOCROOT)epoc32\data\z\resource\plugins\gestureobserver5x.rsc"-"!:\resource\plugins\gestureobserver5x.rsc"
+
 ; Graphics
 "$(EPOCROOT)epoc32\data\z\resource\apps\mobbler\scrobble.png"-		"!:\resource\apps\mobbler\scrobble.png"
 "$(EPOCROOT)epoc32\data\z\resource\apps\mobbler\icon_track.png"-		"!:\resource\apps\mobbler\icon_track.png"

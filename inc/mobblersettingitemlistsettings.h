@@ -83,6 +83,9 @@ public:
 	TInt& DownloadAlbumArt() { return iDownloadAlbumArt; }
 	void SetDownloadAlbumArt(TInt aDownloadAlbumArt) { iDownloadAlbumArt = aDownloadAlbumArt; }
 
+	TBool& AccelerometerGestures() { return iAccelerometerGestures; }
+	void SetAccelerometerGestures(TBool aAccelerometerGestures) { iAccelerometerGestures = aAccelerometerGestures; }
+
 protected:
 	TBuf<30> iUsername;
 	TBuf<30> iPassword;
@@ -97,6 +100,7 @@ protected:
 	TTime iNextUpdateCheck;
 	CMobblerLastFMConnection::TMode iMode;
 	TInt iDownloadAlbumArt;
+	TBool iAccelerometerGestures;
 	};
 
 #endif // __MOBBLERSETTINGITEMLISTSETTINGS_H__
