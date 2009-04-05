@@ -560,8 +560,8 @@ RESOURCE ARRAY r_mobbler_on_off_texts_accelerometer
 	{
 	items =
 		{
-		AVKON_ENUMERATED_TEXT { value = 0; text = "" },
-		AVKON_ENUMERATED_TEXT { value = 1; text = "" }
+		AVKON_ENUMERATED_TEXT { value = 0; text = ""; },
+		AVKON_ENUMERATED_TEXT { value = 1; text = ""; }
 		};
 	}
 
