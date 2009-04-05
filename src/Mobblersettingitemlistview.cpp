@@ -211,11 +211,14 @@ void CMobblerSettingItemListView::LoadListL()
 					  R_MOBBLER_BACKLIGHT_ON_WHEN_ACTIVE);
 	
 	// Accelerometer Gestures binary popup setting item
-	CreateBinaryItemL(iSettings->AccelerometerGestures(),
-					  R_MOBBLER_ACCELEROMETER_GESTURES,
-					  R_MOBBLER_SETTING_PAGE_ACCELEROMETER,
-					  R_MOBBLER_ACCELEROMETER_GESTURES_OFF,
-					  R_MOBBLER_ACCELEROMETER_GESTURES_ON);
+	if (static_cast<CMobblerAppUi*>(AppUi())->AccelerometerGesturesAvailable())
+		{
+		CreateBinaryItemL(iSettings->AccelerometerGestures(),
+							  R_MOBBLER_ACCELEROMETER_GESTURES,
+							  R_MOBBLER_SETTING_PAGE_ACCELEROMETER,
+							  R_MOBBLER_ACCELEROMETER_GESTURES_OFF,
+							  R_MOBBLER_ACCELEROMETER_GESTURES_ON);
+		}
 	
 	// Required when there is only one setting item
 	iMobblerSettingItemList->SettingItemArray()->RecalculateVisibleIndicesL();

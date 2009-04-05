@@ -98,6 +98,7 @@ public:
 	void SetIapIDL(TUint32 aIapID);
 	void SetBufferSize(TTimeIntervalSeconds aBufferSize);
 	void SetAccelerometerGestures(TBool aAccelerometerGestures);
+	TBool AccelerometerGesturesAvailable() const;
 	
 	TInt Scrobbled() const;
 	TInt Queued() const;

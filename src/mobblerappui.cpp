@@ -123,6 +123,11 @@ void CMobblerAppUi::ConstructL()
 		}
 	}
 
+TBool CMobblerAppUi::AccelerometerGesturesAvailable() const
+	{
+	return (iGesturePlugin != NULL);
+	}
+
 TInt CMobblerAppUi::VolumeUpCallBackL(TAny *aSelf)
 	{
 	CMobblerAppUi* self = static_cast<CMobblerAppUi*>(aSelf);
