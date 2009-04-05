@@ -255,9 +255,11 @@ void CMobblerTransaction::MHFRunL(RHTTPTransaction aTransaction, const THTTPEven
 			aTransaction.Response().Body()->ReleaseData();
 			break;
 		case THTTPEvent::ESucceeded:
+			{
 			HBufC8* response = iBuffer->Ptr(0).AllocLC();
 			iConnection.TransactionResponseL(this, *response);
 			CleanupStack::PopAndDestroy(response);
+			}
 		case THTTPEvent::ECancel:
 		case THTTPEvent::EClosed:
 			iConnection.TransactionCompleteL(this);

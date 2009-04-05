@@ -99,7 +99,7 @@ CMobblerBitmapCollection::~CMobblerBitmapCollection()
 	
 CMobblerBitmap& CMobblerBitmapCollection::BitmapL(MMobblerBitmapObserver& aObserver, TInt aId) const
 	{
-	CMobblerBitmap* bitmap;
+	CMobblerBitmap* bitmap(NULL);
 	
 	TInt position = iBitmaps.FindInOrder(aId, CBitmapCollectionItem::Compare);
 	

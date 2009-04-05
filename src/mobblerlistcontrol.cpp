@@ -486,6 +486,11 @@ TKeyResponse CMobblerListControl::OfferKeyEventL(const TKeyEvent& aKeyEvent, TEv
 			// Forward up and down key press events to the list box
 			return iListBox->OfferKeyEventL(aKeyEvent, aEventCode);
 			}
+		case EKeyDevice3:
+			{
+			HandleListCommandL(EMobblerCommandOpen);
+			return EKeyWasConsumed;
+			}
 		default:
 			break;
 		}

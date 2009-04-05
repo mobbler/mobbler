@@ -57,8 +57,6 @@
 ; Gesture plugin (uses sensor framework)
 "$(EPOCROOT)epoc32\release\$(PLATFORM)\$(TARGET)\gestureobserver3x.dll"-"!:\sys\bin\gestureobserver3x.dll"
 "$(EPOCROOT)epoc32\data\z\resource\plugins\gestureobserver3x.rsc"-"!:\resource\plugins\gestureobserver3x.rsc"
-"$(EPOCROOT)epoc32\release\$(PLATFORM)\$(TARGET)\gestureobserver5x.dll"-"!:\sys\bin\gestureobserver5x.dll"
-"$(EPOCROOT)epoc32\data\z\resource\plugins\gestureobserver5x.rsc"-"!:\resource\plugins\gestureobserver5x.rsc"
 
 ; Graphics
 "$(EPOCROOT)epoc32\data\z\resource\apps\mobbler\scrobble.png"-		"!:\resource\apps\mobbler\scrobble.png"
@@ -131,7 +129,7 @@
 "$(EPOCROOT)epoc32\data\z\resource\apps\mobbler_strings.r68"
 "$(EPOCROOT)epoc32\data\z\resource\apps\mobbler_strings.r76"
 "$(EPOCROOT)epoc32\data\z\resource\apps\mobbler_strings.r78"
-}-"C:\resource\apps\mobbler_strings.rsc"
+}-"!:\resource\apps\mobbler_strings.rsc"
 
 ; The application registration file
 "$(EPOCROOT)epoc32\data\z\private\10003a3f\apps\mobbler_reg.r01"-"!:\private\10003a3f\import\apps\mobbler_reg.rsc"

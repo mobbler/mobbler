@@ -1722,6 +1722,7 @@ void CMobblerLastFMConnection::MHFRunL(RHTTPTransaction aTransaction, const THTT
 	switch (aEvent.iStatus)
 		{
 		case THTTPEvent::EGotResponseBodyData:
+			{
 			aTransaction.Response().Body()->GetNextDataPart(nextDataPartPtr);
 			TInt dataSize = aTransaction.Response().Body()->OverallDataSize();
 			if (iTrackDownloadObserver)
@@ -1729,6 +1730,7 @@ void CMobblerLastFMConnection::MHFRunL(RHTTPTransaction aTransaction, const THTT
 				iTrackDownloadObserver->DataPartL(nextDataPartPtr, dataSize);
 				}
 			aTransaction.Response().Body()->ReleaseData();
+			}
 			break;
 		case THTTPEvent::EFailed:
 			if (iTrackDownloadObserver)

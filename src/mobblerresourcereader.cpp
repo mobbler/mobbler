@@ -23,17 +23,18 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <aknnotewrappers.h>
 #include <barsread.h>
+#include <bautils.h> 
 #include <mobbler.rsg>
 #include <mobbler_strings.rsg>
 
 #include "mobblerresourcereader.h"
 
 #if defined(__WINS__)
-_LIT(KLanguageRscFile, "Z:\\Resource\\apps\\mobbler_strings.r01");
-_LIT(KLanguageRscFile2,"Z:\\Resource\\apps\\mobbler_strings2.r01");
+_LIT(KLanguageRscFile, "\\Resource\\apps\\mobbler_strings.r01");
+_LIT(KLanguageRscFile2,"\\Resource\\apps\\mobbler_strings2.r01");
 #else
-_LIT(KLanguageRscFile, "C:\\Resource\\apps\\mobbler_strings.rsc");
-_LIT(KLanguageRscFile2,"C:\\Resource\\apps\\mobbler_strings2.rsc");
+_LIT(KLanguageRscFile, "\\Resource\\apps\\mobbler_strings.rsc");
+_LIT(KLanguageRscFile2,"\\Resource\\apps\\mobbler_strings2.rsc");
 #endif
 	
 const TInt KLanguageRscVersion(1);
@@ -87,6 +88,16 @@ void CMobblerResourceReader::ConstructL()
 	iStringNotFoundInResouce = KStringNotFoundInResouce().AllocL();
 	
 	User::LeaveIfError(iTimer.CreateLocal());
+	
+	TParse parse;
+	TFileName appFullName = RProcess().FileName();
+	parse.Set(appFullName, NULL, NULL);
+	
+	iLanguageRscFile.Append(parse.Drive());
+	iLanguageRscFile.Append(KLanguageRscFile);
+	
+	iLanguageRscFile2.Append(parse.Drive());
+	iLanguageRscFile2.Append(KLanguageRscFile2);
 	}
 
 CMobblerResourceReader::~CMobblerResourceReader()
@@ -129,10 +140,10 @@ const TDesC& CMobblerResourceReader::ResourceL(TInt aResourceId)
 			{
 			// We are not active so the file must be closed
 			
-			TRAPD(error, iResourceFile.OpenL(CCoeEnv::Static()->FsSession(), KLanguageRscFile2));
+			TRAPD(error, iResourceFile.OpenL(CCoeEnv::Static()->FsSession(), iLanguageRscFile2));
 			if (error != KErrNone)
 				{
-				iResourceFile.OpenL(CCoeEnv::Static()->FsSession(), KLanguageRscFile);
+				iResourceFile.OpenL(CCoeEnv::Static()->FsSession(), iLanguageRscFile);
 				}
 			
 			TRAP(error, iResourceFile.ConfirmSignatureL(KLanguageRscVersion));
