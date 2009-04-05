@@ -31,10 +31,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #if defined(__WINS__)
 _LIT(KLanguageRscFile, "\\Resource\\apps\\mobbler_strings.r01");
-_LIT(KLanguageRscFile2,"\\Resource\\apps\\mobbler_strings2.r01");
+_LIT(KLanguageRscFile2,"C:\\Resource\\apps\\mobbler_strings2.r01");
 #else
 _LIT(KLanguageRscFile, "\\Resource\\apps\\mobbler_strings.rsc");
-_LIT(KLanguageRscFile2,"\\Resource\\apps\\mobbler_strings2.rsc");
+_LIT(KLanguageRscFile2,"C:\\Resource\\apps\\mobbler_strings2.rsc");
 #endif
 	
 const TInt KLanguageRscVersion(1);
@@ -96,7 +96,6 @@ void CMobblerResourceReader::ConstructL()
 	iLanguageRscFile.Append(parse.Drive());
 	iLanguageRscFile.Append(KLanguageRscFile);
 	
-	iLanguageRscFile2.Append(parse.Drive());
 	iLanguageRscFile2.Append(KLanguageRscFile2);
 	}
 
