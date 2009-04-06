@@ -473,18 +473,15 @@ void CMobblerListControl::HandleListBoxEventL(CEikListBox* /*aListBox*/, TListBo
 
 TKeyResponse CMobblerListControl::OfferKeyEventL(const TKeyEvent& aKeyEvent, TEventCode aEventCode)
 	{
-	if(aEventCode != EEventKey)
-		{
-		return EKeyWasNotConsumed;
-		}
-
+	RequestImagesL();
+	
 	switch(aKeyEvent.iCode)
 		{
-		case EKeyUpArrow:
-		case EKeyDownArrow:
+		case EKeyLeftArrow:
+		case EKeyRightArrow:
 			{
 			// Forward up and down key press events to the list box
-			return iListBox->OfferKeyEventL(aKeyEvent, aEventCode);
+			return EKeyWasNotConsumed;
 			}
 		case EKeyDevice3:
 			{
@@ -495,7 +492,7 @@ TKeyResponse CMobblerListControl::OfferKeyEventL(const TKeyEvent& aKeyEvent, TEv
 			break;
 		}
 	
-	return EKeyWasNotConsumed;
+	return iListBox->OfferKeyEventL(aKeyEvent, aEventCode);
 	}
 
 
