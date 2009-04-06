@@ -537,44 +537,6 @@ RESOURCE ARRAY r_mobbler_texts_enum
 		};
 	}
 
-RESOURCE AVKON_SETTING_PAGE r_mobbler_setting_page_accelerometer
-	{
-	number = 0;
-	type = EAknCtPopupSettingList;
-	editor_resource_id = r_mobbler_binary_popup_setting_list_accelerometer;
-	}
-
-RESOURCE POPUP_SETTING_LIST r_mobbler_binary_popup_setting_list_accelerometer
-	{
-	flags = 0;
-	}
-
-RESOURCE AVKON_POPUP_SETTING_TEXTS r_mobbler_popup_setting_binary_texts_accelerometer
-	{
-	flags = 0;
-	setting_texts_resource   = r_mobbler_on_off_texts_accelerometer;
-	popped_up_texts_resource = r_mobbler_popped_up_on_off_texts_accelerometer;
-	}
-
-RESOURCE ARRAY r_mobbler_on_off_texts_accelerometer
-	{
-	items =
-		{
-		AVKON_ENUMERATED_TEXT { value = 0; text = ""; },
-		AVKON_ENUMERATED_TEXT { value = 1; text = ""; }
-		};
-	}
-
-RESOURCE ARRAY r_mobbler_popped_up_on_off_texts_accelerometer
-	{
-	items =
-		{
-		LBUF { txt = ""; },
-		LBUF { txt = ""; }
-		};
-	}
-
-
 RESOURCE AVKON_SETTING_PAGE r_mobbler_slider_setting_page_buffer_size
 	{
 	label = "";

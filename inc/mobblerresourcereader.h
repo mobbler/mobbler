@@ -60,7 +60,6 @@ private:
 private:
 	HBufC* iStringNotFoundInResouce;
 	TFileName iLanguageRscFile;
-	TFileName iLanguageRscFile2;
 	
 	RTimer iTimer;
 	
