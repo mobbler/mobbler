@@ -40,6 +40,7 @@ class CMobblerParser;
 class CMobblerTrack;
 class MMobblerLastFMConnectionObserver;
 class CMobblerTransaction;
+class CMobblerString;
 
 class MMobblerSegDataObserver
 	{
@@ -183,6 +184,9 @@ private:
 	void HandshakeL();
 	void WSHandshakeL();
 	void RadioHandshakeL();
+#ifdef BETA_BUILD
+	void BetaHandshakeL();
+#endif
 	
 	void HandleHandshakeErrorL(CMobblerLastFMError* aError);
 	
@@ -219,6 +223,10 @@ private:
 	CMobblerTransaction* iHandshakeTransaction;
 	CMobblerTransaction* iRadioHandshakeTransaction;
 	CMobblerTransaction* iWebServicesHandshakeTransaction;
+#ifdef BETA_BUILD
+	CMobblerTransaction* iBetaTestersTransaction;
+	TBool iIsBetaTester;
+#endif
 	
 	// scrobble transactions
 	CMobblerTransaction* iNowPlayingTransaction;
@@ -232,8 +240,8 @@ private:
 	
 	TBool iSubscriber;
 
-	HBufC* iUsername;
-	HBufC* iPassword;
+	CMobblerString* iUsername;
+	CMobblerString* iPassword;
 	
 	HBufC8* iSessionID;
 	

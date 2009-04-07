@@ -43,6 +43,9 @@ public:
 	static CMobblerLastFMError* ParseHandshakeL(const TDesC8& aHandshakeResponse, HBufC8*& aSessionId, HBufC8*& aNowPlayingURL, HBufC8*& aSubmitURL);
 	static CMobblerLastFMError* ParseRadioHandshakeL(const TDesC8& aRadioHandshakeResponse, HBufC8*& aRadioSessionID, HBufC8*& aRadioBaseURL, HBufC8*& aRadioBasePath);
 	static CMobblerLastFMError* ParseWebServicesHandshakeL(const TDesC8& aWebServicesHandshakeResponse, HBufC8*& aWebServicesSessionKey);
+#ifdef BETA_BUILD
+	static CMobblerLastFMError* ParseBetaTestersHandshakeL(const TDesC8& aHandshakeResponse, const TDesC8& aUsername, TBool& aIsBetaTester);
+#endif
 	static CMobblerLastFMError* ParseScrobbleResponseL(const TDesC8& aScrobbleResponse);
 	
 	static CMobblerLastFMError* ParseRadioSelectStationL(const TDesC8& aXML);

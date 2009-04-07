@@ -466,6 +466,47 @@ CMobblerLastFMError* CMobblerParser::ParseWebServicesHandshakeL(const TDesC8& aW
 	return error;
 	}
 
+#ifdef BETA_BUILD
+CMobblerLastFMError* CMobblerParser::ParseBetaTestersHandshakeL(const TDesC8& aHandshakeResponse, const TDesC8& aUsername, TBool& aIsBetaTester)
+	{
+	CMobblerLastFMError* error = NULL;
+	
+	// create the xml reader and dom fragement and associate them with each other 
+	CSenXmlReader* xmlReader = CSenXmlReader::NewL();
+	CleanupStack::PushL(xmlReader);
+	CSenDomFragment* domFragment = CSenDomFragment::NewL();
+	CleanupStack::PushL(domFragment);
+	xmlReader->SetContentHandler(*domFragment);
+	domFragment->SetReader(*xmlReader);
+	
+	// parse the xml into the dom fragment
+	xmlReader->ParseL(aHandshakeResponse);
+	
+	RPointerArray<CSenElement>& testers = domFragment->AsElement().ElementsL();
+	
+	aIsBetaTester = EFalse;
+	
+	const TInt KTesterCount(testers.Count());
+	for (TInt i(0) ; i < KTesterCount ; ++i)
+		{
+		if (testers[i]->Content().CompareF(aUsername) == 0)
+			{
+			aIsBetaTester = ETrue;
+			break;
+			}
+		}
+	
+	if (!aIsBetaTester)
+		{
+		error = CMobblerLastFMError::NewL(_L8("Sorry. You're not registered to use this private beta version. Please visit http://code.google.etc/p/mobbler"), CMobblerLastFMError::EOther);
+		}
+	
+	CleanupStack::PopAndDestroy(2, xmlReader);
+	
+	return error;
+	}
+#endif
+	
 void CMobblerParser::ParseFriendListL(const TDesC8& aXML, CMobblerFriendList& aObserver, RPointerArray<CMobblerListItem>& aList)
 	{
 #ifdef _DEBUG

@@ -64,7 +64,7 @@ _LIT8(KRadioStationNeighbours, "lastfm://user/%S/neighbours");
 _LIT8(KRadioStationRecommended, "lastfm://user/%S/recommended/100");
 
 #ifdef BETA_BUILD
-_LIT8(KLatesverFileLocation, "http://www.mobbler.co.uk/insertbetafilenamehere.xml");
+#include <mobblerbeta.h>
 #else
 _LIT8(KLatesverFileLocation, "http://www.mobbler.co.uk/latestver.xml");
 #endif
@@ -183,20 +183,24 @@ TUint32 CMobblerLastFMConnection::IapID() const
 void CMobblerLastFMConnection::SetDetailsL(const TDesC& aUsername, const TDesC& aPassword)
 	{
 	if (!iUsername
-			|| iUsername && iUsername->CompareF(aUsername) != 0
+			|| iUsername && iUsername->String().CompareF(aUsername) != 0
 			|| !iPassword
-			|| iPassword && iPassword->Compare(aPassword) != 0)
+			|| iPassword && iPassword->String().Compare(aPassword) != 0)
 		{
 		// There is either no username or password set
 		// or there is a new user or password
 		
-		HBufC* tempUsername = aUsername.AllocL();
-		HBufC* tempPassword = aPassword.AllocL();
+		HBufC* usernameLower = HBufC::NewLC(aUsername.Length());
+		usernameLower->Des().Copy(aUsername);
+		usernameLower->Des().LowerCase();
+		CMobblerString* tempUsername = CMobblerString::NewL(*usernameLower);
+		CMobblerString* tempPassword = CMobblerString::NewL(aPassword);
 		delete iUsername;
 		delete iPassword;
 		iUsername = tempUsername;
 		iPassword = tempPassword;
-		iUsername->Des().LowerCase();
+		
+		CleanupStack::PopAndDestroy(usernameLower);
 		
 		if (iMode == EOnline)
 			{
@@ -354,6 +358,9 @@ void CMobblerLastFMConnection::AuthenticateL()
 	HandshakeL();
 	RadioHandshakeL();
 	WSHandshakeL();
+#ifdef BETA_BUILD
+	BetaHandshakeL();
+#endif
 	}
 
 void CMobblerLastFMConnection::WSHandshakeL()
@@ -363,22 +370,16 @@ void CMobblerLastFMConnection::WSHandshakeL()
 	delete iWebServicesSessionKey;
 	iWebServicesSessionKey = NULL;
 	
-	HBufC8* password = HBufC8::NewLC(iPassword->Length());
-	password->Des().Copy(*iPassword);
-	HBufC8* passwordHash = MobblerUtility::MD5LC(*password);
-	
-	HBufC8* username8 = HBufC8::NewLC(iUsername->Length());
-	username8->Des().Copy(*iUsername);
-	
-	HBufC8* usernameAndPasswordHash = HBufC8::NewLC(passwordHash->Length() + iUsername->Length());
-	usernameAndPasswordHash->Des().Copy(*iUsername);
+	HBufC8* passwordHash = MobblerUtility::MD5LC(iPassword->String8());
+	HBufC8* usernameAndPasswordHash = HBufC8::NewLC(passwordHash->Length() + iUsername->String8().Length());
+	usernameAndPasswordHash->Des().Copy(iUsername->String8());
 	usernameAndPasswordHash->Des().Append(*passwordHash);
 	
 	HBufC8* authToken = MobblerUtility::MD5LC(*usernameAndPasswordHash);
 	
 	CMobblerWebServicesQuery* query = CMobblerWebServicesQuery::NewLC(_L8("auth.getMobileSession"));
 	query->AddFieldL(_L8("authToken"), *authToken);
-	query->AddFieldL(_L8("username"), *username8);
+	query->AddFieldL(_L8("username"), iUsername->String8());
 	HBufC8* queryText = query->GetQueryAuthLC();
 	
 	CUri8* uri = CUri8::NewLC();
@@ -392,8 +393,23 @@ void CMobblerLastFMConnection::WSHandshakeL()
 	iWebServicesHandshakeTransaction = CMobblerTransaction::NewL(*this, uri);
 	CleanupStack::Pop(uri);
 	iWebServicesHandshakeTransaction->SubmitL();
-	CleanupStack::PopAndDestroy(7, password);
+	CleanupStack::PopAndDestroy(5, passwordHash);
 	}
+
+#ifdef BETA_BUILD
+void CMobblerLastFMConnection::BetaHandshakeL()
+	{
+	// Start the web services authentications
+	TUriParser8 uriParser;
+	uriParser.Parse(KBetaTestersFileLocation);
+	CUri8* uri = CUri8::NewLC(uriParser);
+	
+	delete iBetaTestersTransaction;
+	iBetaTestersTransaction = CMobblerTransaction::NewL(*this, uri);
+	CleanupStack::Pop(uri);
+	iBetaTestersTransaction->SubmitL();
+	}
+#endif
 
 void CMobblerLastFMConnection::CheckForUpdateL(MMobblerFlatDataObserver& aObserver)
 	{	
@@ -851,10 +867,7 @@ void CMobblerLastFMConnection::WebServicesCallL(const TDesC8& aClass, const TDes
 		{
 		if (aText.Length() == 0)
 			{
-			HBufC8* username8 = HBufC8::NewLC(iUsername->Length());
-			username8->Des().Copy(*iUsername);
-			query->AddFieldL(_L8("user"), *username8);
-			CleanupStack::PopAndDestroy(username8);
+			query->AddFieldL(_L8("user"), iUsername->String8());
 			}
 		else
 			{
@@ -931,20 +944,15 @@ void CMobblerLastFMConnection::RadioHandshakeL()
 	delete iRadioBasePath;
 	iRadioBasePath = NULL;
 	
-	HBufC8* password = HBufC8::NewLC(iPassword->Length());
-	password->Des().Copy(*iPassword);
-	HBufC8* passwordHash = MobblerUtility::MD5LC(*password);
+	HBufC8* passwordHash = MobblerUtility::MD5LC(iPassword->String8());
 	TPtr8 passwordHashPtr(passwordHash->Des());
 	
 	HBufC8* path = HBufC8::NewLC(255);
-	HBufC8* username = HBufC8::NewLC(iUsername->Length());
-	TPtr8 usernamePtr(username->Des());
-	usernamePtr.Copy(*iUsername);
-	
+
 	// get the phone language code
 	TBuf8<2> language = MobblerUtility::LanguageL();
 	
-	path->Des().AppendFormat(KRadioQuery, &usernamePtr, &passwordHashPtr, &language);
+	path->Des().AppendFormat(KRadioQuery, &iUsername->String8(), &passwordHashPtr, &language);
 	
 	CUri8* uri = CUri8::NewLC();
 	
@@ -958,7 +966,7 @@ void CMobblerLastFMConnection::RadioHandshakeL()
 	iRadioHandshakeTransaction->SubmitL();
 	
 	CleanupStack::Pop(uri);
-	CleanupStack::PopAndDestroy(4, password);
+	CleanupStack::PopAndDestroy(2, passwordHash);
 	}
 
 void CMobblerLastFMConnection::RadioStop()
@@ -981,8 +989,7 @@ void CMobblerLastFMConnection::RadioStartL(MMobblerFlatDataObserver* aObserver, 
 	if (aRadioText.Length() == 0)
 		{
 		// no text supplied so use the user
-		text = HBufC8::NewLC(iUsername->Length());
-		text->Des().Copy(*iUsername);
+		text = iUsername->String8().AllocLC();
 		}
 	else
 		{
@@ -1352,7 +1359,11 @@ void CMobblerLastFMConnection::HandleHandshakeErrorL(CMobblerLastFMError* aError
 		{
 		// The handshake was ok
 		
-		if (iSessionID && iRadioSessionID && iWebServicesSessionKey)
+		if (iSessionID && iRadioSessionID && iWebServicesSessionKey
+#ifdef BETA_BUILD
+				&& iIsBetaTester
+#endif
+				)
 			{
 			iAuthenticated = ETrue;
 			
@@ -1438,6 +1449,10 @@ void CMobblerLastFMConnection::CloseTransactionsL(TBool aCloseTransactionArray)
 	iSubmitTransaction = NULL;
 	delete iWebServicesHandshakeTransaction;
 	iWebServicesHandshakeTransaction = NULL;
+#ifdef BETA_BUILD
+	delete iBetaTestersTransaction;
+	iBetaTestersTransaction = NULL;	
+#endif
 	
 	iRadioAudioTransaction.Close();
 	
@@ -1493,6 +1508,15 @@ void CMobblerLastFMConnection::TransactionResponseL(CMobblerTransaction* aTransa
 		HandleHandshakeErrorL(error);
 		CleanupStack::PopAndDestroy(error);
 		}
+#ifdef BETA_BUILD
+	else if (aTransaction == iBetaTestersTransaction)
+		{
+		CMobblerLastFMError* error = CMobblerParser::ParseBetaTestersHandshakeL(aResponse, iUsername->String8(), iIsBetaTester);
+		CleanupStack::PushL(error);
+		HandleHandshakeErrorL(error);
+		CleanupStack::PopAndDestroy(error);
+		}
+#endif
 	else if (aTransaction == iSubmitTransaction)
 		{
 		CMobblerLastFMError* error = CMobblerParser::ParseScrobbleResponseL(aResponse);
@@ -1771,15 +1795,13 @@ TInt CMobblerLastFMConnection::MHFRunError(TInt /*aError*/, RHTTPTransaction /*a
 
 void CMobblerLastFMConnection::CreateAuthToken(TDes8& aHash, TTimeIntervalSeconds aUnixTimeStamp)
 	{
-	HBufC8* password = HBufC8::NewLC(iPassword->Length());
-	password->Des().Copy(*iPassword);
-	HBufC8* passwordHash = MobblerUtility::MD5LC(*password);
+	HBufC8* passwordHash = MobblerUtility::MD5LC(iPassword->String8());
 	HBufC8* passwordHashAndTimeStamp = HBufC8::NewLC(passwordHash->Length() + 20);
 	passwordHashAndTimeStamp->Des().Append(*passwordHash);
 	passwordHashAndTimeStamp->Des().AppendNum(aUnixTimeStamp.Int());
 	HBufC8* authToken = MobblerUtility::MD5LC(*passwordHashAndTimeStamp);
 	aHash.Copy(*authToken);
-	CleanupStack::PopAndDestroy(4, password);
+	CleanupStack::PopAndDestroy(3, passwordHash);
 	}
 	
 void CMobblerLastFMConnection::HandshakeL()
@@ -1804,10 +1826,7 @@ void CMobblerLastFMConnection::HandshakeL()
 	CreateAuthToken(authTokenPtr, unixTimeStamp);
 	
 	HBufC8* path = HBufC8::NewLC(255);
-	HBufC8* username = HBufC8::NewLC(iUsername->Length());
-	TPtr8 usernamePtr(username->Des());
-	usernamePtr.Copy(*iUsername);
-	path->Des().AppendFormat(KScrobbleQuery, &usernamePtr, unixTimeStamp.Int(), &authTokenPtr);
+	path->Des().AppendFormat(KScrobbleQuery, &iUsername->String8(), unixTimeStamp.Int(), &authTokenPtr);
 	
 	CUri8* uri = CUri8::NewLC();
 	
@@ -1819,7 +1838,7 @@ void CMobblerLastFMConnection::HandshakeL()
 	iHandshakeTransaction = CMobblerTransaction::NewL(*this, uri);
 	CleanupStack::Pop(uri);
 	iHandshakeTransaction->SubmitL();
-	CleanupStack::PopAndDestroy(3, authToken);
+	CleanupStack::PopAndDestroy(2, authToken);
 	}
 
 void CMobblerLastFMConnection::LoadTrackQueueL()

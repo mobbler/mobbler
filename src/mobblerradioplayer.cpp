@@ -86,11 +86,14 @@ void CMobblerRadioPlayer::RunL()
 	{
 	if (iStatus.Int() == KErrNone)
 		{
-		// The radio has not been playing for 5 minutes - delete the playlists
-		delete iCurrentPlaylist;
-		iCurrentPlaylist = NULL;
-		delete iNextPlaylist;
-		iNextPlaylist = NULL;
+		if (!CurrentTrack())
+			{
+			// The radio has not been playing for 5 minutes - delete the playlists
+			delete iCurrentPlaylist;
+			iCurrentPlaylist = NULL;
+			delete iNextPlaylist;
+			iNextPlaylist = NULL;
+			}
 		}
 	}
 
@@ -160,6 +163,7 @@ void CMobblerRadioPlayer::HandleAudioPositionChangeL()
 	if (!iNextAudioControl &&
 			iCurrentAudioControl &&
 			iCurrentAudioControl->DownloadComplete() &&
+			iCurrentPlaylist &&
 			(( (*iCurrentPlaylist)[iCurrentTrackIndex]->TrackLength().Int() - (*iCurrentPlaylist)[iCurrentTrackIndex]->PlaybackPosition().Int() ) <= iCurrentAudioControl->PreBufferSize().Int() ))
 		{
 		// There is another track in the playlist.

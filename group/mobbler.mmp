@@ -21,6 +21,9 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
+// uncomment this to use a beta build
+//MACRO BETA_BUILD
+
 /* Mobbler UIDs
 
 0xA0007648 - Mobbler exe
