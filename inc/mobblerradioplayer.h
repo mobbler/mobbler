@@ -25,6 +25,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #define __MOBBLERRADIOPLAYER_H__
 
 #include "mobbleraudiocontrol.h"
+#include "mobblerdataobserver.h"
 #include "mobblerincomingcallmonitorobserver.h"
 
 class CMobblerIncomingCallMonitor;
@@ -104,7 +105,7 @@ private:
 	void DialogDismissedL(TInt aButtonId);
 
 private: // MMobblerRadioPlayer	
-	void DataL(const TDesC8& aData, TInt aError);
+	void DataL(const TDesC8& aData, CMobblerLastFMConnection::TError aError);
 	
 private:
 	void HandleIncomingCallL(TPSTelephonyCallState aPSTelephonyCallState);

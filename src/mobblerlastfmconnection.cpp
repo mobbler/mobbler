@@ -30,6 +30,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "coemain.h"
 #include "mobblerappui.h"
+#include "mobblerdataobserver.h"
 #include "mobblerlastfmconnection.h"
 #include "mobblerlastfmconnectionobserver.h"
 #include "mobblerparser.h"
@@ -64,7 +65,7 @@ _LIT8(KRadioStationNeighbours, "lastfm://user/%S/neighbours");
 _LIT8(KRadioStationRecommended, "lastfm://user/%S/recommended/100");
 
 #ifdef BETA_BUILD
-#include <mobblerbeta.h>
+#include "mobblerbeta.h"
 #else
 _LIT8(KLatesverFileLocation, "http://www.mobbler.co.uk/latestver.xml");
 #endif
@@ -973,14 +974,14 @@ void CMobblerLastFMConnection::RadioStop()
 	{
 	if (iTrackDownloadObserver)
 		{
-		iTrackDownloadObserver->DataCompleteL(KErrCancel);
+		iTrackDownloadObserver->DataCompleteL(CMobblerLastFMConnection::EErrorStop);
 		iTrackDownloadObserver = NULL;
 		}
 	
 	iRadioAudioTransaction.Close();
 	}
 
-void CMobblerLastFMConnection::RadioStartL(MMobblerFlatDataObserver* aObserver, TRadioStation aRadioStation, const TDesC8& aRadioText)
+void CMobblerLastFMConnection::SelectStationL(MMobblerFlatDataObserver* aObserver, TRadioStation aRadioStation, const TDesC8& aRadioText)
 	{	
 	// Setup the last.fm formatted station URI
 	HBufC8* radioURL = HBufC8::NewLC(255);
@@ -1015,7 +1016,6 @@ void CMobblerLastFMConnection::RadioStartL(MMobblerFlatDataObserver* aObserver, 
 	CMobblerTransaction* transaction = CMobblerTransaction::NewL(*this, *radioURL);
 	
 	transaction->SetFlatDataObserver(aObserver);
-	transaction->SetChildTransaction(CreateRequestPlaylistTransactionL(aObserver));
 	
 	CleanupStack::PopAndDestroy(2, radioURL);
 	
@@ -1383,7 +1383,7 @@ void CMobblerLastFMConnection::HandleHandshakeErrorL(CMobblerLastFMError* aError
 				{
 				// There is a track observer so this must be becasue
 				// we failed to start downloading a track, but have now reconnected
-				iTrackDownloadObserver->DataCompleteL(KErrCancel);
+				iTrackDownloadObserver->DataCompleteL(EErrorHandshake);
 				iTrackDownloadObserver = NULL;
 				}
 			}
@@ -1458,7 +1458,7 @@ void CMobblerLastFMConnection::CloseTransactionsL(TBool aCloseTransactionArray)
 	
 	if (iTrackDownloadObserver)
 		{
-		iTrackDownloadObserver->DataCompleteL(KErrCancel);
+		iTrackDownloadObserver->DataCompleteL(EErrorCancel);
 		iTrackDownloadObserver = NULL;
 		}
 	
@@ -1469,12 +1469,7 @@ void CMobblerLastFMConnection::CloseTransactionsL(TBool aCloseTransactionArray)
 			{
 			if (iTransactions[i]->FlatDataObserver())
 				{
-				iTransactions[i]->FlatDataObserver()->DataL(KNullDesC8, KErrGeneral);
-				}
-			
-			if (iTransactions[i]->ChildTransaction() && iTransactions[i]->ChildTransaction()->FlatDataObserver())
-				{
-				iTransactions[i]->ChildTransaction()->FlatDataObserver()->DataL(KNullDesC8, KErrGeneral);
+				iTransactions[i]->FlatDataObserver()->DataL(KNullDesC8, EErrorCancel);
 				}
 			
 			delete iTransactions[i];
@@ -1584,14 +1579,7 @@ void CMobblerLastFMConnection::TransactionResponseL(CMobblerTransaction* aTransa
 				{
 				if (iTransactions[i]->FlatDataObserver())
 					{
-					if (iTransactions[i]->ChildTransaction())
-						{
-						iTransactions[i]->FlatDataObserver()->DataL(aResponse, KErrOverflow);
-						}
-					else
-						{
-						iTransactions[i]->FlatDataObserver()->DataL(aResponse, KErrNone);
-						}
+					iTransactions[i]->FlatDataObserver()->DataL(aResponse, EErrorNone);
 					}
 				break;
 				}
@@ -1622,12 +1610,6 @@ void CMobblerLastFMConnection::TransactionCompleteL(CMobblerTransaction* aTransa
 			{
 			if (aTransaction == iTransactions[i])
 				{
-				if (aTransaction->ChildTransaction())
-					{
-					// There is a child transaction so start that now
-					AppendAndSubmitTransactionL(aTransaction->ChildTransaction());
-					aTransaction->SetChildTransaction(NULL);
-					}
 				delete aTransaction;
 				iTransactions.Remove(i);
 				break;
@@ -1721,12 +1703,7 @@ void CMobblerLastFMConnection::TransactionFailedL(CMobblerTransaction* aTransact
 					{
 					if (aTransaction->FlatDataObserver())
 						{
-						aTransaction->FlatDataObserver()->DataL(KNullDesC8, KErrGeneral);
-						}
-					
-					if (aTransaction->ChildTransaction() && aTransaction->ChildTransaction()->FlatDataObserver())
-						{
-						aTransaction->ChildTransaction()->FlatDataObserver()->DataL(KNullDesC8, KErrGeneral);
+						aTransaction->FlatDataObserver()->DataL(KNullDesC8, EErrorFailed);
 						}
 					
 					delete aTransaction;
@@ -1759,7 +1736,7 @@ void CMobblerLastFMConnection::MHFRunL(RHTTPTransaction aTransaction, const THTT
 		case THTTPEvent::EFailed:
 			if (iTrackDownloadObserver)
 				{
-				iTrackDownloadObserver->DataCompleteL(KErrGeneral);
+				iTrackDownloadObserver->DataCompleteL(EErrorFailed);
 				iTrackDownloadObserver = NULL;
 				}
 			iTrackDownloadObserver = NULL;
@@ -1769,7 +1746,7 @@ void CMobblerLastFMConnection::MHFRunL(RHTTPTransaction aTransaction, const THTT
 			// tell the radio player that the track has finished downloading
 			if (iTrackDownloadObserver)
 				{
-				iTrackDownloadObserver->DataCompleteL(KErrCancel);
+				iTrackDownloadObserver->DataCompleteL(EErrorCancel);
 				iTrackDownloadObserver = NULL;
 				}
 			break;
@@ -1777,7 +1754,7 @@ void CMobblerLastFMConnection::MHFRunL(RHTTPTransaction aTransaction, const THTT
 			// tell the radio player that the track has finished downloading
 			if (iTrackDownloadObserver)
 				{
-				iTrackDownloadObserver->DataCompleteL(KErrNone);
+				iTrackDownloadObserver->DataCompleteL(EErrorNone);
 				iTrackDownloadObserver = NULL;
 				}
 			iTrackDownloadObserver = NULL;

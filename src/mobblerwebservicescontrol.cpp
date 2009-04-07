@@ -254,8 +254,6 @@ TKeyResponse CMobblerWebServicesControl::OfferKeyEventL(const TKeyEvent& aKeyEve
 	
 	CleanupStack::PopAndDestroy(&commands);
 	
-	ChangePaneTextL();
-	
 	return response;
 	}
 

@@ -926,13 +926,13 @@ void CMobblerAppUi::HandleStatusPaneSizeChange()
 	{
 	}
 
-void CMobblerAppUi::DataL(const TDesC8& aData, TInt aError)
+void CMobblerAppUi::DataL(const TDesC8& aData, CMobblerLastFMConnection::TError aError)
 	{
 	switch (iState)
 		{
 		case ECheckingUpdates:
 			{
-			if (aError == KErrNone)
+			if (aError == CMobblerLastFMConnection::EErrorNone)
 				{
 				// we have just sucessfully checked for updates
 				// so don't do it again for another week

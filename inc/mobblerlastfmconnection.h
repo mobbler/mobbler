@@ -41,19 +41,8 @@ class CMobblerTrack;
 class MMobblerLastFMConnectionObserver;
 class CMobblerTransaction;
 class CMobblerString;
-
-class MMobblerSegDataObserver
-	{
-public:
-	virtual void DataPartL(const TDesC8& aData, TInt aTotalSize) = 0;
-	virtual void DataCompleteL(TInt aError) = 0;
-	};
-
-class MMobblerFlatDataObserver
-	{
-public:
-	virtual void DataL(const TDesC8& aData, TInt aError) = 0;
-	};
+class MMobblerSegDataObserver;
+class MMobblerFlatDataObserver;
 
 class MMobblerConnectionStateObserver
 	{
@@ -66,6 +55,15 @@ class CMobblerLastFMConnection : public CActive, public MHTTPTransactionCallback
 public:
 	friend class CMobblerTransaction;
 public:
+	enum TError
+		{
+		EErrorNone,
+		EErrorCancel,
+		EErrorStop,
+		EErrorHandshake,
+		EErrorFailed
+		};
+	
 	enum TRadioStation
 		{
 		EUnknown,
@@ -115,7 +113,7 @@ public:
 	void TrackStoppedL();
 	
 	// Radio APIs
-	void RadioStartL(MMobblerFlatDataObserver* aObserver, TRadioStation aRadioStation, const TDesC8& aRadioText);
+	void SelectStationL(MMobblerFlatDataObserver* aObserver, TRadioStation aRadioStation, const TDesC8& aRadioText);
 	void RequestPlaylistL(MMobblerFlatDataObserver* aObserver);
 	
 	void RequestMp3L(MMobblerSegDataObserver& aObserver, CMobblerTrack* aTrack);

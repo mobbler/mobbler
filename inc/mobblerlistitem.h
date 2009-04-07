@@ -27,6 +27,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <e32base.h>
 
 #include "mobblerbitmap.h"
+#include "mobblerdataobserver.h"
 
 class CMobblerListControl;
 class CMobblerString;
@@ -54,7 +55,7 @@ public:
 	CMobblerBitmap* Image() const;
 	
 private:
-	void DataL(const TDesC8& aData, TInt aError);
+	void DataL(const TDesC8& aData, CMobblerLastFMConnection::TError aError);
 	
 private:
 	void BitmapLoadedL(const CMobblerBitmap* aMobblerBitmap);

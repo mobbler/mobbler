@@ -118,15 +118,18 @@ void CMobblerAudioControl::DataPartL(const TDesC8& aData, TInt aTotalDataSize)
 	static_cast<CMobblerAppUi*>(CEikonEnv::Static()->AppUi())->StatusDrawDeferred();
 	}
 
-void CMobblerAudioControl::DataCompleteL(TInt aError)
+void CMobblerAudioControl::DataCompleteL(CMobblerLastFMConnection::TError aError)
 	{
 	iShared.iDownloadComplete = ETrue;
 	
-	if (aError != KErrNone)
+	if (aError != CMobblerLastFMConnection::EErrorNone)
 		{
-		// KErrNone means that the download completed sucesfully
-		// therfore HandleAudioFinishedL will be called in RunL when the thread closes
-		iObserver.HandleAudioFinishedL(this, aError);
+		// EErrorNone means that the download completed sucesfully
+		// therfore HandleAudioFinishedL will be called in RunL
+		// when the thread closes at the end of the track
+		
+ 		// Ask for the thred to close because there has been an error
+		SendCmd(ECmdDestroyAudio);
 		}
 	}
 

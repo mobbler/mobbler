@@ -114,36 +114,39 @@ void CMobblerListControl::ConstructListL(TInt aType, const TDesC8& aText1, const
 	
 	InitComponentArrayL();
 	
+	iListBoxItems = new (ELeave) CDesCArrayFlat(4);
+	
 	SetRect(iAppUi.ClientRect());
 	
-	// Create listbox 
+	ConstructL();
+	}
+
+void CMobblerListControl::MakeListBoxL()
+	{
+	delete iListBox;
 	iListBox = new(ELeave) CAknDoubleLargeStyleListBox();
 	
 	iListBox->ConstructL(this, EAknListBoxSelectionList | EAknListBoxLoopScrolling );    
 	iListBox->SetContainerWindowL(*this);
 	
-	iListBox->SetListBoxObserver(this);
-	
 	// Set scrollbars
 	iListBox->CreateScrollBarFrameL(ETrue);
-	iListBox->ScrollBarFrame()->SetScrollBarVisibilityL(CEikScrollBarFrame::EOn, CEikScrollBarFrame::EAuto);    
+	iListBox->ScrollBarFrame()->SetScrollBarVisibilityL(CEikScrollBarFrame::EOn, CEikScrollBarFrame::EAuto);
 	
-	// Activate Listbox
-	iListBox->SetRect(Rect());
+	// Set observers
+	iListBox->SetListBoxObserver(this);
+	iListBox->ScrollBarFrame()->SetScrollBarFrameObserver(this);    
 	
-	// Intercept scrollbar events so we know when the currently displayed items have changed
-	iListBox->ScrollBarFrame()->SetScrollBarFrameObserver(this);
-	
-	iListBoxItems = new (ELeave) CDesCArrayFlat(4);
 	iListBox->Model()->SetItemTextArray(iListBoxItems);
 	iListBox->Model()->SetOwnershipType(ELbmDoesNotOwnItemArray);
 	
 	iListBox->ItemDrawer()->ColumnData()->EnableMarqueeL(ETrue);
 	
+	// Activate Listbox
+	iListBox->SetRect(Rect());
 	iListBox->ActivateL();
-	
-	ConstructL();
 	}
+
 
 CMobblerListControl::~CMobblerListControl()
 	{
@@ -229,7 +232,7 @@ HBufC* CMobblerListControl::NameL()
 
 void CMobblerListControl::UpdateIconArrayL()
 	{
-	if (iDefaultImage->Bitmap() && iList.Count() > 0)
+	if (iDefaultImage && iDefaultImage->Bitmap() && iList.Count() > 0)
 		{
 		// only update the icons if we have loaded the default icon
 		
@@ -267,9 +270,9 @@ void CMobblerListControl::UpdateIconArrayL()
 		}
 	}
 
-void CMobblerListControl::DataL(const TDesC8& aXML, TInt aError)
+void CMobblerListControl::DataL(const TDesC8& aXML, CMobblerLastFMConnection::TError aError)
 	{
-	if (aError == KErrNone)
+	if (aError == CMobblerLastFMConnection::EErrorNone)
 		{
 		iState = ENormal;
 		
@@ -406,6 +409,26 @@ void CMobblerListControl::DataL(const TDesC8& aXML, TInt aError)
 	// services control to update the status pane
 	iWebServicesControl.HandleListControlStateChangedL();
 	}
+
+void CMobblerListControl::SizeChanged()
+	{
+	TRAP_IGNORE(MakeListBoxL());
+	TRAP_IGNORE(UpdateIconArrayL());
+	}
+
+void CMobblerListControl::HandleResourceChange(TInt aType)
+	{
+	TRect rect;
+	
+	if ( aType==KEikDynamicLayoutVariantSwitch )
+		{  	
+		AknLayoutUtils::LayoutMetricsRect(AknLayoutUtils::EMainPane, rect);
+		SetRect(rect);
+		}
+ 	
+	CCoeControl::HandleResourceChange(aType);
+	}
+
 
 void CMobblerListControl::HandleScrollEventL(CEikScrollBar* aScrollBar, TEikScrollEvent aEventType)
 	{

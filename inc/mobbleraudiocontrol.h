@@ -26,6 +26,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 // INCLUDES
 #include <E32Base.h>
+#include "mobblerdataobserver.h"
 #include "mobblerlastfmconnection.h"
 #include "mobblershareddata.h"
 
@@ -69,7 +70,7 @@ private: // from CActive
 	
 private: // from 
 	void DataPartL(const TDesC8& aData, TInt aTotalSize);
-	void DataCompleteL(TInt aError);
+	void DataCompleteL(CMobblerLastFMConnection::TError aError);
 	
 private:
 	TMobblerSharedData iShared;

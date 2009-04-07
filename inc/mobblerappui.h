@@ -29,12 +29,13 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <remconcoreapitarget.h>            // and
 #include <remconinterfaceselector.h>        // RemConInterfaceBase.lib
 
+#include "mobblerdataobserver.h"
 #include "mobblerdownload.h"
 #include "mobblerlastfmconnectionobserver.h"
 #include "mobblersleeptimer.h"
 #include "mobblergesturesinterface.h"
 
-const TVersion KVersion(0, 4, 1);
+const TVersion KVersion(0, 4, 2);
 _LIT(KFormatTime, "%F%D %N %-B%J%:1%T%+B"); // 21 March 11:20 am
 
 #ifdef BETA_BUILD
@@ -159,7 +160,7 @@ private:
 	void MrccatoCommand(TRemConCoreApiOperationId aOperationId, TRemConCoreApiButtonAction aButtonAct);
 	
 private:
-	void DataL(const TDesC8& aData, TInt aError);
+	void DataL(const TDesC8& aData, CMobblerLastFMConnection::TError aError);
 	
 private:
 	// the view classes

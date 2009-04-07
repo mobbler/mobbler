@@ -57,9 +57,6 @@ public:
 	void SubmitL();
 	void Cancel();
 	
-	void SetChildTransaction(CMobblerTransaction* aChildTrnsaction);
-	CMobblerTransaction* ChildTransaction();
-	
 	void SetFlatDataObserver(MMobblerFlatDataObserver* aFlatDataObserver);
 	MMobblerFlatDataObserver* FlatDataObserver();
 	
@@ -87,8 +84,6 @@ private:
 	HBufC8* iLastFMRadioURI;
 	
 	CBufBase* iBuffer;
-	
-	CMobblerTransaction* iChildTransaction;
 	};
 
 #endif // __MOBBLERTRANSACTION_H__

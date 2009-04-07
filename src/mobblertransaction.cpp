@@ -231,7 +231,6 @@ CMobblerTransaction::~CMobblerTransaction()
 	iTransaction.Close();
 	delete iBuffer;
 	delete iForm;
-	delete iChildTransaction;
 	delete iURI;
 	delete iLastFMRadioURI;
 	delete iQuery;
@@ -277,16 +276,6 @@ TInt CMobblerTransaction::MHFRunError(TInt aError, RHTTPTransaction /*aTransacti
 	_LIT8(KMHFRunError, "MHFRunError");
 	iConnection.TransactionFailedL(this, KMHFRunError, aError);
 	return KErrNone;
-	}
-
-void CMobblerTransaction::SetChildTransaction(CMobblerTransaction* aChildTrnsaction)
-	{
-	iChildTransaction = aChildTrnsaction;
-	}
-
-CMobblerTransaction* CMobblerTransaction::ChildTransaction()
-	{
-	return iChildTransaction;
 	}
 
 void CMobblerTransaction::SetFlatDataObserver(MMobblerFlatDataObserver* aFlatDataObserver)

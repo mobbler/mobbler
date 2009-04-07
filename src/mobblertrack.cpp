@@ -480,11 +480,11 @@ TBool CMobblerTrack::TrackPlaying() const
 	return iTrackPlaying;
 	}
 
-void CMobblerTrack::DataL(const TDesC8& aData, TInt aError)
+void CMobblerTrack::DataL(const TDesC8& aData, CMobblerLastFMConnection::TError aError)
 	{
 	if (iState == EFetchingAlbumInfo)
 		{
-		if (aError == KErrNone)
+		if (aError == CMobblerLastFMConnection::EErrorNone)
 			{
 			iState = ENone;
 			
@@ -550,7 +550,7 @@ void CMobblerTrack::DataL(const TDesC8& aData, TInt aError)
 	User::LeaveIfError(file.Write(aData));
 	CleanupStack::PopAndDestroy(&file);
 #endif
-		if (aError == KErrNone)
+		if (aError == CMobblerLastFMConnection::EErrorNone)
 			{
 			iState = ENone;
 			
@@ -590,7 +590,7 @@ void CMobblerTrack::DataL(const TDesC8& aData, TInt aError)
 		}
 	else if (iState == EFetchingAlbumArt || iState == EFetchingArtistImage)
 		{
-		if (aError == KErrNone)
+		if (aError == CMobblerLastFMConnection::EErrorNone)
 			{
 			if (iPath)
 				{

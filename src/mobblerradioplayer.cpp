@@ -295,63 +295,70 @@ void CMobblerRadioPlayer::StartL(CMobblerLastFMConnection::TRadioStation aRadioS
 	if (aRadioText)
 		{
 		HBufC8* urlEncoded = MobblerUtility::URLEncodeLC(aRadioText->String());
-		iLastFMConnection.RadioStartL(this, aRadioStation, *urlEncoded);
+		iLastFMConnection.SelectStationL(this, aRadioStation, *urlEncoded);
 		CleanupStack::PopAndDestroy(urlEncoded);
 		}
 	else
 		{
-		iLastFMConnection.RadioStartL(this, aRadioStation, KNullDesC8);
+		iLastFMConnection.SelectStationL(this, aRadioStation, KNullDesC8);
 		}
 	
 	DoChangeTransactionStateL(ESelectingStation);
 	}
 
-void CMobblerRadioPlayer::DataL(const TDesC8& aData, TInt aError)
+void CMobblerRadioPlayer::DataL(const TDesC8& aData, CMobblerLastFMConnection::TError aError)
 	{
-	if (aError == KErrNone)
+	if (aError == CMobblerLastFMConnection::EErrorNone)
 		{
-		DoChangeStateL(EIdle);
-		DoChangeTransactionStateL(ENone);
-		
-		CMobblerRadioPlaylist* playlist(NULL);
-		CMobblerLastFMError* error = CMobblerParser::ParseRadioPlaylistL(aData, playlist);
-		
-		if (!error)
+		switch (iTransactionState)
 			{
-			if (iCurrentPlaylist)
+			case ESelectingStation:
 				{
-				// we are still using the current playlist
-				// so this must be the next one
-				
-				delete iNextPlaylist;
-				iNextPlaylist = playlist;
+				DoChangeTransactionStateL(EFetchingPlaylist);
+				iLastFMConnection.RequestPlaylistL(this);
 				}
-			else
+				break;
+			case EFetchingPlaylist:
 				{
-				iCurrentPlaylist = playlist;
+				DoChangeTransactionStateL(ENone);
+		
+				CMobblerRadioPlaylist* playlist(NULL);
+				CMobblerLastFMError* error = CMobblerParser::ParseRadioPlaylistL(aData, playlist);
 				
-				iCurrentTrackIndex = -1;
-				NextTrackL();
+				if (!error)
+					{
+					if (iCurrentPlaylist)
+						{
+						// we are still using the current playlist
+						// so this must be the next one
+						
+						delete iNextPlaylist;
+						iNextPlaylist = playlist;
+						}
+					else
+						{
+						iCurrentPlaylist = playlist;
+						
+						iCurrentTrackIndex = -1;
+						NextTrackL();
+						}
+					}
+				else
+					{
+					DoChangeTransactionStateL(ENone);
+					
+					CAknInformationNote* note = new (ELeave) CAknInformationNote(EFalse);
+					note->ExecuteLD(error->Text());
+					}
 				}
+				break;
+			default:
+				DoChangeTransactionStateL(ENone);
+				break;
 			}
-		else
-			{
-			DoChangeStateL(EIdle);
-			DoChangeTransactionStateL(ENone);
-			
-			CAknInformationNote* note = new (ELeave) CAknInformationNote(EFalse);
-			note->ExecuteLD(error->Text());
-			}
-		}
-	else if (aError == KErrOverflow)
-		{
-		// This means we have selected the radio station
-		// and the connection is now fetching the first playlist for us
-		DoChangeTransactionStateL(EFetchingPlaylist);
 		}
 	else
 		{
-		DoChangeStateL(EIdle);
 		DoChangeTransactionStateL(ENone);
 		
 		if (aData.Length() != 0)
@@ -381,9 +388,9 @@ void CMobblerRadioPlayer::NextTrackL()
 				{
 				// This is the last track in the playlist so
 				// fetch the next playlist
-
-				iLastFMConnection.RequestPlaylistL(this);
+				
 				DoChangeTransactionStateL(EFetchingPlaylist);
+				iLastFMConnection.RequestPlaylistL(this);
 				}
 			
 			if (iCurrentPlaylist->Count() > iCurrentTrackIndex)

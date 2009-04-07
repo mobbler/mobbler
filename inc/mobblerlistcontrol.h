@@ -27,6 +27,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <aknlists.h>
 
 #include "mobblerbitmap.h"
+#include "mobblerdataobserver.h"
 #include "mobblerlastfmconnection.h"
 
 class CMobblerAppUi;
@@ -74,6 +75,8 @@ protected:
 	void ConstructListL(TInt aType, const TDesC8& aText1, const TDesC8& aText2);
 	virtual void ConstructL() = 0;
 	
+	void MakeListBoxL();
+	
 	void UpdateIconArrayL();
 	
 private: // from CCoeControl
@@ -81,6 +84,8 @@ private: // from CCoeControl
 	CCoeControl* ComponentControl(TInt /*aIndex*/) const;
 	TInt CountComponentControls() const;
 	TKeyResponse OfferKeyEventL(const TKeyEvent& aKeyEvent, TEventCode aEventCode);
+	void HandleResourceChange(TInt aType);
+	void SizeChanged();
 	
 private: // from MMobblerBitmapObserver
 	void BitmapLoadedL(const CMobblerBitmap* aMobblerBitmap);
@@ -89,13 +94,12 @@ private: // from MMobblerBitmapObserver
 	void RequestImagesL() const;
 	
 private:
-	void DataL(const TDesC8& aData, TInt aError);
+	void DataL(const TDesC8& aData, CMobblerLastFMConnection::TError aError);
 	
-private:
 	void HandleScrollEventL(CEikScrollBar* aScrollBar, TEikScrollEvent aEventType);
-	
-private:
 	void HandleListBoxEventL(CEikListBox* aListBox, TListBoxEvent aEventType);
+	
+	
 	
 protected:
 	CMobblerAppUi& iAppUi;
