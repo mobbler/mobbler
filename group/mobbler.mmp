@@ -91,6 +91,7 @@ SOURCE		mobblerlastfmconnection.cpp
 SOURCE		mobblerlastfmerror.cpp
 SOURCE		mobblerlistcontrol.cpp
 SOURCE		mobblerlistitem.cpp
+SOURCE		mobblerlogging.cpp
 SOURCE		mobblermarquee.cpp
 SOURCE		mobblermusiclistener.cpp
 SOURCE		mobblernowplayingcallback.cpp

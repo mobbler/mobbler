@@ -1,7 +1,7 @@
 /*
 mobblerstring.cpp
 
-mobbler, a last.fm mobile scrobbler for Symbian smartphones.
+Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
 Copyright (C) 2008  Michael Coffey
 
 http://code.google.com/p/mobbler
@@ -24,6 +24,19 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <utf.h> 
 
 #include "mobblerstring.h"
+
+const TChar KForbiddenCharacterArray[] =
+	{
+	'<',
+	'>',
+	'"',
+	'/',
+	'|',
+	'\\',
+	'?',
+	'*',
+	':',
+	};
 
 CMobblerString* CMobblerString::NewL(const TDesC& aString)
 	{
@@ -80,3 +93,30 @@ const TPtrC8& CMobblerString::String8() const
 	{
 	return iString8Ptr;
 	}
+
+const TPtrC CMobblerString::SafeFsString() const
+	{
+	TFileName stripped;
+	stripped.Copy(SafeFsString8());
+	return stripped;
+	}
+
+const TPtrC8 CMobblerString::SafeFsString8() const
+	{
+	TBuf8<KMaxFileName> stripped8(iString8Ptr);
+
+	const TInt arraySize = sizeof(KForbiddenCharacterArray) / sizeof(TChar);
+	for (TInt i(0); i < arraySize; ++i)
+		{
+		TInt position(stripped8.Locate(KForbiddenCharacterArray[i]));
+		 while (position != KErrNotFound)
+			{
+			stripped8.Delete(position, 1);
+			position = stripped8.Locate(KForbiddenCharacterArray[i]);
+			}
+		}
+
+	return stripped8;
+	}
+
+// End of file

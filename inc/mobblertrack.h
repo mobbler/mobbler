@@ -119,7 +119,11 @@ private:
 						TTimeIntervalSeconds aTrackLength,
 						const TDesC8& aRadioAuth);
 	
-//	TFileName AlbumArtCacheFileName();
+	void FetchAlbumInfoL();
+	void FetchArtistInfoL();
+	TBool FetchImageL(const TDesC8& aData);
+	void FetchImageL(TState aState, const TDesC8& aImageLocation);
+	void SaveAlbumArtL(const TDesC8& aData);
 	
 private:
 	void BitmapLoadedL(const CMobblerBitmap* aMobblerBitmap);
@@ -147,6 +151,7 @@ private:
 	// album art
 	HBufC8* iImage;
 	CMobblerBitmap* iAlbumArt;
+	TBool iTriedButCouldntFindAlbumArt;
 	
 	// mp3 location
 	HBufC8* iMp3Location;

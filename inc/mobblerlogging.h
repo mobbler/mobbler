@@ -1,8 +1,8 @@
 /*
-mobblerstring.h
+mobblerlogging.h
 
 Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
-Copyright (C) 2008  Michael Coffey
+Copyright (C) 2009  Michael Coffey
 
 http://code.google.com/p/mobbler
 
@@ -21,36 +21,31 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-#ifndef __MOBBLERSTRING_H__
-#define __MOBBLERSTRING_H__
+#ifndef __MOBBLERLOGGING_H__
+#define __MOBBLERLOGGING_H__
 
 #include <e32base.h>
 
-class CMobblerString : public CBase
+class CMobblerLogging : public CBase
 	{
 public:
-	static CMobblerString* NewL(const TDesC& aString);
-	static CMobblerString* NewL(const TDesC8& aString);
-	~CMobblerString();
-	
-	const TPtrC& String() const;
-	const TPtrC8& String8() const;
 
-	const TPtrC SafeFsString() const;
-	const TPtrC8 SafeFsString8() const;
-	
-private:
-	CMobblerString();
-	void ConstructL(const TDesC& aString);
-	void ConstructL(const TDesC8& aString);
-	
-private:
-	HBufC* iString;
-	TPtrC iStringPtr;
-	HBufC8* iString8;
-	TPtrC8 iString8Ptr;
+#ifdef _DEBUG
+
+#define DUMPDATA(a, b) CMobblerLogging::DumpDataL(a, b)
+#define LOG(a) CMobblerLogging::LogL(a)
+
+	static void DumpDataL(const TDesC8& aData, const TDesC& aLogFile);
+	static void LogL(const TDesC8& aText);
+
+#else // _DEBUG
+
+#define DUMPDATA(a, b) 0
+#define LOG(a) 0
+
+#endif // _DEBUG
 	};
-	
-#endif // __MOBBLERSTRING_H__
+
+#endif // __MOBBLERLOGGING_H__
 
 // End of file
