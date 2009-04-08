@@ -287,8 +287,6 @@ void CMobblerBitmap::RunL()
 			iScaledBitmap = NULL;
 			iScaleStatus = EMobblerScaleNone;
 
-			iBitmap->Compress();
-			
 			iObserver.BitmapResizedL(this);
 			}
 		}
