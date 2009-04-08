@@ -44,7 +44,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 0xA000B6D0 - gesture plug-in 3rd edition implementation
 0xA000B6D1 - gesture plug-in dll (5th edition)
 0xA000B6C2 - gesture plug-in 5th edition implementation
-0xA000B6C3 - unused0xA000B6D4 - unused
+0xA000B6C3 - unused
+0xA000B6D4 - unused
 0xA000BEB1 - content listing dll
 0xA000BEB2 - content listing interface
 0xA000BEB3 - content listing implementation
@@ -61,7 +62,11 @@ TARGET			mobbler.exe
 TARGETTYPE		exe
 UID				0x100039CE 0xA0007648
 
+#ifdef WINS
+LANG 01
+#else
 LANG 01 02 03 04 05 06 08 09 10 14 16 17 18 25 26 27 31 34 37 54 57 59 67 68 76 78
+#endif
 
 SOURCEPATH	..\src
 USERINCLUDE	..\inc

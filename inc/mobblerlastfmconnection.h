@@ -37,12 +37,12 @@ _LIT(KLogFile, "c:\\Data\\Mobbler\\.scrobbler.log");
 
 class CHTTPFormEncoder;
 class CMobblerParser;
-class CMobblerTrack;
-class MMobblerLastFMConnectionObserver;
-class CMobblerTransaction;
 class CMobblerString;
-class MMobblerSegDataObserver;
+class CMobblerTrack;
+class CMobblerTransaction;
 class MMobblerFlatDataObserver;
+class MMobblerLastFMConnectionObserver;
+class MMobblerSegDataObserver;
 
 class MMobblerConnectionStateObserver
 	{

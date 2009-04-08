@@ -43,8 +43,9 @@
 ;Supports S60 release v5.0
 [0x1028315F], 0, 0, 0, {"Series60ProductID"}
 
+; Must be on the C: drive
 {
 "$(EPOCROOT)epoc32\data\z\resource\apps\mobbler_strings.rLANGUAGENUMBER"
-}-"c:\resource\apps\mobbler_strings2.rsc"
+}-"C:\resource\apps\mobbler_strings2.rsc"
 
 ; End of file

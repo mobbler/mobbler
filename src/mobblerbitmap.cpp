@@ -117,8 +117,6 @@ CFbsBitmap* CMobblerBitmap::BitmapGrayL() const
 			CleanupStack::PushL(gc);
 			gc->BitBlt(TPoint(0, 0), src);
 			CleanupStack::PopAndDestroy(2);
-			
-			bitmap = iBitmapGray;
 			}
 		
 		bitmap = iBitmapGray;

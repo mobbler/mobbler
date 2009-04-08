@@ -2,7 +2,7 @@
 mobblerdataobserver.h
 
 Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
-Copyright (C) 2008  Michael Coffey
+Copyright (C) 2009  Michael Coffey
 
 http://code.google.com/p/mobbler
 
@@ -40,3 +40,5 @@ public:
 	};
 	
 #endif // __MOBBLERDATAOBSERVER_H__
+	
+// End of file	

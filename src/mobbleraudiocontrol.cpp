@@ -124,11 +124,11 @@ void CMobblerAudioControl::DataCompleteL(CMobblerLastFMConnection::TError aError
 	
 	if (aError != CMobblerLastFMConnection::EErrorNone)
 		{
-		// EErrorNone means that the download completed sucesfully
-		// therfore HandleAudioFinishedL will be called in RunL
+		// EErrorNone means that the download completed successfully
+		// therefore HandleAudioFinishedL will be called in RunL
 		// when the thread closes at the end of the track
 		
- 		// Ask for the thred to close because there has been an error
+ 		// Ask for the thread to close because there has been an error
 		SendCmd(ECmdDestroyAudio);
 		}
 	}
