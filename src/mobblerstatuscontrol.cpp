@@ -587,12 +587,7 @@ void CMobblerStatusControl::Draw(const TRect& /*aRect*/) const
 				{
 				// The current track has album art and it has finished loading
 				albumArt = iAppUi.CurrentTrack()->AlbumArt();
-				
-				if (iAppUi.CurrentTrack()->AlbumArt()->ScaleStatus() == CMobblerBitmap::EMobblerScaleNone
-					&& !iAppUi.CurrentTrack()->AlbumArt()->LongSidesEqual(iRectAlbumArt.Size()))
-					{
-					const_cast<CMobblerBitmap*>(iAppUi.CurrentTrack()->AlbumArt())->ScaleL(iRectAlbumArt.Size());
-					}
+				const_cast<CMobblerBitmap*>(albumArt)->ScaleL(iRectAlbumArt.Size());
 				}
 			}
 		else
@@ -602,12 +597,7 @@ void CMobblerStatusControl::Draw(const TRect& /*aRect*/) const
 				{
 				// The current track has album art and it has finished loading
 				albumArt = iAppUi.CurrentTrack()->AlbumArt();
-				
-				if (iAppUi.CurrentTrack()->AlbumArt()->ScaleStatus() == CMobblerBitmap::EMobblerScaleNone
-						&& !iAppUi.CurrentTrack()->AlbumArt()->LongSidesEqual(iRectAlbumArt.Size()))
-					{
-					const_cast<CMobblerBitmap*>(iAppUi.CurrentTrack()->AlbumArt())->ScaleL(iRectAlbumArt.Size());
-					}
+				const_cast<CMobblerBitmap*>(albumArt)->ScaleL(iRectAlbumArt.Size());
 				}
 			else
 				{
@@ -671,7 +661,9 @@ void CMobblerStatusControl::Draw(const TRect& /*aRect*/) const
 	
 	// Draw the album art
     //DrawRect(iRectAlbumArt, KRgbWhite, KRgbWhite);
-	DrawMobblerBitmap(albumArt, iRectAlbumArt);
+	albumArt->LongSidesEqual(iRectAlbumArt.Size())?
+		BitBltMobblerBitmap(albumArt, iRectAlbumArt.iTl):
+		DrawMobblerBitmap(albumArt, iRectAlbumArt);
 	
 	// If the track has been loved, draw the love icon in the bottom right corner
 	if (love)
@@ -837,6 +829,26 @@ void CMobblerStatusControl::DrawMobblerBitmap(const CMobblerBitmap* aMobblerBitm
 			else
 				{
 				iBackBufferContext->DrawBitmap(aPoint, bitmap);
+				}
+			}
+		}
+	}
+
+void CMobblerStatusControl::BitBltMobblerBitmap(const CMobblerBitmap* aMobblerBitmap, const TPoint& aPoint, TBool aGray) const
+	{
+	if (aMobblerBitmap)
+		{
+		if (aMobblerBitmap->Bitmap())
+			{
+			CFbsBitmap* bitmap = aGray ? aMobblerBitmap->BitmapGrayL() : aMobblerBitmap->Bitmap();
+			
+			if (aMobblerBitmap->Mask())
+				{
+				iBackBufferContext->BitBltMasked(aPoint, bitmap, aMobblerBitmap->Bitmap()->SizeInPixels(), aMobblerBitmap->Mask(), EFalse);
+				}
+			else
+				{
+				iBackBufferContext->BitBlt(aPoint, bitmap);
 				}
 			}
 		}
