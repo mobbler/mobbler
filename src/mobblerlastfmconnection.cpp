@@ -1050,7 +1050,7 @@ void CMobblerLastFMConnection::RequestMp3L(MMobblerSegDataObserver& aObserver, C
 			iRadioAudioTransaction = iHTTPSession.OpenTransactionL(urimp3Parser, *this);
 			iRadioAudioTransaction.SubmitL();
 			}
-		else
+		else if (iState != EConnecting && iState != EHandshaking)
 			{
 			ConnectL();
 			}
@@ -1680,7 +1680,8 @@ void CMobblerLastFMConnection::TransactionFailedL(CMobblerTransaction* aTransact
 		iSubmitTransaction = NULL;
 		}
 
-	if (!Connected())
+	if (!Connected() &&
+			iState != EConnecting && iState != EHandshaking)
 		{
 		// The connection is not open so we should try to connect again
 		ConnectL();

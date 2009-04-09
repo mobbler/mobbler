@@ -92,7 +92,11 @@ CMobblerAudioThread::~CMobblerAudioThread()
 	{
 	Cancel();
 	
-	iStream->Stop();
+	if (iStream)
+		{
+		iStream->Stop();
+		}
+	
 	delete iEqualizer;
 	delete iStream;
 

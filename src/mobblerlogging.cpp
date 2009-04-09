@@ -49,9 +49,10 @@ void CMobblerLogging::DumpDataL(const TDesC8& aData, const TDesC& aLogFile)
 
 void CMobblerLogging::LogL(const TDesC8& aText)
 	{
-	TBuf<255> text;
-	text.Copy(aText);
-	CEikonEnv::Static()->InfoMsg(text);
+	HBufC* text = HBufC::NewLC(aText.Length());
+	text->Des().Copy(aText);
+	CEikonEnv::Static()->InfoMsg(*text);
+	CleanupStack::PopAndDestroy(text);
 
 #ifdef __WINS__
 	TFileName logFile(_L("C:mobbler.log"));
