@@ -668,7 +668,7 @@ void CMobblerStatusControl::Draw(const TRect& /*aRect*/) const
 	// If the track has been loved, draw the love icon in the bottom right corner
 	if (love)
 		{
-		DrawMobblerBitmap(iMobblerBitmapLove, TPoint(iRectAlbumArt.iBr.iX - iMobblerBitmapLove->SizeInPixels().iWidth - 4, iRectAlbumArt.iBr.iX - iMobblerBitmapLove->SizeInPixels().iHeight - 4));
+		BitBltMobblerBitmap(iMobblerBitmapLove, TPoint(iRectAlbumArt.iBr.iX - iMobblerBitmapLove->SizeInPixels().iWidth - 4, iRectAlbumArt.iBr.iX - iMobblerBitmapLove->SizeInPixels().iHeight - 4));
 		}
 	
 	if (iAppUi.ScrobblingOn())
@@ -676,12 +676,12 @@ void CMobblerStatusControl::Draw(const TRect& /*aRect*/) const
 		iScrobbledQueued.Zero();
 		iScrobbledQueued.Format(iAppUi.ResourceReader().ResourceL(R_MOBBLER_SCROBBLED_QUEUED), iAppUi.Scrobbled(), iAppUi.Queued());
 		
-		DrawMobblerBitmap(iMobblerBitmapScrobble, TPoint(iRectScrobbledQueuedText.iTl.iX - iMobblerBitmapTrackIcon->SizeInPixels().iWidth, iRectScrobbledQueuedText.iTl.iY + 3), EFalse);
+		BitBltMobblerBitmap(iMobblerBitmapScrobble, TPoint(iRectScrobbledQueuedText.iTl.iX - iMobblerBitmapTrackIcon->SizeInPixels().iWidth, iRectScrobbledQueuedText.iTl.iY + 3), EFalse);
 		DrawText(iScrobbledQueued, iRectScrobbledQueuedText, textColor, CGraphicsContext::ELeft, iMobblerFont->WidthZeroInPixels());
 		}
 	else
 		{
-		DrawMobblerBitmap(iMobblerBitmapScrobble, TPoint(iRectScrobbledQueuedText.iTl.iX - iMobblerBitmapTrackIcon->SizeInPixels().iWidth, iRectScrobbledQueuedText.iTl.iY + 3), ETrue);
+		BitBltMobblerBitmap(iMobblerBitmapScrobble, TPoint(iRectScrobbledQueuedText.iTl.iX - iMobblerBitmapTrackIcon->SizeInPixels().iWidth, iRectScrobbledQueuedText.iTl.iY + 3), ETrue);
 		DrawText(iAppUi.ResourceReader().ResourceL(R_MOBBLER_SCROBBLING_OFF), iRectScrobbledQueuedText, textColor, CGraphicsContext::ELeft, iMobblerFont->WidthZeroInPixels());
 		}
 	
@@ -706,8 +706,8 @@ void CMobblerStatusControl::Draw(const TRect& /*aRect*/) const
 		DrawText(volumeText, iRectProgressBar, KRgbBlack, CGraphicsContext::ECenter, iMobblerFont->WidthZeroInPixels());
 		
 		// Draw the speaker icons
-		DrawMobblerBitmap(iMobblerBitmapSpeakerLow, TPoint(iRectProgressBar.iTl.iX + iMobblerFont->WidthZeroInPixels(), iRectProgressBar.iTl.iY));
-		DrawMobblerBitmap(iMobblerBitmapSpeakerHigh, TPoint(iRectProgressBar.iBr.iX - iMobblerFont->WidthZeroInPixels() - iMobblerBitmapSpeakerHigh->SizeInPixels().iWidth, iRectProgressBar.iTl.iY));
+		BitBltMobblerBitmap(iMobblerBitmapSpeakerLow, TPoint(iRectProgressBar.iTl.iX + iMobblerFont->WidthZeroInPixels(), iRectProgressBar.iTl.iY));
+		BitBltMobblerBitmap(iMobblerBitmapSpeakerHigh, TPoint(iRectProgressBar.iBr.iX - iMobblerFont->WidthZeroInPixels() - iMobblerBitmapSpeakerHigh->SizeInPixels().iWidth, iRectProgressBar.iTl.iY));
 		}
 	else
 		{
@@ -744,25 +744,25 @@ void CMobblerStatusControl::Draw(const TRect& /*aRect*/) const
 		}
 	
 	// Draw the controls
-	DrawMobblerBitmap(iMobblerBitmapMore, iPointMore, moreDisabled);
-	DrawMobblerBitmap(iMobblerBitmapLove, iPointLove, loveDisabled);
-	DrawMobblerBitmap(iMobblerBitmapBan, iPointBan, banDisabled);
-	DrawMobblerBitmap(iMobblerBitmapNext, iPointSkip, skipDisabled);
+	BitBltMobblerBitmap(iMobblerBitmapMore, iPointMore, moreDisabled);
+	BitBltMobblerBitmap(iMobblerBitmapLove, iPointLove, loveDisabled);
+	BitBltMobblerBitmap(iMobblerBitmapBan, iPointBan, banDisabled);
+	BitBltMobblerBitmap(iMobblerBitmapNext, iPointSkip, skipDisabled);
 	
 	// Draw either play or stop depending on if there is a track playing
 	if (!iAppUi.CurrentTrack())
 		{
 		// There is no current track so display the play button
-		DrawMobblerBitmap(iMobblerBitmapPlay, iPointPlayStop, playStopDisabled);
+		BitBltMobblerBitmap(iMobblerBitmapPlay, iPointPlayStop, playStopDisabled);
 		}
 	else
 		{
 		// There is a track playing
-		DrawMobblerBitmap(iMobblerBitmapStop, iPointPlayStop, playStopDisabled);
+		BitBltMobblerBitmap(iMobblerBitmapStop, iPointPlayStop, playStopDisabled);
 		}
 	
 	// Draw the Last.fm graphic
-	DrawMobblerBitmap(iMobblerBitmapLastFm, iPointLastFm);
+	BitBltMobblerBitmap(iMobblerBitmapLastFm, iPointLastFm);
 		
 	// Draw the title details line
 	iTitleMarquee->Start(iTitleText, iMobblerFont->WidthZeroInPixels(), iMobblerFont->TextWidthInPixels(iTitleText), iRectTitleText.Width());
@@ -788,7 +788,7 @@ void CMobblerStatusControl::Draw(const TRect& /*aRect*/) const
 		DrawText(iArtistText, iRectArtistText, textColor, CGraphicsContext::ELeft, iArtistMarquee->GetPosition2());
 		}
 	
-	DrawMobblerBitmap(iMobblerBitmapTrackIcon, TPoint(iRectTitleText.iTl.iX -  iMobblerBitmapTrackIcon->SizeInPixels().iWidth, iRectTitleText.iTl.iY + 3));
+	BitBltMobblerBitmap(iMobblerBitmapTrackIcon, TPoint(iRectTitleText.iTl.iX -  iMobblerBitmapTrackIcon->SizeInPixels().iWidth, iRectTitleText.iTl.iY + 3));
 		
 	SystemGc().BitBlt(TPoint(0, 0), iBackBuffer);
 	}
@@ -809,26 +809,6 @@ void CMobblerStatusControl::DrawMobblerBitmap(const CMobblerBitmap* aMobblerBitm
 			else
 				{
 				iBackBufferContext->DrawBitmap(aRect, bitmap);
-				}
-			}
-		}
-	}
-
-void CMobblerStatusControl::DrawMobblerBitmap(const CMobblerBitmap* aMobblerBitmap, const TPoint& aPoint, TBool aGray) const
-	{
-	if (aMobblerBitmap)
-		{
-		if (aMobblerBitmap->Bitmap())
-			{
-			CFbsBitmap* bitmap = aGray ? aMobblerBitmap->BitmapGrayL() : aMobblerBitmap->Bitmap();
-			
-			if (aMobblerBitmap->Mask())
-				{
-				iBackBufferContext->DrawBitmapMasked(TRect(aPoint, aMobblerBitmap->Bitmap()->SizeInPixels()), bitmap, TRect(TPoint(0, 0), aMobblerBitmap->Bitmap()->SizeInPixels()), aMobblerBitmap->Mask(), EFalse);
-				}
-			else
-				{
-				iBackBufferContext->DrawBitmap(aPoint, bitmap);
 				}
 			}
 		}
