@@ -63,7 +63,8 @@ public:
 	TSize SizeInPixels() const;
 
 	void ScaleL(TSize aSize);
-	TMobblerScaleStatus ScaleSatus() const;
+	TMobblerScaleStatus ScaleStatus() const;
+	TBool LongSidesEqual(TSize aSize) const;
 	
 private:
 	void ConstructL(const TDesC& aFileName, const TUid aFileUid);

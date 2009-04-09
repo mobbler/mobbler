@@ -31,6 +31,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "mobblerartistlist.h"
 #include "mobblereventlist.h"
 #include "mobblerfriendlist.h"
+#include "mobblerlogging.h"
 #include "mobblerlistitem.h"
 #include "mobblerparser.h"
 #include "mobblerplaylistlist.h"
@@ -84,38 +85,33 @@ FAILED <reason>
 All other responses should be treated as a hard failure.
     An error may be reported to the user, but as with other messages this should be kept to a minimum. 
 */
-CMobblerLastFMError* CMobblerParser::ParseHandshakeL(const TDesC8& aHandshakeResponse, HBufC8*& aSessionId, HBufC8*& aNowPlayingURL, HBufC8*& aSubmitURL)
+CMobblerLastFMError* CMobblerParser::ParseHandshakeL(const TDesC8& aHandshakeResponse, HBufC8*& aSessionId, HBufC8*& aNowPlayingUrl, HBufC8*& aSubmitUrl)
 	{
-#ifdef _DEBUG
-	RFile file;
-	CleanupClosePushL(file);
-	User::LeaveIfError(file.Replace(CCoeEnv::Static()->FsSession(), _L("c:scrobblehandshake.txt"), EFileWrite));
-	User::LeaveIfError(file.Write(aHandshakeResponse));
-	CleanupStack::PopAndDestroy(&file);
-#endif
+	DUMPDATA(aHandshakeResponse, _L("scrobblehandshake.txt"));
+
 	CMobblerLastFMError* error = NULL;
 	
 	if (aHandshakeResponse.MatchF(_L8("OK*")) == 0)
 		{
 		TInt position = aHandshakeResponse.Find(_L8("\n"));
 		
-		// get the session id
+		// get the session ID
 		TPtrC8 last3Lines = aHandshakeResponse.Mid(position + 1, aHandshakeResponse.Length() - (position + 1) );
 		position = last3Lines.Find(_L8("\n"));
 		delete aSessionId;
 		aSessionId = last3Lines.Mid(0, position).AllocL();
 		
-		// get the now playing url
+		// get the now playing URL
 		TPtrC8 last2Lines = last3Lines.Mid(position + 1, last3Lines.Length() - (position + 1) );
 		position = last2Lines.Find(_L8("\n"));
-		delete aNowPlayingURL;
-		aNowPlayingURL = last2Lines.Mid(0, position).AllocL();
+		delete aNowPlayingUrl;
+		aNowPlayingUrl = last2Lines.Mid(0, position).AllocL();
 		
-		// get the submit url
+		// get the submit URL
 		TPtrC8 last1Lines = last2Lines.Mid(position + 1, last2Lines.Length() - (position + 1) );
 		position = last1Lines.Find(_L8("\n"));
-		delete aSubmitURL;
-		aSubmitURL = last1Lines.Mid(0, position).AllocL();
+		delete aSubmitUrl;
+		aSubmitUrl = last1Lines.Mid(0, position).AllocL();
 		}
 	else if (aHandshakeResponse.MatchF(_L8("BANNED*")) == 0)
 		{
@@ -147,15 +143,9 @@ base_path=/radio
 info_message=
 fingerprint_upload_url=http://ws.audioscrobbler.com/fingerprint/upload.php
 */
-CMobblerLastFMError* CMobblerParser::ParseRadioHandshakeL(const TDesC8& aRadioHandshakeResponse, HBufC8*& aRadioSessionID, HBufC8*& aRadioBaseURL, HBufC8*& aRadioBasePath)
+CMobblerLastFMError* CMobblerParser::ParseRadioHandshakeL(const TDesC8& aRadioHandshakeResponse, HBufC8*& aRadioSessionID, HBufC8*& aRadioBaseUrl, HBufC8*& aRadioBasePath)
 	{
-#ifdef _DEBUG
-	RFile file;
-	CleanupClosePushL(file);
-	User::LeaveIfError(file.Replace(CCoeEnv::Static()->FsSession(), _L("c:radiohandshakeresponse.txt"), EFileWrite));
-	User::LeaveIfError(file.Write(aRadioHandshakeResponse));
-	CleanupStack::PopAndDestroy(&file);
-#endif
+	DUMPDATA(aRadioHandshakeResponse, _L("radiohandshakeresponse.txt"));
 	
 	CMobblerLastFMError* error = NULL;
 	
@@ -192,15 +182,15 @@ CMobblerLastFMError* CMobblerParser::ParseRadioHandshakeL(const TDesC8& aRadioHa
 					}
 				else if (i == 1)
 					{
-					// stream url
-					//delete aRadioStreamURL;
-					//aRadioStreamURL = line.Mid(equalPosition + 1, line.Length() - (equalPosition + 1) - 1).AllocL();
+					// stream URL
+					//delete aRadioStreamUrl;
+					//aRadioStreamUrl = line.Mid(equalPosition + 1, line.Length() - (equalPosition + 1) - 1).AllocL();
 					}
 				else if (i == 4)
 					{
-					//base url
-					delete aRadioBaseURL;
-					aRadioBaseURL = line.Mid(equalPosition + 1, line.Length() - (equalPosition + 1) - 1).AllocL();
+					//base URL
+					delete aRadioBaseUrl;
+					aRadioBaseUrl = line.Mid(equalPosition + 1, line.Length() - (equalPosition + 1) - 1).AllocL();
 					}
 				else if (i == 5)
 					{
@@ -223,13 +213,7 @@ CMobblerLastFMError* CMobblerParser::ParseRadioHandshakeL(const TDesC8& aRadioHa
 
 CMobblerLastFMError* CMobblerParser::ParseScrobbleResponseL(const TDesC8& aScrobbleResponse)
 	{
-#ifdef _DEBUG
-	RFile file;
-	CleanupClosePushL(file);
-	User::LeaveIfError(file.Replace(CCoeEnv::Static()->FsSession(), _L("c:scrobbleresponse.txt"), EFileWrite));
-	User::LeaveIfError(file.Write(aScrobbleResponse));
-	CleanupStack::PopAndDestroy(&file);
-#endif
+	DUMPDATA(aScrobbleResponse, _L("scrobbleresponse.txt"));
 	
 	CMobblerLastFMError* error = NULL;
 	
@@ -300,15 +284,9 @@ HBufC8* CMobblerParser::DecodeURIStringLC(const TDesC8& aString)
 	}
 
 
-CMobblerLastFMError* CMobblerParser::ParseRadioPlaylistL(const TDesC8& aXML, CMobblerRadioPlaylist*& aPlaylist)
+CMobblerLastFMError* CMobblerParser::ParseRadioPlaylistL(const TDesC8& aXml, CMobblerRadioPlaylist*& aPlaylist)
 	{
-#ifdef _DEBUG
-	RFile file;
-	CleanupClosePushL(file);
-	User::LeaveIfError(file.Replace(CCoeEnv::Static()->FsSession(), _L("c:playlist.xml"), EFileWrite));
-	User::LeaveIfError(file.Write(aXML));
-	CleanupStack::PopAndDestroy(&file);
-#endif
+	DUMPDATA(aXml, _L("playlist.xml"));
 	
 	CMobblerLastFMError* error = NULL;
 	
@@ -324,7 +302,7 @@ CMobblerLastFMError* CMobblerParser::ParseRadioPlaylistL(const TDesC8& aXML, CMo
 	domFragment->SetReader(*xmlReader);
 	
 	// parse the xml into the dom fragment
-	xmlReader->ParseL(aXML);
+	xmlReader->ParseL(aXml);
 	
 	HBufC8* radioName = DecodeURIStringLC(domFragment->AsElement().Element(KElementTitle)->Content());
 	playlist->SetNameL(*radioName);
@@ -406,19 +384,13 @@ CMobblerLastFMError* CMobblerParser::ParseRadioPlaylistL(const TDesC8& aXML, CMo
 	return error;
 	}
 
-CMobblerLastFMError* CMobblerParser::ParseRadioSelectStationL(const TDesC8& aXML)
+CMobblerLastFMError* CMobblerParser::ParseRadioSelectStationL(const TDesC8& aXml)
 	{
-#ifdef _DEBUG
-	RFile file;
-	CleanupClosePushL(file);
-	User::LeaveIfError(file.Replace(CCoeEnv::Static()->FsSession(), _L("c:radioselectresponse.xml"), EFileWrite));
-	User::LeaveIfError(file.Write(aXML));
-	CleanupStack::PopAndDestroy(&file);
-#endif
+	DUMPDATA(aXml, _L("radioselectresponse.xml"));
 	
 	CMobblerLastFMError* error = NULL;
 	
-	if (aXML.Find(_L8("response=OK")) != 0)
+	if (aXml.Find(_L8("response=OK")) != 0)
 		{
 		error = CMobblerLastFMError::NewL(static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->ResourceReader().ResourceL(R_MOBBLER_NOTE_BAD_STATION), CMobblerLastFMError::EBadStation);
 		}
@@ -428,13 +400,7 @@ CMobblerLastFMError* CMobblerParser::ParseRadioSelectStationL(const TDesC8& aXML
 
 CMobblerLastFMError* CMobblerParser::ParseWebServicesHandshakeL(const TDesC8& aWebServicesHandshakeResponse, HBufC8*& aWebServicesSessionKey)
 	{
-#ifdef _DEBUG
-	RFile file;
-	CleanupClosePushL(file);
-	User::LeaveIfError(file.Replace(CCoeEnv::Static()->FsSession(), _L("c:webserviceshandshakeresponse.xml"), EFileWrite));
-	User::LeaveIfError(file.Write(aWebServicesHandshakeResponse));
-	CleanupStack::PopAndDestroy(&file);
-#endif
+	DUMPDATA(aWebServicesHandshakeResponse, _L("webserviceshandshakeresponse.xml"));
 	
 	CMobblerLastFMError* error = NULL;
 	
@@ -471,7 +437,7 @@ CMobblerLastFMError* CMobblerParser::ParseBetaTestersHandshakeL(const TDesC8& aH
 	{
 	CMobblerLastFMError* error = NULL;
 	
-	// create the xml reader and dom fragement and associate them with each other 
+	// create the XML reader and DOM fragement and associate them with each other 
 	CSenXmlReader* xmlReader = CSenXmlReader::NewL();
 	CleanupStack::PushL(xmlReader);
 	CSenDomFragment* domFragment = CSenDomFragment::NewL();
@@ -479,7 +445,7 @@ CMobblerLastFMError* CMobblerParser::ParseBetaTestersHandshakeL(const TDesC8& aH
 	xmlReader->SetContentHandler(*domFragment);
 	domFragment->SetReader(*xmlReader);
 	
-	// parse the xml into the dom fragment
+	// parse the XML into the DOM fragment
 	xmlReader->ParseL(aHandshakeResponse);
 	
 	RPointerArray<CSenElement>& testers = domFragment->AsElement().ElementsL();
@@ -487,7 +453,7 @@ CMobblerLastFMError* CMobblerParser::ParseBetaTestersHandshakeL(const TDesC8& aH
 	aIsBetaTester = EFalse;
 	
 	const TInt KTesterCount(testers.Count());
-	for (TInt i(0) ; i < KTesterCount ; ++i)
+	for (TInt i(0); i < KTesterCount ; ++i)
 		{
 		if (testers[i]->Content().CompareF(aUsername) == 0)
 			{
@@ -498,7 +464,7 @@ CMobblerLastFMError* CMobblerParser::ParseBetaTestersHandshakeL(const TDesC8& aH
 	
 	if (!aIsBetaTester)
 		{
-		error = CMobblerLastFMError::NewL(_L8("Sorry. You're not registered to use this private beta version. Please visit http://code.google.etc/p/mobbler"), CMobblerLastFMError::EOther);
+		error = CMobblerLastFMError::NewL(_L8("Sorry. You're not registered to use this private beta version. Please visit http://code.google.com/p/mobbler"), CMobblerLastFMError::EOther);
 		}
 	
 	CleanupStack::PopAndDestroy(2, xmlReader);
@@ -507,15 +473,9 @@ CMobblerLastFMError* CMobblerParser::ParseBetaTestersHandshakeL(const TDesC8& aH
 	}
 #endif
 	
-void CMobblerParser::ParseFriendListL(const TDesC8& aXML, CMobblerFriendList& aObserver, RPointerArray<CMobblerListItem>& aList)
+void CMobblerParser::ParseFriendListL(const TDesC8& aXml, CMobblerFriendList& aObserver, RPointerArray<CMobblerListItem>& aList)
 	{
-#ifdef _DEBUG
-	RFile file;
-	CleanupClosePushL(file);
-	User::LeaveIfError(file.Replace(CCoeEnv::Static()->FsSession(), _L("c:usergetfriends.xml"), EFileWrite));
-	User::LeaveIfError(file.Write(aXML));
-	CleanupStack::PopAndDestroy(&file);
-#endif
+	DUMPDATA(aXml, _L("usergetfriends.xml"));
 	
 	// create the xml reader and dom fragement and associate them with each other 
 	CSenXmlReader* xmlReader = CSenXmlReader::NewL();
@@ -526,7 +486,7 @@ void CMobblerParser::ParseFriendListL(const TDesC8& aXML, CMobblerFriendList& aO
 	domFragment->SetReader(*xmlReader);
 	
 	// parse the xml into the dom fragment
-	xmlReader->ParseL(aXML);
+	xmlReader->ParseL(aXml);
 	
 	RPointerArray<CSenElement>& items = domFragment->AsElement().Element(_L8("friends"))->ElementsL();
 		
@@ -552,15 +512,9 @@ void CMobblerParser::ParseFriendListL(const TDesC8& aXML, CMobblerFriendList& aO
 	CleanupStack::PopAndDestroy(2, xmlReader);
 	}
 
-void CMobblerParser::ParseTopArtistsL(const TDesC8& aXML, CMobblerArtistList& aObserver, RPointerArray<CMobblerListItem>& aList)
+void CMobblerParser::ParseTopArtistsL(const TDesC8& aXml, CMobblerArtistList& aObserver, RPointerArray<CMobblerListItem>& aList)
 	{
-#ifdef _DEBUG
-	RFile file;
-	CleanupClosePushL(file);
-	User::LeaveIfError(file.Replace(CCoeEnv::Static()->FsSession(), _L("c:usergettopartists.xml"), EFileWrite));
-	User::LeaveIfError(file.Write(aXML));
-	CleanupStack::PopAndDestroy(&file);
-#endif
+	DUMPDATA(aXml, _L("usergettopartists.xml"));
 	
 	// create the xml reader and dom fragement and associate them with each other 
 	CSenXmlReader* xmlReader = CSenXmlReader::NewL();
@@ -571,7 +525,7 @@ void CMobblerParser::ParseTopArtistsL(const TDesC8& aXML, CMobblerArtistList& aO
 	domFragment->SetReader(*xmlReader);
 	
 	// parse the xml into the dom fragment
-	xmlReader->ParseL(aXML);
+	xmlReader->ParseL(aXml);
 	
 	RPointerArray<CSenElement>& items = domFragment->AsElement().Element(_L8("topartists"))->ElementsL();
 		
@@ -597,15 +551,9 @@ void CMobblerParser::ParseTopArtistsL(const TDesC8& aXML, CMobblerArtistList& aO
 	}
 
 
-void CMobblerParser::ParseRecommendedArtistsL(const TDesC8& aXML, CMobblerArtistList& aObserver, RPointerArray<CMobblerListItem>& aList)
+void CMobblerParser::ParseRecommendedArtistsL(const TDesC8& aXml, CMobblerArtistList& aObserver, RPointerArray<CMobblerListItem>& aList)
 	{
-#ifdef _DEBUG
-	RFile file;
-	CleanupClosePushL(file);
-	User::LeaveIfError(file.Replace(CCoeEnv::Static()->FsSession(), _L("c:recommendedartists.xml"), EFileWrite));
-	User::LeaveIfError(file.Write(aXML));
-	CleanupStack::PopAndDestroy(&file);
-#endif
+	DUMPDATA(aXml, _L("recommendedartists.xml"));
 	
 	// create the xml reader and dom fragement and associate them with each other 
 	CSenXmlReader* xmlReader = CSenXmlReader::NewL();
@@ -616,7 +564,7 @@ void CMobblerParser::ParseRecommendedArtistsL(const TDesC8& aXML, CMobblerArtist
 	domFragment->SetReader(*xmlReader);
 	
 	// parse the xml into the dom fragment
-	xmlReader->ParseL(aXML);
+	xmlReader->ParseL(aXml);
 	
 	RPointerArray<CSenElement>& items = domFragment->AsElement().Element(_L8("recommendations"))->ElementsL();
 		
@@ -641,15 +589,9 @@ void CMobblerParser::ParseRecommendedArtistsL(const TDesC8& aXML, CMobblerArtist
 	CleanupStack::PopAndDestroy(2, xmlReader);
 	}
 
-void CMobblerParser::ParseSimilarArtistsL(const TDesC8& aXML, CMobblerArtistList& aObserver, RPointerArray<CMobblerListItem>& aList)
+void CMobblerParser::ParseSimilarArtistsL(const TDesC8& aXml, CMobblerArtistList& aObserver, RPointerArray<CMobblerListItem>& aList)
 	{
-#ifdef _DEBUG
-	RFile file;
-	CleanupClosePushL(file);
-	User::LeaveIfError(file.Replace(CCoeEnv::Static()->FsSession(), _L("c:usergettopartists.xml"), EFileWrite));
-	User::LeaveIfError(file.Write(aXML));
-	CleanupStack::PopAndDestroy(&file);
-#endif
+	DUMPDATA(aXml, _L("usergettopartists.xml"));
 	
 	// create the xml reader and dom fragement and associate them with each other 
 	CSenXmlReader* xmlReader = CSenXmlReader::NewL();
@@ -660,7 +602,7 @@ void CMobblerParser::ParseSimilarArtistsL(const TDesC8& aXML, CMobblerArtistList
 	domFragment->SetReader(*xmlReader);
 	
 	// parse the xml into the dom fragment
-	xmlReader->ParseL(aXML);
+	xmlReader->ParseL(aXml);
 	
 	RPointerArray<CSenElement>& items = domFragment->AsElement().Element(_L8("similarartists"))->ElementsL();
 		
@@ -686,15 +628,9 @@ void CMobblerParser::ParseSimilarArtistsL(const TDesC8& aXML, CMobblerArtistList
 	
 	}
 
-void CMobblerParser::ParseEventsL(const TDesC8& aXML, CMobblerEventList& aObserver, RPointerArray<CMobblerListItem>& aList)
+void CMobblerParser::ParseEventsL(const TDesC8& aXml, CMobblerEventList& aObserver, RPointerArray<CMobblerListItem>& aList)
 	{
-#ifdef _DEBUG
-	RFile file;
-	CleanupClosePushL(file);
-	User::LeaveIfError(file.Replace(CCoeEnv::Static()->FsSession(), _L("c:usergetevents.xml"), EFileWrite));
-	User::LeaveIfError(file.Write(aXML));
-	CleanupStack::PopAndDestroy(&file);
-#endif
+	DUMPDATA(aXml, _L("usergetevents.xml"));
 	
 	// create the xml reader and dom fragement and associate them with each other 
 	CSenXmlReader* xmlReader = CSenXmlReader::NewL();
@@ -705,7 +641,7 @@ void CMobblerParser::ParseEventsL(const TDesC8& aXML, CMobblerEventList& aObserv
 	domFragment->SetReader(*xmlReader);
 	
 	// parse the xml into the dom fragment
-	xmlReader->ParseL(aXML);
+	xmlReader->ParseL(aXml);
 	
 	RPointerArray<CSenElement>& items = domFragment->AsElement().Element(_L8("events"))->ElementsL();
 		
@@ -732,15 +668,9 @@ void CMobblerParser::ParseEventsL(const TDesC8& aXML, CMobblerEventList& aObserv
 	CleanupStack::PopAndDestroy(2, xmlReader);
 	}
 
-void CMobblerParser::ParseTopAlbumsL(const TDesC8& aXML, CMobblerAlbumList& aObserver, RPointerArray<CMobblerListItem>& aList)
+void CMobblerParser::ParseTopAlbumsL(const TDesC8& aXml, CMobblerAlbumList& aObserver, RPointerArray<CMobblerListItem>& aList)
 	{
-#ifdef _DEBUG
-	RFile file;
-	CleanupClosePushL(file);
-	User::LeaveIfError(file.Replace(CCoeEnv::Static()->FsSession(), _L("c:usergettopalbums.xml"), EFileWrite));
-	User::LeaveIfError(file.Write(aXML));
-	CleanupStack::PopAndDestroy(&file);
-#endif
+	DUMPDATA(aXml, _L("usergettopalbums.xml"));
 	
 	// create the xml reader and dom fragement and associate them with each other 
 	CSenXmlReader* xmlReader = CSenXmlReader::NewL();
@@ -751,7 +681,7 @@ void CMobblerParser::ParseTopAlbumsL(const TDesC8& aXML, CMobblerAlbumList& aObs
 	domFragment->SetReader(*xmlReader);
 	
 	// parse the xml into the dom fragment
-	xmlReader->ParseL(aXML);
+	xmlReader->ParseL(aXml);
 	
 	RPointerArray<CSenElement>& items = domFragment->AsElement().Element(_L8("topalbums"))->ElementsL();
 		
@@ -777,15 +707,9 @@ void CMobblerParser::ParseTopAlbumsL(const TDesC8& aXML, CMobblerAlbumList& aObs
 	
 	}
 
-void CMobblerParser::ParseArtistTopTracksL(const TDesC8& aXML, CMobblerTrackList& aObserver, RPointerArray<CMobblerListItem>& aList)
+void CMobblerParser::ParseArtistTopTracksL(const TDesC8& aXml, CMobblerTrackList& aObserver, RPointerArray<CMobblerListItem>& aList)
 	{
-#ifdef _DEBUG
-	RFile file;
-	CleanupClosePushL(file);
-	User::LeaveIfError(file.Replace(CCoeEnv::Static()->FsSession(), _L("c:artisttoptracks.xml"), EFileWrite));
-	User::LeaveIfError(file.Write(aXML));
-	CleanupStack::PopAndDestroy(&file);
-#endif
+	DUMPDATA(aXml, _L("artisttoptracks.xml"));
 	
 	// create the xml reader and dom fragement and associate them with each other 
 	CSenXmlReader* xmlReader = CSenXmlReader::NewL();
@@ -796,7 +720,7 @@ void CMobblerParser::ParseArtistTopTracksL(const TDesC8& aXML, CMobblerTrackList
 	domFragment->SetReader(*xmlReader);
 	
 	// parse the xml into the dom fragment
-	xmlReader->ParseL(aXML);
+	xmlReader->ParseL(aXml);
 	
 	RPointerArray<CSenElement>& items = domFragment->AsElement().Element(_L8("toptracks"))->ElementsL();
 		
@@ -821,15 +745,9 @@ void CMobblerParser::ParseArtistTopTracksL(const TDesC8& aXML, CMobblerTrackList
 	CleanupStack::PopAndDestroy(2, xmlReader);
 	}
 
-void CMobblerParser::ParseUserTopTracksL(const TDesC8& aXML, CMobblerTrackList& aObserver, RPointerArray<CMobblerListItem>& aList)
+void CMobblerParser::ParseUserTopTracksL(const TDesC8& aXml, CMobblerTrackList& aObserver, RPointerArray<CMobblerListItem>& aList)
 	{
-#ifdef _DEBUG
-	RFile file;
-	CleanupClosePushL(file);
-	User::LeaveIfError(file.Replace(CCoeEnv::Static()->FsSession(), _L("c:usertoptracks.xml"), EFileWrite));
-	User::LeaveIfError(file.Write(aXML));
-	CleanupStack::PopAndDestroy(&file);
-#endif
+	DUMPDATA(aXml, _L("usertoptracks.xml"));
 	
 	// create the xml reader and dom fragement and associate them with each other 
 	CSenXmlReader* xmlReader = CSenXmlReader::NewL();
@@ -840,7 +758,7 @@ void CMobblerParser::ParseUserTopTracksL(const TDesC8& aXML, CMobblerTrackList& 
 	domFragment->SetReader(*xmlReader);
 	
 	// parse the xml into the dom fragment
-	xmlReader->ParseL(aXML);
+	xmlReader->ParseL(aXml);
 	
 	RPointerArray<CSenElement>& items = domFragment->AsElement().Element(_L8("toptracks"))->ElementsL();
 		
@@ -865,15 +783,9 @@ void CMobblerParser::ParseUserTopTracksL(const TDesC8& aXML, CMobblerTrackList& 
 	CleanupStack::PopAndDestroy(2, xmlReader);
 	}
 
-void CMobblerParser::ParseSimilarTracksL(const TDesC8& aXML, CMobblerTrackList& aObserver, RPointerArray<CMobblerListItem>& aList)
+void CMobblerParser::ParseSimilarTracksL(const TDesC8& aXml, CMobblerTrackList& aObserver, RPointerArray<CMobblerListItem>& aList)
 	{
-#ifdef _DEBUG
-	RFile file;
-	CleanupClosePushL(file);
-	User::LeaveIfError(file.Replace(CCoeEnv::Static()->FsSession(), _L("c:similartracks.xml"), EFileWrite));
-	User::LeaveIfError(file.Write(aXML));
-	CleanupStack::PopAndDestroy(&file);
-#endif
+	DUMPDATA(aXml, _L("similartracks.xml"));
 	
 	// create the xml reader and dom fragement and associate them with each other 
 	CSenXmlReader* xmlReader = CSenXmlReader::NewL();
@@ -884,7 +796,7 @@ void CMobblerParser::ParseSimilarTracksL(const TDesC8& aXML, CMobblerTrackList& 
 	domFragment->SetReader(*xmlReader);
 	
 	// parse the xml into the dom fragment
-	xmlReader->ParseL(aXML);
+	xmlReader->ParseL(aXml);
 	
 	RPointerArray<CSenElement>& items = domFragment->AsElement().Element(_L8("similartracks"))->ElementsL();
 		
@@ -913,15 +825,9 @@ void CMobblerParser::ParseSimilarTracksL(const TDesC8& aXML, CMobblerTrackList& 
 	CleanupStack::PopAndDestroy(2, xmlReader);
 	}
 
-void CMobblerParser::ParseRecentTracksL(const TDesC8& aXML, CMobblerTrackList& aObserver, RPointerArray<CMobblerListItem>& aList)
+void CMobblerParser::ParseRecentTracksL(const TDesC8& aXml, CMobblerTrackList& aObserver, RPointerArray<CMobblerListItem>& aList)
 	{
-#ifdef _DEBUG
-	RFile file;
-	CleanupClosePushL(file);
-	User::LeaveIfError(file.Replace(CCoeEnv::Static()->FsSession(), _L("c:recenttracks.xml"), EFileWrite));
-	User::LeaveIfError(file.Write(aXML));
-	CleanupStack::PopAndDestroy(&file);
-#endif
+	DUMPDATA(aXml, _L("recenttracks.xml"));
 	
 	// create the xml reader and dom fragement and associate them with each other 
 	CSenXmlReader* xmlReader = CSenXmlReader::NewL();
@@ -932,7 +838,7 @@ void CMobblerParser::ParseRecentTracksL(const TDesC8& aXML, CMobblerTrackList& a
 	domFragment->SetReader(*xmlReader);
 	
 	// parse the xml into the dom fragment
-	xmlReader->ParseL(aXML);
+	xmlReader->ParseL(aXml);
 	
 	RPointerArray<CSenElement>& items = domFragment->AsElement().Element(_L8("recenttracks"))->ElementsL();
 		
@@ -969,15 +875,9 @@ void CMobblerParser::ParseRecentTracksL(const TDesC8& aXML, CMobblerTrackList& a
 	CleanupStack::PopAndDestroy(2, xmlReader);
 	}
 
-void CMobblerParser::ParsePlaylistsL(const TDesC8& aXML, CMobblerPlaylistList& aObserver, RPointerArray<CMobblerListItem>& aList)
+void CMobblerParser::ParsePlaylistsL(const TDesC8& aXml, CMobblerPlaylistList& aObserver, RPointerArray<CMobblerListItem>& aList)
 	{
-#ifdef _DEBUG
-	RFile file;
-	CleanupClosePushL(file);
-	User::LeaveIfError(file.Replace(CCoeEnv::Static()->FsSession(), _L("c:userplaylists.xml"), EFileWrite));
-	User::LeaveIfError(file.Write(aXML));
-	CleanupStack::PopAndDestroy(&file);
-#endif
+	DUMPDATA(aXml, _L("userplaylists.xml"));
 	
 	// create the xml reader and dom fragement and associate them with each other 
 	CSenXmlReader* xmlReader = CSenXmlReader::NewL();
@@ -988,7 +888,7 @@ void CMobblerParser::ParsePlaylistsL(const TDesC8& aXML, CMobblerPlaylistList& a
 	domFragment->SetReader(*xmlReader);
 	
 	// parse the xml into the dom fragment
-	xmlReader->ParseL(aXML);
+	xmlReader->ParseL(aXml);
 	
 	RPointerArray<CSenElement>& items = domFragment->AsElement().Element(_L8("playlists"))->ElementsL();
 		
@@ -1016,15 +916,9 @@ void CMobblerParser::ParsePlaylistsL(const TDesC8& aXML, CMobblerPlaylistList& a
 	
 	}
 
-void CMobblerParser::ParseShoutboxL(const TDesC8& aXML, CMobblerShoutbox& aObserver, RPointerArray<CMobblerListItem>& aList)
+void CMobblerParser::ParseShoutboxL(const TDesC8& aXml, CMobblerShoutbox& aObserver, RPointerArray<CMobblerListItem>& aList)
 	{
-#ifdef _DEBUG
-	RFile file;
-	CleanupClosePushL(file);
-	User::LeaveIfError(file.Replace(CCoeEnv::Static()->FsSession(), _L("c:shoutbox.xml"), EFileWrite));
-	User::LeaveIfError(file.Write(aXML));
-	CleanupStack::PopAndDestroy(&file);
-#endif
+	DUMPDATA(aXml, _L("shoutbox.xml"));
 	
 	// create the xml reader and dom fragement and associate them with each other 
 	CSenXmlReader* xmlReader = CSenXmlReader::NewL();
@@ -1035,7 +929,7 @@ void CMobblerParser::ParseShoutboxL(const TDesC8& aXML, CMobblerShoutbox& aObser
 	domFragment->SetReader(*xmlReader);
 	
 	// parse the xml into the dom fragment
-	xmlReader->ParseL(aXML);
+	xmlReader->ParseL(aXml);
 	
 	RPointerArray<CSenElement>& items = domFragment->AsElement().Element(_L8("shouts"))->ElementsL();
 		
@@ -1056,15 +950,9 @@ void CMobblerParser::ParseShoutboxL(const TDesC8& aXML, CMobblerShoutbox& aObser
 	CleanupStack::PopAndDestroy(2, xmlReader);
 	}
 
-void CMobblerParser::ParseTopTagsL(const TDesC8& aXML, CMobblerTagList& aObserver, RPointerArray<CMobblerListItem>& aList)
+void CMobblerParser::ParseTopTagsL(const TDesC8& aXml, CMobblerTagList& aObserver, RPointerArray<CMobblerListItem>& aList)
 	{
-#ifdef _DEBUG
-	RFile file;
-	CleanupClosePushL(file);
-	User::LeaveIfError(file.Replace(CCoeEnv::Static()->FsSession(), _L("c:toptags.xml"), EFileWrite));
-	User::LeaveIfError(file.Write(aXML));
-	CleanupStack::PopAndDestroy(&file);
-#endif
+	DUMPDATA(aXml, _L("toptags.xml"));
 	
 	// create the xml reader and dom fragement and associate them with each other 
 	CSenXmlReader* xmlReader = CSenXmlReader::NewL();
@@ -1075,7 +963,7 @@ void CMobblerParser::ParseTopTagsL(const TDesC8& aXML, CMobblerTagList& aObserve
 	domFragment->SetReader(*xmlReader);
 	
 	// parse the xml into the dom fragment
-	xmlReader->ParseL(aXML);
+	xmlReader->ParseL(aXml);
 	
 	RPointerArray<CSenElement>& items = domFragment->AsElement().Element(_L8("toptags"))->ElementsL();
 		
@@ -1096,15 +984,9 @@ void CMobblerParser::ParseTopTagsL(const TDesC8& aXML, CMobblerTagList& aObserve
 	CleanupStack::PopAndDestroy(2, xmlReader);
 	}
 
-TInt CMobblerParser::ParseUpdateResponseL(const TDesC8& aXML, TVersion& aVersion, TDes8& location)
+TInt CMobblerParser::ParseUpdateResponseL(const TDesC8& aXml, TVersion& aVersion, TDes8& location)
 	{
-#ifdef _DEBUG
-	RFile file;
-	CleanupClosePushL(file);
-	User::LeaveIfError(file.Replace(CCoeEnv::Static()->FsSession(), _L("c:update.xml"), EFileWrite));
-	User::LeaveIfError(file.Write(aXML));
-	CleanupStack::PopAndDestroy(&file);
-#endif
+	DUMPDATA(aXml, _L("update.xml"));
 	
 	TInt error(KErrNone);
 	
@@ -1117,7 +999,7 @@ TInt CMobblerParser::ParseUpdateResponseL(const TDesC8& aXML, TVersion& aVersion
 	domFragment->SetReader(*xmlReader);
 	
 	// parse the xml into the dom fragment
-	xmlReader->ParseL(aXML);
+	xmlReader->ParseL(aXml);
 	
 	TLex8 lex8;
 	lex8.Assign(domFragment->AsElement().Element(KUpdateVersionMajor)->Content());

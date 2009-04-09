@@ -588,8 +588,8 @@ void CMobblerStatusControl::Draw(const TRect& /*aRect*/) const
 				// The current track has album art and it has finished loading
 				albumArt = iAppUi.CurrentTrack()->AlbumArt();
 				
-				if (iAppUi.CurrentTrack()->AlbumArt()->ScaleSatus() == CMobblerBitmap::EMobblerScaleNone
-						&& iAppUi.CurrentTrack()->AlbumArt()->SizeInPixels() != iRectAlbumArt.Size())
+				if (iAppUi.CurrentTrack()->AlbumArt()->ScaleStatus() == CMobblerBitmap::EMobblerScaleNone
+					&& !iAppUi.CurrentTrack()->AlbumArt()->LongSidesEqual(iRectAlbumArt.Size()))
 					{
 					const_cast<CMobblerBitmap*>(iAppUi.CurrentTrack()->AlbumArt())->ScaleL(iRectAlbumArt.Size());
 					}
@@ -603,8 +603,8 @@ void CMobblerStatusControl::Draw(const TRect& /*aRect*/) const
 				// The current track has album art and it has finished loading
 				albumArt = iAppUi.CurrentTrack()->AlbumArt();
 				
-				if (iAppUi.CurrentTrack()->AlbumArt()->ScaleSatus() == CMobblerBitmap::EMobblerScaleNone
-						&& iAppUi.CurrentTrack()->AlbumArt()->SizeInPixels() != iRectAlbumArt.Size())
+				if (iAppUi.CurrentTrack()->AlbumArt()->ScaleStatus() == CMobblerBitmap::EMobblerScaleNone
+						&& !iAppUi.CurrentTrack()->AlbumArt()->LongSidesEqual(iRectAlbumArt.Size()))
 					{
 					const_cast<CMobblerBitmap*>(iAppUi.CurrentTrack()->AlbumArt())->ScaleL(iRectAlbumArt.Size());
 					}

@@ -1183,7 +1183,7 @@ void CMobblerLastFMConnection::TrackStoppedL()
 		
 		TTimeIntervalSeconds listenedFor(0);
 		
-		if (iCurrentTrack->RadioAuth().Length() != 0)
+		if (!iCurrentTrack->IsMusicPlayerTrack())
 			{
 			// It's a radio track so test the amount of continuous playback
 			listenedFor = iCurrentTrack->PlaybackPosition();
@@ -1295,7 +1295,7 @@ TBool CMobblerLastFMConnection::DoSubmitL()
 				startTimeBuf.AppendNum(unixTimeStamp.Int());
 				submitForm->AddFieldL(i, startTimeBuf);
 				
-				if (iTrackQueue[ii]->RadioAuth().Compare(KNullDesC8) == 0)
+				if (iTrackQueue[ii]->IsMusicPlayerTrack())
 					{
 					submitForm->AddFieldL(o, _L8("P"));
 					}

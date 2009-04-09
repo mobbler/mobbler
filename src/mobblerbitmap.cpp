@@ -308,7 +308,7 @@ void CMobblerBitmap::DoCancel()
 void CMobblerBitmap::ScaleL(TSize aSize)
 	{
 	if (iBitmapLoaded && iScaleStatus != EMobblerScalePending
-			&& iBitmap->SizeInPixels() != aSize)
+			&& !LongSidesEqual(aSize))
 		{
 		// Delete and stop any previous attempt to scale and create a new scaler
 		delete iBitmapScaler;
@@ -334,10 +334,24 @@ void CMobblerBitmap::ScaleL(TSize aSize)
 		}
 	}
 
-CMobblerBitmap::TMobblerScaleStatus CMobblerBitmap::ScaleSatus() const
+CMobblerBitmap::TMobblerScaleStatus CMobblerBitmap::ScaleStatus() const
 	{
 	return iScaleStatus;
 	}
 
-				
+TBool CMobblerBitmap::LongSidesEqual(TSize aSize) const
+	{
+	TInt width(SizeInPixels().iWidth);
+	TInt height(SizeInPixels().iHeight);
+	
+	if ((width >= height && width == aSize.iWidth)
+			||
+		(height >= width && height == aSize.iHeight))
+		{
+		return ETrue;
+		}
+
+	return EFalse;
+	}
+	
 // End of file

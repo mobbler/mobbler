@@ -253,7 +253,7 @@ void CMobblerListControl::UpdateIconArrayL()
 			
 			if (iList[i]->Image() &&
 					iList[i]->Image()->Bitmap() && // the bitmap has loaded
-					iList[i]->Image()->ScaleSatus() != CMobblerBitmap::EMobblerScalePending) // Don't display if it is still scaling
+					iList[i]->Image()->ScaleStatus() != CMobblerBitmap::EMobblerScalePending) // Don't display if it is still scaling
 				{
 				icon = CGulIcon::NewL(iList[i]->Image()->Bitmap(), iList[i]->Image()->Mask());
 				}

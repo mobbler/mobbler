@@ -31,9 +31,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "mobblerdataobserver.h"
 #include "mobblerdownload.h"
+#include "mobblergesturesinterface.h"
 #include "mobblerlastfmconnectionobserver.h"
 #include "mobblersleeptimer.h"
-#include "mobblergesturesinterface.h"
 
 const TVersion KVersion(0, 4, 2);
 _LIT(KFormatTime, "%F%D %N %-B%J%:1%T%+B"); // 21 March 11:20 am
