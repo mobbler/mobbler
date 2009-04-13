@@ -592,7 +592,7 @@ void CMobblerTrack::FetchArtistInfoL()
 	if (okTodownloadAlbumArt && 
 		static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->LastFMConnection().Mode() == CMobblerLastFMConnection::EOnline)
 		{
-		static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->LastFMConnection().ArtistGetInfoL(iArtist->String(), *this);
+		static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->LastFMConnection().ArtistGetImageL(iArtist->String(), *this);
 		iState = EFetchingArtistInfo;
 		}
 	}
@@ -627,9 +627,30 @@ TBool CMobblerTrack::FetchImageL(const TDesC8& aData)
 	
 	RPointerArray<CSenElement> imageArray;
 	CleanupClosePushL(imageArray);
-	iState == EFetchingAlbumInfo?
-		User::LeaveIfError(domFragment->AsElement().Element(_L8("album"))->ElementsL(imageArray, _L8("image"))):
-		User::LeaveIfError(domFragment->AsElement().Element(_L8("artist"))->ElementsL(imageArray, _L8("image")));
+	
+	if (iState == EFetchingAlbumInfo)
+		{
+		User::LeaveIfError(domFragment->AsElement().Element(_L8("album"))->ElementsL(imageArray, _L8("image")));
+		}
+	else
+		{
+		CSenElement* element = domFragment->AsElement().Element(_L8("images"));
+		
+		if (element)
+			{
+			element = element->Element(_L8("image"));
+			
+			if (element)
+				{
+				element->Element(_L8("sizes"));
+				
+				if (element)
+					{
+					User::LeaveIfError(element->ElementsL(imageArray, _L8("size")));
+					}
+				}
+			}
+		}
 	
 	const TInt KImageCount(imageArray.Count());
 	for (TInt i(0); i < KImageCount; ++i)
@@ -638,7 +659,7 @@ TBool CMobblerTrack::FetchImageL(const TDesC8& aData)
 			 imageArray[i]->AttrValue(_L8("size"))->Compare(_L8("extralarge")) == 0)
 				||
 			(iState == EFetchingArtistInfo &&
-			 imageArray[i]->AttrValue(_L8("size"))->Compare(_L8("large")) == 0))
+			 imageArray[i]->AttrValue(_L8("name"))->Compare(_L8("largesquare")) == 0))
 			{
 			if (imageArray[i]->Content().Length() > 0)
 				{

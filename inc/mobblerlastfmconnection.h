@@ -141,6 +141,7 @@ public:
 	
 	void SimilarArtistsL(const TDesC8& aArtist, MMobblerFlatDataObserver& aObserver);
 	void ArtistGetInfoL(const TDesC& aArtist, MMobblerFlatDataObserver& aObserver);
+	void ArtistGetImageL(const TDesC& aArtist, MMobblerFlatDataObserver& aObserver);
 	void ArtistGetTagsL(const TDesC& aArtist, MMobblerFlatDataObserver& aObserver);
 	void ArtistOrTrackSearchL(TDesC& aArtist, TDesC& aTrack, MMobblerFlatDataObserver& aObserver);
 	void AlbumGetInfoL(const CMobblerTrack& aTrack, MMobblerFlatDataObserver& aObserver);

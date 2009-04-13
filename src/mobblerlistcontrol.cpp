@@ -173,61 +173,65 @@ TInt CMobblerListControl::Count() const
 
 HBufC* CMobblerListControl::NameL()
 	{
-	TBuf<50> name;
+	TPtrC format(KNullDesC);
+	TPtrC text(iText1->String());
 	
 	switch (iType)
 		{
 		case EMobblerCommandFriends:
-			name.Format(iAppUi.ResourceReader().ResourceL(R_MOBBLER_FORMAT_FRIENDS), &iText1->String());
+			format.Set(iAppUi.ResourceReader().ResourceL(R_MOBBLER_FORMAT_FRIENDS));
 			break;
 		case EMobblerCommandUserTopArtists:
-			name.Format(iAppUi.ResourceReader().ResourceL(R_MOBBLER_FORMAT_TOP_ARTISTS), &iText1->String());
+			format.Set(iAppUi.ResourceReader().ResourceL(R_MOBBLER_FORMAT_TOP_ARTISTS));
 			break;
 		case EMobblerCommandRecommendedArtists:
-			name.Format(iAppUi.ResourceReader().ResourceL(R_MOBBLER_FORMAT_RECOMMENDED_ARTISTS), &iText1->String());
+			format.Set(iAppUi.ResourceReader().ResourceL(R_MOBBLER_FORMAT_RECOMMENDED_ARTISTS));
 			break;
 		case EMobblerCommandRecommendedEvents:
-			name.Format(iAppUi.ResourceReader().ResourceL(R_MOBBLER_FORMAT_RECOMMENDED_EVENTS), &iText1->String());
+			format.Set(iAppUi.ResourceReader().ResourceL(R_MOBBLER_FORMAT_RECOMMENDED_EVENTS));
 			break;
 		case EMobblerCommandSimilarArtists:
-			name.Format(iAppUi.ResourceReader().ResourceL(R_MOBBLER_FORMAT_SIMILAR_ARTISTS), &iText1->String());
+			format.Set(iAppUi.ResourceReader().ResourceL(R_MOBBLER_FORMAT_SIMILAR_ARTISTS));
 			break;
 		case EMobblerCommandUserTopAlbums:
 		case EMobblerCommandArtistTopAlbums:
-			name.Format(iAppUi.ResourceReader().ResourceL(R_MOBBLER_FORMAT_TOP_ALBUMS), &iText1->String());
+			format.Set(iAppUi.ResourceReader().ResourceL(R_MOBBLER_FORMAT_TOP_ALBUMS));
 			break;
 		case EMobblerCommandUserTopTracks:
 		case EMobblerCommandArtistTopTracks:
-			name.Format(iAppUi.ResourceReader().ResourceL(R_MOBBLER_FORMAT_TOP_TRACKS), &iText1->String());
+			format.Set(iAppUi.ResourceReader().ResourceL(R_MOBBLER_FORMAT_TOP_TRACKS));
 			break;
 		case EMobblerCommandRecentTracks:
-			name.Format(iAppUi.ResourceReader().ResourceL(R_MOBBLER_FORMAT_RECENT_TRACKS), &iText1->String());
+			format.Set(iAppUi.ResourceReader().ResourceL(R_MOBBLER_FORMAT_RECENT_TRACKS));
 			break;
 		case EMobblerCommandSimilarTracks:
-			name.Format(iAppUi.ResourceReader().ResourceL(R_MOBBLER_FORMAT_SIMILAR_TRACKS), &iText2->String());
+			format.Set(iAppUi.ResourceReader().ResourceL(R_MOBBLER_FORMAT_SIMILAR_TRACKS));
+			text.Set(iText2->String());
 			break;
 		case EMobblerCommandPlaylists:
-			name.Format(iAppUi.ResourceReader().ResourceL(R_MOBBLER_FORMAT_PLAYLISTS), &iText1->String());
+			format.Set(iAppUi.ResourceReader().ResourceL(R_MOBBLER_FORMAT_PLAYLISTS));
 			break;
 		case EMobblerCommandUserEvents:
 		case EMobblerCommandArtistEvents:
-			name.Format(iAppUi.ResourceReader().ResourceL(R_MOBBLER_FORMAT_EVENTS), &iText1->String());
+			format.Set(iAppUi.ResourceReader().ResourceL(R_MOBBLER_FORMAT_EVENTS));
 			break;
 		case EMobblerCommandUserTopTags:
 		case EMobblerCommandArtistTopTags:
-			name.Format(iAppUi.ResourceReader().ResourceL(R_MOBBLER_FORMAT_TOP_TAGS), &iText1->String());
+			format.Set(iAppUi.ResourceReader().ResourceL(R_MOBBLER_FORMAT_TOP_TAGS));
 			break;
 		case EMobblerCommandUserShoutbox:
 		case EMobblerCommandArtistShoutbox:
 		case EMobblerCommandEventShoutbox:
-			name.Format(iAppUi.ResourceReader().ResourceL(R_MOBBLER_FORMAT_SHOUTBOX), &iText1->String());
+			format.Set(iAppUi.ResourceReader().ResourceL(R_MOBBLER_FORMAT_SHOUTBOX));
 			break;
 		default:
 			// we should panic if we get here
 			break;
 		};
 	
-	return name.AllocL();
+	HBufC* returnText = HBufC::NewL(format.Length() + text.Length());
+	returnText->Des().Format(format, &text);
+	return returnText;
 	}
 
 void CMobblerListControl::UpdateIconArrayL()

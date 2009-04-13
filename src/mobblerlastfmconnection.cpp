@@ -645,6 +645,32 @@ void CMobblerLastFMConnection::ArtistGetInfoL(const TDesC& aArtist, MMobblerFlat
 	AppendAndSubmitTransactionL(transaction);
 	}
 
+void CMobblerLastFMConnection::ArtistGetImageL(const TDesC& aArtist, MMobblerFlatDataObserver& aObserver)
+	{
+	CUri8* uri = CUri8::NewL();
+	CleanupStack::PushL(uri);
+	
+	uri->SetComponentL(KScheme, EUriScheme);
+	uri->SetComponentL(KWebServicesHost, EUriHost);
+	uri->SetComponentL(_L8("/2.0/"), EUriPath);
+	
+	CMobblerWebServicesQuery* query = CMobblerWebServicesQuery::NewLC(_L8("artist.getimages"));
+	query->AddFieldL(_L8("artist"), *MobblerUtility::URLEncodeLC(aArtist));
+	query->AddFieldL(_L8("limit"), _L8("1"));
+	CleanupStack::PopAndDestroy(); // *MobblerUtility::URLEncodeLC(aTrack.Artist().String8())
+			
+	uri->SetComponentL(*query->GetQueryLC(), EUriQuery);
+	CleanupStack::PopAndDestroy(); // *query->GetQueryLC()
+
+	CMobblerTransaction* transaction = CMobblerTransaction::NewL(*this, uri);
+	transaction->SetFlatDataObserver(&aObserver);
+	
+	CleanupStack::PopAndDestroy(query);
+	CleanupStack::Pop(uri);
+	
+	AppendAndSubmitTransactionL(transaction);
+	}
+
 void CMobblerLastFMConnection::ArtistGetTagsL(const TDesC& aArtist, MMobblerFlatDataObserver& aObserver)
 	{
 	CUri8* uri = CUri8::NewL();
