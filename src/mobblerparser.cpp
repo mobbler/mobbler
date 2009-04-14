@@ -591,7 +591,7 @@ void CMobblerParser::ParseRecommendedArtistsL(const TDesC8& aXml, CMobblerArtist
 
 void CMobblerParser::ParseSimilarArtistsL(const TDesC8& aXml, CMobblerArtistList& aObserver, RPointerArray<CMobblerListItem>& aList)
 	{
-	DUMPDATA(aXml, _L("usergettopartists.xml"));
+	DUMPDATA(aXml, _L("similarartists.xml"));
 	
 	// create the xml reader and dom fragement and associate them with each other 
 	CSenXmlReader* xmlReader = CSenXmlReader::NewL();
@@ -625,7 +625,6 @@ void CMobblerParser::ParseSimilarArtistsL(const TDesC8& aXml, CMobblerArtistList
 		}
 	
 	CleanupStack::PopAndDestroy(2, xmlReader);
-	
 	}
 
 void CMobblerParser::ParseEventsL(const TDesC8& aXml, CMobblerEventList& aObserver, RPointerArray<CMobblerListItem>& aList)
@@ -704,7 +703,6 @@ void CMobblerParser::ParseTopAlbumsL(const TDesC8& aXml, CMobblerAlbumList& aObs
 		}
 	
 	CleanupStack::PopAndDestroy(2, xmlReader);
-	
 	}
 
 void CMobblerParser::ParseArtistTopTracksL(const TDesC8& aXml, CMobblerTrackList& aObserver, RPointerArray<CMobblerListItem>& aList)

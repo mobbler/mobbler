@@ -152,6 +152,7 @@ private:
 	HBufC8* iImage;
 	CMobblerBitmap* iAlbumArt;
 	TBool iTriedButCouldntFindAlbumArt;
+	TBool iUsingArtistImage;
 	
 	// mp3 location
 	HBufC8* iMp3Location;

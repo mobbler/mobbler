@@ -570,7 +570,7 @@ void CMobblerRadioPlayer::DoStop(TBool aDeleteNextTrack)
 		if (iNextAudioControl)
 			{
 			// if there was a next track then increment the current track
-			// becasue we can't download the same track twice
+			// because we can't download the same track twice
 			++iCurrentTrackIndex;
 			}
 		

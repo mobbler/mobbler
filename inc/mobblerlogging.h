@@ -36,6 +36,8 @@ public:
 #define LOG(a) CMobblerLogging::LogL(a)
 
 	static void DumpDataL(const TDesC8& aData, const TDesC& aLogFile);
+	static void LogL(const TInt aNumber);
+	static void LogL(const TDesC& aText);
 	static void LogL(const TDesC8& aText);
 
 #else // _DEBUG

@@ -28,7 +28,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "mobbleralbumlist.h"
 #include "mobblerappui.h"
 #include "mobblerartistlist.h"
-#include "mobblerbitmap.h"
 #include "mobblereventlist.h"
 #include "mobblerfriendlist.h"
 #include "mobblerlistcontrol.h"
@@ -153,7 +152,7 @@ CMobblerListControl::~CMobblerListControl()
 	iAppUi.LastFMConnection().CancelTransaction(this);
 	
 	const TInt KListCount(iList.Count());
-	for (TInt i(0); i < KListCount ; ++i)
+	for (TInt i(0); i < KListCount; ++i)
 		{
 		iAppUi.LastFMConnection().CancelTransaction(iList[i]);
 		}
@@ -274,13 +273,13 @@ void CMobblerListControl::UpdateIconArrayL()
 		}
 	}
 
-void CMobblerListControl::DataL(const TDesC8& aXML, CMobblerLastFMConnection::TError aError)
+void CMobblerListControl::DataL(const TDesC8& aXml, CMobblerLastFMConnection::TError aError)
 	{
 	if (aError == CMobblerLastFMConnection::EErrorNone)
 		{
 		iState = ENormal;
 		
-		ParseL(aXML);
+		ParseL(aXml);
 		
 		const TInt KListCount(iList.Count());
 		for (TInt i(0); i < KListCount; ++i)
@@ -291,36 +290,38 @@ void CMobblerListControl::DataL(const TDesC8& aXML, CMobblerLastFMConnection::TE
 				{
 				case EMobblerCommandUserTopTags:
 				case EMobblerCommandArtistTopTags:
-					{
-					TInt descriptionFormatID = (iList[i]->Description()->String().Compare(_L("1")) == 0)?
-												R_MOBBLER_FORMAT_TIME_USED:
-												R_MOBBLER_FORMAT_TIMES_USED;
-					
-					const TDesC& descriptionFormat = iAppUi.ResourceReader().ResourceL(descriptionFormatID);
-
-					HBufC* description = HBufC::NewLC(descriptionFormat.Length() + iList[i]->Description()->String().Length());
-					description->Des().Format(descriptionFormat, &iList[i]->Description()->String());
-					
-					HBufC* format = HBufC::NewLC(KDoubleLargeStyleListBoxTextFormat().Length() + iList[i]->Title()->String().Length() + description->Length());
-					format->Des().Format(KDoubleLargeStyleListBoxTextFormat, i, &iList[i]->Title()->String(), description);
-					iListBoxItems->AppendL(*format);
-					CleanupStack::PopAndDestroy(format);
-					CleanupStack::PopAndDestroy(description);
-					}
-					break;
 				case EMobblerCommandUserTopArtists:
 				case EMobblerCommandArtistTopTracks:
 					{
-					TInt descriptionFormatID = (iList[i]->Description()->String().Compare(_L("1")) == 0)?
+					TInt descriptionFormatId;
+
+					switch (iType)
+						{
+						case EMobblerCommandUserTopTags:
+						case EMobblerCommandArtistTopTags:
+							{
+							descriptionFormatId = (iList[i]->Description()->String().Compare(_L("1")) == 0)?
+													R_MOBBLER_FORMAT_TIME_USED:
+													R_MOBBLER_FORMAT_TIMES_USED;
+							break;
+							}
+						case EMobblerCommandUserTopArtists:
+						case EMobblerCommandArtistTopTracks:
+							{
+							descriptionFormatId = (iList[i]->Description()->String().Compare(_L("1")) == 0)?
 													R_MOBBLER_FORMAT_PLAY:
 													R_MOBBLER_FORMAT_PLAYS;
-					
-					const TDesC& descriptionFormat = iAppUi.ResourceReader().ResourceL(descriptionFormatID);
-										
+							break;
+							}
+						default:
+							break;
+						}
+
+					const TDesC& descriptionFormat = iAppUi.ResourceReader().ResourceL(descriptionFormatId);
+
 					HBufC* description = HBufC::NewLC(descriptionFormat.Length() + iList[i]->Description()->String().Length());
 					description->Des().Format(descriptionFormat, &iList[i]->Description()->String());
 										
-					
 					HBufC* format = HBufC::NewLC(KDoubleLargeStyleListBoxTextFormat().Length() + iList[i]->Title()->String().Length() + description->Length());
 					format->Des().Format(KDoubleLargeStyleListBoxTextFormat, i, &iList[i]->Title()->String(), description);
 					iListBoxItems->AppendL(*format);
@@ -328,6 +329,7 @@ void CMobblerListControl::DataL(const TDesC8& aXML, CMobblerLastFMConnection::TE
 					CleanupStack::PopAndDestroy(description);
 					}
 					break;
+
 				case EMobblerCommandRecentTracks:
 					{
 					HBufC* title = HBufC::NewLC(KRecentTracksTitleFormat().Length() +
@@ -387,6 +389,22 @@ void CMobblerListControl::DataL(const TDesC8& aXML, CMobblerLastFMConnection::TE
 					CleanupStack::PopAndDestroy(title);
 					}
 					break;
+
+				case EMobblerCommandSimilarArtists:
+					{
+					_LIT(KPercent, "%");
+					HBufC* description = HBufC::NewLC(iList[i]->Description()->String().Length() + KPercent().Length());
+					description->Des() = iList[i]->Description()->String();
+					description->Des().Append(KPercent());
+										
+					HBufC* format = HBufC::NewLC(KDoubleLargeStyleListBoxTextFormat().Length() + iList[i]->Title()->String().Length() + description->Length());
+					format->Des().Format(KDoubleLargeStyleListBoxTextFormat, i, &iList[i]->Title()->String(), description);
+					iListBoxItems->AppendL(*format);
+					CleanupStack::PopAndDestroy(format);
+					CleanupStack::PopAndDestroy(description);
+					}
+					break;
+
 				default:
 					{
 					HBufC* itemText = HBufC::NewLC(KDoubleLargeStyleListBoxTextFormat().Length() + iList[i]->Title()->String().Length() + iList[i]->Description()->String().Length());

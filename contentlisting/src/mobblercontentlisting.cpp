@@ -153,9 +153,9 @@ void CMobblerContentListing::FindAndSetAlbumNameL()
 						// TCLFDefaultFieldId. Luckily Compare() is 
 						// case-sensitive and that'll discriminate on the often
 						// different "the"/"The", "In"/"in", "Of"/"of" etc.
+						found = ETrue;
 						}
 					
-					found = ETrue;
 					break;
 					}
 				}

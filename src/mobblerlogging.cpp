@@ -47,6 +47,20 @@ void CMobblerLogging::DumpDataL(const TDesC8& aData, const TDesC& aLogFile)
 	CleanupStack::PopAndDestroy(&file);
 	}
 
+void CMobblerLogging::LogL(const TInt aNumber)
+	{
+	TBuf8<255> text8;
+	text8.AppendNum(aNumber);
+	LogL(text8);
+	}
+
+void CMobblerLogging::LogL(const TDesC& aText)
+	{
+	HBufC8* text8 = HBufC8::NewL(aText.Length());
+	text8->Des().Copy(aText);
+	LogL(*text8);
+	}
+
 void CMobblerLogging::LogL(const TDesC8& aText)
 	{
 	HBufC* text = HBufC::NewLC(aText.Length());

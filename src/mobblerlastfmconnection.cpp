@@ -1406,7 +1406,7 @@ void CMobblerLastFMConnection::HandleHandshakeErrorL(CMobblerLastFMError* aError
 			
 			if (iTrackDownloadObserver)
 				{
-				// There is a track observer so this must be becasue
+				// There is a track observer so this must be because
 				// we failed to start downloading a track, but have now reconnected
 				iTrackDownloadObserver->DataCompleteL(EErrorHandshake);
 				iTrackDownloadObserver = NULL;

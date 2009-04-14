@@ -76,7 +76,9 @@ CMobblerTrack* CMobblerTrack::NewL(RReadStream& aReadStream)
 
 CMobblerTrack::CMobblerTrack()
 	: iTrackNumber(KErrUnknown), iStartTimeUTC(Time::NullTTime()), 
-	  iTotalPlayed(0), iInitialPlaybackPosition(KErrUnknown)
+	  iTotalPlayed(0), iInitialPlaybackPosition(KErrUnknown),
+	  iTriedButCouldntFindAlbumArt(EFalse),
+	  iUsingArtistImage(EFalse)
 	{
 	Open();
 	}
@@ -250,10 +252,15 @@ const CMobblerString& CMobblerTrack::Album() const
 
 void CMobblerTrack::SetAlbumL(const TDesC& aAlbum)
 	{
+	LOG(_L8("CMobblerTrack::SetAlbumL"));
+	LOG(aAlbum);
+
 	delete iAlbum;
 	iAlbum = CMobblerString::NewL(aAlbum);
 
-	if (!iAlbumArt && iState == ENone)
+	// Check if there's a something better online
+	if ((!iAlbumArt || iUsingArtistImage)
+				&& iState == ENone)
 		{
 		if (iAlbum->String().Length() != 0)
 			{
@@ -270,7 +277,7 @@ void CMobblerTrack::SetAlbumL(const TDesC& aAlbum)
 			LOG(_L8("3 FetchImageL(album)"));
 			FetchImageL(EFetchingAlbumArt, *iImage);
 			}
-		else
+		else if (!iUsingArtistImage)
 			{
 			 // No album art, let's try the artist image instead.
 			// Try to fetch the artist info. Once this is fetched
@@ -312,6 +319,9 @@ void CMobblerTrack::BitmapResizedL(const CMobblerBitmap* /*aMobblerBitmap*/)
 
 void CMobblerTrack::SetPathL(const TDesC& aPath)
 	{
+	LOG(_L8("CMobblerTrack::SetPathL"));
+	LOG(aPath);
+
 	TParse parse;
 	parse.Set(aPath, NULL, NULL);
 	TFileName fileName;
@@ -331,6 +341,7 @@ void CMobblerTrack::SetPathL(const TDesC& aPath)
 
 			if (BaflUtils::FileExists(CCoeEnv::Static()->FsSession(), fileName))
 				{
+				LOG(_L8("Found %album%.jpg/gif/png"));
 				found = ETrue;
 				break;
 				}
@@ -346,6 +357,7 @@ void CMobblerTrack::SetPathL(const TDesC& aPath)
 
 		if (BaflUtils::FileExists(CCoeEnv::Static()->FsSession(), fileName))
 			{
+			LOG(_L8("Found cover.jpg/gif/png, folder.jpg/gif/png"));
 			found = ETrue;
 			break;
 			}
@@ -363,7 +375,9 @@ void CMobblerTrack::SetPathL(const TDesC& aPath)
 
 			if (BaflUtils::FileExists(CCoeEnv::Static()->FsSession(), fileName))
 				{
+				LOG(_L8("Found %artist%.jpg/gif/png"));
 				found = ETrue;
+				iUsingArtistImage = ETrue;
 				break;
 				}
 			}
@@ -371,6 +385,7 @@ void CMobblerTrack::SetPathL(const TDesC& aPath)
 
 	if (found)
 		{
+		LOG(fileName);
 		delete iAlbumArt;
 		iAlbumArt = CMobblerBitmap::NewL(*this, fileName);
 		}
@@ -488,7 +503,7 @@ void CMobblerTrack::DataL(const TDesC8& aData, CMobblerLastFMConnection::TError 
 					LOG(_L8("7 FetchImageL(album)"));
 					FetchImageL(EFetchingAlbumArt, *iImage);
 					}
-				else
+				else if (!iUsingArtistImage)
 					{
 					// Couldn't fetch album art, try artist image instead
 					iTriedButCouldntFindAlbumArt = ETrue;
@@ -510,6 +525,7 @@ void CMobblerTrack::DataL(const TDesC8& aData, CMobblerLastFMConnection::TError 
 				{
 				// Couldn't fetch album art, try artist image instead
 				LOG(_L8("10 FetchArtistInfoL()"));
+				iTriedButCouldntFindAlbumArt = ETrue;
 				FetchArtistInfoL();
 				}
 			break;
@@ -518,7 +534,7 @@ void CMobblerTrack::DataL(const TDesC8& aData, CMobblerLastFMConnection::TError 
 		case EFetchingArtistInfo:
 			{
 			LOG(_L8("11 DataL artist info fetched"));
-			DUMPDATA(aData, _L("artistgetinfo.xml"));
+			DUMPDATA(aData, _L("artistgetimage.xml"));
 
 			if (iAlbumArt)
 				{

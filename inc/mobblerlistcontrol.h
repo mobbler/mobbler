@@ -28,19 +28,17 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "mobblerbitmap.h"
 #include "mobblerdataobserver.h"
-#include "mobblerlastfmconnection.h"
 
 class CMobblerAppUi;
-class CMobblerBitmap;
 class CMobblerListItem;
 class CMobblerString;
 class CMobblerWebServicesControl;
 
 class CMobblerListControl : public CCoeControl,
-								public MMobblerBitmapObserver,
-								public MMobblerFlatDataObserver,
-								public MEikScrollBarObserver,
-								public MEikListBoxObserver
+							public MMobblerBitmapObserver,
+							public MMobblerFlatDataObserver,
+							public MEikScrollBarObserver,
+							public MEikListBoxObserver
 	{
 public:
 	enum TState
