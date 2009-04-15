@@ -89,7 +89,7 @@ void CMobblerResourceReader::ConstructL()
 	User::LeaveIfError(iTimer.CreateLocal());
 	
 	TParse parse;
-	TFileName appFullName = RProcess().FileName();
+	TFileName appFullName(RProcess().FileName());
 	parse.Set(appFullName, NULL, NULL);
 	
 	iLanguageRscFile.Append(parse.Drive());
@@ -122,7 +122,7 @@ void CMobblerResourceReader::DoCancel()
 
 const TDesC& CMobblerResourceReader::ResourceL(TInt aResourceId)
 	{
-	TInt position = iResources.FindInOrder(aResourceId, CMobblerResource::Compare);
+	TInt position(iResources.FindInOrder(aResourceId, CMobblerResource::Compare));
 	
 	if (position != KErrNotFound)
 		{
@@ -149,7 +149,7 @@ const TDesC& CMobblerResourceReader::ResourceL(TInt aResourceId)
 				if (!iErrorDialogShown)
 					{
 					// Warn the user
-					CAknQueryDialog* dlg = CAknQueryDialog::NewL();
+					CAknQueryDialog* dlg(CAknQueryDialog::NewL());
 					dlg->ExecuteLD(R_MOBBLER_GET_LATEST_LANGUAGE_DIALOG, 
 								   ResourceL(R_MOBBLER_GET_LATEST_LANGUAGE));
 			
@@ -176,11 +176,11 @@ const TDesC& CMobblerResourceReader::ResourceL(TInt aResourceId)
 	
 		if (iResourceFile.OwnsResourceId(aResourceId))
 			{
-			HBufC8* resource8 = iResourceFile.AllocReadLC(aResourceId);
+			HBufC8* resource8(iResourceFile.AllocReadLC(aResourceId));
 			TResourceReader reader;
 			reader.SetBuffer(resource8);
-			HBufC* text = reader.ReadTPtrC().AllocLC();
-			CMobblerResource* resource = new(ELeave) CMobblerResource(aResourceId, text);
+			HBufC* text(reader.ReadTPtrC().AllocLC());
+			CMobblerResource* resource(new(ELeave) CMobblerResource(aResourceId, text));
 			CleanupStack::Pop(text);
 			CleanupStack::PopAndDestroy(resource8);
 			CleanupStack::PushL(resource);
@@ -193,7 +193,7 @@ const TDesC& CMobblerResourceReader::ResourceL(TInt aResourceId)
 			if (!iErrorDialogShown)
 				{
 				// Warn the user
-				CAknQueryDialog* dlg = CAknQueryDialog::NewL();
+				CAknQueryDialog* dlg(CAknQueryDialog::NewL());
 				dlg->ExecuteLD(R_MOBBLER_GET_LATEST_LANGUAGE_DIALOG, 
 							   ResourceL(R_MOBBLER_GET_LATEST_LANGUAGE));
 	

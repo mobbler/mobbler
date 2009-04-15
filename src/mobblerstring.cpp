@@ -105,7 +105,7 @@ const TPtrC8 CMobblerString::SafeFsString8() const
 	{
 	TBuf8<KMaxFileName> stripped8(iString8Ptr);
 
-	const TInt arraySize = sizeof(KForbiddenCharacterArray) / sizeof(TChar);
+	const TInt arraySize(sizeof(KForbiddenCharacterArray) / sizeof(TChar));
 	for (TInt i(0); i < arraySize; ++i)
 		{
 		TInt position(stripped8.Locate(KForbiddenCharacterArray[i]));

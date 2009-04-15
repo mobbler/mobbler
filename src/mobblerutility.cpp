@@ -1,7 +1,7 @@
 /*
 mobblerutility.cpp
 
-mobbler, a last.fm mobile scrobbler for Symbian smartphones.
+Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
 Copyright (C) 2008  Michael Coffey
 
 http://code.google.com/p/mobbler
@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
 #include "mobblerutility.h"
+
 #include <bautils.h>
 #include <coemain.h>
 #include <hash.h>
@@ -41,11 +42,11 @@ _LIT8(KTurkishLangCode, "tu");
 
 HBufC8* MobblerUtility::MD5LC(const TDesC8& aSource)
 	{
-	CMD5* md5 = CMD5::NewL();
+	CMD5* md5(CMD5::NewL());
 	CleanupStack::PushL(md5);
 	
-	TPtrC8 hash = md5->Hash(aSource);
-	HBufC8* hashResult = HBufC8::NewLC(hash.Length() * 2); 
+	TPtrC8 hash(md5->Hash(aSource));
+	HBufC8* hashResult(HBufC8::NewLC(hash.Length() * 2));
 	
 	for (TInt i(0); i < hash.Length(); ++i)
 		{
@@ -60,7 +61,7 @@ HBufC8* MobblerUtility::MD5LC(const TDesC8& aSource)
 
 HBufC8* MobblerUtility::URLEncodeLC(const TDesC8& aString)
 	{
-	HBufC8* urlEncoded = HBufC8::NewLC(aString.Length() * 3);
+	HBufC8* urlEncoded(HBufC8::NewLC(aString.Length() * 3));
 	// sanitise the input string
 	const TInt KCharCount(aString.Length());
 	for (TInt i(0); i < KCharCount; ++i)
@@ -73,7 +74,7 @@ HBufC8* MobblerUtility::URLEncodeLC(const TDesC8& aString)
 
 HBufC8* MobblerUtility::URLEncodeLC(const TDesC& aString)
 	{
-	HBufC8* urlEncoded = HBufC8::NewLC(aString.Length() * 3);
+	HBufC8* urlEncoded(HBufC8::NewLC(aString.Length() * 3));
 	// sanitise the input string
 	const TInt KCharCount(aString.Length());
 	for (TInt i(0); i < KCharCount; ++i)

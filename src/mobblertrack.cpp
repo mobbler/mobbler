@@ -150,8 +150,8 @@ TBool CMobblerTrack::operator==(const CMobblerTrack& aTrack) const
 
 void CMobblerTrack::InternalizeL(RReadStream& aReadStream)
 	{
-	TInt high = aReadStream.ReadInt32L();
-	TInt low = aReadStream.ReadInt32L();
+	TInt high(aReadStream.ReadInt32L());
+	TInt low(aReadStream.ReadInt32L());
 	iStartTimeUTC = MAKE_TINT64(high, low);
 	iTrackLength = aReadStream.ReadInt32L();
 	delete iArtist;
@@ -332,7 +332,7 @@ void CMobblerTrack::SetPathL(const TDesC& aPath)
 	// First check for %album%.jpg/gif/png
 	if (iAlbum->String().Length() > 0)
 		{
-		const TInt arraySize = sizeof(KArtExtensionArray) / sizeof(TPtrC);
+		const TInt arraySize(sizeof(KArtExtensionArray) / sizeof(TPtrC));
 		for (TInt i(0); i < arraySize; ++i)
 			{
 			fileName.Copy(parse.DriveAndPath());
@@ -349,7 +349,7 @@ void CMobblerTrack::SetPathL(const TDesC& aPath)
 		}
 
 	// If not found, check for cover.jpg/gif/png, folder.jpg/gif/png
-	const TInt arraySize = sizeof(KArtFileArray) / sizeof(TPtrC);
+	const TInt arraySize(sizeof(KArtFileArray) / sizeof(TPtrC));
 	for (TInt i(0); i < arraySize && !found; ++i)
 		{
 		fileName.Copy(parse.DriveAndPath());
@@ -366,7 +366,7 @@ void CMobblerTrack::SetPathL(const TDesC& aPath)
 	// If still not found, check for %artist%.jpg/gif/png
 	if (!found && iArtist->String().Length() > 0)
 		{
-		const TInt arraySize = sizeof(KArtExtensionArray) / sizeof(TPtrC);
+		const TInt arraySize(sizeof(KArtExtensionArray) / sizeof(TPtrC));
 		for (TInt i(0); i < arraySize; ++i)
 			{
 			fileName.Copy(parse.DriveAndPath());
@@ -411,7 +411,7 @@ void CMobblerTrack::SetPlaybackPosition(TTimeIntervalSeconds aPlaybackPosition)
 			TTimeIntervalSeconds offset(0);
 			TTime now;
 			now.UniversalTime();
-			TInt error = now.SecondsFrom(iStartTimeUTC, offset);
+			TInt error(now.SecondsFrom(iStartTimeUTC, offset));
 			if (error == KErrNone && offset.Int() > 0)
 				{
 				iInitialPlaybackPosition = Max(0, iInitialPlaybackPosition.Int() - offset.Int());
@@ -452,7 +452,7 @@ TTimeIntervalSeconds CMobblerTrack::TrackLength() const
 
 TTimeIntervalSeconds CMobblerTrack::ScrobbleDuration() const
 	{
-	TInt scrobblePercent = static_cast<CMobblerAppUi*>(CEikonEnv::Static()->AppUi())->ScrobblePercent();
+	TInt scrobblePercent(static_cast<CMobblerAppUi*>(CEikonEnv::Static()->AppUi())->ScrobblePercent());
 	return (TTimeIntervalSeconds)Min(240, (iTrackLength.Int() *  scrobblePercent / 100));
 	}
 
@@ -631,9 +631,9 @@ TBool CMobblerTrack::FetchImageL(const TDesC8& aData)
 	TBool found(EFalse);
 	
 	// create the XML reader and DOM fragement and associate them with each other 
-	CSenXmlReader* xmlReader = CSenXmlReader::NewL();
+	CSenXmlReader* xmlReader(CSenXmlReader::NewL());
 	CleanupStack::PushL(xmlReader);
-	CSenDomFragment* domFragment = CSenDomFragment::NewL();
+	CSenDomFragment* domFragment(CSenDomFragment::NewL());
 	CleanupStack::PushL(domFragment);
 	xmlReader->SetContentHandler(*domFragment);
 	domFragment->SetReader(*xmlReader);
@@ -650,7 +650,7 @@ TBool CMobblerTrack::FetchImageL(const TDesC8& aData)
 		}
 	else
 		{
-		CSenElement* element = domFragment->AsElement().Element(_L8("images"));
+		CSenElement* element(domFragment->AsElement().Element(_L8("images")));
 		
 		if (element)
 			{
@@ -717,11 +717,11 @@ void CMobblerTrack::SaveAlbumArtL(const TDesC8& aData)
 			}
 		
 		RFile albumArtFile;
-		TInt createError = albumArtFile.Create(CCoeEnv::Static()->FsSession(), albumArtFileName, EFileWrite);
+		TInt createError(albumArtFile.Create(CCoeEnv::Static()->FsSession(), albumArtFileName, EFileWrite));
 		
 		if (createError == KErrNone)
 			{
-			TInt writeError = albumArtFile.Write(aData);
+			TInt writeError(albumArtFile.Write(aData));
 			if (writeError != KErrNone)
 				{
 				albumArtFile.Close();

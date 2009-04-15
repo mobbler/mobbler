@@ -60,7 +60,7 @@ void CMobblerSettingItemListSettings::LoadSettingValuesL()
 	{
 	RFile file;
 	CleanupClosePushL(file);
-	TInt openError = file.Open(CCoeEnv::Static()->FsSession(), KSettingsFile, EFileRead | EFileShareAny);
+	TInt openError(file.Open(CCoeEnv::Static()->FsSession(), KSettingsFile, EFileRead | EFileShareAny));
 	
 	// Default values if the settings do not already exist
 	TBool backlight(EFalse);
@@ -155,7 +155,7 @@ void CMobblerSettingItemListSettings::SaveSettingValuesL()
 	RFile file;
 	CleanupClosePushL(file);
 	CCoeEnv::Static()->FsSession().MkDirAll(KSettingsFile);
-	TInt error = file.Replace(CCoeEnv::Static()->FsSession(), KSettingsFile, EFileWrite | EFileShareAny);
+	TInt error(file.Replace(CCoeEnv::Static()->FsSession(), KSettingsFile, EFileWrite | EFileShareAny));
 	
 	if (error == KErrNone)
 		{

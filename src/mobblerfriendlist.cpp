@@ -70,14 +70,14 @@ CMobblerListControl* CMobblerFriendList::HandleListCommandL(TInt aCommand)
 			{
 	    	TBuf<255> message;
 	    	
-	    	CAknTextQueryDialog* shareDialog = new(ELeave) CAknTextQueryDialog(message);
+	    	CAknTextQueryDialog* shareDialog(new(ELeave) CAknTextQueryDialog(message));
 	    	shareDialog->PrepareLC(R_MOBBLER_TEXT_QUERY_DIALOG);
 	    	shareDialog->SetPromptL(iAppUi.ResourceReader().ResourceL(R_MOBBLER_SHARE));
 	    	shareDialog->SetPredictiveTextInputPermitted(ETrue);
 
 	    	if (shareDialog->RunLD())
 	    		{
-	    		CMobblerString* messageString = CMobblerString::NewL(message);
+	    		CMobblerString* messageString(CMobblerString::NewL(message));
 	    		CleanupStack::PushL(messageString);
 	    		
 	    		if (iAppUi.CurrentTrack())
@@ -143,9 +143,9 @@ void CMobblerFriendList::SupportedCommandsL(RArray<TInt>& aCommands)
 	aCommands.AppendL(EMobblerCommandRadioLoved);
 	}
 
-void CMobblerFriendList::ParseL(const TDesC8& aXML)
+void CMobblerFriendList::ParseL(const TDesC8& aXml)
 	{
-	CMobblerParser::ParseFriendListL(aXML, *this, iList);
+	CMobblerParser::ParseFriendListL(aXml, *this, iList);
 	}
 
 // End of file

@@ -21,7 +21,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-#include <aknnavide.h> 
+#include <aknnavide.h>
 #include <aknnavilabel.h>
 #include <aknsbasicbackgroundcontrolcontext.h>
 #include <aknsdrawutils.h>
@@ -565,8 +565,8 @@ void CMobblerStatusControl::Draw(const TRect& /*aRect*/) const
 		}
 
 	// Redraw the background using the default skin
-	MAknsSkinInstance* skin = AknsUtils::SkinInstance();
-	MAknsControlContext* cc = AknsDrawUtils::ControlContext(this);
+	MAknsSkinInstance* skin(AknsUtils::SkinInstance());
+	MAknsControlContext* cc(AknsDrawUtils::ControlContext(this));
 	AknsDrawUtils::DrawBackground(skin, cc, this, *iBackBufferContext, TPoint(0, 0), Rect(), KAknsDrawParamDefault);
 	
 	TInt playbackTotal(1);
@@ -806,7 +806,7 @@ void CMobblerStatusControl::DrawMobblerBitmap(const CMobblerBitmap* aMobblerBitm
 		{
 		if (aMobblerBitmap->Bitmap())
 			{
-			CFbsBitmap* bitmap = aGray ? aMobblerBitmap->BitmapGrayL() : aMobblerBitmap->Bitmap();
+			CFbsBitmap* bitmap(aGray ? aMobblerBitmap->BitmapGrayL() : aMobblerBitmap->Bitmap());
 
 			TRect rect(aRect);
 			TInt width(bitmap->SizeInPixels().iWidth);
@@ -839,7 +839,7 @@ void CMobblerStatusControl::BitBltMobblerBitmap(const CMobblerBitmap* aMobblerBi
 		{
 		if (aMobblerBitmap->Bitmap())
 			{
-			CFbsBitmap* bitmap = aGray ? aMobblerBitmap->BitmapGrayL() : aMobblerBitmap->Bitmap();
+			CFbsBitmap* bitmap(aGray ? aMobblerBitmap->BitmapGrayL() : aMobblerBitmap->Bitmap());
 			
 			if (aMobblerBitmap->Mask())
 				{

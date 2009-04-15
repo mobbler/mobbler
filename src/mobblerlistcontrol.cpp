@@ -228,7 +228,7 @@ HBufC* CMobblerListControl::NameL()
 			break;
 		};
 	
-	HBufC* returnText = HBufC::NewL(format.Length() + text.Length());
+	HBufC* returnText(HBufC::NewL(format.Length() + text.Length()));
 	returnText->Des().Format(format, &text);
 	return returnText;
 	}
@@ -252,7 +252,7 @@ void CMobblerListControl::UpdateIconArrayL()
 		
 		for (TInt i(0); i < KListCount; ++i)
 			{
-			CGulIcon* icon = NULL;
+			CGulIcon* icon(NULL);
 			
 			if (iList[i]->Image() &&
 					iList[i]->Image()->Bitmap() && // the bitmap has loaded
@@ -317,12 +317,12 @@ void CMobblerListControl::DataL(const TDesC8& aXml, CMobblerLastFMConnection::TE
 							break;
 						}
 
-					const TDesC& descriptionFormat = iAppUi.ResourceReader().ResourceL(descriptionFormatId);
+					const TDesC& descriptionFormat(iAppUi.ResourceReader().ResourceL(descriptionFormatId));
 
-					HBufC* description = HBufC::NewLC(descriptionFormat.Length() + iList[i]->Description()->String().Length());
+					HBufC* description(HBufC::NewLC(descriptionFormat.Length() + iList[i]->Description()->String().Length()));
 					description->Des().Format(descriptionFormat, &iList[i]->Description()->String());
 										
-					HBufC* format = HBufC::NewLC(KDoubleLargeStyleListBoxTextFormat().Length() + iList[i]->Title()->String().Length() + description->Length());
+					HBufC* format(HBufC::NewLC(KDoubleLargeStyleListBoxTextFormat().Length() + iList[i]->Title()->String().Length() + description->Length()));
 					format->Des().Format(KDoubleLargeStyleListBoxTextFormat, i, &iList[i]->Title()->String(), description);
 					iListBoxItems->AppendL(*format);
 					CleanupStack::PopAndDestroy(format);
@@ -332,15 +332,15 @@ void CMobblerListControl::DataL(const TDesC8& aXml, CMobblerLastFMConnection::TE
 
 				case EMobblerCommandRecentTracks:
 					{
-					HBufC* title = HBufC::NewLC(KRecentTracksTitleFormat().Length() +
-													iList[i]->Title()->String().Length() +
-													iList[i]->Description()->String().Length());
+					HBufC* title(HBufC::NewLC(KRecentTracksTitleFormat().Length() +
+												iList[i]->Title()->String().Length() +
+												iList[i]->Description()->String().Length()));
 					
 					title->Des().Format(KRecentTracksTitleFormat, &iList[i]->Title()->String(), &iList[i]->Description()->String());
 
-					HBufC* description = HBufC::NewLC(50);
+					HBufC* description(HBufC::NewLC(50));
 					
-					TTime itemTime = iList[i]->TimeLocal();
+					TTime itemTime(iList[i]->TimeLocal());
 					
 					if (itemTime == Time::NullTTime())
 						{
@@ -374,12 +374,12 @@ void CMobblerListControl::DataL(const TDesC8& aXml, CMobblerLastFMConnection::TE
 							}
 						else
 							{
-							TPtr yeah = description->Des();
+							TPtr yeah(description->Des());
 							iList[i]->TimeLocal().FormatL(yeah, KFormatTime);
 							}
 						}
 					
-					HBufC* itemText = HBufC::NewLC(KDoubleLargeStyleListBoxTextFormat().Length() + title->Length() + description->Length());
+					HBufC* itemText(HBufC::NewLC(KDoubleLargeStyleListBoxTextFormat().Length() + title->Length() + description->Length()));
 					itemText->Des().Format(KDoubleLargeStyleListBoxTextFormat, i, title, description);
 					
 					iListBoxItems->AppendL(*itemText);
@@ -393,11 +393,11 @@ void CMobblerListControl::DataL(const TDesC8& aXml, CMobblerLastFMConnection::TE
 				case EMobblerCommandSimilarArtists:
 					{
 					_LIT(KPercent, "%");
-					HBufC* description = HBufC::NewLC(iList[i]->Description()->String().Length() + KPercent().Length());
+					HBufC* description(HBufC::NewLC(iList[i]->Description()->String().Length() + KPercent().Length()));
 					description->Des() = iList[i]->Description()->String();
 					description->Des().Append(KPercent());
 										
-					HBufC* format = HBufC::NewLC(KDoubleLargeStyleListBoxTextFormat().Length() + iList[i]->Title()->String().Length() + description->Length());
+					HBufC* format(HBufC::NewLC(KDoubleLargeStyleListBoxTextFormat().Length() + iList[i]->Title()->String().Length() + description->Length()));
 					format->Des().Format(KDoubleLargeStyleListBoxTextFormat, i, &iList[i]->Title()->String(), description);
 					iListBoxItems->AppendL(*format);
 					CleanupStack::PopAndDestroy(format);
@@ -407,7 +407,7 @@ void CMobblerListControl::DataL(const TDesC8& aXml, CMobblerLastFMConnection::TE
 
 				default:
 					{
-					HBufC* itemText = HBufC::NewLC(KDoubleLargeStyleListBoxTextFormat().Length() + iList[i]->Title()->String().Length() + iList[i]->Description()->String().Length());
+					HBufC* itemText(HBufC::NewLC(KDoubleLargeStyleListBoxTextFormat().Length() + iList[i]->Title()->String().Length() + iList[i]->Description()->String().Length()));
 					itemText->Des().Format(KDoubleLargeStyleListBoxTextFormat, i, &iList[i]->Title()->String(), &iList[i]->Description()->String());
 					iListBoxItems->AppendL(*itemText);
 					CleanupStack::PopAndDestroy(itemText);
@@ -442,7 +442,7 @@ void CMobblerListControl::HandleResourceChange(TInt aType)
 	{
 	TRect rect;
 	
-	if ( aType==KEikDynamicLayoutVariantSwitch )
+	if (aType == KEikDynamicLayoutVariantSwitch)
 		{  	
 		AknLayoutUtils::LayoutMetricsRect(AknLayoutUtils::EMainPane, rect);
 		SetRect(rect);
@@ -543,7 +543,7 @@ TKeyResponse CMobblerListControl::OfferKeyEventL(const TKeyEvent& aKeyEvent, TEv
 
 void CMobblerListControl::Draw(const TRect& /*aRect*/) const
 	{
-	CWindowGc& gc = SystemGc();
+	CWindowGc& gc(SystemGc());
    	gc.Clear(Rect());
 	}
 

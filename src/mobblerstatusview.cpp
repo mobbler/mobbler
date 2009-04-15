@@ -74,9 +74,9 @@ void CMobblerStatusView::BitmapResizedL(const CMobblerBitmap* /*aMobblerBitmap*/
 void CMobblerStatusView::SetMenuItemTextL(CEikMenuPane* aMenuPane,
 										  TInt aResourceId, TInt aCommandId)
 	{
-	HBufC* menuText = static_cast<CMobblerAppUi*>(AppUi())->ResourceReader().ResourceL(aResourceId).AllocLC();
+	HBufC* menuText(static_cast<CMobblerAppUi*>(AppUi())->ResourceReader().ResourceL(aResourceId).AllocLC());
 
-	const TInt KTextLimit = CEikMenuPaneItem::SData::ENominalTextLength;
+	const TInt KTextLimit(CEikMenuPaneItem::SData::ENominalTextLength);
 
 	// Shortcut keys
 	if (aCommandId == EMobblerCommandToggleScrobbling)
@@ -185,8 +185,8 @@ void CMobblerStatusView::DynInitMenuPaneL(TInt aResourceId, CEikMenuPane* aMenuP
 			}
 		
 		MMdaAudioOutputStreamCallback* dummyCallback(NULL);
-		CMdaAudioOutputStream* tempStream = CMdaAudioOutputStream::NewL(*dummyCallback);
-		CAudioEqualizerUtility* tempEqualizer = NULL;
+		CMdaAudioOutputStream* tempStream(CMdaAudioOutputStream::NewL(*dummyCallback));
+		CAudioEqualizerUtility* tempEqualizer(NULL);
 #ifndef __WINS__
 		// Emulator seems to crap out even when TRAP_IGNORE is used,
 		// it doesn't support the equalizer anyway
@@ -207,9 +207,9 @@ void CMobblerStatusView::DynInitMenuPaneL(TInt aResourceId, CEikMenuPane* aMenuP
 	else if (aResourceId == R_MOBBLER_EQUALIZER_SUBMENU_PANE)
 		{
 		MMdaAudioOutputStreamCallback* dummyCallback(NULL);
-		CMdaAudioOutputStream* tempStream = CMdaAudioOutputStream::NewL(*dummyCallback);
+		CMdaAudioOutputStream* tempStream(CMdaAudioOutputStream::NewL(*dummyCallback));
 		CleanupStack::PushL(tempStream);
-		CAudioEqualizerUtility* tempEqualizer = NULL;
+		CAudioEqualizerUtility* tempEqualizer(NULL);
 #ifndef __WINS__
 		// Emulator seems to crap out even when TRAP_IGNORE is used,
 		// it doesn't support the equalizer anyway
@@ -218,7 +218,7 @@ void CMobblerStatusView::DynInitMenuPaneL(TInt aResourceId, CEikMenuPane* aMenuP
 		if (tempEqualizer)
 			{
 			CleanupStack::PushL(tempEqualizer);
-			TInt count = tempEqualizer->Presets().Count();
+			TInt count(tempEqualizer->Presets().Count());
 			for (TInt i(0); i < count; ++i)
 				{
 				CEikMenuPaneItem::SData item;
@@ -235,7 +235,7 @@ void CMobblerStatusView::DynInitMenuPaneL(TInt aResourceId, CEikMenuPane* aMenuP
 				item.iText = tempEqualizer->Presets()[i].iPresetName;
 				aMenuPane->AddMenuItemL(item);
 				}
-			TInt equalizerIndex = static_cast<CMobblerAppUi*>(AppUi())->RadioPlayer().EqualizerIndex();
+			TInt equalizerIndex(static_cast<CMobblerAppUi*>(AppUi())->RadioPlayer().EqualizerIndex());
 			aMenuPane->SetItemButtonState(EMobblerCommandEqualizerDefault + equalizerIndex + 1, EEikMenuItemSymbolOn);
 			tempStream->Stop();
 			CleanupStack::PopAndDestroy(tempEqualizer);
@@ -282,7 +282,7 @@ void CMobblerStatusView::DoActivateL(const TVwsViewId& /*aPrevViewId*/, TUid /*a
 		AppUi()->AddToStackL(*this, iMobblerStatusControl);
 	
 		// Change the Back softkey to Hide
-		TInt pos = Cba()->PositionById(EAknSoftkeyBack);
+		TInt pos(Cba()->PositionById(EAknSoftkeyBack));
 		Cba()->RemoveCommandFromStack(pos, EAknSoftkeyBack);
 		Cba()->SetCommandL(pos, EAknSoftkeyBack, static_cast<CMobblerAppUi*>(AppUi())->ResourceReader().ResourceL(R_MOBBLER_SOFTKEY_HIDE));
 		}
@@ -306,22 +306,22 @@ void CMobblerStatusView::HandleStatusPaneSizeChange()
 
 void CMobblerStatusView::SetupStatusPaneL()
 	{
-	TUid contextPaneUid = TUid::Uid( EEikStatusPaneUidContext );
-	CEikStatusPaneBase::TPaneCapabilities subPaneContext = StatusPane()->PaneCapabilities(contextPaneUid);
+	TUid contextPaneUid(TUid::Uid(EEikStatusPaneUidContext));
+	CEikStatusPaneBase::TPaneCapabilities subPaneContext(StatusPane()->PaneCapabilities(contextPaneUid));
 	
-	if ( subPaneContext.IsPresent() && subPaneContext.IsAppOwned() )
+	if (subPaneContext.IsPresent() && subPaneContext.IsAppOwned())
 		{
-		CAknContextPane* context = static_cast<CAknContextPane*>(StatusPane()->ControlL(contextPaneUid ));
+		CAknContextPane* context(static_cast<CAknContextPane*>(StatusPane()->ControlL(contextPaneUid)));
 		context->SetPictureToDefaultL();
 		}
 	
 	// setup the title pane
-	TUid titlePaneUid = TUid::Uid( EEikStatusPaneUidTitle );
-	CEikStatusPaneBase::TPaneCapabilities subPaneTitle = StatusPane()->PaneCapabilities(titlePaneUid);
+	TUid titlePaneUid(TUid::Uid(EEikStatusPaneUidTitle));
+	CEikStatusPaneBase::TPaneCapabilities subPaneTitle(StatusPane()->PaneCapabilities(titlePaneUid));
 	
-	if ( subPaneTitle.IsPresent() && subPaneTitle.IsAppOwned() )
+	if (subPaneTitle.IsPresent() && subPaneTitle.IsAppOwned())
 		{
-		CAknTitlePane* title = static_cast<CAknTitlePane*>(StatusPane()->ControlL(titlePaneUid));
+		CAknTitlePane* title(static_cast<CAknTitlePane*>(StatusPane()->ControlL(titlePaneUid)));
 		TResourceReader reader;
 		iEikonEnv->CreateResourceReaderLC(reader, R_MOBBLER_TITLE_RESOURCE);
 		title->SetFromResourceL(reader);

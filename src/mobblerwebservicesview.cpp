@@ -64,9 +64,9 @@ void CMobblerWebServicesView::ConstructL()
 
 void CMobblerWebServicesView::SetMenuItemTextL(CEikMenuPane* aMenuPane, TInt aResourceId, TInt aCommandId)
 	{
-	HBufC* menuText = static_cast<CMobblerAppUi*>(AppUi())->ResourceReader().ResourceL(aResourceId).AllocLC();
+	HBufC* menuText(static_cast<CMobblerAppUi*>(AppUi())->ResourceReader().ResourceL(aResourceId).AllocLC());
 
-	const TInt KTextLimit = CEikMenuPaneItem::SData::ENominalTextLength;
+	const TInt KTextLimit(CEikMenuPaneItem::SData::ENominalTextLength);
 	if (menuText->Length() > KTextLimit)
 		{
 		TBuf<KTextLimit> newText(menuText->Left(KTextLimit));
@@ -157,10 +157,10 @@ void CMobblerWebServicesView::DynInitMenuPaneL(TInt aResourceId, CEikMenuPane* a
 	else if (aResourceId == R_MOBBLER_SHOUT_SUBMENU_PANE)
 		{
 		// This must be a shoutbox
-		CMobblerShoutbox* shoutbox = static_cast<CMobblerShoutbox*>(iWebServicesControl->TopControl());
+		CMobblerShoutbox* shoutbox(static_cast<CMobblerShoutbox*>(iWebServicesControl->TopControl()));
 		
-		HBufC* shoutTextUser = shoutbox->ShoutAtTextUserLC();
-		HBufC* shoutTextOwner = shoutbox->ShoutAtTextOwnerLC();
+		HBufC* shoutTextUser(shoutbox->ShoutAtTextUserLC());
+		HBufC* shoutTextOwner(shoutbox->ShoutAtTextOwnerLC());
 
 		aMenuPane->SetItemTextL(EMobblerCommandShoutUser, *shoutTextUser);
 

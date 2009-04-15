@@ -120,7 +120,7 @@ void CMobblerGestureSkipAction::NotifyGestureTimeOut()
 void CMobblerGestureSkipAction::NotifySkip()
 	{
 	const TInt KNumberOfListeners(iNotify.Count());
-	for (TInt i = 0; i < KNumberOfListeners; ++i)
+	for (TInt i(0); i < KNumberOfListeners; ++i)
 		{
 		TRAP_IGNORE(iNotify[i]->HandleSingleShakeL(EShakeRight));
 		}

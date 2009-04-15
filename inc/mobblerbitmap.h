@@ -27,9 +27,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <coecntrl.h>
 #include <coedef.h>
 
+class CBitmapScaler;
 class CImageDecoder;
 class CMobblerBitmap;
-class CBitmapScaler;
 
 class MMobblerBitmapObserver
 	{
@@ -100,3 +100,4 @@ private:
 
 #endif
 
+// End of file

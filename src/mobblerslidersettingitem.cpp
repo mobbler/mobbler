@@ -50,7 +50,7 @@ CMobblerSliderSettingItem::CMobblerSliderSettingItem(TInt aIdentifier,
 
 void CMobblerSliderSettingItem::CreateAndExecuteSettingPageL()
 	{
-	CAknSettingPage* dlg = CreateSettingPageL();
+	CAknSettingPage* dlg(CreateSettingPageL());
 
 	SetSettingPage(dlg);
 	SettingPage()->SetSettingPageObserver(this);

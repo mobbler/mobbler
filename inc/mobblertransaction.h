@@ -1,7 +1,7 @@
 /*
 mobblertransaction.h
 
-mobbler, a last.fm mobile scrobbler for Symbian smartphones.
+Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
 Copyright (C) 2008  Michael Coffey
 
 http://code.google.com/p/mobbler
@@ -25,21 +25,12 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #define __MOBBLERTRANSACTION_H__
 
 #include <e32base.h>
-#include <badesca.h>
-#include <es_sock.h>
-
-#include <http/rhttpsession.h>
 #include <http/mhttptransactioncallback.h> 
-#include <http/mhttpdatasupplier.h>
 
-#include "mobblerlastfmconnection.h"
-#include "mobblerutility.h"
+#include "mobblerdataobserver.h"
 
 class CHTTPFormEncoder;
-class CMobblerTrack;
-class MMobblerRadioPlayer;
-class CMobblerParser;
-class CMobblerTransaction;
+class CMobblerLastFMConnection;
 class CMobblerWebServicesQuery;
 
 class CMobblerTransaction : public CBase, public MHTTPTransactionCallback
@@ -87,3 +78,5 @@ private:
 	};
 
 #endif // __MOBBLERTRANSACTION_H__
+
+// End of file

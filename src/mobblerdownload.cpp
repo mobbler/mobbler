@@ -65,7 +65,7 @@ CMobblerDownload::~CMobblerDownload()
 void CMobblerDownload::DownloadL(const TDesC8& aDownloadUrl, TUint32 aIap)
 	{
 	User::LeaveIfError(iDownloadMgr.SetIntAttribute(EDlMgrIap, aIap)); 
-	RHttpDownload& download = iDownloadMgr.CreateDownloadL(aDownloadUrl);
+	RHttpDownload& download(iDownloadMgr.CreateDownloadL(aDownloadUrl));
 	
 	download.SetBoolAttribute(EDlAttrNoContentTypeCheck, ETrue);
 	download.Start();

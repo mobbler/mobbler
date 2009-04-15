@@ -1,7 +1,7 @@
 /*
 mobblerwebservicesquery.cpp
 
-mobbler, a last.fm mobile scrobbler for Symbian smartphones.
+Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
 Copyright (C) 2008  Michael Coffey
 
 http://code.google.com/p/mobbler
@@ -21,8 +21,9 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-#include <chttpformencoder.h> 
+#include <chttpformencoder.h>
 
+#include "mobblerutility.h"
 #include "mobblerwebservicesquery.h"
 
 _LIT8(KMobblerAPIKey, "31e4e200b2c0b8aa90d9829534ad40a6");
@@ -66,8 +67,8 @@ void CMobblerWebServicesQuery::AddFieldL(const TDesC8& aParameter, const TDesC8&
 
 HBufC8* CMobblerWebServicesQuery::GetQueryAuthLC() const
 	{
-	HBufC8* queryText = HBufC8::NewLC(1024);
-	HBufC8* apiSig = HBufC8::NewLC(1024);
+	HBufC8* queryText(HBufC8::NewLC(1024));
+	HBufC8* apiSig(HBufC8::NewLC(1024));
 	
 	// add all the fields
 	const TInt KFieldCount(iFields.Count());
@@ -89,7 +90,7 @@ HBufC8* CMobblerWebServicesQuery::GetQueryAuthLC() const
 	
 	// create and add the api_sig
 	apiSig->Des().Append(KMobblerSecretKey);
-	HBufC8* apiSigHash = MobblerUtility::MD5LC(*apiSig);
+	HBufC8* apiSigHash(MobblerUtility::MD5LC(*apiSig));
 	
 	queryText->Des().Append(_L8("&"));
 	queryText->Des().Append(_L8("api_sig"));
@@ -103,11 +104,11 @@ HBufC8* CMobblerWebServicesQuery::GetQueryAuthLC() const
 
 HBufC8* CMobblerWebServicesQuery::GetQueryLC() const
 	{
-	HBufC8* queryText = HBufC8::NewLC(1024);
+	HBufC8* queryText(HBufC8::NewLC(1024));
 	
 	// add all the fields
 	const TInt KFieldCount(iFields.Count());
-	for (TInt i(0) ; i < KFieldCount ; ++i)
+	for (TInt i(0); i < KFieldCount; ++i)
 		{
 		// add the fields for the normal query
 		queryText->Des().Append(_L8("&"));
@@ -121,14 +122,14 @@ HBufC8* CMobblerWebServicesQuery::GetQueryLC() const
 
 CHTTPFormEncoder* CMobblerWebServicesQuery::GetFormLC() const
 	{
-	CHTTPFormEncoder* form = CHTTPFormEncoder::NewL();
+	CHTTPFormEncoder* form(CHTTPFormEncoder::NewL());
 	CleanupStack::PushL(form);
 	
-	HBufC8* apiSig = HBufC8::NewLC(1024);
+	HBufC8* apiSig(HBufC8::NewLC(1024));
 	
 	// add all the fields
 	const TInt KFieldCount(iFields.Count());
-	for (TInt i(0) ; i < KFieldCount ; ++i)
+	for (TInt i(0); i < KFieldCount; ++i)
 		{
 		// add the fields for the normal query
 		form->AddFieldL(iFields[i].iParameter, iFields[i].iValue);
@@ -140,7 +141,7 @@ CHTTPFormEncoder* CMobblerWebServicesQuery::GetFormLC() const
 	
 	// create and add the api_sig
 	apiSig->Des().Append(KMobblerSecretKey);
-	HBufC8* apiSigHash = MobblerUtility::MD5LC(*apiSig);
+	HBufC8* apiSigHash(MobblerUtility::MD5LC(*apiSig));
 	
 	form->AddFieldL(_L8("api_sig"), *apiSigHash);
 	
@@ -153,3 +154,5 @@ TInt CMobblerWebServicesQuery::Compare(const TMobblerWebServicesQueryField& aLef
 	{
 	return aLeft.iParameter.Compare(aRight.iParameter);
 	}
+
+// End of file

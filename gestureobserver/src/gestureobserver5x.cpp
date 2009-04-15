@@ -22,9 +22,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
 #include <ecom/implementationproxy.h>
+#include <sensrvaccelerometersensor.h>
+
 #include "gestureevent.h"
 #include "gestureobserver5x.h"
-#include <sensrvaccelerometersensor.h>
 
 // Required for ECOM plugin
 const TImplementationProxy ImplementationTable[] =
@@ -107,8 +108,8 @@ void CMobblerGestureObserver5x::SetupConditionSetL()
 	highValLowerBound.iAxisX = KFilterValue;
 	
 	TPckgC<TSensrvAccelerometerAxisData> highValLowerBoundPckg(highValLowerBound);
-	CSensrvChannelCondition* highFilter =  CSensrvChannelCondition::NewLC(ESensrvSingleLimitCondition, 
-			ESensrvOperatorGreaterThan, TSensrvAccelerometerAxisData::EAxisX, highValLowerBoundPckg);
+	CSensrvChannelCondition* highFilter(CSensrvChannelCondition::NewLC(ESensrvSingleLimitCondition, 
+			ESensrvOperatorGreaterThan, TSensrvAccelerometerAxisData::EAxisX, highValLowerBoundPckg));
 	
 	iConditions->AddChannelConditionL(highFilter);
 	CleanupStack::Pop(highFilter);
@@ -119,8 +120,8 @@ void CMobblerGestureObserver5x::SetupConditionSetL()
 	lowValUpperBound.iAxisX = (-1 * KFilterValue);
 	
 	TPckgC<TSensrvAccelerometerAxisData> lowValUpperBoundPckg(lowValUpperBound);
-	CSensrvChannelCondition* lowFilter =  CSensrvChannelCondition::NewLC(ESensrvSingleLimitCondition, 
-			ESensrvOperatorLessThan, TSensrvAccelerometerAxisData::EAxisX, lowValUpperBoundPckg);
+	CSensrvChannelCondition* lowFilter(CSensrvChannelCondition::NewLC(ESensrvSingleLimitCondition, 
+			ESensrvOperatorLessThan, TSensrvAccelerometerAxisData::EAxisX, lowValUpperBoundPckg));
 	
 	iConditions->AddChannelConditionL(lowFilter);
 	CleanupStack::Pop(lowFilter);
@@ -133,7 +134,7 @@ TSensrvChannelInfo CMobblerGestureObserver5x::GetChannelL()
 	accelerometerXyzSearch.iChannelType = KSensrvChannelTypeIdAccelerometerXYZAxisData;
 	
 	// Create a channel finder and list for matched channels.
-	CSensrvChannelFinder* sensrvChannelFinder = CSensrvChannelFinder::NewLC(); 
+	CSensrvChannelFinder* sensrvChannelFinder(CSensrvChannelFinder::NewLC());
 	RSensrvChannelInfoList channelInfoList;
 	CleanupClosePushL(channelInfoList);
 	
@@ -192,7 +193,7 @@ void CMobblerGestureObserver5x::ConditionMet(CSensrvChannel& aChannel, CSensrvCh
 			TPckgBuf<TSensrvAccelerometerAxisData> dataBuffer;
 			dataBuffer.Copy(aValue);
 	
-			TSensrvAccelerometerAxisData accData = dataBuffer();
+			TSensrvAccelerometerAxisData accData(dataBuffer());
 	
 			// Instantiate an event and deliver it to action delegates
 			TMobblerGestureEvent event(KAccelerometerSensorUID, Transform(accData.iAxisY),

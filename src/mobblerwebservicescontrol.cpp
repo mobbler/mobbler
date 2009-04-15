@@ -124,7 +124,7 @@ CMobblerListControl* CMobblerWebServicesControl::TopControl()
 
 void CMobblerWebServicesControl::HandleListCommandL(TInt aCommand)
 	{
-	CMobblerListControl* list = iControls[iControls.Count() - 1]->HandleListCommandL(aCommand);
+	CMobblerListControl* list(iControls[iControls.Count() - 1]->HandleListCommandL(aCommand));
 	
 	if (list)
 		{
@@ -159,7 +159,7 @@ void CMobblerWebServicesControl::ChangePaneTextL()
 	
 	text.AppendFill('>', Max(0, iControls.Count() - 1));
 	
-	CMobblerListControl::TState state = iControls.Count() > 0 ? TopControl()->State() : CMobblerListControl::ELoading;
+	CMobblerListControl::TState state(iControls.Count() > 0 ? TopControl()->State() : CMobblerListControl::ELoading);
 	
 	switch (state)
 		{
@@ -180,7 +180,7 @@ void CMobblerWebServicesControl::ChangePaneTextL()
 		case CMobblerListControl::ENormal:
 			if (iControls.Count() > 0)
 				{
-				HBufC* name = TopControl()->NameL();
+				HBufC* name(TopControl()->NameL());
 				text.Append(*name);
 				delete name;
 				}
@@ -260,7 +260,7 @@ TKeyResponse CMobblerWebServicesControl::OfferKeyEventL(const TKeyEvent& aKeyEve
 
 void CMobblerWebServicesControl::Draw(const TRect& /*aRect*/) const
 	{
-	CWindowGc& gc = SystemGc();
+	CWindowGc& gc(SystemGc());
    	gc.Clear(Rect());
 	}
 

@@ -52,7 +52,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "mobblerutility.h"
 #include "mobblerwebservicesview.h"
 
-_LIT(KRadioFile, "c:radiostations.dat");
+_LIT(KRadioFile, "C:radiostations.dat");
 
 enum TSleepTimerAction
 	{
@@ -107,7 +107,6 @@ void CMobblerAppUi::ConstructL()
 	iMobblerDownload = CMobblerDownload::NewL(*this);
 
 	iSleepTimer = CMobblerSleepTimer::NewL(EPriorityLow, *this);
-	iSleepAction = EGoOffline;
 
 	iWebServicesView = CMobblerWebServicesView::NewL();
 	AddViewL(iWebServicesView);
@@ -121,6 +120,38 @@ void CMobblerAppUi::ConstructL()
 		{
 		SetAccelerometerGestures(ETrue);
 		}
+	}
+
+CMobblerAppUi::CMobblerAppUi()
+	: iSleepAction(EGoOffline)
+	{
+	}
+
+CMobblerAppUi::~CMobblerAppUi()
+	{
+	if (iGesturePlugin)
+		{
+		REComSession::DestroyedImplementation(iGesturePluginDtorUid);
+		delete iGesturePlugin;
+		}
+
+	delete iPreviousRadioArtist;
+	delete iPreviousRadioTag;
+	delete iPreviousRadioPersonal;
+	delete iMusicListener;
+	delete iRadioPlayer;
+	delete iLastFMConnection;
+	delete iMobblerDownload;
+	delete iInterfaceSelector;
+	delete iVolumeUpTimer;
+	delete iVolumeDownTimer;
+	
+#ifndef __WINS__
+	delete iBrowserLauncher;
+#endif
+	delete iResourceReader;
+	delete iSleepTimer;
+	delete iBitmapCollection;
 	}
 
 TBool CMobblerAppUi::AccelerometerGesturesAvailable() const
@@ -298,7 +329,7 @@ void CMobblerAppUi::SetAccelerometerGestures(TBool aAccelerometerGestures)
 
 const CMobblerTrack* CMobblerAppUi::CurrentTrack() const
 	{
-	const CMobblerTrack* track = iRadioPlayer->CurrentTrack();
+	const CMobblerTrack* track(iRadioPlayer->CurrentTrack());
 	
 	if (!track)
 		{
@@ -310,7 +341,7 @@ const CMobblerTrack* CMobblerAppUi::CurrentTrack() const
 
 CMobblerTrack* CMobblerAppUi::CurrentTrack()
 	{
-	CMobblerTrack* track = iRadioPlayer->CurrentTrack();
+	CMobblerTrack* track(iRadioPlayer->CurrentTrack());
 	
 	if (!track)
 		{
@@ -345,37 +376,6 @@ const TDesC& CMobblerAppUi::MusicAppNameL() const
 	return iMusicListener->MusicAppNameL();
 	}
 
-CMobblerAppUi::CMobblerAppUi()
-	{
-	}
-
-CMobblerAppUi::~CMobblerAppUi()
-	{
-	if (iGesturePlugin)
-		{
-		REComSession::DestroyedImplementation(iGesturePluginDtorUid);
-		delete iGesturePlugin;
-		}
-
-	delete iPreviousRadioArtist;
-	delete iPreviousRadioTag;
-	delete iPreviousRadioPersonal;
-	delete iMusicListener;
-	delete iRadioPlayer;
-	delete iLastFMConnection;
-	delete iMobblerDownload;
-	delete iInterfaceSelector;
-	delete iVolumeUpTimer;
-	delete iVolumeDownTimer;
-	
-#ifndef __WINS__
-	delete iBrowserLauncher;
-#endif
-	delete iResourceReader;
-	delete iSleepTimer;
-	delete iBitmapCollection;
-	}
-
 void CMobblerAppUi::HandleInstallStartedL()
 	{
 	RunAppShutter();
@@ -397,7 +397,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 		if (BaflUtils::FileExists(CCoeEnv::Static()->FsSession(), KSettingsFile)
 			== EFalse)
 			{
-			CAknInformationNote* note = new (ELeave) CAknInformationNote(EFalse);
+			CAknInformationNote* note(new (ELeave) CAknInformationNote(EFalse));
 			note->ExecuteLD(iResourceReader->ResourceL(R_MOBBLER_NOTE_NO_DETAILS));
 
 			// bail from the function
@@ -452,7 +452,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 				
 			if (iLastFMConnection->Mode() == CMobblerLastFMConnection::EOnline)
 				{
-				CMobblerString* username = CMobblerString::NewL(iSettingView->Username());
+				CMobblerString* username(CMobblerString::NewL(iSettingView->Username()));
 				CleanupStack::PushL(username);
 				ActivateLocalViewL(iWebServicesView->Id(), TUid::Uid(aCommand), username->String8());
 				CleanupStack::PopAndDestroy(username);
@@ -469,17 +469,17 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 		case EMobblerCommandAbout:
 			{
 			// create the message text
-			const TDesC& aboutText1 = iResourceReader->ResourceL(R_MOBBLER_ABOUT_TEXT1);
-			const TDesC& aboutText2 = iResourceReader->ResourceL(R_MOBBLER_ABOUT_TEXT2);
+			const TDesC& aboutText1(iResourceReader->ResourceL(R_MOBBLER_ABOUT_TEXT1));
+			const TDesC& aboutText2(iResourceReader->ResourceL(R_MOBBLER_ABOUT_TEXT2));
 			
-			HBufC* msg = HBufC::NewLC(aboutText1.Length() + KVersion.Name().Length() + aboutText2.Length());
+			HBufC* msg(HBufC::NewLC(aboutText1.Length() + KVersion.Name().Length() + aboutText2.Length()));
 			
 			msg->Des().Append(aboutText1);
 			msg->Des().Append(KVersion.Name());
 			msg->Des().Append(aboutText2);
 			
 			// create the header text
-			CAknMessageQueryDialog* dlg = new(ELeave) CAknMessageQueryDialog();
+			CAknMessageQueryDialog* dlg(new(ELeave) CAknMessageQueryDialog());
 			
 			// initialise the dialog
 			dlg->PrepareLC(R_MOBBLER_ABOUT_BOX);
@@ -543,14 +543,14 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 				{
 				artist = iPreviousRadioArtist->String();
 				}
-			CAknTextQueryDialog* artistDialog = new(ELeave) CAknTextQueryDialog(artist);
+			CAknTextQueryDialog* artistDialog(new(ELeave) CAknTextQueryDialog(artist));
 			artistDialog->PrepareLC(R_MOBBLER_TEXT_QUERY_DIALOG);
 			artistDialog->SetPromptL(iResourceReader->ResourceL(R_MOBBLER_RADIO_ENTER_ARTIST));
 			artistDialog->SetPredictiveTextInputPermitted(ETrue);
 			
 			if (artistDialog->RunLD())
 				{
-				CMobblerString* artistString = CMobblerString::NewL(artist);
+				CMobblerString* artistString(CMobblerString::NewL(artist));
 				CleanupStack::PushL(artistString);
 				RadioStartL(CMobblerLastFMConnection::EArtist, artistString);
 				CleanupStack::PopAndDestroy(artistString);
@@ -570,14 +570,14 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 				tag = iPreviousRadioTag->String();
 				}
 			
-			CAknTextQueryDialog* tagDialog = new(ELeave) CAknTextQueryDialog(tag);
+			CAknTextQueryDialog* tagDialog(new(ELeave) CAknTextQueryDialog(tag));
 			tagDialog->PrepareLC(R_MOBBLER_TEXT_QUERY_DIALOG);
 			tagDialog->SetPromptL(iResourceReader->ResourceL(R_MOBBLER_RADIO_ENTER_TAG));
 			tagDialog->SetPredictiveTextInputPermitted(ETrue);
 
 			if (tagDialog->RunLD())
 				{
-				CMobblerString* tagString = CMobblerString::NewL(tag);
+				CMobblerString* tagString(CMobblerString::NewL(tag));
 				CleanupStack::PushL(tagString);
 				RadioStartL(CMobblerLastFMConnection::ETag, tagString);
 				CleanupStack::PopAndDestroy(tagString);
@@ -597,14 +597,14 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 				user = iPreviousRadioPersonal->String();
 				}
 			
-			CAknTextQueryDialog* userDialog = new(ELeave) CAknTextQueryDialog(user);
+			CAknTextQueryDialog* userDialog(new(ELeave) CAknTextQueryDialog(user));
 			userDialog->PrepareLC(R_MOBBLER_TEXT_QUERY_DIALOG);
 			userDialog->SetPromptL(iResourceReader->ResourceL(R_MOBBLER_RADIO_ENTER_USER));
 			userDialog->SetPredictiveTextInputPermitted(ETrue);
 
 			if (userDialog->RunLD())
 				{
-				CMobblerString* userString = CMobblerString::NewL(user);
+				CMobblerString* userString(CMobblerString::NewL(user));
 				CleanupStack::PushL(userString);
 				RadioStartL(CMobblerLastFMConnection::EPersonal, userString);
 				CleanupStack::PopAndDestroy(userString);
@@ -634,7 +634,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 				if (!currentTrack->Love())
 					{
 					// There is a current track and it is not already loved
-					CAknQueryDialog* dlg = CAknQueryDialog::NewL();
+					CAknQueryDialog* dlg(CAknQueryDialog::NewL());
 					TBool love(dlg->ExecuteLD(R_MOBBLER_YES_NO_QUERY_DIALOG, iResourceReader->ResourceL(R_MOBBLER_LOVE_TRACK)));
 					
 					if (love)
@@ -652,7 +652,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 			if (currentRadioTrack)
 				{
 				// There is a current track and it is not already loved
-				CAknQueryDialog* dlg = CAknQueryDialog::NewL();
+				CAknQueryDialog* dlg(CAknQueryDialog::NewL());
 				TBool ban(dlg->ExecuteLD(R_MOBBLER_YES_NO_QUERY_DIALOG, iResourceReader->ResourceL(R_MOBBLER_BAN_TRACK)));
 				
 				if (ban)
@@ -668,7 +668,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 			
 			if (currentTrack)
 				{
-				CAknSinglePopupMenuStyleListBox* list = new(ELeave) CAknSinglePopupMenuStyleListBox;
+				CAknSinglePopupMenuStyleListBox* list(new(ELeave) CAknSinglePopupMenuStyleListBox);
 			    CleanupStack::PushL(list);
 			     
 			    CAknPopupList* popup = CAknPopupList::NewL(list, R_AVKON_SOFTKEYS_OK_CANCEL, AknPopupLayouts::EMenuWindow);
@@ -681,7 +681,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 			    list->CreateScrollBarFrameL(ETrue);
 			    list->ScrollBarFrame()->SetScrollBarVisibilityL(CEikScrollBarFrame::EOff, CEikScrollBarFrame::EAuto);
 			    
-			    CDesCArrayFlat* items = new(ELeave) CDesCArrayFlat(1);
+			    CDesCArrayFlat* items = new(ELeave) CDesCArrayFlat(10);
 			    CleanupStack::PushL(items);
 			    
 			    items->AppendL(iResourceReader->ResourceL(R_MOBBLER_SHARE_TRACK));
@@ -717,7 +717,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 				    		case 0:
 				    			{
 				    			// Share
-				    			CMobblerString* username = CMobblerString::NewL(iSettingView->Username());
+				    			CMobblerString* username(CMobblerString::NewL(iSettingView->Username()));
 				    			CleanupStack::PushL(username);
 				    			iLastFMConnection->WebServicesCallL(_L8("user"), _L8("getfriends"), username->String8(), *this);
 				    			CleanupStack::PopAndDestroy(username);
@@ -729,7 +729,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 				    		case 1:
 				    			{
 				    			// Share
-				    			CMobblerString* username = CMobblerString::NewL(iSettingView->Username());
+				    			CMobblerString* username(CMobblerString::NewL(iSettingView->Username()));
 				    			CleanupStack::PushL(username);
 				    			iLastFMConnection->WebServicesCallL(_L8("user"), _L8("getfriends"), username->String8(), *this);
 				    			CleanupStack::PopAndDestroy(username);
@@ -741,7 +741,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 					    	case 2:
 					    		{
 					    		// Playlists
-					    		CMobblerString* username = CMobblerString::NewL(iSettingView->Username());
+					    		CMobblerString* username(CMobblerString::NewL(iSettingView->Username()));
 					    		CleanupStack::PushL(username);
 					    		iLastFMConnection->WebServicesCallL(_L8("user"), _L8("getplaylists"), username->String8(), *this);
 					    		CleanupStack::PopAndDestroy(username);
@@ -792,7 +792,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 			{
 			if (iTracksQueued == 0)
 				{
-				CAknResourceNoteDialog *note = new (ELeave) CAknInformationNote(EFalse);
+				CAknResourceNoteDialog *note(new (ELeave) CAknInformationNote(EFalse));
 				note->ExecuteLD(iResourceReader->ResourceL(R_MOBBLER_NOTE_EXPORT_EMPTY_QUEUE));
 				}
 			else
@@ -801,7 +801,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 				
 				if (BaflUtils::FileExists(CCoeEnv::Static()->FsSession(), KLogFile))
 					{
-					CAknQueryDialog* dlg = CAknQueryDialog::NewL();
+					CAknQueryDialog* dlg(CAknQueryDialog::NewL());
 					okToReplaceLog = dlg->ExecuteLD(R_MOBBLER_YES_NO_QUERY_DIALOG, iResourceReader->ResourceL(R_MOBBLER_CONFIRM_REPLACE_LOG));
 					}
 				
@@ -812,7 +812,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 						BaflUtils::DeleteFile(CCoeEnv::Static()->FsSession(), KLogFile);
 						}
 					
-					CAknResourceNoteDialog *note = new (ELeave) CAknInformationNote(EFalse);
+					CAknResourceNoteDialog *note(new (ELeave) CAknInformationNote(EFalse));
 					note->ExecuteLD(iLastFMConnection->ExportQueueToLogFileL()?
 										iResourceReader->ResourceL(R_MOBBLER_NOTE_QUEUE_EXPORTED):
 										iResourceReader->ResourceL(R_MOBBLER_NOTE_QUEUE_NOT_EXPORTED));
@@ -824,7 +824,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 			if (aCommand >= EMobblerCommandEqualizerDefault && 
 				aCommand <= EMobblerCommandEqualizerMaximum)
 				{
-				TInt index = aCommand - EMobblerCommandEqualizerDefault - 1;
+				TInt index(aCommand - EMobblerCommandEqualizerDefault - 1);
 				RadioPlayer().SetEqualizer(index);
 				iSettingView->SetEqualizerIndexL(index);
 				return;
@@ -879,7 +879,7 @@ TBool CMobblerAppUi::RadioStartable() const
 	if (iMusicListener->IsPlaying())
 		{
 		// Tell the user that there was an error connecting
-		CAknResourceNoteDialog *note = new (ELeave) CAknInformationNote(EFalse);
+		CAknResourceNoteDialog *note(new (ELeave) CAknInformationNote(EFalse));
 		note->ExecuteLD(iResourceReader->ResourceL(R_MOBBLER_NOTE_STOP_MUSIC_PLAYER));
 
 		return EFalse;
@@ -943,7 +943,7 @@ void CMobblerAppUi::DataL(const TDesC8& aData, CMobblerLastFMConnection::TError 
 				
 				TVersion version;
 				TBuf8<255> location;
-				TInt error = CMobblerParser::ParseUpdateResponseL(aData, version, location);
+				TInt error(CMobblerParser::ParseUpdateResponseL(aData, version, location));
 				
 				if (error == KErrNone)
 					{
@@ -956,7 +956,7 @@ void CMobblerAppUi::DataL(const TDesC8& aData, CMobblerLastFMConnection::TError 
 						 version.iMinor == KVersion.iMinor && 
 						 version.iBuild > KVersion.iBuild))
 						{
-						CAknQueryDialog* dlg = CAknQueryDialog::NewL();
+						CAknQueryDialog* dlg(CAknQueryDialog::NewL());
 						TBool yes( dlg->ExecuteLD(R_MOBBLER_YES_NO_QUERY_DIALOG, iResourceReader->ResourceL(R_MOBBLER_UPDATE)));
 										
 						if (yes)
@@ -966,7 +966,7 @@ void CMobblerAppUi::DataL(const TDesC8& aData, CMobblerLastFMConnection::TError 
 						}
 					else
 						{
-						CAknResourceNoteDialog *note = new (ELeave) CAknInformationNote(EFalse);
+						CAknResourceNoteDialog *note(new (ELeave) CAknInformationNote(EFalse));
 						note->ExecuteLD(iResourceReader->ResourceL(R_MOBBLER_NO_UPDATE));
 						}
 					}
@@ -978,7 +978,7 @@ void CMobblerAppUi::DataL(const TDesC8& aData, CMobblerLastFMConnection::TError 
 			{
 			// parse and bring up a share with friends popup menu
 			
-			CAknSinglePopupMenuStyleListBox* list = new(ELeave) CAknSinglePopupMenuStyleListBox;
+			CAknSinglePopupMenuStyleListBox* list(new(ELeave) CAknSinglePopupMenuStyleListBox);
 		    CleanupStack::PushL(list);
 		     
 		    CAknPopupList* popup = CAknPopupList::NewL(list, R_AVKON_SOFTKEYS_OK_CANCEL, AknPopupLayouts::EMenuWindow);
@@ -997,7 +997,7 @@ void CMobblerAppUi::DataL(const TDesC8& aData, CMobblerLastFMConnection::TError 
 			// create the xml reader and dom fragement and associate them with each other 
 		    CSenXmlReader* xmlReader = CSenXmlReader::NewL();
 			CleanupStack::PushL(xmlReader);
-			CSenDomFragment* domFragment = CSenDomFragment::NewL();
+			CSenDomFragment* domFragment(CSenDomFragment::NewL());
 			CleanupStack::PushL(domFragment);
 			xmlReader->SetContentHandler(*domFragment);
 			domFragment->SetReader(*xmlReader);
@@ -1005,12 +1005,12 @@ void CMobblerAppUi::DataL(const TDesC8& aData, CMobblerLastFMConnection::TError 
 			// parse the xml into the dom fragment
 			xmlReader->ParseL(aData);
 			
-			RPointerArray<CSenElement>& users = domFragment->AsElement().Element(_L8("friends"))->ElementsL();
+			RPointerArray<CSenElement>& users(domFragment->AsElement().Element(_L8("friends"))->ElementsL());
 				
 			const TInt KUserCount(users.Count());
 			for (TInt i(0) ; i < KUserCount; ++i)
 				{
-				CMobblerString* user = CMobblerString::NewL(users[i]->Element(_L8("name"))->Content());
+				CMobblerString* user(CMobblerString::NewL(users[i]->Element(_L8("name"))->Content()));
 				CleanupStack::PushL(user);
 				items->AppendL(user->String());
 				CleanupStack::PopAndDestroy(user);
@@ -1029,17 +1029,17 @@ void CMobblerAppUi::DataL(const TDesC8& aData, CMobblerLastFMConnection::TError 
 		    	{
 		    	TBuf<255> message;
 		    	
-		    	CAknTextQueryDialog* shoutDialog = new(ELeave) CAknTextQueryDialog(message);
+		    	CAknTextQueryDialog* shoutDialog(new(ELeave) CAknTextQueryDialog(message));
 		    	shoutDialog->PrepareLC(R_MOBBLER_TEXT_QUERY_DIALOG);
 		    	shoutDialog->SetPromptL(iResourceReader->ResourceL(R_MOBBLER_SHARE));
 		    	shoutDialog->SetPredictiveTextInputPermitted(ETrue);
 
 		    	if (shoutDialog->RunLD())
 		    		{
-		    		CMobblerString* messageString = CMobblerString::NewL(message);
+		    		CMobblerString* messageString(CMobblerString::NewL(message));
 		    		CleanupStack::PushL(messageString);
 		    		
-			    	CMobblerString* user = CMobblerString::NewL((*items)[list->CurrentItemIndex()]);
+			    	CMobblerString* user(CMobblerString::NewL((*items)[list->CurrentItemIndex()]));
 					CleanupStack::PushL(user);
 					
 					if (iState == EFetchingFriendsShareTrack)
@@ -1065,12 +1065,12 @@ void CMobblerAppUi::DataL(const TDesC8& aData, CMobblerLastFMConnection::TError 
 			// create the xml reader and dom fragement and associate them with each other 
 		    CSenXmlReader* xmlReader = CSenXmlReader::NewL();
 			CleanupStack::PushL(xmlReader);
-			CSenDomFragment* domFragment = CSenDomFragment::NewL();
+			CSenDomFragment* domFragment(CSenDomFragment::NewL());
 			CleanupStack::PushL(domFragment);
 			xmlReader->SetContentHandler(*domFragment);
 			domFragment->SetReader(*xmlReader);
 			
-			CAknSinglePopupMenuStyleListBox* list = new(ELeave) CAknSinglePopupMenuStyleListBox;
+			CAknSinglePopupMenuStyleListBox* list(new(ELeave) CAknSinglePopupMenuStyleListBox);
 		    CleanupStack::PushL(list);
 		     
 		    CAknPopupList* popup = CAknPopupList::NewL(list, R_AVKON_SOFTKEYS_OK_CANCEL, AknPopupLayouts::EMenuWindow);
@@ -1091,12 +1091,12 @@ void CMobblerAppUi::DataL(const TDesC8& aData, CMobblerLastFMConnection::TError 
 			// parse the xml into the dom fragment
 			xmlReader->ParseL(aData);
 			
-			RPointerArray<CSenElement>& playlists = domFragment->AsElement().Element(_L8("playlists"))->ElementsL();
+			RPointerArray<CSenElement>& playlists(domFragment->AsElement().Element(_L8("playlists"))->ElementsL());
 				
 			const TInt KPlaylistCount(playlists.Count());
 			for (TInt i(0) ; i < KPlaylistCount; ++i)
 				{
-				CMobblerString* playlist = CMobblerString::NewL(playlists[i]->Element(_L8("title"))->Content());
+				CMobblerString* playlist(CMobblerString::NewL(playlists[i]->Element(_L8("title"))->Content()));
 				CleanupStack::PushL(playlist);
 				items->AppendL(playlist->String());
 				CleanupStack::PopAndDestroy(playlist);
@@ -1134,7 +1134,7 @@ void CMobblerAppUi::HandleConnectCompleteL(TInt aError)
 	if (aError != KErrNone)
 		{
 		// Tell the user that there was an error connecting
-		CAknResourceNoteDialog *note = new (ELeave) CAknInformationNote(EFalse);
+		CAknResourceNoteDialog *note(new (ELeave) CAknInformationNote(EFalse));
 		note->ExecuteLD(iResourceReader->ResourceL(R_MOBBLER_NOTE_COMMS_ERROR));
 		}
 	else
@@ -1159,7 +1159,7 @@ void CMobblerAppUi::HandleLastFMErrorL(CMobblerLastFMError& aError)
 	{
 	iStatusView->DrawDeferred();
 	
-	CAknResourceNoteDialog *note = new (ELeave) CAknInformationNote(EFalse);
+	CAknResourceNoteDialog *note(new (ELeave) CAknInformationNote(EFalse));
 	note->ExecuteLD(aError.Text());
 	}
 
@@ -1167,19 +1167,19 @@ void CMobblerAppUi::HandleCommsErrorL(TInt aStatusCode, const TDesC8& aStatus)
 	{
 	iStatusView->DrawDeferred();
 	
-	HBufC* noteText = HBufC::NewLC(255);
+	HBufC* noteText(HBufC::NewLC(255));
 
 	noteText->Des().Append(iResourceReader->ResourceL(R_MOBBLER_NOTE_COMMS_ERROR));
 	noteText->Des().Append(_L(" "));
 	noteText->Des().AppendNum(aStatusCode);
 	noteText->Des().Append(_L(" "));
 	
-	HBufC* status = HBufC::NewLC(aStatus.Length());
+	HBufC* status(HBufC::NewLC(aStatus.Length()));
 	status->Des().Copy(aStatus);
 	noteText->Des().Append(*status);
 	CleanupStack::PopAndDestroy(status);
 	
-	CAknInformationNote* note = new (ELeave) CAknInformationNote(EFalse);
+	CAknInformationNote* note(new (ELeave) CAknInformationNote(EFalse));
 	note->ExecuteLD(*noteText);
 	
 	CleanupStack::PopAndDestroy(noteText);
@@ -1227,7 +1227,7 @@ void CMobblerAppUi::HandleTrackDequeued(const CMobblerTrack& /*aTrack*/)
 TBool CMobblerAppUi::GoOnlineL()
 	{
 	// Ask if they would like to go online
-	CAknQueryDialog* dlg = CAknQueryDialog::NewL();
+	CAknQueryDialog* dlg(CAknQueryDialog::NewL());
 	TBool goOnline(dlg->ExecuteLD(R_MOBBLER_YES_NO_QUERY_DIALOG, iResourceReader->ResourceL(R_MOBBLER_ASK_GO_ONLINE)));
 	
 	if (goOnline)
@@ -1281,7 +1281,7 @@ void CMobblerAppUi::LoadRadioStationsL()
 	{
 	RFile file;
 	CleanupClosePushL(file);
-	TInt openError = file.Open(CCoeEnv::Static()->FsSession(), KRadioFile, EFileRead);
+	TInt openError(file.Open(CCoeEnv::Static()->FsSession(), KRadioFile, EFileRead));
 
 	if (openError == KErrNone)
 		{
@@ -1326,7 +1326,7 @@ void CMobblerAppUi::SaveRadioStationsL()
 
 	RFile file;
 	CleanupClosePushL(file);
-	TInt replaceError = file.Replace(CCoeEnv::Static()->FsSession(), KRadioFile, EFileWrite);
+	TInt replaceError(file.Replace(CCoeEnv::Static()->FsSession(), KRadioFile, EFileWrite));
 
 	if (replaceError == KErrNone)
 		{
@@ -1398,13 +1398,13 @@ void CMobblerAppUi::SetSleepTimer()
 		sleepMinutes = minutes.Int();
 		}
 
-	CAknNumberQueryDialog* sleepDlg = CAknNumberQueryDialog::NewL(sleepMinutes,
-													CAknQueryDialog::ENoTone);
+	CAknNumberQueryDialog* sleepDlg(CAknNumberQueryDialog::NewL(sleepMinutes,
+													CAknQueryDialog::ENoTone));
 	sleepDlg->PrepareLC(R_MOBBLER_SLEEP_TIMER_QUERY_DIALOG);
 	sleepDlg->SetPromptL(iResourceReader->ResourceL(R_MOBBLER_SLEEP_TIMER_PROMPT));
 
-	CEikButtonGroupContainer* cba = &sleepDlg->ButtonGroupContainer();
-	MEikButtonGroup* buttonGroup = cba->ButtonGroup();
+	CEikButtonGroupContainer* cba(&sleepDlg->ButtonGroupContainer());
+	MEikButtonGroup* buttonGroup(cba->ButtonGroup());
 
 	cba->SetCommandL(buttonGroup->CommandId(0), iResourceReader->ResourceL(R_MOBBLER_SOFTKEY_SET));
 
@@ -1416,10 +1416,10 @@ void CMobblerAppUi::SetSleepTimer()
 	TBool removeTimer(EFalse);
 	if (sleepDlg->RunLD())
 		{
-		CEikTextListBox* list = new(ELeave) CAknSinglePopupMenuStyleListBox;
+		CEikTextListBox* list(new(ELeave) CAknSinglePopupMenuStyleListBox);
 		CleanupStack::PushL(list);
-		CAknPopupList* popupList = CAknPopupList::NewL(list, 
-				R_AVKON_SOFTKEYS_SELECT_CANCEL, AknPopupLayouts::EMenuWindow);
+		CAknPopupList* popupList(CAknPopupList::NewL(list, 
+				R_AVKON_SOFTKEYS_SELECT_CANCEL, AknPopupLayouts::EMenuWindow));
 		CleanupStack::PushL(popupList);
 
 		list->ConstructL(popupList, CEikListBox::ELeftDownInViewRect);
@@ -1429,19 +1429,19 @@ void CMobblerAppUi::SetSleepTimer()
 
 		if (iSleepTimer->IsActive())
 			{
-			CEikButtonGroupContainer* cba = popupList->ButtonGroupContainer();
-			MEikButtonGroup* buttonGroup = cba->ButtonGroup();
+			CEikButtonGroupContainer* cba(popupList->ButtonGroupContainer());
+			MEikButtonGroup* buttonGroup(cba->ButtonGroup());
 			cba->SetCommandL(buttonGroup->CommandId(2), iResourceReader->ResourceL(R_MOBBLER_SOFTKEY_REMOVE));
 			}
 
-		CDesCArrayFlat* items = new CDesCArrayFlat(3);
+		CDesCArrayFlat* items(new CDesCArrayFlat(3));
 		CleanupStack::PushL(items);
 
 		items->AppendL(iResourceReader->ResourceL(R_MOBBLER_SLEEP_TIMER_ACTION_STOP));
 		items->AppendL(iResourceReader->ResourceL(R_MOBBLER_SLEEP_TIMER_ACTION_OFFLINE));
 		items->AppendL(iResourceReader->ResourceL(R_MOBBLER_SLEEP_TIMER_ACTION_EXIT));
 		
-		CTextListBoxModel* model = list->Model();
+		CTextListBoxModel* model(list->Model());
 		model->SetItemTextArray(items);
 		model->SetOwnershipType(ELbmOwnsItemArray);
 		CleanupStack::Pop(items);
@@ -1449,7 +1449,7 @@ void CMobblerAppUi::SetSleepTimer()
 		popupList->SetTitleL(iResourceReader->ResourceL(R_MOBBLER_SLEEP_TIMER_ACTION));
 		
 		list->SetCurrentItemIndex(iSleepAction);
-		TInt popupOk = popupList->ExecuteLD();
+		TInt popupOk(popupList->ExecuteLD());
 		CleanupStack::Pop(popupList);
 		
 		if (popupOk)
@@ -1483,7 +1483,7 @@ void CMobblerAppUi::SetSleepTimer()
 	if (removeTimer && iSleepTimer->IsActive())
 		{
 		iSleepTimer->Cancel();
-		CAknInformationNote* note = new (ELeave) CAknInformationNote(ETrue);
+		CAknInformationNote* note(new (ELeave) CAknInformationNote(ETrue));
 		note->ExecuteLD(iResourceReader->ResourceL(R_MOBBLER_SLEEP_TIMER_REMOVED));
 		}
 	}
@@ -1500,7 +1500,7 @@ void CMobblerAppUi::TimerExpiredL(TAny* /*aTimer*/, TInt aError)
 #ifdef _DEBUG
 		CEikonEnv::Static()->InfoMsg(_L("Timer expired!"));
 #endif
-		CAknInformationNote* note = new (ELeave) CAknInformationNote(ETrue);
+		CAknInformationNote* note(new (ELeave) CAknInformationNote(ETrue));
 		note->ExecuteLD(iResourceReader->ResourceL(R_MOBBLER_SLEEP_TIMER_EXPIRED));
 
 		switch (iSleepAction)

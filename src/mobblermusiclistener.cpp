@@ -204,14 +204,14 @@ const TDesC& CMobblerMusicAppListener::MusicAppNameL() const
 		{
 		if (iMobblerMusicApps[i]->PlayerState() == EMPlayerRCtrlPlaying)
 			{
-			HBufC* appName = iMobblerMusicApps[i]->NameL();
+			HBufC* appName(iMobblerMusicApps[i]->NameL());
 			iMusicAppName.Copy(*appName);
 			delete appName;
 			break;
 			}
 		else if (iMobblerMusicApps[i]->PlayerState() == EMPlayerRCtrlPaused)
 			{
-			HBufC* appName = iMobblerMusicApps[i]->NameL();
+			HBufC* appName(iMobblerMusicApps[i]->NameL());
 			iMusicAppName.Copy(*appName);
 			delete appName;
 			// Intentionally don't break if found a paused app,
@@ -272,9 +272,9 @@ void CMobblerMusicAppListener::NowPlayingL()
 			
 			if (trackLength.Int() >= 30 && trackArtist.Length() > 0)
 				{
-				HBufC8* artist = CnvUtfConverter::ConvertFromUnicodeToUtf8L(trackArtist);
+				HBufC8* artist(CnvUtfConverter::ConvertFromUnicodeToUtf8L(trackArtist));
 				CleanupStack::PushL(artist);
-				HBufC8* title = CnvUtfConverter::ConvertFromUnicodeToUtf8L(trackTitle);
+				HBufC8* title(CnvUtfConverter::ConvertFromUnicodeToUtf8L(trackTitle));
 				CleanupStack::PushL(title);
 				
 				if (iCurrentTrack)
@@ -293,7 +293,7 @@ void CMobblerMusicAppListener::NowPlayingL()
 					}
 				else
 					{
-					HBufC8* album = CnvUtfConverter::ConvertFromUnicodeToUtf8L(trackAlbum);
+					HBufC8* album(CnvUtfConverter::ConvertFromUnicodeToUtf8L(trackAlbum));
 					CleanupStack::PushL(album);
 					iCurrentTrack = CMobblerTrack::NewL(*artist, *title, *album, /*KNullDesC8,*/ KNullDesC8, KNullDesC8, KNullDesC8, trackLength, KNullDesC8);
 					CleanupStack::PopAndDestroy(album);
@@ -356,7 +356,7 @@ void CMobblerMusicAppListener::PlayerStateChangedL(TMPlayerRemoteControlState aS
 		// Update total played
 		if (iCurrentTrack)
 			{
-			TTimeIntervalSeconds totalPlayed = iCurrentTrack->TotalPlayed();
+			TTimeIntervalSeconds totalPlayed(iCurrentTrack->TotalPlayed());
 
 			TTime now;
 			now.UniversalTime();

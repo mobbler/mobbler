@@ -38,7 +38,7 @@ public:
 	
 	CMobblerListControl* HandleListCommandL(TInt aCommand);
 	void SupportedCommandsL(RArray<TInt>& aCommands);
-	void ParseL(const TDesC8& aXML);
+	void ParseL(const TDesC8& aXml);
 	
 private:
 	};

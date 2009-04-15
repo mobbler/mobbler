@@ -75,7 +75,7 @@ HBufC* CMobblerShoutbox::ShoutAtTextOwnerLC()
 
 	if (iText1->String().Length() == 0)
 		{
-		CMobblerString* name = CMobblerString::NewL(iAppUi.SettingView().Username());
+		CMobblerString* name(CMobblerString::NewL(iAppUi.SettingView().Username()));
 		CleanupStack::PushL(name);
 		shoutAtText = ShoutAtTextLC(name->String8());
 		CleanupStack::Pop(shoutAtText);
@@ -97,10 +97,10 @@ HBufC* CMobblerShoutbox::ShoutAtTextUserLC()
 
 HBufC* CMobblerShoutbox::ShoutAtTextLC(const TDesC8& aName)
 	{
-	const TDesC& format = iAppUi.ResourceReader().ResourceL(R_MOBBLER_SHOUT_AT);
-	HBufC* text = HBufC::NewLC(format.Length() + aName.Length());
+	const TDesC& format(iAppUi.ResourceReader().ResourceL(R_MOBBLER_SHOUT_AT));
+	HBufC* text(HBufC::NewLC(format.Length() + aName.Length()));
 	
-	CMobblerString* name = CMobblerString::NewL(aName);
+	CMobblerString* name(CMobblerString::NewL(aName));
 	CleanupStack::PushL(name);
 	text->Des().Format(format, &name->String());
 	CleanupStack::PopAndDestroy(name);
@@ -122,7 +122,7 @@ CMobblerListControl* CMobblerShoutbox::HandleListCommandL(TInt aCommand)
 		case EMobblerCommandOpen:
 			{
 			// Show the shout in a dialog box
-			CAknMessageQueryDialog* dlg = new(ELeave) CAknMessageQueryDialog();
+			CAknMessageQueryDialog* dlg(new(ELeave) CAknMessageQueryDialog());
 			dlg->PrepareLC(R_MOBBLER_ABOUT_BOX);
 			dlg->QueryHeading()->SetTextL(iList[iListBox->CurrentItemIndex()]->Title()->String());
 			dlg->SetMessageTextL(iList[iListBox->CurrentItemIndex()]->Description()->String());
@@ -148,7 +148,7 @@ CMobblerListControl* CMobblerShoutbox::HandleListCommandL(TInt aCommand)
 
 			if (shoutDialog->RunLD())
 				{
-				CMobblerString* shout = CMobblerString::NewL(shoutMessage);
+				CMobblerString* shout(CMobblerString::NewL(shoutMessage));
 				CleanupStack::PushL(shout);
 				switch (iType)
 					{

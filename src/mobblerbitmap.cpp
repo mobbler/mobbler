@@ -21,8 +21,6 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-#include <akniconutils.h>
-#include <aknutils.h>
 #include <aknsutils.h>
 #include <BitmapTransforms.h>
 #include <imageconversion.h>
@@ -88,7 +86,7 @@ CMobblerBitmap::~CMobblerBitmap()
 	
 CFbsBitmap* CMobblerBitmap::Bitmap() const
 	{
-	CFbsBitmap* bitmap = NULL;
+	CFbsBitmap* bitmap(NULL);
 	
 	if (iBitmapLoaded)
 		{
@@ -100,19 +98,19 @@ CFbsBitmap* CMobblerBitmap::Bitmap() const
 
 CFbsBitmap* CMobblerBitmap::BitmapGrayL() const
 	{
-	CFbsBitmap* bitmap = NULL;
+	CFbsBitmap* bitmap(NULL);
 	
 	if (iBitmapLoaded)
 		{
 		if (!iBitmapGray)
 			{
 			iBitmapGray = new (ELeave) CFbsBitmap();
-			TSize picSize = iBitmap->SizeInPixels();
+			TSize picSize(iBitmap->SizeInPixels());
 			iBitmapGray->Create(picSize, EGray256);
-			CFbsBitmap* src = const_cast<CFbsBitmap*>(iBitmap);
-			CFbsBitmapDevice* device = CFbsBitmapDevice::NewL(iBitmapGray);
+			CFbsBitmap* src(const_cast<CFbsBitmap*>(iBitmap));
+			CFbsBitmapDevice* device(CFbsBitmapDevice::NewL(iBitmapGray));
 			CleanupStack::PushL(device);
-			CFbsBitGc* gc = NULL;
+			CFbsBitGc* gc(NULL);
 			User::LeaveIfError(device->CreateContext(gc));
 			CleanupStack::PushL(gc);
 			gc->BitBlt(TPoint(0, 0), src);
@@ -127,7 +125,7 @@ CFbsBitmap* CMobblerBitmap::BitmapGrayL() const
 
 CFbsBitmap* CMobblerBitmap::Mask() const
 	{
-	CFbsBitmap* mask = NULL;
+	CFbsBitmap* mask(NULL);
 	
 	if (iBitmapLoaded)
 		{
@@ -166,7 +164,7 @@ void CMobblerBitmap::ConstructL(const TDesC& aFileName, const TUid aFileUid)
 		{
 		// Find the drive the Mobbler is installed on so that we know where the graphic file is
 		TParse parse;
-		TFileName appFullName = RProcess().FileName();
+		TFileName appFullName(RProcess().FileName());
 		parse.Set(appFullName, NULL, NULL);
 		fileName.Copy(parse.Drive());
 		fileName.Append(aFileName);
@@ -177,21 +175,20 @@ void CMobblerBitmap::ConstructL(const TDesC& aFileName, const TUid aFileUid)
 		}
 
 	iImageDecoder = CImageDecoder::FileNewL(CCoeEnv::Static()->FsSession(), fileName, CImageDecoder::EOptionAlwaysThread, aFileUid, TUid::Null(), TUid::Null());
-	const TFrameInfo& info = iImageDecoder->FrameInfo();
+	const TFrameInfo& info(iImageDecoder->FrameInfo());
 	iBitmap = new(ELeave) CFbsBitmap();
 
 	iBitmap->Create(info.iOverallSizeInPixels, info.iFrameDisplayMode);
 	
+	TRequestStatus* status(&iStatus);
 	if (info.iFlags & TFrameInfo::ETransparencyPossible)
 		{
 		iMask = new(ELeave) CFbsBitmap();
 		iMask->Create(info.iOverallSizeInPixels, EGray256);
-		TRequestStatus* status = &iStatus;
 		iImageDecoder->Convert(status, *iBitmap, *iMask);
 		}
 	else
 		{
-		TRequestStatus* status = &iStatus;
 		iImageDecoder->Convert(status, *iBitmap);
 		}
 
@@ -203,20 +200,19 @@ void CMobblerBitmap::ConstructL(const TDesC8& aData, const TUid aFileUid)
 	iData = aData.AllocL();
 	
 	iImageDecoder = CImageDecoder::DataNewL(CCoeEnv::Static()->FsSession(), *iData, CImageDecoder::EOptionAlwaysThread, aFileUid, TUid::Null(), TUid::Null());
-	const TFrameInfo& info = iImageDecoder->FrameInfo();
+	const TFrameInfo& info(iImageDecoder->FrameInfo());
 	iBitmap = new(ELeave) CFbsBitmap();
 	iBitmap->Create(info.iOverallSizeInPixels, info.iFrameDisplayMode);
 	
+	TRequestStatus* status(&iStatus);
 	if (info.iFlags & TFrameInfo::ETransparencyPossible)
 		{
 		iMask = new(ELeave) CFbsBitmap();
 		iMask->Create(info.iOverallSizeInPixels, EGray256);
-		TRequestStatus* status = &iStatus;
 		iImageDecoder->Convert(status, *iBitmap, *iMask);
 		}
 	else
 		{
-		TRequestStatus* status = &iStatus;
 		iImageDecoder->Convert(status, *iBitmap);
 		}
 
@@ -235,8 +231,7 @@ void CMobblerBitmap::ConstructL(const TDesC& aMifFileName, TInt aBitmapIndex, TI
 	// Find which drive the mif file is on
 	iMifFileName = HBufC::NewL(aMifFileName.Length() + 2);
 	TParse parse;
-	TFileName mifFileName;
-	TFileName appFullName = RProcess().FileName();
+	TFileName appFullName(RProcess().FileName());
 	parse.Set(appFullName, NULL, NULL);
 	iMifFileName->Des().Copy(parse.Drive());
 	iMifFileName->Des().Append(aMifFileName);
@@ -245,7 +240,7 @@ void CMobblerBitmap::ConstructL(const TDesC& aMifFileName, TInt aBitmapIndex, TI
 	iMifMaskIndex = aMaskIndex;
 	
 	// asked to be called back to do the conversion
-	TRequestStatus* status = &iStatus;
+	TRequestStatus* status(&iStatus);
 	User::RequestComplete(status, KErrNone);
 	SetActive();
 	}

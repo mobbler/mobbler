@@ -103,7 +103,7 @@ private:
 private:
 	void DialogDismissedL(TInt aButtonId);
 
-private: // MMobblerRadioPlayer	
+private:
 	void DataL(const TDesC8& aData, CMobblerLastFMConnection::TError aError);
 	
 private:

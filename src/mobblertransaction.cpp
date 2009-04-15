@@ -1,7 +1,7 @@
 /*
 mobblertransaction.cpp
 
-mobbler, a last.fm mobile scrobbler for Symbian smartphones.
+Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
 Copyright (C) 2008  Michael Coffey
 
 http://code.google.com/p/mobbler
@@ -21,31 +21,12 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-#include <http/mhttpdatasupplier.h> 
-#include <httpstringconstants.h>
-#include <http/mhttpdatasupplier.h>
-#include <http/mhttpfilter.h>
-#include <http/mhttpfilterbase.h>
-#include <http/mhttptransactioncallback.h>
-#include <http/rhttpconnectioninfo.h>
-#include <http/rhttpfiltercollection.h>
-#include <http/rhttpheaders.h>
-#include <http/rhttpmessage.h>
-#include <http/rhttppropertyset.h>
-#include <http/rhttprequest.h>
-#include <http/rhttpresponse.h>
-#include <http/rhttpsession.h>
-#include <http/rhttptransaction.h>
-#include <http/rhttptransactionpropertyset.h>
-#include <http/thttpevent.h>
-#include <http/thttpfilterhandle.h>
-#include <http/thttpfilteriterator.h>
-#include <http/thttpfilterregistration.h>
-#include <http/thttphdrfielditer.h>
-#include <http/thttphdrval.h>
 #include <chttpformencoder.h> 
+#include <http/rhttpheaders.h>
+#include <httpstringconstants.h>
 
 #include "mobblertransaction.h"
+#include "mobblerutility.h"
 #include "mobblerwebservicesquery.h"
 
 // The granurarity of the buffer that responses from last.fm are read into
@@ -136,14 +117,14 @@ void CMobblerTransaction::SubmitL()
 		// this is a start radio transaction
 
 		// setup the path
-		HBufC8* path = HBufC8::NewLC(255);
+		HBufC8* path(HBufC8::NewLC(255));
 		TPtr8 pathPtr(path->Des());
 		pathPtr.Copy(*iConnection.iRadioBasePath);
 		pathPtr.Append(_L8("/adjust.php"));
 		
-		TBuf8<2> language = MobblerUtility::LanguageL();
+		TBuf8<2> language(MobblerUtility::LanguageL());
 		
-		HBufC8* query = HBufC8::NewLC(255);
+		HBufC8* query(HBufC8::NewLC(255));
 		
 		// setup the 
 		TPtr8 radioSessionIDPtr(iConnection.iRadioSessionID->Des());
@@ -151,7 +132,7 @@ void CMobblerTransaction::SubmitL()
 		
 		query->Des().AppendFormat(KRadioStationQuery, &radioSessionIDPtr, &radioURLPtr, &language);
 		
-		CUri8* uri = CUri8::NewLC();
+		CUri8* uri(CUri8::NewLC());
 		
 		uri->SetComponentL(_L8("http"), EUriScheme);
 		uri->SetComponentL(*iConnection.iRadioBaseURL, EUriHost);
@@ -179,14 +160,14 @@ void CMobblerTransaction::SubmitL()
 			{
 			// get the post string
 			RStringF string;
-			RStringPool stringPool = iConnection.iHTTPSession.StringPool();
+			RStringPool stringPool(iConnection.iHTTPSession.StringPool());
 			string = stringPool.StringF(HTTP::EPOST, RHTTPSession::GetTable());
 			
 			iTransaction = iConnection.iHTTPSession.OpenTransactionL(iURI->Uri(), *this, string);
 			iTransaction.Request().SetBody(*iForm);
 			
 			// get the header
-			RStringF contentType = stringPool.OpenFStringL(_L8("application/x-www-form-urlencoded"));
+			RStringF contentType(stringPool.OpenFStringL(_L8("application/x-www-form-urlencoded")));
 			THTTPHdrVal accVal(contentType);
 			iTransaction.Request().GetHeaderCollection().SetFieldL(stringPool.StringF(HTTP::EContentType, RHTTPSession::GetTable()), accVal);
 			contentType.Close();
@@ -200,18 +181,18 @@ void CMobblerTransaction::SubmitL()
 		{
 		// this must be requesting a playlist
 		
-		// only try to request a playlist if we have the session id
-		HBufC8* path = HBufC8::NewLC(255);
+		// only try to request a playlist if we have the session ID
+		HBufC8* path(HBufC8::NewLC(255));
 		TPtr8 pathPtr(path->Des());
 		pathPtr.Copy(*iConnection.iRadioBasePath);
 		pathPtr.Append(_L8("/xspf.php"));
 		
 		TPtr8 radioSessionIDPtr(iConnection.iRadioSessionID->Des());
 		
-		HBufC8* query = HBufC8::NewLC(255);
+		HBufC8* query(HBufC8::NewLC(255));
 		query->Des().AppendFormat(KRadioPlaylistQuery, &radioSessionIDPtr);
 		
-		CUri8* uri = CUri8::NewLC();
+		CUri8* uri(CUri8::NewLC());
 		
 		uri->SetComponentL(_L8("http"), EUriScheme);
 		uri->SetComponentL(*iConnection.iRadioBaseURL, EUriHost);
@@ -255,7 +236,7 @@ void CMobblerTransaction::MHFRunL(RHTTPTransaction aTransaction, const THTTPEven
 			break;
 		case THTTPEvent::ESucceeded:
 			{
-			HBufC8* response = iBuffer->Ptr(0).AllocLC();
+			HBufC8* response(iBuffer->Ptr(0).AllocLC());
 			iConnection.TransactionResponseL(this, *response);
 			CleanupStack::PopAndDestroy(response);
 			}
@@ -287,5 +268,5 @@ MMobblerFlatDataObserver* CMobblerTransaction::FlatDataObserver()
 	{
 	return iFlatDataObserver;
 	}
-	
 
+// End of file

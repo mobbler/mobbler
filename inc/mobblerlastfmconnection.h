@@ -24,10 +24,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #ifndef __MOBBLERLASTFMCONNECTION_H__
 #define __MOBBLERLASTFMCONNECTION_H__
 
-#include <badesca.h>
 #include <e32base.h>
 #include <es_sock.h>
-#include <http/mhttpdatasupplier.h>
 #include <http/mhttptransactioncallback.h> 
 #include <http/rhttpsession.h>
 
@@ -35,8 +33,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 _LIT(KLogFile, "c:\\Data\\Mobbler\\.scrobbler.log");
 
-class CHTTPFormEncoder;
-class CMobblerParser;
 class CMobblerString;
 class CMobblerTrack;
 class CMobblerTransaction;
@@ -140,7 +136,7 @@ public:
 	void SimilarTracksL(const TDesC8& aArtist, const TDesC8& aTrack, MMobblerFlatDataObserver& aObserver);
 	
 	void SimilarArtistsL(const TDesC8& aArtist, MMobblerFlatDataObserver& aObserver);
-	void ArtistGetInfoL(const TDesC& aArtist, MMobblerFlatDataObserver& aObserver);
+//	void ArtistGetInfoL(const TDesC& aArtist, MMobblerFlatDataObserver& aObserver);
 	void ArtistGetImageL(const TDesC& aArtist, MMobblerFlatDataObserver& aObserver);
 	void ArtistGetTagsL(const TDesC& aArtist, MMobblerFlatDataObserver& aObserver);
 	void ArtistOrTrackSearchL(TDesC& aArtist, TDesC& aTrack, MMobblerFlatDataObserver& aObserver);

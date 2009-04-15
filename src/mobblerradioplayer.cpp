@@ -109,7 +109,7 @@ void CMobblerRadioPlayer::AddObserverL(MMobblerRadioStateChangeObserver* aObserv
 
 void CMobblerRadioPlayer::RemoveObserver(MMobblerRadioStateChangeObserver* aObserver)
 	{
-	TInt position = iObservers.FindInAddressOrder(aObserver);
+	TInt position(iObservers.FindInAddressOrder(aObserver));
 	
 	if (position != KErrNotFound)
 		{
@@ -294,7 +294,7 @@ void CMobblerRadioPlayer::StartL(CMobblerLastFMConnection::TRadioStation aRadioS
 	// now ask for the radio to start again
 	if (aRadioText)
 		{
-		HBufC8* urlEncoded = MobblerUtility::URLEncodeLC(aRadioText->String());
+		HBufC8* urlEncoded(MobblerUtility::URLEncodeLC(aRadioText->String()));
 		iLastFMConnection.SelectStationL(this, aRadioStation, *urlEncoded);
 		CleanupStack::PopAndDestroy(urlEncoded);
 		}
@@ -323,7 +323,7 @@ void CMobblerRadioPlayer::DataL(const TDesC8& aData, CMobblerLastFMConnection::T
 				DoChangeTransactionStateL(ENone);
 		
 				CMobblerRadioPlaylist* playlist(NULL);
-				CMobblerLastFMError* error = CMobblerParser::ParseRadioPlaylistL(aData, playlist);
+				CMobblerLastFMError* error(CMobblerParser::ParseRadioPlaylistL(aData, playlist));
 				
 				if (!error)
 					{
@@ -347,7 +347,7 @@ void CMobblerRadioPlayer::DataL(const TDesC8& aData, CMobblerLastFMConnection::T
 					{
 					DoChangeTransactionStateL(ENone);
 					
-					CAknInformationNote* note = new (ELeave) CAknInformationNote(EFalse);
+					CAknInformationNote* note(new (ELeave) CAknInformationNote(EFalse));
 					note->ExecuteLD(error->Text());
 					}
 				}
@@ -365,9 +365,9 @@ void CMobblerRadioPlayer::DataL(const TDesC8& aData, CMobblerLastFMConnection::T
 			{
 			// Display an error if we were given some text because this is a false response from Last.fm
 			
-			CMobblerString* errorText = CMobblerString::NewL(aData);
+			CMobblerString* errorText(CMobblerString::NewL(aData));
 			CleanupStack::PushL(errorText);
-			CAknInformationNote* note = new (ELeave) CAknInformationNote(EFalse);
+			CAknInformationNote* note(new (ELeave) CAknInformationNote(EFalse));
 			note->ExecuteLD(errorText->String());
 			CleanupStack::PopAndDestroy(errorText);
 			}
@@ -418,7 +418,7 @@ void CMobblerRadioPlayer::NextTrackL()
 				iCurrentAudioControl->SetCurrent();
 				
 				// We have started playing the track so tell Last.fm
-				CMobblerTrack* track = (*iCurrentPlaylist)[iCurrentTrackIndex];
+				CMobblerTrack* track((*iCurrentPlaylist)[iCurrentTrackIndex]);
 				
 				if (track->StartTimeUTC() == Time::NullTTime())
 					{
@@ -458,8 +458,8 @@ void CMobblerRadioPlayer::NextTrackL()
 
 void CMobblerRadioPlayer::VolumeUp()
 	{
-	TInt volume = Volume();
-	TInt maxVolume = MaxVolume();
+	TInt volume(Volume());
+	TInt maxVolume(MaxVolume());
 	iVolume = Min(volume + (maxVolume / 10), maxVolume);
 
 	if (iCurrentAudioControl)
@@ -476,8 +476,8 @@ void CMobblerRadioPlayer::VolumeUp()
 
 void CMobblerRadioPlayer::VolumeDown()
 	{
-	TInt volume = Volume();
-	TInt maxVolume = MaxVolume();
+	TInt volume(Volume());
+	TInt maxVolume(MaxVolume());
 	iVolume = Max(volume - (maxVolume / 10), 0);
 		
 	if (iCurrentAudioControl)
@@ -530,7 +530,7 @@ TInt CMobblerRadioPlayer::EqualizerIndex() const
 
 const CMobblerString& CMobblerRadioPlayer::Station() const
 	{
-	const CMobblerString* station = &iCurrentPlaylist->Name();
+	const CMobblerString* station(&iCurrentPlaylist->Name());
 	
 	if (station->String().Length() == 0
 			&& iStation)

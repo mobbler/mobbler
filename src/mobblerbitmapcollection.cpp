@@ -101,7 +101,7 @@ CMobblerBitmap& CMobblerBitmapCollection::BitmapL(MMobblerBitmapObserver& aObser
 	{
 	CMobblerBitmap* bitmap(NULL);
 	
-	TInt position = iBitmaps.FindInOrder(aId, CBitmapCollectionItem::Compare);
+	TInt position(iBitmaps.FindInOrder(aId, CBitmapCollectionItem::Compare));
 	
 	if (position == KErrNotFound)
 		{
@@ -151,7 +151,7 @@ CMobblerBitmap& CMobblerBitmapCollection::BitmapL(MMobblerBitmapObserver& aObser
 				break;
 			}
 		
-		CBitmapCollectionItem* item = CBitmapCollectionItem::NewLC(bitmap, aId);
+		CBitmapCollectionItem* item(CBitmapCollectionItem::NewLC(bitmap, aId));
 		TLinearOrder<CBitmapCollectionItem> linearOrder(CBitmapCollectionItem::Compare);
 		iBitmaps.InsertInOrderL(item, linearOrder);
 		CleanupStack::Pop(item);

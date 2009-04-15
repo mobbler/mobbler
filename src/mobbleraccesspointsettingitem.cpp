@@ -32,15 +32,15 @@ CMobblerAccessPointSettingItem::CMobblerAccessPointSettingItem(TInt aIdentifier,
 
 void CMobblerAccessPointSettingItem::LoadL()
 	{
-	CArrayPtr<CAknEnumeratedText>* texts = EnumeratedTextArray();
-	TInt selectedIndex = IndexFromValue(iValue);
+	CArrayPtr<CAknEnumeratedText>* texts(EnumeratedTextArray());
+	TInt selectedIndex(IndexFromValue(iValue));
 
 	if (selectedIndex < 0)  // no match found.
 		{
 		if (texts->Count() > 0)  
 			{
 			// choose the first item as default one.
-			CAknEnumeratedText* item = texts->At(0);
+			CAknEnumeratedText* item(texts->At(0));
 			// reset external value to the default one.
 			SetExternalValue(item->EnumerationValue());
 			}
@@ -52,13 +52,13 @@ void CMobblerAccessPointSettingItem::LoadL()
 void CMobblerAccessPointSettingItem::LoadIapListL()
 	{
 	// Add all the access point to the list
-	CCommsDatabase* commDb = CCommsDatabase::NewL(EDatabaseTypeIAP);
+	CCommsDatabase* commDb(CCommsDatabase::NewL(EDatabaseTypeIAP));
 	CleanupStack::PushL(commDb);
 
 	// Open IAP table
-	CCommsDbTableView* commView = commDb->OpenIAPTableViewMatchingBearerSetLC(
+	CCommsDbTableView* commView(commDb->OpenIAPTableViewMatchingBearerSetLC(
 										ECommDbBearerGPRS | ECommDbBearerWLAN, 
-										ECommDbConnectionDirectionOutgoing);
+										ECommDbConnectionDirectionOutgoing));
 
 	// Search all IAPs
 	for (TInt error(commView->GotoFirstRecord());
@@ -71,8 +71,8 @@ void CMobblerAccessPointSettingItem::LoadIapListL()
 			commView->ReadTextL(TPtrC(COMMDB_NAME), iapName);
 			commView->ReadUintL(TPtrC(COMMDB_ID), iapId);
 
-			HBufC* text = iapName.AllocLC();
-			CAknEnumeratedText* enumText = new(ELeave) CAknEnumeratedText(iapId, text);
+			HBufC* text(iapName.AllocLC());
+			CAknEnumeratedText* enumText(new(ELeave) CAknEnumeratedText(iapId, text));
 			CleanupStack::Pop(text);
 			CleanupStack::PushL(enumText);
 			EnumeratedTextArray()->AppendL(enumText);
@@ -85,7 +85,7 @@ void CMobblerAccessPointSettingItem::LoadIapListL()
 
 void CMobblerAccessPointSettingItem::CreateAndExecuteSettingPageL()
 	{
-	CAknSettingPage* dlg = CreateSettingPageL();
+	CAknSettingPage* dlg(CreateSettingPageL());
 
 	SetSettingPage(dlg);
 	SettingPage()->SetSettingPageObserver(this);

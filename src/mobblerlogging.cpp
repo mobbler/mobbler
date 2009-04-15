@@ -58,9 +58,18 @@ void CMobblerLogging::LogL(const TInt aNumber)
 	LogL(text8);
 	}
 
+void CMobblerLogging::LogL(const TInt aFirstNumber, const TInt aSecondNumber)
+	{
+	TBuf8<255> text8;
+	text8.AppendNum(aFirstNumber);
+	text8.Append(_L8(", "));
+	text8.AppendNum(aSecondNumber);
+	LogL(text8);
+	}
+
 void CMobblerLogging::LogL(const TDesC& aText)
 	{
-	HBufC8* text8 = HBufC8::NewLC(aText.Length());
+	HBufC8* text8(HBufC8::NewLC(aText.Length()));
 	text8->Des().Copy(aText);
 	LogL(*text8);
 	CleanupStack::PopAndDestroy(text8);
@@ -68,7 +77,7 @@ void CMobblerLogging::LogL(const TDesC& aText)
 
 void CMobblerLogging::LogL(const TDesC8& aText)
 	{
-	HBufC* text = HBufC::NewLC(aText.Length());
+	HBufC* text(HBufC::NewLC(aText.Length()));
 	text->Des().Copy(aText);
 	CEikonEnv::Static()->InfoMsg(*text);
 	CleanupStack::PopAndDestroy(text);
@@ -87,7 +96,7 @@ void CMobblerLogging::LogL(const TDesC8& aText)
 		CCoeEnv::Static()->FsSession().MkDirAll(logFile);
 		User::LeaveIfError(file.Create(CCoeEnv::Static()->FsSession(), logFile, EFileWrite));
 		}
-	TInt position = 0;
+	TInt position(0);
 	file.Seek(ESeekEnd, position);
 	User::LeaveIfError(file.Write(aText));
 	User::LeaveIfError(file.Write(_L8("\n")));

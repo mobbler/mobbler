@@ -111,7 +111,7 @@ void CMobblerContentListing::FindAndSetAlbumNameL()
 		TInt numberOfItems(iClfModel->ItemCount());
 		for(TInt i(0); i < numberOfItems; ++i)
 			{
-			const MCLFItem& item = iClfModel->Item(i);
+			const MCLFItem& item(iClfModel->Item(i));
 			TPtrC artist;
 			TPtrC title;
 			TPtrC album;

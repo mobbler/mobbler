@@ -34,8 +34,10 @@ public:
 
 #define DUMPDATA(a, b) CMobblerLogging::DumpDataL(a, b)
 #define LOG(a) CMobblerLogging::LogL(a)
+#define LOG2(a, b) CMobblerLogging::LogL(a, b)
 
 	static void DumpDataL(const TDesC8& aData, const TDesC& aLogFile);
+	static void LogL(const TInt aFirstNumber, const TInt aSecondNumber);
 	static void LogL(const TInt aNumber);
 	static void LogL(const TDesC& aText);
 	static void LogL(const TDesC8& aText);
@@ -44,6 +46,7 @@ public:
 
 #define DUMPDATA(a, b) 0
 #define LOG(a) 0
+#define LOG2(a, b) 0
 
 #endif // _DEBUG
 	};

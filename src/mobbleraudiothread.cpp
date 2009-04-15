@@ -33,9 +33,9 @@ TInt ThreadFunction(TAny* aData)
 	{
 	__UHEAP_MARK;
 	
-	CTrapCleanup* cleanupStack = CTrapCleanup::New();
+	CTrapCleanup* cleanupStack(CTrapCleanup::New());
 	
-	CActiveScheduler* activeScheduler = new CActiveScheduler;
+	CActiveScheduler* activeScheduler(new CActiveScheduler);
 	CActiveScheduler::Install(activeScheduler);
 	
 	CMobblerAudioThread* audioThread(NULL);
@@ -46,8 +46,8 @@ TInt ThreadFunction(TAny* aData)
 	
 	if (error == KErrNone)
 		{
-		// if we're still here, activescheduler has been constructed
-		// start wait loop which runs until it's time to end the thread
+		// If we're still here, the active scheduler has been constructed.
+		// Start the wait loop which runs until it's time to end the thread.
 		CActiveScheduler::Start();
 		}
 	
@@ -157,7 +157,7 @@ void CMobblerAudioThread::RunL()
 
 void CMobblerAudioThread::DoCancel()
 	{
-	TRequestStatus* status = &iStatus;
+	TRequestStatus* status(&iStatus);
 	User::RequestComplete(status, KErrCancel);
 	}
 
@@ -212,12 +212,12 @@ TBool CMobblerAudioThread::PreBufferFilled() const
 	
 	if (iShared.iTrack->DataSize() != 1)
 		{
-		TInt byteRate = iShared.iTrack->DataSize() / iShared.iTrack->TrackLength().Int();
-		TInt buffered = iShared.iTrack->Buffered() - iPreBufferOffset.Int();
+		TInt byteRate(iShared.iTrack->DataSize() / iShared.iTrack->TrackLength().Int());
+		TInt buffered(iShared.iTrack->Buffered() - iPreBufferOffset.Int());
 		
 		if (byteRate != 0)
 			{
-			TInt secondsBuffered = buffered / byteRate;
+			TInt secondsBuffered(buffered / byteRate);
 			
 			// either buffered amount of time or the track has finished downloading
 			preBufferedFilled = secondsBuffered >= iShared.iPreBufferSize.Int() || iShared.iTrack->Buffered() == iShared.iTrack->DataSize();

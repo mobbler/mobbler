@@ -230,10 +230,10 @@ void CMobblerSettingItemListView::CreateTextItemL(TDes& aText,
 												  const TInt aTitleResource, 
 												  const TInt aPageResource)
 	{
-	CAknTextSettingItem* item = new (ELeave) CAknTextSettingItem(iOrdinal, aText);
+	CAknTextSettingItem* item(new (ELeave) CAknTextSettingItem(iOrdinal, aText));
 	CleanupStack::PushL(item);
 
-	const TDesC& text = static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->ResourceReader().ResourceL(aTitleResource);
+	const TDesC& text(static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->ResourceReader().ResourceL(aTitleResource));
 	item->SetEmptyItemTextL(text);
 	item->ConstructL(iIsNumberedStyle, iOrdinal, text, iIcons, aPageResource, -1);
 	item->SetSettingPageFlags(CAknTextSettingPage::EPredictiveTextEntryPermitted);
@@ -247,11 +247,11 @@ void CMobblerSettingItemListView::CreatePasswordItemL(TDes& aPassword,
 													  const TInt aTitleResource, 
 													  const TInt aPageResource)
 	{
-	CAknPasswordSettingItem* item = new (ELeave) CAknPasswordSettingItem(
-						iOrdinal, CAknPasswordSettingItem::EAlpha, aPassword);
+	CAknPasswordSettingItem* item(new (ELeave) CAknPasswordSettingItem(
+						iOrdinal, CAknPasswordSettingItem::EAlpha, aPassword));
 	CleanupStack::PushL(item);
 
-	const TDesC& title = static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->ResourceReader().ResourceL(aTitleResource);
+	const TDesC& title(static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->ResourceReader().ResourceL(aTitleResource));
 	
 	item->SetEmptyItemTextL(title);
 	item->ConstructL(iIsNumberedStyle, iOrdinal, title, iIcons, aPageResource, -1);
@@ -266,19 +266,19 @@ void CMobblerSettingItemListView::CreateIapItemL(TInt& aIapId,
 												 const TInt aPageResource)
 	{
 	// To avoid "Setting Item Lis 6" panic
-	TInt tempIapId = aIapId;
+	TInt tempIapId(aIapId);
 	aIapId = 0;
 
-	CMobblerAccessPointSettingItem* item = new (ELeave) 
-			CMobblerAccessPointSettingItem(iOrdinal, aIapId);
+	CMobblerAccessPointSettingItem* item(new (ELeave) 
+			CMobblerAccessPointSettingItem(iOrdinal, aIapId));
 	CleanupStack::PushL(item);
 
 	// The same resource ID can be used for multiple enumerated text setting pages
-	const TDesC& text = static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->ResourceReader().ResourceL(aTitleResource);
+	const TDesC& text(static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->ResourceReader().ResourceL(aTitleResource));
 	item->ConstructL(iIsNumberedStyle, iOrdinal, text, iIcons, 
 				aPageResource, -1, 0, R_MOBBLER_POPUP_SETTING_TEXTS_ENUM);
 
-	CArrayPtr<CAknEnumeratedText>* texts = item->EnumeratedTextArray();
+	CArrayPtr<CAknEnumeratedText>* texts(item->EnumeratedTextArray());
 	texts->ResetAndDestroy();
 	CAknEnumeratedText* enumText;
 
@@ -309,11 +309,11 @@ void CMobblerSettingItemListView::CreateSliderItemL(TInt& aSliderValue,
 													const TInt aResourceSingular,
 							  						const TInt aResourcePlural)
 	{
-	CMobblerSliderSettingItem* item = new (ELeave) CMobblerSliderSettingItem(
-				iOrdinal, aSliderValue, aResourceSingular, aResourcePlural);
+	CMobblerSliderSettingItem* item(new (ELeave) CMobblerSliderSettingItem(
+				iOrdinal, aSliderValue, aResourceSingular, aResourcePlural));
 	CleanupStack::PushL(item);
 
-	const TDesC& text = static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->ResourceReader().ResourceL(aTitleResource);
+	const TDesC& text(static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->ResourceReader().ResourceL(aTitleResource));
 	item->ConstructL(iIsNumberedStyle, iOrdinal, text, iIcons, aPageResource, -1);
 
 	iMobblerSettingItemList->SettingItemArray()->AppendL(item);
@@ -327,27 +327,27 @@ void CMobblerSettingItemListView::CreateBinaryItemL(TBool& aBinaryValue,
 													const TInt aFirstEnumResource,
 													const TInt aSecondEnumResource)
 	{
-	CAknBinaryPopupSettingItem* item = new (ELeave) 
-				CAknBinaryPopupSettingItem(iOrdinal, aBinaryValue);
+	CAknBinaryPopupSettingItem* item(new (ELeave) 
+				CAknBinaryPopupSettingItem(iOrdinal, aBinaryValue));
 	CleanupStack::PushL(item);
 
-	const TDesC& title = static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->ResourceReader().ResourceL(aTitleResource);
+	const TDesC& title(static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->ResourceReader().ResourceL(aTitleResource));
 	// The same resource ID can be used for multiple binary setting pages
 	item->ConstructL(iIsNumberedStyle, iOrdinal, title, iIcons, 
 				aPageResource, -1, 0, R_MOBBLER_POPUP_SETTING_BINARY_TEXTS);
 
 	// Load text dynamically
-	CArrayPtr<CAknEnumeratedText>* texts = item->EnumeratedTextArray();
+	CArrayPtr<CAknEnumeratedText>* texts(item->EnumeratedTextArray());
 	texts->ResetAndDestroy();
 	// Text 1
-	const TDesC& text1 = static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->ResourceReader().ResourceL(aFirstEnumResource);
-	CAknEnumeratedText* enumText = new (ELeave) CAknEnumeratedText(0, text1.AllocLC());
+	const TDesC& text1(static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->ResourceReader().ResourceL(aFirstEnumResource));
+	CAknEnumeratedText* enumText(new (ELeave) CAknEnumeratedText(0, text1.AllocLC()));
 	CleanupStack::Pop();
 	CleanupStack::PushL(enumText);
 	texts->AppendL(enumText);
 	CleanupStack::Pop(enumText);
 	// Text 2
-	const TDesC& text2 = static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->ResourceReader().ResourceL(aSecondEnumResource);
+	const TDesC& text2(static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->ResourceReader().ResourceL(aSecondEnumResource));
 	enumText = new (ELeave) CAknEnumeratedText(1, text2.AllocLC());
 	CleanupStack::Pop();
 	CleanupStack::PushL(enumText);
@@ -369,24 +369,24 @@ void CMobblerSettingItemListView::CreateEnumItemL(TInt& aEnumId,
 
 	// To avoid "Setting Item Lis 6" panic. If it occurs, double check settings
 	// are loaded from file in the same order they're saved.
-	TInt tempEnumId = aEnumId;
+	TInt tempEnumId(aEnumId);
 	aEnumId = 0;
 
-	CAknEnumeratedTextPopupSettingItem* item = new (ELeave) 
-						CAknEnumeratedTextPopupSettingItem(iOrdinal, aEnumId);
+	CAknEnumeratedTextPopupSettingItem* item(new (ELeave) 
+						CAknEnumeratedTextPopupSettingItem(iOrdinal, aEnumId));
 	CleanupStack::PushL(item);
 
 	// The same resource ID can be used for multiple enumerated text setting pages
-	const TDesC& title = static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->ResourceReader().ResourceL(aTitleResource);
+	const TDesC& title(static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->ResourceReader().ResourceL(aTitleResource));
 	item->ConstructL(iIsNumberedStyle, iOrdinal, title, iIcons, aPageResource, 
 									-1, 0, R_MOBBLER_POPUP_SETTING_TEXTS_ENUM);
 
-	CArrayPtr<CAknEnumeratedText>* texts = item->EnumeratedTextArray();
+	CArrayPtr<CAknEnumeratedText>* texts(item->EnumeratedTextArray());
 	texts->ResetAndDestroy();
 	CAknEnumeratedText* enumText;
 
 	// Text 1
-	const TDesC& text1 = static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->ResourceReader().ResourceL(R_MOBBLER_DOWNLOAD_ALBUM_ART_NEVER);
+	const TDesC& text1(static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->ResourceReader().ResourceL(R_MOBBLER_DOWNLOAD_ALBUM_ART_NEVER));
 	enumText = new (ELeave) CAknEnumeratedText(0, text1.AllocLC());
 	CleanupStack::Pop();
 	CleanupStack::PushL(enumText);
@@ -394,7 +394,7 @@ void CMobblerSettingItemListView::CreateEnumItemL(TInt& aEnumId,
 	CleanupStack::Pop(enumText);
 
 	// Text 2
-	const TDesC& text2 = static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->ResourceReader().ResourceL(R_MOBBLER_DOWNLOAD_ALBUM_ART_RADIO_ONLY);
+	const TDesC& text2(static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->ResourceReader().ResourceL(R_MOBBLER_DOWNLOAD_ALBUM_ART_RADIO_ONLY));
 	enumText = new (ELeave) CAknEnumeratedText(1, text2.AllocLC());
 	CleanupStack::Pop();
 	CleanupStack::PushL(enumText);
@@ -402,7 +402,7 @@ void CMobblerSettingItemListView::CreateEnumItemL(TInt& aEnumId,
 	CleanupStack::Pop(enumText);
 
 	// Text 3
-	const TDesC& text3 = static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->ResourceReader().ResourceL(R_MOBBLER_DOWNLOAD_ALBUM_ART_ALWAYS_WHEN_ONLINE);
+	const TDesC& text3(static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->ResourceReader().ResourceL(R_MOBBLER_DOWNLOAD_ALBUM_ART_ALWAYS_WHEN_ONLINE));
 	enumText = new (ELeave) CAknEnumeratedText(2, text3.AllocLC());
 	CleanupStack::Pop();
 	CleanupStack::PushL(enumText);
