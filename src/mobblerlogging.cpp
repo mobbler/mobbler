@@ -30,13 +30,17 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "mobblerlogging.h"
 
+#ifdef __WINS__
+_LIT(KLogPath, "C:");
+#else
+_LIT(KLogPath, "E:\\Mobbler\\");
+#endif
+
+_LIT(KLogFilename, "mobbler.log");
+
 void CMobblerLogging::DumpDataL(const TDesC8& aData, const TDesC& aLogFile)
 	{
-#ifdef __WINS__
-	TFileName logFile(_L("C:"));
-#else
-	TFileName logFile(_L("E:\\Mobbler\\"));
-#endif
+	TFileName logFile(KLogPath);
 	logFile.Append(aLogFile);
 
 	RFile file;
@@ -56,9 +60,10 @@ void CMobblerLogging::LogL(const TInt aNumber)
 
 void CMobblerLogging::LogL(const TDesC& aText)
 	{
-	HBufC8* text8 = HBufC8::NewL(aText.Length());
+	HBufC8* text8 = HBufC8::NewLC(aText.Length());
 	text8->Des().Copy(aText);
 	LogL(*text8);
+	CleanupStack::PopAndDestroy(text8);
 	}
 
 void CMobblerLogging::LogL(const TDesC8& aText)
@@ -68,11 +73,8 @@ void CMobblerLogging::LogL(const TDesC8& aText)
 	CEikonEnv::Static()->InfoMsg(*text);
 	CleanupStack::PopAndDestroy(text);
 
-#ifdef __WINS__
-	TFileName logFile(_L("C:mobbler.log"));
-#else
-	TFileName logFile(_L("E:\\Mobbler\\mobbler.log"));
-#endif
+	TFileName logFile(KLogPath);
+	logFile.Append(KLogFilename);
 
 	RFile file;
 	CleanupClosePushL(file);
