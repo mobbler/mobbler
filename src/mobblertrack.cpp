@@ -658,7 +658,7 @@ TBool CMobblerTrack::FetchImageL(const TDesC8& aData)
 			
 			if (element)
 				{
-				element->Element(_L8("sizes"));
+				element = element->Element(_L8("sizes"));
 				
 				if (element)
 					{
