@@ -21,12 +21,16 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
+#include <aknnotewrappers.h>
+#include <e32svr.h>
+
 #include "mobbleraudiocontrol.h"
 #include "mobblerappui.h"
 #include "mobbleraudiothread.h"
+#include "mobblerstring.h"
 #include "mobblertrack.h"
 
-#include <e32svr.h>
+
 
 const TInt KTimerDuration(250000); // 1/4 second
 const TInt KMobblerHeapSize(1000000); // 1 MB
@@ -118,15 +122,25 @@ void CMobblerAudioControl::DataPartL(const TDesC8& aData, TInt aTotalDataSize)
 	static_cast<CMobblerAppUi*>(CEikonEnv::Static()->AppUi())->StatusDrawDeferred();
 	}
 
-void CMobblerAudioControl::DataCompleteL(CMobblerLastFMConnection::TError aError)
+void CMobblerAudioControl::DataCompleteL(CMobblerLastFMConnection::TError aError, TInt aHTTPStatusCode, const TDesC8& aStatusText)
 	{
 	iShared.iDownloadComplete = ETrue;
 	
 	if (aError != CMobblerLastFMConnection::EErrorNone)
 		{
-		// EErrorNone means that the download completed successfully
-		// therefore HandleAudioFinishedL will be called in RunL
-		// when the thread closes at the end of the track
+		iObserver.HandleAudioFinishedL(this, KErrCancel);
+		}
+	
+	if (aError == CMobblerLastFMConnection::EErrorFailed)
+		{
+		// Display an error
+		_LIT(KAudioErrorFormat, "%d %S");
+		TBuf<25> message;
+		CMobblerString* string(CMobblerString::NewL(aStatusText));
+		message.Format(KAudioErrorFormat, aHTTPStatusCode, &string->String());
+		delete string;
+		CAknInformationNote* note = new (ELeave) CAknInformationNote(EFalse);
+		note->ExecuteLD(message);
 		
  		// Ask for the thread to close because there has been an error
 		SendCmd(ECmdDestroyAudio);

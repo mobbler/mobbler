@@ -30,7 +30,7 @@ class MMobblerSegDataObserver
 	{
 public:
 	virtual void DataPartL(const TDesC8& aData, TInt aTotalSize) = 0;
-	virtual void DataCompleteL(CMobblerLastFMConnection::TError aError) = 0;
+	virtual void DataCompleteL(CMobblerLastFMConnection::TError aError, TInt aHTTPStatusCode, const TDesC8& aStatusText) = 0;
 	};
 
 class MMobblerFlatDataObserver

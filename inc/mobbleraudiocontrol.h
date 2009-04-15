@@ -70,7 +70,7 @@ private: // from CActive
 	
 private: // from 
 	void DataPartL(const TDesC8& aData, TInt aTotalSize);
-	void DataCompleteL(CMobblerLastFMConnection::TError aError);
+	void DataCompleteL(CMobblerLastFMConnection::TError aError, TInt aHTTPStatusCode, const TDesC8& aStatusText);
 	
 private:
 	TMobblerSharedData iShared;

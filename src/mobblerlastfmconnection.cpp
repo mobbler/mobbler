@@ -999,7 +999,7 @@ void CMobblerLastFMConnection::RadioStop()
 	{
 	if (iTrackDownloadObserver)
 		{
-		iTrackDownloadObserver->DataCompleteL(CMobblerLastFMConnection::EErrorStop);
+		iTrackDownloadObserver->DataCompleteL(CMobblerLastFMConnection::EErrorStop, KErrNone, KNullDesC8);
 		iTrackDownloadObserver = NULL;
 		}
 	
@@ -1408,7 +1408,7 @@ void CMobblerLastFMConnection::HandleHandshakeErrorL(CMobblerLastFMError* aError
 				{
 				// There is a track observer so this must be because
 				// we failed to start downloading a track, but have now reconnected
-				iTrackDownloadObserver->DataCompleteL(EErrorHandshake);
+				iTrackDownloadObserver->DataCompleteL(EErrorHandshake, KErrNone, KNullDesC8);
 				iTrackDownloadObserver = NULL;
 				}
 			}
@@ -1483,7 +1483,7 @@ void CMobblerLastFMConnection::CloseTransactionsL(TBool aCloseTransactionArray)
 	
 	if (iTrackDownloadObserver)
 		{
-		iTrackDownloadObserver->DataCompleteL(EErrorCancel);
+		iTrackDownloadObserver->DataCompleteL(EErrorCancel, KErrNone, KNullDesC8);
 		iTrackDownloadObserver = NULL;
 		}
 	
@@ -1762,7 +1762,7 @@ void CMobblerLastFMConnection::MHFRunL(RHTTPTransaction aTransaction, const THTT
 		case THTTPEvent::EFailed:
 			if (iTrackDownloadObserver)
 				{
-				iTrackDownloadObserver->DataCompleteL(EErrorFailed);
+				iTrackDownloadObserver->DataCompleteL(EErrorFailed, aTransaction.Response().StatusCode(), aTransaction.Response().StatusText().DesC());
 				iTrackDownloadObserver = NULL;
 				}
 			iTrackDownloadObserver = NULL;
@@ -1772,7 +1772,7 @@ void CMobblerLastFMConnection::MHFRunL(RHTTPTransaction aTransaction, const THTT
 			// tell the radio player that the track has finished downloading
 			if (iTrackDownloadObserver)
 				{
-				iTrackDownloadObserver->DataCompleteL(EErrorCancel);
+				iTrackDownloadObserver->DataCompleteL(EErrorCancel, aTransaction.Response().StatusCode(), aTransaction.Response().StatusText().DesC());
 				iTrackDownloadObserver = NULL;
 				}
 			break;
@@ -1780,7 +1780,7 @@ void CMobblerLastFMConnection::MHFRunL(RHTTPTransaction aTransaction, const THTT
 			// tell the radio player that the track has finished downloading
 			if (iTrackDownloadObserver)
 				{
-				iTrackDownloadObserver->DataCompleteL(EErrorNone);
+				iTrackDownloadObserver->DataCompleteL(EErrorNone, aTransaction.Response().StatusCode(), aTransaction.Response().StatusText().DesC());
 				iTrackDownloadObserver = NULL;
 				}
 			iTrackDownloadObserver = NULL;

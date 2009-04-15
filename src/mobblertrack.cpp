@@ -675,7 +675,7 @@ TBool CMobblerTrack::FetchImageL(const TDesC8& aData)
 			 imageArray[i]->AttrValue(_L8("size"))->Compare(_L8("extralarge")) == 0)
 				||
 			(iState == EFetchingArtistInfo &&
-			 imageArray[i]->AttrValue(_L8("name"))->Compare(_L8("largesquare")) == 0))
+			 imageArray[i]->AttrValue(_L8("name"))->Compare(_L8("large")) == 0))
 			{
 			if (imageArray[i]->Content().Length() > 0)
 				{
