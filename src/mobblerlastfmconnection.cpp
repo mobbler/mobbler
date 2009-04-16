@@ -288,7 +288,19 @@ void CMobblerLastFMConnection::RunL()
 		connInfo.SetPropertyL(strP.StringF(HTTP::EHttpSocketServ, RHTTPSession::GetTable()), THTTPHdrVal(iSocketServ.Handle()));
 		TInt connPtr(REINTERPRET_CAST(TInt, &iConnection));
 		connInfo.SetPropertyL(strP.StringF(HTTP::EHttpSocketConnection, RHTTPSession::GetTable()), THTTPHdrVal(connPtr));
+
+		// submit any request that does not require authentication
+		TInt KTransactionCount(iTransactions.Count());
+		for (TInt i(0) ; i < KTransactionCount ; ++i)
+			{
+			if (!iTransactions[i]->RequiresAuthentication())
+				{
+				iTransactions[i]->SubmitL();
+				}
+			}
 		
+		// Authenticate now so that API calls that require it will be submitted.
+		// This also means that any tracks in the queue will be submitted.
 		AuthenticateL();
 		}
 	else
@@ -308,9 +320,16 @@ void CMobblerLastFMConnection::DoCancel()
 
 TBool CMobblerLastFMConnection::Connected()
 	{
-	TNifProgress nifProgress;
-	iConnection.Progress(nifProgress);
-	return (nifProgress.iStage == KLinkLayerOpen);
+	TBool connected(EFalse);
+	
+	if (iConnection.SubSessionHandle() != 0)
+		{
+		TNifProgress nifProgress;
+		iConnection.Progress(nifProgress);
+		connected = (nifProgress.iStage == KLinkLayerOpen);
+		}
+	
+	return connected;
 	}
 
 void CMobblerLastFMConnection::ConnectL()
@@ -1448,6 +1467,11 @@ void CMobblerLastFMConnection::AppendAndSubmitTransactionL(CMobblerTransaction* 
 		{
 		// we are online and we have authenticated
 		aTransaction->SubmitL();
+		}
+	else if (Connected())
+		{
+		// we are connected, but not authenticated
+		AuthenticateL();
 		}
 	else
 		{

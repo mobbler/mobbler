@@ -45,6 +45,8 @@ public:
 	
 	~CMobblerTransaction();
 	
+	TBool RequiresAuthentication() const;
+	
 	void SubmitL();
 	void Cancel();
 	

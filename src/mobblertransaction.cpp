@@ -269,4 +269,9 @@ MMobblerFlatDataObserver* CMobblerTransaction::FlatDataObserver()
 	return iFlatDataObserver;
 	}
 
+TBool CMobblerTransaction::RequiresAuthentication() const
+	{
+	return iForm || iLastFMRadioURI;
+	}
+
 // End of file
