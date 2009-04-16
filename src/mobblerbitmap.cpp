@@ -73,6 +73,11 @@ CMobblerBitmap::~CMobblerBitmap()
 	{
 	Cancel();
 	
+	if (iScaledBitmap)
+		{
+		iScaledBitmap->Reset();
+		}
+
 	delete iBitmap;
 	delete iBitmapGray;
 	delete iScaledBitmap;
