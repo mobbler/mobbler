@@ -306,6 +306,7 @@ void CMobblerBitmap::ScaleL(TSize aSize)
 			&& !LongSidesEqual(aSize))
 		{
 		// Delete and stop any previous attempt to scale and create a new scaler
+		Cancel();
 		delete iBitmapScaler;
 		iBitmapScaler = NULL;
 		iBitmapScaler = CBitmapScaler::NewL();
