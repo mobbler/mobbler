@@ -1440,8 +1440,17 @@ void CMobblerLastFMConnection::HandleHandshakeErrorL(CMobblerLastFMError* aError
 		iWebServicesHandshakeTransaction->Cancel();
 		iHandshakeTransaction->Cancel();
 		iRadioHandshakeTransaction->Cancel();
-		
-		CloseTransactionsL(ETrue);
+
+		// close all transactions that require authentication
+		// but let other ones carry on
+		for (TInt i(iTransactions.Count() - 1) ; i >= 0 ; --i)
+			{
+			if (iTransactions[i]->RequiresAuthentication())
+				{
+				delete iTransactions[i];
+				iTransactions.Remove(i);
+				}
+			}
 		}
 	}
 

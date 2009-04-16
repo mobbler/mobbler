@@ -53,14 +53,21 @@ void CMobblerWebServicesQuery::ConstructL(const TDesC8& aMethod)
 	
 CMobblerWebServicesQuery::~CMobblerWebServicesQuery()
 	{
+	const TInt KFieldCount(iFields.Count());
+	for (TInt i(0) ; i < KFieldCount ; ++i)
+		{
+		delete iFields[i].iParameter;
+		delete iFields[i].iValue;
+		}
+	
 	iFields.Close();
 	}
 
 void CMobblerWebServicesQuery::AddFieldL(const TDesC8& aParameter, const TDesC8& aValue)
 	{
 	TMobblerWebServicesQueryField field;
-	field.iParameter.Copy(aParameter);
-	field.iValue.Copy(aValue);
+	field.iParameter = aParameter.AllocL();
+	field.iValue = aValue.AllocL();
 	TLinearOrder<TMobblerWebServicesQueryField> linearOrder(Compare);
 	iFields.InsertInOrder(field, linearOrder);
 	}
@@ -79,13 +86,14 @@ HBufC8* CMobblerWebServicesQuery::GetQueryAuthLC() const
 			{
 			queryText->Des().Append(_L8("&"));
 			}
-		queryText->Des().Append(iFields[i].iParameter);
+		
+		queryText->Des().Append(*iFields[i].iParameter);
 		queryText->Des().Append(_L8("="));
-		queryText->Des().Append(iFields[i].iValue);
+		queryText->Des().Append(*iFields[i].iValue);
 		
 		// append to the api sig
-		apiSig->Des().Append(iFields[i].iParameter);
-		apiSig->Des().Append(iFields[i].iValue);
+		apiSig->Des().Append(*iFields[i].iParameter);
+		apiSig->Des().Append(*iFields[i].iValue);
 		}
 	
 	// create and add the api_sig
@@ -112,9 +120,9 @@ HBufC8* CMobblerWebServicesQuery::GetQueryLC() const
 		{
 		// add the fields for the normal query
 		queryText->Des().Append(_L8("&"));
-		queryText->Des().Append(iFields[i].iParameter);
+		queryText->Des().Append(*iFields[i].iParameter);
 		queryText->Des().Append(_L8("="));
-		queryText->Des().Append(iFields[i].iValue);
+		queryText->Des().Append(*iFields[i].iValue);
 		}
 	
 	return queryText;
@@ -132,11 +140,11 @@ CHTTPFormEncoder* CMobblerWebServicesQuery::GetFormLC() const
 	for (TInt i(0); i < KFieldCount; ++i)
 		{
 		// add the fields for the normal query
-		form->AddFieldL(iFields[i].iParameter, iFields[i].iValue);
+		form->AddFieldL(*iFields[i].iParameter, *iFields[i].iValue);
 		
 		// append to the api sig
-		apiSig->Des().Append(iFields[i].iParameter);
-		apiSig->Des().Append(iFields[i].iValue);
+		apiSig->Des().Append(*iFields[i].iParameter);
+		apiSig->Des().Append(*iFields[i].iValue);
 		}
 	
 	// create and add the api_sig
@@ -152,7 +160,7 @@ CHTTPFormEncoder* CMobblerWebServicesQuery::GetFormLC() const
 
 TInt CMobblerWebServicesQuery::Compare(const TMobblerWebServicesQueryField& aLeft, const TMobblerWebServicesQueryField& aRight)
 	{
-	return aLeft.iParameter.Compare(aRight.iParameter);
+	return aLeft.iParameter->Compare(*aRight.iParameter);
 	}
 
 // End of file

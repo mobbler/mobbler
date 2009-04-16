@@ -31,8 +31,8 @@ const TInt KMaxWebservicesQueryFieldLength(255);
 class TMobblerWebServicesQueryField
 	{
 public:
-	TBuf8<KMaxWebservicesQueryFieldLength> iParameter;
-	TBuf8<KMaxWebservicesQueryFieldLength> iValue;
+	HBufC8* iParameter;
+	HBufC8* iValue;
 	};
 
 class CMobblerWebServicesQuery : public CBase
