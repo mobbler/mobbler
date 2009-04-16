@@ -128,7 +128,7 @@ void CMobblerMusicAppListener::AddObserverL(MMobblerMusicAppListenerObserver* aO
 
 void CMobblerMusicAppListener::RemoveObserver(MMobblerMusicAppListenerObserver* aObserver)
 	{
-	TInt position = iObservers.FindInAddressOrder(aObserver);
+	TInt position(iObservers.FindInAddressOrder(aObserver));
 	
 	if (position != KErrNotFound)
 		{
