@@ -187,11 +187,7 @@ void CMobblerStatusView::DynInitMenuPaneL(TInt aResourceId, CEikMenuPane* aMenuP
 		MMdaAudioOutputStreamCallback* dummyCallback(NULL);
 		CMdaAudioOutputStream* tempStream(CMdaAudioOutputStream::NewL(*dummyCallback));
 		CAudioEqualizerUtility* tempEqualizer(NULL);
-#ifndef __WINS__
-		// Emulator seems to crap out even when TRAP_IGNORE is used,
-		// it doesn't support the equalizer anyway
 		TRAP_IGNORE(tempEqualizer = CAudioEqualizerUtility::NewL(*tempStream));
-#endif
 		if (!tempEqualizer)
 			{
 			aMenuPane->SetItemDimmed(EMobblerCommandEqualizer, ETrue);
@@ -210,11 +206,7 @@ void CMobblerStatusView::DynInitMenuPaneL(TInt aResourceId, CEikMenuPane* aMenuP
 		CMdaAudioOutputStream* tempStream(CMdaAudioOutputStream::NewL(*dummyCallback));
 		CleanupStack::PushL(tempStream);
 		CAudioEqualizerUtility* tempEqualizer(NULL);
-#ifndef __WINS__
-		// Emulator seems to crap out even when TRAP_IGNORE is used,
-		// it doesn't support the equalizer anyway
 		TRAP_IGNORE(tempEqualizer = CAudioEqualizerUtility::NewL(*tempStream));
-#endif
 		if (tempEqualizer)
 			{
 			CleanupStack::PushL(tempEqualizer);

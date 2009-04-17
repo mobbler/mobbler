@@ -466,12 +466,14 @@ void CMobblerStatusControl::CreateBackBufferL()
 	iBackBufferSize = iBackBuffer->SizeInPixels();
 
 	// Get and set the font to use
-	_LIT(fontName, "SwissA");
-#ifdef __WINS__
-	TFontSpec fontSpec(fontName, 80);
+	TFontSpec fontSpec = iEikonEnv->NormalFont()->FontSpecInTwips();
+	
+#ifdef _WINS_
+	fontSpec.iHeight = 80;
 #else
-	TFontSpec fontSpec(fontName, 120);
+	fontSpec.iHeight = 120;
 #endif
+	
 	fontSpec.iFontStyle = TFontStyle(EPostureUpright, EStrokeWeightNormal, EPrintPosNormal);
 	fontSpec.iFontStyle.SetBitmapType(EAntiAliasedGlyphBitmap);
 	iBackBufferDevice->GetNearestFontInTwips(iMobblerFont, fontSpec);

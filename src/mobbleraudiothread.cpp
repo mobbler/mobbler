@@ -140,7 +140,7 @@ void CMobblerAudioThread::RunL()
 			{
 			iStream = CMdaAudioOutputStream::NewL(*this);
 			iStream->Open(&iSet);
-			iEqualizer = CAudioEqualizerUtility::NewL(*iStream);
+			TRAP_IGNORE(iEqualizer = CAudioEqualizerUtility::NewL(*iStream));
 			}
 			break;
 		case ECmdDestroyAudio:
