@@ -468,7 +468,7 @@ void CMobblerStatusControl::CreateBackBufferL()
 	// Get and set the font to use
 	TFontSpec fontSpec = iEikonEnv->NormalFont()->FontSpecInTwips();
 	
-#ifdef _WINS_
+#ifdef __WINS__
 	fontSpec.iHeight = 80;
 #else
 	fontSpec.iHeight = 120;
