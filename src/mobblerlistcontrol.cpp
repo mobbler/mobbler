@@ -548,7 +548,7 @@ TKeyResponse CMobblerListControl::OfferKeyEventL(const TKeyEvent& aKeyEvent, TEv
 			}
 		case EKeyDevice3:
 			{
-			CMobblerListControl* list = HandleListCommandL(EMobblerCommandOpen);
+			CMobblerListControl* list(HandleListCommandL(EMobblerCommandOpen));
 			
 			if (list)
 				{

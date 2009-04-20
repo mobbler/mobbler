@@ -21,7 +21,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-#include <aknnavide.h> 
+#include <aknnavide.h>
 #include <aknnavilabel.h>
 #include <aknsbasicbackgroundcontrolcontext.h>
 #include <aknsdrawutils.h>
@@ -250,7 +250,7 @@ void CMobblerStatusControl::SetPositions()
 		if (iMobblerFeedback)
 			{
 			// 5th edition
-			TInt albumArtDimension = Rect().Width() - (3 * KTextRectHeight);
+			TInt albumArtDimension(Rect().Width() - (3 * KTextRectHeight));
 								
 			iRectAlbumArt = 			TRect(TPoint((3 * KTextRectHeight) / 2, 0), TSize(albumArtDimension, albumArtDimension));
 			
@@ -268,8 +268,8 @@ void CMobblerStatusControl::SetPositions()
 						
 			TInt textX(KTextRectHeight / 2 + iMobblerBitmapTrackIcon->SizeInPixels().iWidth);
 			
-			TInt infoY = iRectAlbumArt.iBr.iY + (KTextRectHeight / 2);
-			TInt infoHeight = Rect().Height() - iControlSize.iHeight - ((3 * KTextRectHeight) / 2) - infoY;
+			TInt infoY(iRectAlbumArt.iBr.iY + (KTextRectHeight / 2));
+			TInt infoHeight(Rect().Height() - iControlSize.iHeight - ((3 * KTextRectHeight) / 2) - infoY);
 			
 			iRectTitleText = 				TRect(TPoint(textX, infoY + ((0 * infoHeight) / 4) ), infoSize);
 			iRectArtistText = 				TRect(TPoint(textX, infoY + ((1 * infoHeight) / 4) ), infoSize);
@@ -280,12 +280,12 @@ void CMobblerStatusControl::SetPositions()
 		else
 			{
 			// 3rd edition
-			TInt albumArtDimension = Rect().Width() - iMobblerBitmapLastFm->SizeInPixels().iWidth - ((3 * KTextRectHeight) / 2);
+			TInt albumArtDimension(Rect().Width() - iMobblerBitmapLastFm->SizeInPixels().iWidth - ((3 * KTextRectHeight) / 2));
 			
 			iControlSize = TSize(27, 27);
 			
 			iRectAlbumArt = 			TRect(TPoint(KTextRectHeight / 2, KTextRectHeight / 2), TSize(albumArtDimension, albumArtDimension));
-			TPoint controlsTopLeft = 	TPoint(Rect().Width() - iMobblerBitmapLastFm->SizeInPixels().iWidth - (KTextRectHeight / 2), iRectAlbumArt.iBr.iY - (3 * iControlSize.iHeight) - 4);
+			TPoint controlsTopLeft(		TPoint(Rect().Width() - iMobblerBitmapLastFm->SizeInPixels().iWidth - (KTextRectHeight / 2), iRectAlbumArt.iBr.iY - (3 * iControlSize.iHeight) - 4));
 			iPointMore =				TPoint(controlsTopLeft.iX + (0 * iControlSize.iWidth), controlsTopLeft.iY + (1 * iControlSize.iHeight));
 			iPointLove =				TPoint(controlsTopLeft.iX + (1 * iControlSize.iWidth), controlsTopLeft.iY + (0 * iControlSize.iHeight));
 			iPointBan =					TPoint(controlsTopLeft.iX + (1 * iControlSize.iWidth), controlsTopLeft.iY + (2 * iControlSize.iHeight));
@@ -300,8 +300,8 @@ void CMobblerStatusControl::SetPositions()
 			
 			TInt textX(KTextRectHeight / 2 + iMobblerBitmapTrackIcon->SizeInPixels().iWidth);
 			
-			TInt infoY = iRectAlbumArt.iBr.iY + iMobblerFont->DescentInPixels() - 1;
-			TInt infoHeight = Rect().Height() - KTextRectHeight - infoY;
+			TInt infoY(iRectAlbumArt.iBr.iY + iMobblerFont->DescentInPixels() - 1);
+			TInt infoHeight(Rect().Height() - KTextRectHeight - infoY);
 			
 			iRectTitleText = 				TRect(TPoint(textX, infoY + ((0 * infoHeight) / 4) ), infoSize);
 			iRectArtistText = 				TRect(TPoint(textX, infoY + ((1 * infoHeight) / 4) ), infoSize);
@@ -317,7 +317,7 @@ void CMobblerStatusControl::SetPositions()
 		if (iMobblerFeedback)
 			{
 			// 5th edition
-			TInt albumArtDimension = Rect().Height() - (3 * KTextRectHeight);
+			TInt albumArtDimension(Rect().Height() - (3 * KTextRectHeight));
 						
 			iRectAlbumArt =				TRect(TPoint(0, (3 * KTextRectHeight) / 2), TSize(albumArtDimension, albumArtDimension));
 			
@@ -346,13 +346,14 @@ void CMobblerStatusControl::SetPositions()
 		else
 			{
 			// 3rd edition
-			TInt albumArtDimension = 	Rect().Height() - ((3 * KTextRectHeight) / 2) - iMobblerBitmapLastFm->SizeInPixels().iHeight;
+			TInt albumArtDimension(		Rect().Height() - ((3 * KTextRectHeight) / 2) - iMobblerBitmapLastFm->SizeInPixels().iHeight);
+
 			iRectAlbumArt =				TRect(TPoint(KTextRectHeight / 2, KTextRectHeight / 2), TSize(albumArtDimension, albumArtDimension));
 			
 			TInt controlDimension((Rect().Width() - albumArtDimension - iMobblerBitmapLastFm->SizeInPixels().iWidth - (2 * KTextRectHeight)) / 3);
 			iControlSize = TSize(controlDimension, controlDimension);
 			
-			TPoint controlsTopLeft = 	TPoint(albumArtDimension + KTextRectHeight, KTextRectHeight / 2);
+			TPoint controlsTopLeft( 	TPoint(albumArtDimension + KTextRectHeight, KTextRectHeight / 2));
 			iPointMore =				TPoint(controlsTopLeft.iX + (0 * iControlSize.iWidth), controlsTopLeft.iY + (1 * iControlSize.iHeight));
 			iPointLove =				TPoint(controlsTopLeft.iX + (1 * iControlSize.iWidth), controlsTopLeft.iY + (0 * iControlSize.iHeight));
 			iPointBan =					TPoint(controlsTopLeft.iX + (1 * iControlSize.iWidth), controlsTopLeft.iY + (2 * iControlSize.iHeight));
@@ -465,12 +466,14 @@ void CMobblerStatusControl::CreateBackBufferL()
 	iBackBufferSize = iBackBuffer->SizeInPixels();
 
 	// Get and set the font to use
-	_LIT(fontName, "SwissA");
+	TFontSpec fontSpec(iEikonEnv->NormalFont()->FontSpecInTwips());
+	
 #ifdef __WINS__
-	TFontSpec fontSpec(fontName, 80);
+	fontSpec.iHeight = 100;
 #else
-	TFontSpec fontSpec(fontName, 120);
+	fontSpec.iHeight = 120;
 #endif
+	
 	fontSpec.iFontStyle = TFontStyle(EPostureUpright, EStrokeWeightNormal, EPrintPosNormal);
 	fontSpec.iFontStyle.SetBitmapType(EAntiAliasedGlyphBitmap);
 	iBackBufferDevice->GetNearestFontInTwips(iMobblerFont, fontSpec);
@@ -540,13 +543,13 @@ CMobblerStatusControl::~CMobblerStatusControl()
 
 void CMobblerStatusControl::FormatTime(TDes& aString, TTimeIntervalSeconds aSeconds, TTimeIntervalSeconds aTotalSeconds)
 	{
-	TInt minutes = aSeconds.Int() / 60;
-	TInt seconds = (aSeconds.Int() - (minutes * 60));
+	TInt minutes(aSeconds.Int() / 60);
+	TInt seconds(aSeconds.Int() - (minutes * 60));
 	aString.Zero();
 
 	if ((aTotalSeconds.Int()) >= 3600) // 3,600 seconds = 60 minutes
 		{
-		TInt hours = minutes / 60;
+		TInt hours(minutes / 60);
 		minutes -= (hours * 60);
 		aString.AppendFormat(_L("%02d:%02d:%02d"), hours, minutes, seconds);
 		}
@@ -564,8 +567,8 @@ void CMobblerStatusControl::Draw(const TRect& /*aRect*/) const
 		}
 
 	// Redraw the background using the default skin
-	MAknsSkinInstance* skin = AknsUtils::SkinInstance();
-	MAknsControlContext* cc = AknsDrawUtils::ControlContext(this);
+	MAknsSkinInstance* skin(AknsUtils::SkinInstance());
+	MAknsControlContext* cc(AknsDrawUtils::ControlContext(this));
 	AknsDrawUtils::DrawBackground(skin, cc, this, *iBackBufferContext, TPoint(0, 0), Rect(), KAknsDrawParamDefault);
 	
 	TInt playbackTotal(1);
@@ -587,7 +590,7 @@ void CMobblerStatusControl::Draw(const TRect& /*aRect*/) const
 		{
 		love = iAppUi.CurrentTrack()->Love();
 		
-		if (iAppUi.CurrentTrack()->RadioAuth().Compare(KNullDesC8) != 0)
+		if (!iAppUi.CurrentTrack()->IsMusicPlayerTrack())
 			{
 			if (iAppUi.CurrentTrack()->AlbumArt() && iAppUi.CurrentTrack()->AlbumArt()->Bitmap())
 				{
@@ -666,7 +669,7 @@ void CMobblerStatusControl::Draw(const TRect& /*aRect*/) const
 	iBackBufferContext->SetPenColor(textColor);
 	
 	// Draw the album art
-    //DrawRect(iRectAlbumArt, KRgbWhite, KRgbWhite);
+	//DrawRect(iRectAlbumArt, KRgbWhite, KRgbWhite);
 	albumArt->LongSidesEqual(iRectAlbumArt.Size())?
 		BitBltMobblerBitmap(albumArt, iRectAlbumArt.iTl):
 		DrawMobblerBitmap(albumArt, iRectAlbumArt);
@@ -698,11 +701,11 @@ void CMobblerStatusControl::Draw(const TRect& /*aRect*/) const
 	if (!iMobblerVolumeTimeout->TimedOut())
 		{
 		// Draw the volume level progresses
-		TRect rectBufferProgress = iRectProgressBar;
+		TRect rectBufferProgress(iRectProgressBar);
 		rectBufferProgress.SetWidth((iAppUi.RadioPlayer().Volume() * iRectProgressBar.Width()) / iAppUi.RadioPlayer().MaxVolume());
 		DrawRect(rectBufferProgress, KRgbTransparent, KRgbLastFMRed);
 		
-		TInt volumePercent = ((iAppUi.RadioPlayer().Volume() * 100) / iAppUi.RadioPlayer().MaxVolume());
+		TInt volumePercent((iAppUi.RadioPlayer().Volume() * 100) / iAppUi.RadioPlayer().MaxVolume());
 #ifdef __WINS__
 		TBuf<8> volumeText;
 #else
@@ -718,11 +721,11 @@ void CMobblerStatusControl::Draw(const TRect& /*aRect*/) const
 	else
 		{
 		// Draw the playback progresses
-		TRect rectBufferProgress = iRectProgressBar;
+		TRect rectBufferProgress(iRectProgressBar);
 		rectBufferProgress.SetWidth((bufferPosition * iRectProgressBar.Width()) / bufferTotal);
 		DrawRect(rectBufferProgress, KRgbTransparent, KRgbProgressBarBuffer);
 		
-		TRect rectPlaybackProgress = iRectProgressBar;
+		TRect rectPlaybackProgress(iRectProgressBar);
 		rectPlaybackProgress.SetWidth((playbackPosition * iRectProgressBar.Width()) / playbackTotal);
 
 		iAppUi.ScrobblingOn() ?
@@ -737,8 +740,8 @@ void CMobblerStatusControl::Draw(const TRect& /*aRect*/) const
 			}
 		if (iAppUi.ScrobblingOn() && scrobbleTime <= playbackTotal)
 			{
-			TInt scrobbleMark = iRectProgressBar.iTl.iX - 1 + 
-				((iRectProgressBar.Width() * scrobbleTime) / playbackTotal);
+			TInt scrobbleMark(iRectProgressBar.iTl.iX - 1 + 
+				((iRectProgressBar.Width() * scrobbleTime) / playbackTotal));
 			iBackBufferContext->SetPenColor(KRgbBlack);
 			iBackBufferContext->SetPenStyle(CGraphicsContext::EDottedPen);
 			iBackBufferContext->DrawLine(TPoint(scrobbleMark, iRectProgressBar.iTl.iY),
@@ -805,16 +808,28 @@ void CMobblerStatusControl::DrawMobblerBitmap(const CMobblerBitmap* aMobblerBitm
 		{
 		if (aMobblerBitmap->Bitmap())
 			{
-			CFbsBitmap* bitmap = aGray ? aMobblerBitmap->BitmapGrayL() : aMobblerBitmap->Bitmap();
+			CFbsBitmap* bitmap(aGray ? aMobblerBitmap->BitmapGrayL() : aMobblerBitmap->Bitmap());
 
+			TRect rect(aRect);
+			TInt width(bitmap->SizeInPixels().iWidth);
+			TInt height(bitmap->SizeInPixels().iHeight);
+			
+			if (width > height)
+				{
+				rect.SetHeight(aRect.Height() * height/width);
+				}
+			else if (height > width)
+				{
+				rect.SetWidth(aRect.Height() * height/width);
+				}
 			
 			if (aMobblerBitmap->Mask())
 				{
-				iBackBufferContext->DrawBitmapMasked(aRect, bitmap, TRect(TPoint(0, 0), aMobblerBitmap->SizeInPixels()), aMobblerBitmap->Mask(), EFalse);
+				iBackBufferContext->DrawBitmapMasked(rect, bitmap, TRect(TPoint(0, 0), aMobblerBitmap->SizeInPixels()), aMobblerBitmap->Mask(), EFalse);
 				}
 			else
 				{
-				iBackBufferContext->DrawBitmap(aRect, bitmap);
+				iBackBufferContext->DrawBitmap(rect, bitmap);
 				}
 			}
 		}
@@ -826,7 +841,7 @@ void CMobblerStatusControl::BitBltMobblerBitmap(const CMobblerBitmap* aMobblerBi
 		{
 		if (aMobblerBitmap->Bitmap())
 			{
-			CFbsBitmap* bitmap = aGray ? aMobblerBitmap->BitmapGrayL() : aMobblerBitmap->Bitmap();
+			CFbsBitmap* bitmap(aGray ? aMobblerBitmap->BitmapGrayL() : aMobblerBitmap->Bitmap());
 			
 			if (aMobblerBitmap->Mask())
 				{
