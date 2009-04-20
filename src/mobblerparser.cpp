@@ -781,6 +781,45 @@ void CMobblerParser::ParseUserTopTracksL(const TDesC8& aXml, CMobblerTrackList& 
 	CleanupStack::PopAndDestroy(2, xmlReader);
 	}
 
+void CMobblerParser::ParsePlaylistL(const TDesC8& aXml, CMobblerTrackList& aObserver, RPointerArray<CMobblerListItem>& aList)
+	{
+	DUMPDATA(aXml, _L("fetchplaylist.xml"));
+	
+	// Create the XML reader and DOM fragement and associate them with each other
+	CSenXmlReader* xmlReader(CSenXmlReader::NewL());
+	CleanupStack::PushL(xmlReader);
+	CSenDomFragment* domFragment(CSenDomFragment::NewL());
+	CleanupStack::PushL(domFragment);
+	xmlReader->SetContentHandler(*domFragment);
+	domFragment->SetReader(*xmlReader);
+	
+	// Parse the XML into the DOM fragment
+	xmlReader->ParseL(aXml);
+	
+	RPointerArray<CSenElement>& items = domFragment->AsElement().Child(0)->Element(_L8("trackList"))->ElementsL();
+		
+	const TInt KCount(items.Count());
+	for (TInt i(0); i < KCount; ++i)
+		{				
+		HBufC8* image((items[i]->Element(KElementImage) == NULL) ?
+				KNullDesC8().AllocLC() :
+				items[i]->Element(KElementImage)->Content().AllocLC());
+		
+		CMobblerListItem* item(CMobblerListItem::NewL(aObserver,
+														*SenXmlUtils::DecodeHttpCharactersLC(items[i]->Element(_L8("title"))->Content()),
+														*SenXmlUtils::DecodeHttpCharactersLC(items[i]->Element(_L8("creator"))->Content()),
+														*image));
+		CleanupStack::PopAndDestroy(3);
+		
+		CleanupStack::PushL(item);
+		aList.AppendL(item);
+		CleanupStack::Pop(item);
+		}
+	
+	CleanupStack::PopAndDestroy(2, xmlReader);
+	
+	}
+
 void CMobblerParser::ParseSimilarTracksL(const TDesC8& aXml, CMobblerTrackList& aObserver, RPointerArray<CMobblerListItem>& aList)
 	{
 	DUMPDATA(aXml, _L("similartracks.xml"));

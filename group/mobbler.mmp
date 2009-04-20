@@ -82,6 +82,7 @@ SOURCE		mobbleraudiocontrol.cpp
 SOURCE		mobbleraudiothread.cpp
 SOURCE		mobblerbitmap.cpp
 SOURCE		mobblerbitmapcollection.cpp
+SOURCE		mobblerdataobserver.cpp
 SOURCE		mobblerdocument.cpp
 SOURCE		mobblerdownload.cpp
 SOURCE		mobblereventlist.cpp
@@ -116,6 +117,7 @@ SOURCE		mobblertracklist.cpp
 SOURCE		mobblertransaction.cpp
 SOURCE		mobblerutility.cpp
 SOURCE		mobblerwebservicescontrol.cpp
+SOURCE		mobblerwebserviceshelper.cpp
 SOURCE		mobblerwebservicesquery.cpp
 SOURCE		mobblerwebservicesview.cpp
 

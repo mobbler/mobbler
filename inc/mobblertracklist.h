@@ -27,6 +27,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "mobblerlistcontrol.h"
 
 class CMobblerAppUi;
+class CMobblerWebServicesHelper;
 
 class CMobblerTrackList : public CMobblerListControl
 	{
@@ -41,6 +42,7 @@ public:
 	void ParseL(const TDesC8& aXML);
 	
 private:
+	CMobblerWebServicesHelper* iWebServicesHelper;
 	};
 
 #endif // __MOBBLERTRACKLIST_H__

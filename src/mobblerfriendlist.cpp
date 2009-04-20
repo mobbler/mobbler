@@ -54,6 +54,7 @@ void CMobblerFriendList::ConstructL()
 
 CMobblerFriendList::~CMobblerFriendList()
 	{
+	delete iShareObserver;
 	}
 
 CMobblerListControl* CMobblerFriendList::HandleListCommandL(TInt aCommand)
@@ -84,11 +85,15 @@ CMobblerListControl* CMobblerFriendList::HandleListCommandL(TInt aCommand)
 					{
 					if (aCommand == EMobblerCommandTrackShare)
 						{
-						iAppUi.LastFMConnection().TrackShareL(iList[iListBox->CurrentItemIndex()]->Title()->String8(), iAppUi.CurrentTrack()->Artist().String8(), iAppUi.CurrentTrack()->Title().String8(), messageString->String8());
+						delete iShareObserver;
+						iShareObserver = CMobblerFlatDataObserverHelper::NewL(iAppUi.LastFMConnection(), *this);
+						iAppUi.LastFMConnection().TrackShareL(iList[iListBox->CurrentItemIndex()]->Title()->String8(), iAppUi.CurrentTrack()->Artist().String8(), iAppUi.CurrentTrack()->Title().String8(), messageString->String8(), *iShareObserver);
 						}
 					else
-						{	
-						iAppUi.LastFMConnection().ArtistShareL(iList[iListBox->CurrentItemIndex()]->Title()->String8(), iAppUi.CurrentTrack()->Artist().String8(), messageString->String8());
+						{
+						delete iShareObserver;
+						iShareObserver = CMobblerFlatDataObserverHelper::NewL(iAppUi.LastFMConnection(), *this);
+						iAppUi.LastFMConnection().ArtistShareL(iList[iListBox->CurrentItemIndex()]->Title()->String8(), iAppUi.CurrentTrack()->Artist().String8(), messageString->String8(), *iShareObserver);
 						}
 					}
 	    		
@@ -141,6 +146,12 @@ void CMobblerFriendList::SupportedCommandsL(RArray<TInt>& aCommands)
 	aCommands.AppendL(EMobblerCommandRadioPersonal);
 	aCommands.AppendL(EMobblerCommandRadioNeighbourhood);
 	aCommands.AppendL(EMobblerCommandRadioLoved);
+	}
+
+
+void CMobblerFriendList::DataL(CMobblerFlatDataObserverHelper* aObserver, const TDesC8& aData, CMobblerLastFMConnection::TError aError)
+	{
+	
 	}
 
 void CMobblerFriendList::ParseL(const TDesC8& aXml)

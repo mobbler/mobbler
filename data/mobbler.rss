@@ -114,6 +114,10 @@ RESOURCE MENU_PANE r_mobbler_webservices_menu_pane
 			},
 		MENU_ITEM
 			{
+			command = EMobblerCommandPlaylistCreate;
+			},
+		MENU_ITEM
+			{
 			command = EMobblerCommandPlaylistAddTrack;
 			},
 		MENU_ITEM
@@ -575,6 +579,26 @@ RESOURCE SLIDER r_mobbler_slider_setting_editor_scrobble_percent
 	minlabel = "50";
 	maxlabel = "100";
 	}
+	
+RESOURCE DIALOG r_mobbler_wait_dialog
+    {
+    flags = EAknWaitNoteFlags | EEikDialogFlagNotifyEsc;
+    buttons = R_AVKON_SOFTKEYS_CANCEL;
+    items =
+        {
+        DLG_LINE
+            {
+            type = EAknCtNote;
+            id = EMobblerWait;
+            control= AVKON_NOTE 
+                { 
+                layout = EWaitLayout;
+                animation = R_QGN_GRAF_WAIT_BAR_ANIM;
+                };
+            }
+        };
+    }
+
 
 RESOURCE DIALOG r_mobbler_downloading_dialog
 	{

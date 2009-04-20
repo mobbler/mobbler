@@ -91,6 +91,7 @@ void CMobblerWebServicesView::DynInitMenuPaneL(TInt aResourceId, CEikMenuPane* a
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_SHOUT,				EMobblerCommandShout);
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_EXIT,					EAknSoftkeyExit);
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_LOVE_TRACK,			EMobblerCommandTrackLove);
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_PLAYLIST_CREATE,		EMobblerCommandPlaylistCreate);
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_PLAYLIST_ADD_TRACK,	EMobblerCommandPlaylistAddTrack);
 		}
 	else if (aResourceId == R_MOBBLER_WEBSERVICES_RADIO_SUBMENU_PANE)
@@ -151,6 +152,7 @@ void CMobblerWebServicesView::DynInitMenuPaneL(TInt aResourceId, CEikMenuPane* a
 	
 	if (aResourceId == R_MOBBLER_WEBSERVICES_MENU_PANE)
 		{
+		if (iWebServicesControl->TopControl()->Type() == EMobblerCommandFriends)
 		aMenuPane->SetItemDimmed(EMobblerCommandShare, 
 						!static_cast<CMobblerAppUi*>(AppUi())->CurrentTrack() || supportedCommands.Find(EMobblerCommandShare) == KErrNotFound);
 		}

@@ -68,6 +68,7 @@ CMobblerListControl* CMobblerListControl::CreateListL(CMobblerAppUi& aAppUi, CMo
 		case EMobblerCommandArtistTopTracks:
 		case EMobblerCommandRecentTracks:
 		case EMobblerCommandSimilarTracks:
+		case EMobblerCommandPlaylistFetch:
 			self = new(ELeave) CMobblerTrackList(aAppUi, aWebServicesControl);
 			break;
 		case EMobblerCommandPlaylists:
@@ -170,7 +171,12 @@ TInt CMobblerListControl::Count() const
 	return iList.Count();
 	}
 
-HBufC* CMobblerListControl::NameL()
+TInt CMobblerListControl::Type() const
+	{
+	return iType;
+	}
+
+HBufC* CMobblerListControl::NameL() const
 	{
 	TPtrC format(KNullDesC);
 	TPtrC text(iText1->String());
@@ -206,6 +212,9 @@ HBufC* CMobblerListControl::NameL()
 		case EMobblerCommandSimilarTracks:
 			format.Set(iAppUi.ResourceReader().ResourceL(R_MOBBLER_FORMAT_SIMILAR_TRACKS));
 			text.Set(iText2->String());
+			break;
+		case EMobblerCommandPlaylistFetch:
+			format.Set(_L("%S"));
 			break;
 		case EMobblerCommandPlaylists:
 			format.Set(iAppUi.ResourceReader().ResourceL(R_MOBBLER_FORMAT_PLAYLISTS));
@@ -503,16 +512,25 @@ void CMobblerListControl::BitmapResizedL(const CMobblerBitmap* /*aMobblerBitmap*
 
 void CMobblerListControl::HandleListBoxEventL(CEikListBox* /*aListBox*/, TListBoxEvent aEventType)
 	{
+	CMobblerListControl* list(NULL);
+	
 	switch (aEventType)
 		{
 		case EEventEnterKeyPressed:
-			HandleListCommandL(EMobblerCommandOpen);
+			list = HandleListCommandL(EMobblerCommandOpen);
 			break;
 		case EEventItemDoubleClicked:
-			HandleListCommandL(EMobblerCommandOpen);
+			list = HandleListCommandL(EMobblerCommandOpen);
 			break;
 		default:
 			break;
+		}
+	
+	if (list)
+		{
+		CleanupStack::PushL(list);
+		iWebServicesControl.ForwardL(list);
+		CleanupStack::Pop(list);
 		}
 	}
 
@@ -530,7 +548,15 @@ TKeyResponse CMobblerListControl::OfferKeyEventL(const TKeyEvent& aKeyEvent, TEv
 			}
 		case EKeyDevice3:
 			{
-			HandleListCommandL(EMobblerCommandOpen);
+			CMobblerListControl* list = HandleListCommandL(EMobblerCommandOpen);
+			
+			if (list)
+				{
+				CleanupStack::PushL(list);
+				iWebServicesControl.ForwardL(list);
+				CleanupStack::Pop(list);
+				}
+			
 			return EKeyWasConsumed;
 			}
 		default:

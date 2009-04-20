@@ -55,25 +55,16 @@ class CMobblerStatusView;
 class CMobblerString;
 class CMobblerTrack;
 class CMobblerWebServicesView;
+class CMobblerWebServicesHelper;
 
 class CMobblerAppUi : public CAknViewAppUi,
 						public MMobblerLastFMConnectionObserver,
 						public MMobblerDownloadObserver,
 						public MMobblerSleepTimerNotify,
 						public MRemConCoreApiTargetObserver,
-						public MMobblerFlatDataObserver,
+						public MMobblerFlatDataObserverHelper,
 						public MMobblerGestures
-	{
-public:
-	enum TState
-		{
-		ENone,
-		ECheckingUpdates,
-		EFetchingFriendsShareTrack,
-		EFetchingFriendsShareArtist,
-		EFetchingPlaylists
-		};
-	
+	{	
 public:
 	void ConstructL();
 	CMobblerAppUi();
@@ -160,7 +151,7 @@ private:
 	void MrccatoCommand(TRemConCoreApiOperationId aOperationId, TRemConCoreApiButtonAction aButtonAct);
 	
 private:
-	void DataL(const TDesC8& aData, CMobblerLastFMConnection::TError aError);
+	void DataL(CMobblerFlatDataObserverHelper* aObserver, const TDesC8& aData, CMobblerLastFMConnection::TError aError);
 	
 private:
 	// the view classes
@@ -213,7 +204,9 @@ private:
 	TTime iTimeToSleep;
 	TInt iSleepAction;
 	
-	TState iState;
+	CMobblerWebServicesHelper* iWebServicesHelper;
+	
+	CMobblerFlatDataObserverHelper* iCheckForUpdatesObserver;
 	};
 
 #endif // __MOBBLERAPPUI_H__

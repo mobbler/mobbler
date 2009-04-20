@@ -40,6 +40,8 @@ public:
 	CMobblerListControl* TopControl();
 	
 	void HandleListCommandL(TInt aCommand);
+	
+	void ForwardL(CMobblerListControl* aListControl);
 	void Back();
 	
 	void HandleListControlStateChangedL();

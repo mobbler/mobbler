@@ -200,6 +200,22 @@ void CMobblerWebServicesControl::ChangePaneTextL()
 		}
 	}
 
+void CMobblerWebServicesControl::ForwardL(CMobblerListControl* aListControl)
+	{
+	// remove the top control
+	iAppUi.RemoveFromStack(iControls[iControls.Count() - 1]);
+
+	// add the new top control to the stack
+	iControls.AppendL(aListControl);
+	aListControl->SetMopParent(&iAppUi);
+	aListControl->ActivateL();
+	iAppUi.AddToStackL(aListControl);
+	
+	ChangePaneTextL();
+
+	DrawDeferred();
+	}
+
 void CMobblerWebServicesControl::Back()
 	{
 	if (iControls.Count() == 1)

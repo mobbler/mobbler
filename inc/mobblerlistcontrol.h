@@ -58,7 +58,8 @@ public:
 	
 	TInt Count() const;
 	
-	HBufC* NameL();
+	TInt Type() const;
+	HBufC* NameL() const;
 	
 	void SetWebServicesControl();
 	

@@ -461,7 +461,67 @@ void CMobblerLastFMConnection::TrackLoveL(const TDesC8& aArtist, const TDesC8& a
 	AppendAndSubmitTransactionL(transaction);
 	}
 
-void CMobblerLastFMConnection::PlaylistAddTrackL(const TDesC8& aPlaylistId, const TDesC8& aArtist, const TDesC8& aTrack)
+void CMobblerLastFMConnection::PlaylistCreateL(const TDesC& aTitle, const TDesC& aDescription, MMobblerFlatDataObserver& aObserver)
+	{
+	CUri8* uri(CUri8::NewLC());
+	
+	uri->SetComponentL(KScheme, EUriScheme);
+	uri->SetComponentL(KWebServicesHost, EUriHost);
+	uri->SetComponentL(_L8("/2.0/"), EUriPath);
+	
+	CMobblerWebServicesQuery* query(CMobblerWebServicesQuery::NewLC(_L8("playlist.create")));
+	
+	CMobblerString* title(CMobblerString::NewL(aTitle));
+	CleanupStack::PushL(title);
+	query->AddFieldL(_L8("title"), title->String8());
+	CleanupStack::PopAndDestroy(title);
+	
+	CMobblerString* description(CMobblerString::NewL(aDescription));
+	CleanupStack::PushL(description);
+	query->AddFieldL(_L8("description"), description->String8());
+	CleanupStack::PopAndDestroy(description);
+	
+	CMobblerTransaction* transaction(CMobblerTransaction::NewL(*this, uri, query));
+	transaction->SetFlatDataObserver(&aObserver);
+	
+	CleanupStack::Pop(query);
+	CleanupStack::Pop(uri);
+	
+	AppendAndSubmitTransactionL(transaction);
+	}
+
+void CMobblerLastFMConnection::PlaylistFetchUserL(const TDesC8& aPlaylistId, MMobblerFlatDataObserver& aObserver)
+	{
+	_LIT8(KUserPlaylistFormat, "lastfm://playlist/%S");
+	
+	CUri8* uri(CUri8::NewL());
+	CleanupStack::PushL(uri);
+	
+	uri->SetComponentL(KScheme, EUriScheme);
+	uri->SetComponentL(KWebServicesHost, EUriHost);
+	uri->SetComponentL(_L8("/2.0/"), EUriPath);
+	
+	CMobblerWebServicesQuery* query(CMobblerWebServicesQuery::NewLC(_L8("playlist.fetch")));
+	
+	HBufC8* playlistURL(HBufC8::NewLC(KUserPlaylistFormat().Length() + aPlaylistId.Length()));
+	playlistURL->Des().Format(KUserPlaylistFormat, &aPlaylistId);
+	query->AddFieldL(_L8("playlistURL"), *playlistURL);
+	CleanupStack::PopAndDestroy(playlistURL);
+			
+	uri->SetComponentL(*query->GetQueryLC(), EUriQuery);
+	CleanupStack::PopAndDestroy(); // *query->GetQueryLC()
+	CleanupStack::PopAndDestroy(query); // *query->GetQueryLC()
+
+	CMobblerTransaction* transaction(CMobblerTransaction::NewL(*this, uri));
+	transaction->SetFlatDataObserver(&aObserver);
+	
+	CleanupStack::Pop(uri);
+	
+	AppendAndSubmitTransactionL(transaction);
+	
+	}
+
+void CMobblerLastFMConnection::PlaylistAddTrackL(const TDesC8& aPlaylistId, const TDesC8& aArtist, const TDesC8& aTrack, MMobblerFlatDataObserver& aObserver)
 	{
 	CUri8* uri(CUri8::NewLC());
 	
@@ -475,6 +535,7 @@ void CMobblerLastFMConnection::PlaylistAddTrackL(const TDesC8& aPlaylistId, cons
 	query->AddFieldL(_L8("artist"), aArtist);
 	
 	CMobblerTransaction* transaction(CMobblerTransaction::NewL(*this, uri, query));
+	transaction->SetFlatDataObserver(&aObserver);
 	
 	CleanupStack::Pop(query);
 	CleanupStack::Pop(uri);
@@ -937,7 +998,7 @@ void CMobblerLastFMConnection::WebServicesCallL(const TDesC8& aClass, const TDes
 	AppendAndSubmitTransactionL(transaction);
 	}
 
-void CMobblerLastFMConnection::TrackShareL(const TDesC8& aUserName, const TDesC8& aArtist, const TDesC8& aTrack, const TDesC8& aMessage)
+void CMobblerLastFMConnection::TrackShareL(const TDesC8& aUserName, const TDesC8& aArtist, const TDesC8& aTrack, const TDesC8& aMessage, MMobblerFlatDataObserver& aObserver)
 	{
 	CUri8* uri(CUri8::NewLC());
 	uri->SetComponentL(KScheme, EUriScheme);
@@ -951,6 +1012,7 @@ void CMobblerLastFMConnection::TrackShareL(const TDesC8& aUserName, const TDesC8
 	query->AddFieldL(_L8("message"), aMessage);
 	
 	CMobblerTransaction* transaction(CMobblerTransaction::NewL(*this, uri, query));
+	transaction->SetFlatDataObserver(&aObserver);
 	
 	CleanupStack::Pop(query);
 	CleanupStack::Pop(uri);
@@ -958,7 +1020,7 @@ void CMobblerLastFMConnection::TrackShareL(const TDesC8& aUserName, const TDesC8
 	AppendAndSubmitTransactionL(transaction);
 	}
 
-void CMobblerLastFMConnection::ArtistShareL(const TDesC8& aUserName, const TDesC8& aArtist, const TDesC8& aMessage)
+void CMobblerLastFMConnection::ArtistShareL(const TDesC8& aUserName, const TDesC8& aArtist, const TDesC8& aMessage, MMobblerFlatDataObserver& aObserver)
 	{
 	CUri8* uri(CUri8::NewLC());
 	uri->SetComponentL(KScheme, EUriScheme);
@@ -971,6 +1033,7 @@ void CMobblerLastFMConnection::ArtistShareL(const TDesC8& aUserName, const TDesC
 	query->AddFieldL(_L8("message"), aMessage);
 	
 	CMobblerTransaction* transaction(CMobblerTransaction::NewL(*this, uri, query));
+	transaction->SetFlatDataObserver(&aObserver);
 	
 	CleanupStack::Pop(query);
 	CleanupStack::Pop(uri);

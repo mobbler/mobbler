@@ -28,7 +28,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 class CMobblerAppUi;
 
-class CMobblerPlaylistList : public CMobblerListControl
+class CMobblerPlaylistList : public CMobblerListControl, public MMobblerFlatDataObserverHelper
 	{
 public:
 	CMobblerPlaylistList(CMobblerAppUi& aAppUi, CMobblerWebServicesControl& aWebServicesControl);
@@ -39,9 +39,13 @@ public:
 	CMobblerListControl* HandleListCommandL(TInt aCommand);
 	void SupportedCommandsL(RArray<TInt>& aCommands);
 	void ParseL(const TDesC8& aXML);
-
+	
 private:
-	//data
+	void DataL(CMobblerFlatDataObserverHelper* aObserver, const TDesC8& aData, CMobblerLastFMConnection::TError aError);
+	
+private:
+	CMobblerFlatDataObserverHelper* iPlaylistCreateObserver;
+	CMobblerFlatDataObserverHelper* iPlaylistAddObserver;
 	};
 
 #endif // __MOBBLERPLAYLISTLIST_H__

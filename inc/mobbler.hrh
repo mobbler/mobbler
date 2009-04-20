@@ -85,6 +85,7 @@ enum TMobblerSettingItemListViewCommands
 	EMobblerCommandEventShoutbox,
 	
 	EMobblerCommandPlaylistAddTrack,
+	EMobblerCommandPlaylistCreate,
 	EMobblerCommandPlaylistFetch,
 	
 	EMobblerCommandShout,
@@ -126,7 +127,8 @@ enum TMobblerControls
 	EMobblerProgressNoteId,
 	EMobblerQuery,
 	EMobblerGetLatestLanguageNote,
-	EMobblerSleepTimer
+	EMobblerSleepTimer,
+	EMobblerWait
 	};
 
 #endif // __MOBBLER_HRH__

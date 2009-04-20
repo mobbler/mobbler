@@ -24,11 +24,13 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #ifndef __MOBBLERFRIENDLIST_H__
 #define __MOBBLERFRIENDLIST_H__
 
+#include "mobblerdataobserver.h"
+
 #include "mobblerlistcontrol.h"
 
 class CMobblerAppUi;
 
-class CMobblerFriendList : public CMobblerListControl
+class CMobblerFriendList : public CMobblerListControl, public MMobblerFlatDataObserverHelper
 	{
 public:
 	CMobblerFriendList(CMobblerAppUi& aAppUi, CMobblerWebServicesControl& aWebServicesControl);
@@ -41,6 +43,10 @@ public:
 	void ParseL(const TDesC8& aXml);
 	
 private:
+	void DataL(CMobblerFlatDataObserverHelper* aObserver, const TDesC8& aData, CMobblerLastFMConnection::TError aError);
+	
+private:
+	CMobblerFlatDataObserverHelper* iShareObserver;
 	};
 
 #endif // __MOBBLERFRIENDLIST_H__

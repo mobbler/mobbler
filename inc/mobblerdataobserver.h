@@ -24,7 +24,12 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #ifndef __MOBBLERDATAOBSERVER_H__
 #define __MOBBLERDATAOBSERVER_H__
 
+#include <aknprogressdialog.h>
+
 #include "mobblerlastfmconnection.h"
+
+class CMobblerFlatDataObserverHelper;
+class CAknWaitDialog;
 
 class MMobblerSegDataObserver
 	{
@@ -37,6 +42,33 @@ class MMobblerFlatDataObserver
 	{
 public:
 	virtual void DataL(const TDesC8& aData, CMobblerLastFMConnection::TError aError) = 0;
+	};
+
+class MMobblerFlatDataObserverHelper
+	{
+public:
+	virtual void DataL(CMobblerFlatDataObserverHelper* aObserver, const TDesC8& aData, CMobblerLastFMConnection::TError aError) = 0;
+	};
+
+class CMobblerFlatDataObserverHelper : public CBase, public MMobblerFlatDataObserver, public MProgressDialogCallback
+	{
+public:
+	static CMobblerFlatDataObserverHelper* NewL(CMobblerLastFMConnection& aConnection, MMobblerFlatDataObserverHelper& aObserver);
+	~CMobblerFlatDataObserverHelper();
+	
+private:
+	CMobblerFlatDataObserverHelper(CMobblerLastFMConnection& aConnection, MMobblerFlatDataObserverHelper& aObserver);
+	void ConstructL();
+	
+	void DataL(const TDesC8& aData, CMobblerLastFMConnection::TError aError);
+	
+	void DialogDismissedL(TInt aButtonId);
+	
+private:
+	CMobblerLastFMConnection& iConnection;
+	MMobblerFlatDataObserverHelper& iObserver;
+	
+	CAknWaitDialog* iWaitDialog;
 	};
 	
 #endif // __MOBBLERDATAOBSERVER_H__

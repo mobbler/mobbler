@@ -126,8 +126,8 @@ public:
 	void TrackLoveL(const TDesC8& aArtist, const TDesC8& aTrack);
 	void TrackBanL(const TDesC8& aArtist, const TDesC8& aTrack);
 	
-	void TrackShareL(const TDesC8& aUser, const TDesC8& aArtist, const TDesC8& aTrack, const TDesC8& aMessage);
-	void ArtistShareL(const TDesC8& aUser, const TDesC8& aArtist, const TDesC8& aMessage);
+	void TrackShareL(const TDesC8& aUser, const TDesC8& aArtist, const TDesC8& aTrack, const TDesC8& aMessage, MMobblerFlatDataObserver& aObserver);
+	void ArtistShareL(const TDesC8& aUser, const TDesC8& aArtist, const TDesC8& aMessage, MMobblerFlatDataObserver& aObserver);
 	
 	void RecommendedArtistsL(MMobblerFlatDataObserver& aObserver);
 	void RecommendedEventsL(MMobblerFlatDataObserver& aObserver);
@@ -136,17 +136,16 @@ public:
 	void SimilarTracksL(const TDesC8& aArtist, const TDesC8& aTrack, MMobblerFlatDataObserver& aObserver);
 	
 	void SimilarArtistsL(const TDesC8& aArtist, MMobblerFlatDataObserver& aObserver);
-//	void ArtistGetInfoL(const TDesC& aArtist, MMobblerFlatDataObserver& aObserver);
 	void ArtistGetImageL(const TDesC& aArtist, MMobblerFlatDataObserver& aObserver);
 	void ArtistGetTagsL(const TDesC& aArtist, MMobblerFlatDataObserver& aObserver);
 	void ArtistOrTrackSearchL(TDesC& aArtist, TDesC& aTrack, MMobblerFlatDataObserver& aObserver);
 	void AlbumGetInfoL(const CMobblerTrack& aTrack, MMobblerFlatDataObserver& aObserver);
 	void AlbumGetInfoL(const TDesC& aAlbum, const TDesC& aArtist, MMobblerFlatDataObserver& aObserver);
 	void TracksOrAlbumsByArtistL(TDesC& aArtist, TBool aAlbums, MMobblerFlatDataObserver& aObserver);
-	//void TracksOnAlbumL(const TDesC& aAlbumID, MMobblerFlatDataObserver& aObserver);
-	//void AddToLibrary(const TDesC& aArtist, const TDesC& aTrack, const TDesC& aAlbum, TInt aCommand);
 	
-	void PlaylistAddTrackL(const TDesC8& aPlaylistId, const TDesC8& aArtist, const TDesC8& aTrack);
+	void PlaylistCreateL(const TDesC& aTitle, const TDesC& aDescription, MMobblerFlatDataObserver& aObserver);
+	void PlaylistFetchUserL(const TDesC8& aPlaylistId, MMobblerFlatDataObserver& aObserver);
+	void PlaylistAddTrackL(const TDesC8& aPlaylistId, const TDesC8& aArtist, const TDesC8& aTrack, MMobblerFlatDataObserver& aObserver);
 	
 	TBool ExportQueueToLogFileL();
 	

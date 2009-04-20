@@ -28,7 +28,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "mobblerlistitem.h"
 #include "mobblerparser.h"
 #include "mobblerstring.h"
+#include "mobblertrack.h"
 #include "mobblertracklist.h"
+#include "mobblerwebserviceshelper.h"
 
 _LIT(KDefaultImage, "\\resource\\apps\\mobbler\\default_track.png");
 
@@ -55,6 +57,8 @@ void CMobblerTrackList::ConstructL()
     	case EMobblerCommandSimilarTracks:
     		iAppUi.LastFMConnection().SimilarTracksL(iText1->String8(), iText2->String8(), *this);
     		break;
+    	case EMobblerCommandPlaylistFetch:
+    		iAppUi.LastFMConnection().PlaylistFetchUserL(iText2->String8(), *this);
     	default:
     		break;
     	}
@@ -62,28 +66,53 @@ void CMobblerTrackList::ConstructL()
 
 CMobblerTrackList::~CMobblerTrackList()
 	{
+	delete iWebServicesHelper;
 	}
 
 CMobblerListControl* CMobblerTrackList::HandleListCommandL(TInt aCommand)
 	{
 	CMobblerListControl* list(NULL);
 	
+	TPtrC8 artist(KNullDesC8);
+	TPtrC8 title(KNullDesC8);
+	
+	if (iList.Count() > 0)
+		{
+		title.Set(iList[iListBox->CurrentItemIndex()]->Title()->String8());
+	
+		if (iType == EMobblerCommandArtistTopTracks)
+			{
+			artist.Set(iText1->String8());
+			}
+		else
+			{
+			artist.Set(iList[iListBox->CurrentItemIndex()]->Description()->String8());
+			}
+		}
+
 	switch(aCommand)
 		{	
 		case EMobblerCommandTrackLove:
-			switch (iType)
+			iAppUi.LastFMConnection().TrackLoveL(artist, title);
+			break;
+		case EMobblerCommandTrackShare:
+		case EMobblerCommandArtistShare:
+		case EMobblerCommandPlaylistAddTrack:
+			{
+			CMobblerTrack* track = CMobblerTrack::NewL(artist, title, KNullDesC8, KNullDesC8, KNullDesC8, KNullDesC8, 0, KNullDesC8);
+			
+			delete iWebServicesHelper;
+			iWebServicesHelper = CMobblerWebServicesHelper::NewL(iAppUi, *track);
+			
+			switch (aCommand)
 				{
-				case EMobblerCommandArtistTopTracks:
-					iAppUi.LastFMConnection().TrackLoveL(iText1->String8(), iList[iListBox->CurrentItemIndex()]->Title()->String8());
-					break;
-				case EMobblerCommandUserTopTracks:
-				case EMobblerCommandRecentTracks:
-				case EMobblerCommandSimilarTracks:
-					iAppUi.LastFMConnection().TrackLoveL(iList[iListBox->CurrentItemIndex()]->Description()->String8(), iList[iListBox->CurrentItemIndex()]->Title()->String8());
-					break;
-				default:
-					break;
+				case EMobblerCommandTrackShare: iWebServicesHelper->TrackShareL(); break;
+				case EMobblerCommandArtistShare: iWebServicesHelper->ArtistShareL(); break;
+				case EMobblerCommandPlaylistAddTrack: iWebServicesHelper->PlaylistAddL(); break;
 				}
+						
+			track->Release();
+			}
 			break;
 		default:
 			break;	
@@ -95,6 +124,12 @@ CMobblerListControl* CMobblerTrackList::HandleListCommandL(TInt aCommand)
 void CMobblerTrackList::SupportedCommandsL(RArray<TInt>& aCommands)
 	{
 	aCommands.AppendL(EMobblerCommandTrackLove);
+	
+	aCommands.AppendL(EMobblerCommandShare);
+	aCommands.AppendL(EMobblerCommandTrackShare);
+	aCommands.AppendL(EMobblerCommandArtistShare);
+	
+	aCommands.AppendL(EMobblerCommandPlaylistAddTrack);
 	}
 
 void CMobblerTrackList::ParseL(const TDesC8& aXML)
@@ -113,6 +148,8 @@ void CMobblerTrackList::ParseL(const TDesC8& aXML)
     	case EMobblerCommandSimilarTracks:
     		CMobblerParser::ParseSimilarTracksL(aXML, *this, iList);
     		break;
+    	case EMobblerCommandPlaylistFetch:
+    		CMobblerParser::ParsePlaylistL(aXML, *this, iList);
     	default:
     		break;
     	}

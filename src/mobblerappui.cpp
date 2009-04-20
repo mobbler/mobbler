@@ -34,8 +34,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <mobbler.rsg>
 #include <mobbler_strings.rsg>
-#include <sendomfragment.h>
-#include <senxmlutils.h> 
 
 #include "mobbler.hrh"
 #include "mobblerappui.h"
@@ -50,6 +48,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "mobblerstring.h"
 #include "mobblertrack.h"
 #include "mobblerutility.h"
+#include "mobblerwebserviceshelper.h"
 #include "mobblerwebservicesview.h"
 
 _LIT(KRadioFile, "C:radiostations.dat");
@@ -152,6 +151,10 @@ CMobblerAppUi::~CMobblerAppUi()
 	delete iResourceReader;
 	delete iSleepTimer;
 	delete iBitmapCollection;
+	
+	delete iWebServicesHelper;
+	
+	delete iCheckForUpdatesObserver;
 	}
 
 TBool CMobblerAppUi::AccelerometerGesturesAvailable() const
@@ -460,8 +463,11 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 				
 			break;
 		case EMobblerCommandCheckForUpdates:
-			iLastFMConnection->CheckForUpdateL(*this);
-			iState = ECheckingUpdates;
+			{
+			delete iCheckForUpdatesObserver;
+			iCheckForUpdatesObserver = CMobblerFlatDataObserverHelper::NewL(*iLastFMConnection, *this);
+			iLastFMConnection->CheckForUpdateL(*iCheckForUpdatesObserver);
+			}
 			break;
 		case EMobblerCommandEditSettings:
 			ActivateLocalViewL(iSettingView->Id());
@@ -715,41 +721,26 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 				    	switch (list->CurrentItemIndex())
 				    		{
 				    		case 0:
-				    			{
-				    			// Share
-				    			CMobblerString* username(CMobblerString::NewL(iSettingView->Username()));
-				    			CleanupStack::PushL(username);
-				    			iLastFMConnection->WebServicesCallL(_L8("user"), _L8("getfriends"), username->String8(), *this);
-				    			CleanupStack::PopAndDestroy(username);
-				    			
-				    			iState = EFetchingFriendsShareTrack;
-				    			
-					    		break;
-				    			}
 				    		case 1:
+				    		case 2:
 				    			{
-				    			// Share
-				    			CMobblerString* username(CMobblerString::NewL(iSettingView->Username()));
-				    			CleanupStack::PushL(username);
-				    			iLastFMConnection->WebServicesCallL(_L8("user"), _L8("getfriends"), username->String8(), *this);
-				    			CleanupStack::PopAndDestroy(username);
-				    			
-				    			iState = EFetchingFriendsShareArtist;
-				    			
-					    		break;
+				    			if (CurrentTrack())
+				    				{
+				    				delete iWebServicesHelper;
+				    				iWebServicesHelper = CMobblerWebServicesHelper::NewL(*this, *CurrentTrack());
+				    				switch (list->CurrentItemIndex())
+				    					{
+				    					case 0: iWebServicesHelper->TrackShareL(); break;
+				    					case 1: iWebServicesHelper->ArtistShareL(); break;
+				    					case 2: iWebServicesHelper->PlaylistAddL(); break;
+				    					}
+				    				}
+				    			else
+				    				{
+				    				// TODO: display an error
+				    				}
 				    			}
-					    	case 2:
-					    		{
-					    		// Playlists
-					    		CMobblerString* username(CMobblerString::NewL(iSettingView->Username()));
-					    		CleanupStack::PushL(username);
-					    		iLastFMConnection->WebServicesCallL(_L8("user"), _L8("getplaylists"), username->String8(), *this);
-					    		CleanupStack::PopAndDestroy(username);
-					    		
-					    		iState = EFetchingPlaylists;
-					    		
 					    		break;
-					    		}
 				    		case 3:
 				    			ActivateLocalViewL(iWebServicesView->Id(), TUid::Uid(EMobblerCommandSimilarArtists), currentTrack->Artist().String8());
 				    			break;
@@ -926,205 +917,50 @@ void CMobblerAppUi::HandleStatusPaneSizeChange()
 	{
 	}
 
-void CMobblerAppUi::DataL(const TDesC8& aData, CMobblerLastFMConnection::TError aError)
+void CMobblerAppUi::DataL(CMobblerFlatDataObserverHelper* aObserver, const TDesC8& aData, CMobblerLastFMConnection::TError aError)
 	{
-	switch (iState)
+	if (aObserver == iCheckForUpdatesObserver)
 		{
-		case ECheckingUpdates:
+		if (aError == CMobblerLastFMConnection::EErrorNone)
 			{
-			if (aError == CMobblerLastFMConnection::EErrorNone)
+			// we have just sucessfully checked for updates
+			// so don't do it again for another week
+			TTime now;
+			now.UniversalTime();
+			now += TTimeIntervalDays(KUpdateIntervalDays);
+			iSettingView->SetNextUpdateCheckL(now);
+			
+			TVersion version;
+			TBuf8<255> location;
+			TInt error(CMobblerParser::ParseUpdateResponseL(aData, version, location));
+			
+			if (error == KErrNone)
 				{
-				// we have just sucessfully checked for updates
-				// so don't do it again for another week
-				TTime now;
-				now.UniversalTime();
-				now += TTimeIntervalDays(KUpdateIntervalDays);
-				iSettingView->SetNextUpdateCheckL(now);
-				
-				TVersion version;
-				TBuf8<255> location;
-				TInt error(CMobblerParser::ParseUpdateResponseL(aData, version, location));
-				
-				if (error == KErrNone)
+				if ((version.iMajor > KVersion.iMajor)
+					|| 
+					(version.iMajor == KVersion.iMajor && 
+					 version.iMinor > KVersion.iMinor)
+					|| 
+					(version.iMajor == KVersion.iMajor && 
+					 version.iMinor == KVersion.iMinor && 
+					 version.iBuild > KVersion.iBuild))
 					{
-					if ((version.iMajor > KVersion.iMajor)
-						|| 
-						(version.iMajor == KVersion.iMajor && 
-						 version.iMinor > KVersion.iMinor)
-						|| 
-						(version.iMajor == KVersion.iMajor && 
-						 version.iMinor == KVersion.iMinor && 
-						 version.iBuild > KVersion.iBuild))
+					CAknQueryDialog* dlg(CAknQueryDialog::NewL());
+					TBool yes( dlg->ExecuteLD(R_MOBBLER_YES_NO_QUERY_DIALOG, iResourceReader->ResourceL(R_MOBBLER_UPDATE)));
+									
+					if (yes)
 						{
-						CAknQueryDialog* dlg(CAknQueryDialog::NewL());
-						TBool yes( dlg->ExecuteLD(R_MOBBLER_YES_NO_QUERY_DIALOG, iResourceReader->ResourceL(R_MOBBLER_UPDATE)));
-										
-						if (yes)
-							{
-							iMobblerDownload->DownloadL(location, iLastFMConnection->IapID());
-							}
+						iMobblerDownload->DownloadL(location, iLastFMConnection->IapID());
 						}
-					else
-						{
-						CAknResourceNoteDialog *note(new (ELeave) CAknInformationNote(EFalse));
-						note->ExecuteLD(iResourceReader->ResourceL(R_MOBBLER_NO_UPDATE));
-						}
+					}
+				else
+					{
+					CAknResourceNoteDialog *note(new (ELeave) CAknInformationNote(EFalse));
+					note->ExecuteLD(iResourceReader->ResourceL(R_MOBBLER_NO_UPDATE));
 					}
 				}
 			}
-			break;
-		case EFetchingFriendsShareArtist:
-		case EFetchingFriendsShareTrack:
-			{
-			// parse and bring up a share with friends popup menu
-			
-			CAknSinglePopupMenuStyleListBox* list(new(ELeave) CAknSinglePopupMenuStyleListBox);
-		    CleanupStack::PushL(list);
-		     
-		    CAknPopupList* popup = CAknPopupList::NewL(list, R_AVKON_SOFTKEYS_OK_CANCEL, AknPopupLayouts::EMenuWindow);
-		    CleanupStack::PushL(popup);
-		    
-		    list->ConstructL(popup, CEikListBox::ELeftDownInViewRect);
-
-		    popup->SetTitleL(iResourceReader->ResourceL(R_MOBBLER_SHARE));
-		    
-		    list->CreateScrollBarFrameL(ETrue);
-		    list->ScrollBarFrame()->SetScrollBarVisibilityL(CEikScrollBarFrame::EOff, CEikScrollBarFrame::EAuto);
-		    
-		    CDesCArrayFlat* items = new(ELeave) CDesCArrayFlat(1);
-		    CleanupStack::PushL(items);
-		    
-			// create the xml reader and dom fragement and associate them with each other 
-		    CSenXmlReader* xmlReader = CSenXmlReader::NewL();
-			CleanupStack::PushL(xmlReader);
-			CSenDomFragment* domFragment(CSenDomFragment::NewL());
-			CleanupStack::PushL(domFragment);
-			xmlReader->SetContentHandler(*domFragment);
-			domFragment->SetReader(*xmlReader);
-			
-			// parse the xml into the dom fragment
-			xmlReader->ParseL(aData);
-			
-			RPointerArray<CSenElement>& users(domFragment->AsElement().Element(_L8("friends"))->ElementsL());
-				
-			const TInt KUserCount(users.Count());
-			for (TInt i(0) ; i < KUserCount; ++i)
-				{
-				CMobblerString* user(CMobblerString::NewL(users[i]->Element(_L8("name"))->Content()));
-				CleanupStack::PushL(user);
-				items->AppendL(user->String());
-				CleanupStack::PopAndDestroy(user);
-				}
-			
-			CleanupStack::PopAndDestroy(2, xmlReader);
-
-		    CleanupStack::Pop(items);
-		    
-		    list->Model()->SetItemTextArray(items);
-		    list->Model()->SetOwnershipType(ELbmOwnsItemArray);
-		    
-		    CleanupStack::Pop(popup); //popup
-		    
-		    if (popup->ExecuteLD())
-		    	{
-		    	TBuf<255> message;
-		    	
-		    	CAknTextQueryDialog* shoutDialog(new(ELeave) CAknTextQueryDialog(message));
-		    	shoutDialog->PrepareLC(R_MOBBLER_TEXT_QUERY_DIALOG);
-		    	shoutDialog->SetPromptL(iResourceReader->ResourceL(R_MOBBLER_SHARE));
-		    	shoutDialog->SetPredictiveTextInputPermitted(ETrue);
-
-		    	if (shoutDialog->RunLD())
-		    		{
-		    		CMobblerString* messageString(CMobblerString::NewL(message));
-		    		CleanupStack::PushL(messageString);
-		    		
-			    	CMobblerString* user(CMobblerString::NewL((*items)[list->CurrentItemIndex()]));
-					CleanupStack::PushL(user);
-					
-					if (iState == EFetchingFriendsShareTrack)
-						{
-						iLastFMConnection->TrackShareL(user->String8(), CurrentTrack()->Artist().String8(), CurrentTrack()->Title().String8(), messageString->String8());
-						}
-					else
-						{
-						iLastFMConnection->ArtistShareL(user->String8(), CurrentTrack()->Artist().String8(), messageString->String8());
-						}
-					
-					CleanupStack::PopAndDestroy(2, messageString);
-		    		}
-		    	}
-		     
-		    CleanupStack::PopAndDestroy(list); //list
-			
-			break;
-			}
-		case EFetchingPlaylists:
-			{
-			// parse and bring up an add to playlist popup menu
-			// create the xml reader and dom fragement and associate them with each other 
-		    CSenXmlReader* xmlReader = CSenXmlReader::NewL();
-			CleanupStack::PushL(xmlReader);
-			CSenDomFragment* domFragment(CSenDomFragment::NewL());
-			CleanupStack::PushL(domFragment);
-			xmlReader->SetContentHandler(*domFragment);
-			domFragment->SetReader(*xmlReader);
-			
-			CAknSinglePopupMenuStyleListBox* list(new(ELeave) CAknSinglePopupMenuStyleListBox);
-		    CleanupStack::PushL(list);
-		     
-		    CAknPopupList* popup = CAknPopupList::NewL(list, R_AVKON_SOFTKEYS_OK_CANCEL, AknPopupLayouts::EMenuWindow);
-		    CleanupStack::PushL(popup);
-		    
-		    list->ConstructL(popup, CEikListBox::ELeftDownInViewRect);
-
-		    popup->SetTitleL(iResourceReader->ResourceL(R_MOBBLER_PLAYLIST_ADD_TRACK));
-		    
-		    list->CreateScrollBarFrameL(ETrue);
-		    list->ScrollBarFrame()->SetScrollBarVisibilityL(CEikScrollBarFrame::EOff, CEikScrollBarFrame::EAuto);
-		    
-		    CDesCArrayFlat* items = new(ELeave) CDesCArrayFlat(1);
-		    CleanupStack::PushL(items);
-		    
-			
-			
-			// parse the xml into the dom fragment
-			xmlReader->ParseL(aData);
-			
-			RPointerArray<CSenElement>& playlists(domFragment->AsElement().Element(_L8("playlists"))->ElementsL());
-				
-			const TInt KPlaylistCount(playlists.Count());
-			for (TInt i(0) ; i < KPlaylistCount; ++i)
-				{
-				CMobblerString* playlist(CMobblerString::NewL(playlists[i]->Element(_L8("title"))->Content()));
-				CleanupStack::PushL(playlist);
-				items->AppendL(playlist->String());
-				CleanupStack::PopAndDestroy(playlist);
-				}
-			
-		    CleanupStack::Pop(items);
-		    
-		    list->Model()->SetItemTextArray(items);
-		    list->Model()->SetOwnershipType(ELbmOwnsItemArray);
-		    
-		    CleanupStack::Pop(popup); //popup
-		    
-		    if (popup->ExecuteLD())
-		    	{
-				iLastFMConnection->PlaylistAddTrackL(playlists[list->CurrentItemIndex()]->Element(_L8("id"))->Content(), CurrentTrack()->Artist().String8(), CurrentTrack()->Title().String8());
-		    	}
-		     
-		    CleanupStack::PopAndDestroy(list); //list
-		    
-		    CleanupStack::PopAndDestroy(2, xmlReader);
-			
-			break;
-			}
-		default:
-			break;
 		}
-	
-	iState = ENone;
 	}
 
 void CMobblerAppUi::HandleConnectCompleteL(TInt aError)
@@ -1148,8 +984,9 @@ void CMobblerAppUi::HandleConnectCompleteL(TInt aError)
 			if (now > iSettingView->NextUpdateCheck())
 				{
 				// do an update check
-				iLastFMConnection->CheckForUpdateL(*this);
-				iState = ECheckingUpdates;
+				delete iCheckForUpdatesObserver;
+				iCheckForUpdatesObserver = CMobblerFlatDataObserverHelper::NewL(*iLastFMConnection, *this);
+				iLastFMConnection->CheckForUpdateL(*iCheckForUpdatesObserver);
 				}
 			}
 		}
