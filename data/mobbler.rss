@@ -674,7 +674,7 @@ RESOURCE DIALOG r_mobbler_get_latest_language_dialog
 		{
 		DLG_LINE
 			{
-			type = EAknCtNote;
+			type = EAknCtQuery;
 			id = EMobblerGetLatestLanguageNote;
 			
 			control = AVKON_CONFIRMATION_QUERY
