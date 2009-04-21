@@ -48,6 +48,8 @@ const TPtrC KArtFileArray[] =
 	_L("folder.png"),
 	};
 
+_LIT(KArtistImageCache, "E:\\System\\Data\\Mobbler\\cache\\");
+
 CMobblerTrack* CMobblerTrack::NewL(const TDesC8& aArtist,
 									const TDesC8& aTitle,
 									const TDesC8& aAlbum,
@@ -258,6 +260,23 @@ void CMobblerTrack::SetAlbumL(const TDesC& aAlbum)
 	delete iAlbum;
 	iAlbum = CMobblerString::NewL(aAlbum);
 
+	// First check the artist image cache
+	if (!iAlbumArt && iArtist->String().Length() > 0)
+		{
+		// Not found track's path, check for %artist%.jpg in the cache
+		TFileName fileName(KArtistImageCache);
+		fileName.Append(iArtist->SafeFsString());
+		fileName.Append(KArtExtensionArray[0]);
+		if (BaflUtils::FileExists(CCoeEnv::Static()->FsSession(), fileName))
+			{
+			LOG(_L8("Found %artist%.jpg in cache"));
+			LOG(fileName);
+			iUsingArtistImage = ETrue;
+			delete iAlbumArt;
+			iAlbumArt = CMobblerBitmap::NewL(*this, fileName);
+			}
+		}
+	
 	// Check if there's a something better online
 	if ((!iAlbumArt || iUsingArtistImage)
 				&& iState == ENone)
@@ -587,13 +606,20 @@ TBool CMobblerTrack::IsMusicPlayerTrack() const
 	// TODO or return (iRadioAuth->Length() != 0) ?
 	}
 
-void CMobblerTrack::FetchAlbumInfoL()
+TBool CMobblerTrack::OkToDownloadAlbumArt() const
 	{
 	TInt downloadAlbumArt(static_cast<CMobblerAppUi*>(CEikonEnv::Static()->AppUi())->DownloadAlbumArt());
-	TBool okTodownloadAlbumArt((downloadAlbumArt == 1 && !IsMusicPlayerTrack()) || (downloadAlbumArt == 2));
-	
-	if (okTodownloadAlbumArt && 
-		static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->LastFMConnection().Mode() == CMobblerLastFMConnection::EOnline)
+
+	TBool okToDownloadAlbumArt((downloadAlbumArt == CMobblerAppUi::EOnlyRadio && !IsMusicPlayerTrack())
+								|| (downloadAlbumArt == CMobblerAppUi::EAlwaysWhenOnline));
+
+	return (okToDownloadAlbumArt && 
+		static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->LastFMConnection().Mode() == CMobblerLastFMConnection::EOnline);
+	}
+
+void CMobblerTrack::FetchAlbumInfoL()
+	{
+	if (OkToDownloadAlbumArt())
 		{
 		static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->LastFMConnection().AlbumGetInfoL(*this, *this);
 		iState = EFetchingAlbumInfo;
@@ -602,11 +628,7 @@ void CMobblerTrack::FetchAlbumInfoL()
 
 void CMobblerTrack::FetchArtistInfoL()
 	{
-	TInt downloadAlbumArt(static_cast<CMobblerAppUi*>(CEikonEnv::Static()->AppUi())->DownloadAlbumArt());
-	TBool okTodownloadAlbumArt((downloadAlbumArt == 1 && !IsMusicPlayerTrack()) || (downloadAlbumArt == 2));
-	
-	if (okTodownloadAlbumArt && 
-		static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->LastFMConnection().Mode() == CMobblerLastFMConnection::EOnline)
+	if (OkToDownloadAlbumArt())
 		{
 		static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->LastFMConnection().ArtistGetImageL(iArtist->String(), *this);
 		iState = EFetchingArtistInfo;
@@ -615,11 +637,7 @@ void CMobblerTrack::FetchArtistInfoL()
 	
 void CMobblerTrack::FetchImageL(TState aState, const TDesC8& aImageLocation)
 	{
-	TInt downloadAlbumArt(static_cast<CMobblerAppUi*>(CEikonEnv::Static()->AppUi())->DownloadAlbumArt());
-	TBool okTodownloadAlbumArt((downloadAlbumArt == 1 && !IsMusicPlayerTrack()) || (downloadAlbumArt == 2));
-	
-	if (okTodownloadAlbumArt && 
-		static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->LastFMConnection().Mode() == CMobblerLastFMConnection::EOnline)
+	if (OkToDownloadAlbumArt())
 		{
 		static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->LastFMConnection().RequestImageL(this, aImageLocation);
 		iState = aState;
@@ -700,12 +718,24 @@ TBool CMobblerTrack::FetchImageL(const TDesC8& aData)
 
 void CMobblerTrack::SaveAlbumArtL(const TDesC8& aData)
 	{
-	if (iPath)
+	if ((iPath && iPath->Length() > 0)
+			|| 
+		(iState == EFetchingArtistImage && IsMusicPlayerTrack()))
 		{
 		// try to save the album art in the album folder
+		LOG(_L8("SaveAlbumArtL()"));
 		
 		TFileName albumArtFileName;
-		albumArtFileName.Append(*iPath);
+		if (iPath && iPath->Length() > 0)
+			{
+			albumArtFileName.Append(*iPath);
+			}
+		else
+			{
+			albumArtFileName.Append(KArtistImageCache());
+			CCoeEnv::Static()->FsSession().MkDirAll(albumArtFileName);
+			}
+		
 		if (iState == EFetchingAlbumArt)
 			{
 			albumArtFileName.Append(KArtFileArray[0]);
@@ -713,8 +743,9 @@ void CMobblerTrack::SaveAlbumArtL(const TDesC8& aData)
 		else
 			{
 			albumArtFileName.Append(iArtist->SafeFsString());
-			albumArtFileName.Append(_L(".jpg"));
+			albumArtFileName.Append(KArtExtensionArray[0]);
 			}
+		LOG(albumArtFileName);
 		
 		RFile albumArtFile;
 		TInt createError(albumArtFile.Create(CCoeEnv::Static()->FsSession(), albumArtFileName, EFileWrite));

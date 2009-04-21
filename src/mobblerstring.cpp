@@ -116,6 +116,13 @@ const TPtrC8 CMobblerString::SafeFsString8() const
 			}
 		}
 
+	if (stripped8.Length() > KMaxFileName)
+		{
+		TInt pos(KMaxFileName - stripped8.Length());
+		TInt length(stripped8.Length() - pos);
+		stripped8.Delete(pos, length);
+		}
+
 	return stripped8;
 	}
 

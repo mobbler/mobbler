@@ -2,7 +2,7 @@
 mobblerwebserviceshelper.cpp
 
 Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
-Copyright (C) 2008  Michael Coffey
+Copyright (C) 2009  Michael Coffey
 
 http://code.google.com/p/mobbler
 
@@ -21,9 +21,9 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-#include <aknmessagequerydialog.h>
 #include <akninfopopupnotecontroller.h>
 #include <AknLists.h>
+#include <aknmessagequerydialog.h>
 #include <aknnotewrappers.h>
 #include <aknsutils.h>
 #include <bautils.h> 
@@ -128,7 +128,7 @@ void CMobblerWebServicesHelper::DataL(CMobblerFlatDataObserverHelper* aObserver,
 				{
 				// Everything worked
 				CAknConfirmationNote* note(new (ELeave) CAknConfirmationNote(EFalse));
-				note->ExecuteLD(_L("Done."));
+				note->ExecuteLD(_L("Done")); // TODO localise
 				}
 			else
 				{

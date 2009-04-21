@@ -76,7 +76,7 @@ void CMobblerSettingItemListSettings::LoadSettingValuesL()
 	nextUpdateCheck += TTimeIntervalDays(KUpdateIntervalDays); // the default update check should be 7 days after install
 	CMobblerLastFMConnection::TMode mode(CMobblerLastFMConnection::EOffline);
 	TInt downloadAlbumArt(KDefaultDownloadAlbumArt);
-	TBool accelerometerGestures = EFalse;
+	TBool accelerometerGestures(EFalse);
 	
 	if (openError == KErrNone)
 		{

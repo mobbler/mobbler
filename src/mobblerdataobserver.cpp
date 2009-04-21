@@ -22,7 +22,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
 #include <aknwaitdialog.h>
-
 #include <mobbler.rsg>
 
 #include "mobblerdataobserver.h"
@@ -45,7 +44,7 @@ void CMobblerFlatDataObserverHelper::ConstructL()
 	{
 	iWaitDialog = new (ELeave) CAknWaitDialog((REINTERPRET_CAST(CEikDialog**, &iWaitDialog)), ETrue);
 	iWaitDialog->SetCallback(this);
-	iWaitDialog->SetTextL(_L("Wait"));
+	iWaitDialog->SetTextL(_L("Please wait")); // TODO localise, how about "Please wait" or "Fetching" or "Fetching playlists"?
 	iWaitDialog->ExecuteLD(R_MOBBLER_WAIT_DIALOG);
 	}
 

@@ -21,15 +21,13 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-#ifndef __TRACKINFO_H__
-#define __TRACKINFO_H__
+#ifndef __MOBBLERTRACK_H__
+#define __MOBBLERTRACK_H__
 
 #include <e32base.h>
-#include <s32file.h>
 
 #include "mobblerbitmap.h"
 #include "mobblerdataobserver.h"
-#include "mobblerlastfmconnection.h"
 
 class CMobblerString;
 
@@ -124,6 +122,7 @@ private:
 	TBool FetchImageL(const TDesC8& aData);
 	void FetchImageL(TState aState, const TDesC8& aImageLocation);
 	void SaveAlbumArtL(const TDesC8& aData);
+	TBool OkToDownloadAlbumArt() const;
 	
 private:
 	void BitmapLoadedL(const CMobblerBitmap* aMobblerBitmap);
@@ -169,4 +168,6 @@ private:
 	TState iState;
 	};
 	
-#endif // __TRACKINFO_H__
+#endif // __MOBBLERTRACK_H__
+
+// End of file

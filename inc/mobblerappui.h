@@ -64,7 +64,15 @@ class CMobblerAppUi : public CAknViewAppUi,
 						public MRemConCoreApiTargetObserver,
 						public MMobblerFlatDataObserverHelper,
 						public MMobblerGestures
-	{	
+	{
+public:
+	enum TDownloadAlbumArt
+		{
+		ENever,
+		EOnlyRadio,
+		EAlwaysWhenOnline
+		};
+
 public:
 	void ConstructL();
 	CMobblerAppUi();

@@ -149,7 +149,7 @@ void CMobblerFriendList::SupportedCommandsL(RArray<TInt>& aCommands)
 	}
 
 
-void CMobblerFriendList::DataL(CMobblerFlatDataObserverHelper* aObserver, const TDesC8& aData, CMobblerLastFMConnection::TError aError)
+void CMobblerFriendList::DataL(CMobblerFlatDataObserverHelper* /*aObserver*/, const TDesC8& /*aData*/, CMobblerLastFMConnection::TError /*aError*/)
 	{
 	
 	}

@@ -235,14 +235,15 @@ RESOURCE STRING r_mobbler_share_artist { text = STR_mobbler_share_artist; }
 
 ///////////////////////////////////////////////////////////////////////////////
 
-// Mobbler 0.4.0 resources above,
-// Mobbler 0.4.1 resources below
+// Mobbler 0.4.5 resources above,
+// Mobbler 0.5.x resources below
+
+///////////////////////////////////////////////////////////////////////////////
 
 RESOURCE STRING	r_mobbler_playlist_create { text = STR_mobbler_playlist_create; }
 RESOURCE STRING r_mobbler_playlist_title { text = STR_mobbler_playlist_title; }
 RESOURCE STRING r_mobbler_playlist_description { text = STR_mobbler_playlist_description; }
 RESOURCE STRING	r_mobbler_format_tracks { text = STR_mobbler_format_tracks; }
 
-///////////////////////////////////////////////////////////////////////////////
 
 // End of file

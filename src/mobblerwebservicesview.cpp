@@ -153,8 +153,10 @@ void CMobblerWebServicesView::DynInitMenuPaneL(TInt aResourceId, CEikMenuPane* a
 	if (aResourceId == R_MOBBLER_WEBSERVICES_MENU_PANE)
 		{
 		if (iWebServicesControl->TopControl()->Type() == EMobblerCommandFriends)
-		aMenuPane->SetItemDimmed(EMobblerCommandShare, 
-						!static_cast<CMobblerAppUi*>(AppUi())->CurrentTrack() || supportedCommands.Find(EMobblerCommandShare) == KErrNotFound);
+			{
+			aMenuPane->SetItemDimmed(EMobblerCommandShare, 
+				!static_cast<CMobblerAppUi*>(AppUi())->CurrentTrack() || supportedCommands.Find(EMobblerCommandShare) == KErrNotFound);
+			}
 		}
 	else if (aResourceId == R_MOBBLER_SHOUT_SUBMENU_PANE)
 		{
