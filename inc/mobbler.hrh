@@ -33,6 +33,11 @@ enum TMobblerSettingItemListViewCommands
 	EMobblerCommandTools,
 	
 	EMobblerCommandPlus,
+	EMobblerCommandVisitWebPage,
+	EMobblerCommandTrackWebPage,
+	EMobblerCommandArtistWebPage,
+	EMobblerCommandAlbumWebPage,
+	EMobblerCommandEventsWebPage,
 	
 	EMobblerCommandToggleScrobbling,
 	EMobblerCommandSleepTimer,

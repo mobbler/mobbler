@@ -34,6 +34,7 @@ public:
 	static HBufC8* URLEncodeLC(const TDesC& aString);
 	
 	static TBuf8<2> LanguageL();
+	static TBuf<30> LocalLastFmDomainL();
 	};
 
 #endif // __MOBBLERUTILITY_H__

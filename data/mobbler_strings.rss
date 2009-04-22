@@ -245,5 +245,6 @@ RESOURCE STRING r_mobbler_playlist_title { text = STR_mobbler_playlist_title; }
 RESOURCE STRING r_mobbler_playlist_description { text = STR_mobbler_playlist_description; }
 RESOURCE STRING	r_mobbler_format_tracks { text = STR_mobbler_format_tracks; }
 
+RESOURCE STRING	r_mobbler_visit_lastfm { text = STR_mobbler_visit_lastfm; }
 
 // End of file

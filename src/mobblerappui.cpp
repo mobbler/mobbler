@@ -25,6 +25,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <akninfopopupnotecontroller.h>
 #include <AknLists.h>
 #include <aknnotewrappers.h>
+#include <aknserverapp.h>	// MAknServerAppExitObserver
 #include <aknsutils.h>
 #include <bautils.h> 
 
@@ -32,6 +33,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <browserlauncher.h>
 #endif
 
+#include <DocumentHandler.h>
 #include <mobbler.rsg>
 #include <mobbler_strings.rsg>
 #include <s32file.h>
@@ -708,7 +710,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 			    list->Model()->SetItemTextArray(items);
 			    list->Model()->SetOwnershipType(ELbmOwnsItemArray);
 			    
-			    CleanupStack::Pop(popup); //popup
+			    CleanupStack::Pop(popup);
 			    
 			    if (popup->ExecuteLD())
 			    	{
@@ -769,9 +771,81 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 			    		}
 			    	}
 			     
-			    CleanupStack::PopAndDestroy(list); //list
+			    CleanupStack::PopAndDestroy(list);
 				}
 			
+			break;
+		case EMobblerCommandVisitWebPage:
+			{
+			if (CurrentTrack())
+				{
+				CEikTextListBox* list(new(ELeave) CAknSinglePopupMenuStyleListBox);
+				CleanupStack::PushL(list);
+				CAknPopupList* popupList(CAknPopupList::NewL(list, 
+										 R_AVKON_SOFTKEYS_SELECT_CANCEL,
+										 AknPopupLayouts::EMenuWindow));
+				CleanupStack::PushL(popupList);
+
+				list->ConstructL(popupList, CEikListBox::ELeftDownInViewRect);
+				list->CreateScrollBarFrameL(ETrue);
+				list->ScrollBarFrame()->SetScrollBarVisibilityL(CEikScrollBarFrame::EOff,
+																CEikScrollBarFrame::EAuto);
+
+				CDesCArrayFlat* items(new CDesCArrayFlat(4));
+				CleanupStack::PushL(items);
+
+				HBufC* action(CurrentTrack()->Title().String().AllocLC());
+				items->AppendL(*action);
+				CleanupStack::PopAndDestroy(action);
+
+				action = CurrentTrack()->Artist().String().AllocLC();
+				items->AppendL(*action);
+				CleanupStack::PopAndDestroy(action);
+
+				if (CurrentTrack()->Album().String().Length() > 0)
+					{
+					action = CurrentTrack()->Album().String().AllocLC();
+					items->AppendL(*action);
+					CleanupStack::PopAndDestroy(action);
+					}
+
+				items->AppendL(iResourceReader->ResourceL(R_MOBBLER_EVENTS));
+
+				
+				CTextListBoxModel* model(list->Model());
+				model->SetItemTextArray(items);
+				model->SetOwnershipType(ELbmOwnsItemArray);
+				CleanupStack::Pop();
+
+				popupList->SetTitleL(iResourceReader->ResourceL(R_MOBBLER_VISIT_LASTFM));
+		
+				list->SetCurrentItemIndex(1);
+				TInt popupOk(popupList->ExecuteLD());
+				CleanupStack::Pop();
+				
+				if (popupOk)
+					{
+					switch (list->CurrentItemIndex())
+						{
+						case 0:
+							GoToLastFmL(EMobblerCommandTrackWebPage);
+							break;
+						case 1:
+							GoToLastFmL(EMobblerCommandArtistWebPage);
+							break;
+						case 2:
+							GoToLastFmL(EMobblerCommandAlbumWebPage);
+							break;
+						case 3:
+							GoToLastFmL(EMobblerCommandEventsWebPage);
+							break;
+						default:
+							break;
+						}
+					}
+			    CleanupStack::PopAndDestroy(list);
+				}
+			}
 			break;
 		case EMobblerCommandToggleScrobbling:
 			iLastFMConnection->ToggleScrobbling();
@@ -1459,4 +1533,71 @@ void CMobblerAppUi::HandleSingleShakeL(TMobblerShakeGestureDirection aDirection)
 		}
 	}
 
+void CMobblerAppUi::LaunchFileEmbeddedL(const TDesC& aFilename)
+	{
+	CDocumentHandler* docHandler(CDocumentHandler::NewL(CEikonEnv::Static()->Process()));
+
+	// Set the exit observer so HandleServerAppExit will be called
+	docHandler->SetExitObserver(this);
+
+	TDataType emptyDataType = TDataType();
+	docHandler->OpenFileEmbeddedL(aFilename, emptyDataType);
+
+	delete docHandler;
+	}
+ 
+void CMobblerAppUi::HandleServerAppExit(TInt aReason)
+	{
+	// Handle closing the handler application
+	MAknServerAppExitObserver::HandleServerAppExit(aReason);
+	}
+
+void CMobblerAppUi::GoToLastFmL(TInt aCommand)
+	{
+	CMobblerTrack* currentTrack(CurrentTrack());
+	
+	if (currentTrack)
+		{
+		_LIT(KMusicSlash, "music/");
+		_LIT(KSlash, "/");
+		_LIT(KUnderscoreSlash, "_/");
+		_LIT(KPlusEvents, "+events");
+
+		TBuf<255> url(MobblerUtility::LocalLastFmDomainL());
+		url.Append(KMusicSlash);
+		url.Append(currentTrack->Artist().String());
+		url.Append(KSlash);
+
+		switch (aCommand)
+			{
+			case EMobblerCommandArtistWebPage:
+				break;
+			case EMobblerCommandAlbumWebPage:
+				url.Append(currentTrack->Album().String());
+				break;
+			case EMobblerCommandTrackWebPage:
+				url.Append(KUnderscoreSlash);
+				url.Append(currentTrack->Title().String());
+				break;
+			case EMobblerCommandEventsWebPage:
+				url.Append(KPlusEvents);
+				break;
+
+			default:
+				break;
+			}
+
+		// replace space with '+' in the artist name for the URL
+		TInt position(url.Find(_L(" ")));
+		while (position != KErrNotFound)
+			{
+			url.Replace(position, 1, _L("+"));
+			position = url.Find(_L(" "));
+			}
+		
+#ifndef __WINS__
+		iBrowserLauncher->LaunchBrowserEmbeddedL(url);
+#endif
+		}
+	}
 // End of File

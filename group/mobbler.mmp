@@ -125,6 +125,7 @@ LIBRARY		aknicon.lib
 LIBRARY		aknskins.lib
 LIBRARY		apgrfx.lib
 LIBRARY		apparc.lib
+LIBRARY		apmime.lib	// TDataType
 LIBRARY		audioequalizereffect.lib
 LIBRARY		audioequalizerutility.lib
 LIBRARY		avkon.lib
@@ -135,6 +136,7 @@ LIBRARY		centralrepository.lib
 LIBRARY		charconv.lib
 LIBRARY		commdb.lib
 LIBRARY		commonengine.lib
+LIBRARY		commonui.lib	// CDocumentHandler
 LIBRARY		cone.lib
 LIBRARY		downloadmgr.lib
 LIBRARY		ecom.lib

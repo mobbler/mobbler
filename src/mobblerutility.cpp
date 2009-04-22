@@ -40,6 +40,19 @@ _LIT8(KSpanishLangCode, "es");
 _LIT8(KSwedishLangCode, "sv");
 _LIT8(KTurkishLangCode, "tu");
 
+// _LIT(KChineseUrl,		"http://cn.last.fm/"); /// No known Chinese mobile site
+_LIT(KEnglishUrl,		"http://m.last.fm/");
+_LIT(KFrenchUrl,		"http://m.lastfm.fr/");
+_LIT(KGermanUrl,		"http://m.lastfm.de/");
+_LIT(KItalianUrl,		"http://m.lastfm.it/");
+_LIT(KJapaneseUrl, 		"http://m.lastfm.jp/");
+_LIT(KPolishUrl,		"http://m.lastfm.pl/");
+_LIT(KPortugueseUrl,	"http://m.lastfm.com.br/");
+_LIT(KRussianUrl,		"http://m.lastfm.ru/");
+_LIT(KSpanishUrl,		"http://m.lastfm.es/");
+_LIT(KSwedishUrl,		"http://m.lastfm.se/");
+_LIT(KTurkishUrl,		"http://m.lastfm.com.tr/");
+
 HBufC8* MobblerUtility::MD5LC(const TDesC8& aSource)
 	{
 	CMD5* md5(CMD5::NewL());
@@ -151,5 +164,70 @@ TBuf8<2> MobblerUtility::LanguageL()
 	return language;
 	}
 
+TBuf<30> MobblerUtility::LocalLastFmDomainL()
+	{
+	TBuf<30> url;
+	url.Copy(KEnglishUrl); // default to English
+	
+	RArray<TLanguage> downgradePath;
+	CleanupClosePushL(downgradePath);
+	BaflUtils::GetDowngradePathL(CCoeEnv::Static()->FsSession(), User::Language(), downgradePath);
+	
+	TBool languageFound(EFalse);
+	
+	const TInt KLanguageCount(downgradePath.Count());
+	for (TInt i(0); i < KLanguageCount && !languageFound; ++i)
+		{
+		languageFound = ETrue;
+		
+		switch (downgradePath[i])
+			{
+			case ELangEnglish:
+				url.Copy(KEnglishUrl);
+				break;
+			case ELangFrench:
+				url.Copy(KFrenchUrl);
+				break;
+			case ELangGerman: 
+				url.Copy(KGermanUrl);
+				break;
+			case ELangSpanish: 
+				url.Copy(KSpanishUrl);
+				break;
+			case ELangItalian: 
+				url.Copy(KItalianUrl);
+				break;
+			case ELangSwedish: 
+				url.Copy(KSwedishUrl);
+				break;
+			case ELangPortuguese: 
+				url.Copy(KPortugueseUrl);
+				break;
+			case ELangRussian: 
+				url.Copy(KRussianUrl);
+				break;
+			case ELangPolish:
+				url.Copy(KPolishUrl);
+				break;
+/*			case ELangPrcChinese: 
+				url.Copy(KChineseUrl); // No known Chinese mobile site
+				break;*/
+			case ELangJapanese: 
+				url.Copy(KJapaneseUrl);
+				break;
+			case ELangTurkish:
+				url.Copy(KTurkishUrl);
+				break;
+			default:
+				// carry on iterating through the downgrade path
+				languageFound = EFalse;
+				break;
+			};
+		}
+	
+	CleanupStack::PopAndDestroy(&downgradePath);
+	
+	return url;
+	}
 
 // End of file

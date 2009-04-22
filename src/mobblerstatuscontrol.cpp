@@ -923,6 +923,10 @@ TKeyResponse CMobblerStatusControl::OfferKeyEventL(const TKeyEvent& aKeyEvent, T
 			const_cast<CMobblerAppUi&>(iAppUi).HandleCommandL(EMobblerCommandPlus);
 			response = EKeyWasConsumed;
 			break;
+		case '0':
+			const_cast<CMobblerAppUi&>(iAppUi).HandleCommandL(EMobblerCommandVisitWebPage);
+			response = EKeyWasConsumed;
+			break;
 		case '5':
 			const_cast<CMobblerAppUi&>(iAppUi).HandleCommandL(EMobblerCommandToggleScrobbling);
 			DrawDeferred();

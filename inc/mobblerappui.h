@@ -25,6 +25,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #define __MOBBLERAPPUI_H__
 
 #include <aknviewappui.h>
+#include <aknserverapp.h>	// MAknServerAppExitObserver
 #include <remconcoreapitargetobserver.h>    // link against RemConCoreApi.lib
 #include <remconcoreapitarget.h>            // and
 #include <remconinterfaceselector.h>        // RemConInterfaceBase.lib
@@ -63,7 +64,8 @@ class CMobblerAppUi : public CAknViewAppUi,
 						public MMobblerSleepTimerNotify,
 						public MRemConCoreApiTargetObserver,
 						public MMobblerFlatDataObserverHelper,
-						public MMobblerGestures
+						public MMobblerGestures,
+						public MAknServerAppExitObserver
 	{
 public:
 	enum TDownloadAlbumArt
@@ -141,6 +143,9 @@ private:
 	void SaveRadioStationsL();
 	void SetSleepTimer();
 	TBool RadioStartable() const;
+	
+	void LaunchFileEmbeddedL(const TDesC& aFilename);
+	void GoToLastFmL(TInt aCommand);
 
 private: // from MMobblerSleepTimerNotify
 	void TimerExpiredL(TAny* aTimer, TInt aError);
@@ -161,6 +166,9 @@ private:
 private:
 	void DataL(CMobblerFlatDataObserverHelper* aObserver, const TDesC8& aData, CMobblerLastFMConnection::TError aError);
 	
+private: // from MAknServerAppExitObserver.
+	void HandleServerAppExit(TInt aReason);
+ 
 private:
 	// the view classes
 	CMobblerSettingItemListView* iSettingView;
