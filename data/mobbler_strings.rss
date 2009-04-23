@@ -240,11 +240,13 @@ RESOURCE STRING r_mobbler_share_artist { text = STR_mobbler_share_artist; }
 
 ///////////////////////////////////////////////////////////////////////////////
 
-RESOURCE STRING	r_mobbler_playlist_create { text = STR_mobbler_playlist_create; }
+RESOURCE STRING r_mobbler_playlist_create { text = STR_mobbler_playlist_create; }
 RESOURCE STRING r_mobbler_playlist_title { text = STR_mobbler_playlist_title; }
 RESOURCE STRING r_mobbler_playlist_description { text = STR_mobbler_playlist_description; }
-RESOURCE STRING	r_mobbler_format_tracks { text = STR_mobbler_format_tracks; }
+RESOURCE STRING r_mobbler_format_tracks { text = STR_mobbler_format_tracks; }
 
-RESOURCE STRING	r_mobbler_visit_lastfm { text = STR_mobbler_visit_lastfm; }
+RESOURCE STRING r_mobbler_love_track_option { text = STR_mobbler_love_track_option; }
+
+RESOURCE STRING r_mobbler_visit_lastfm { text = STR_mobbler_visit_lastfm; }
 
 // End of file

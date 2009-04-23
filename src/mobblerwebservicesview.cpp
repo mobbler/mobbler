@@ -90,7 +90,7 @@ void CMobblerWebServicesView::DynInitMenuPaneL(TInt aResourceId, CEikMenuPane* a
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_VIEW,					EMobblerCommandView);
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_SHOUT,				EMobblerCommandShout);
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_EXIT,					EAknSoftkeyExit);
-		SetMenuItemTextL(aMenuPane, R_MOBBLER_LOVE_TRACK,			EMobblerCommandTrackLove);
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_LOVE_TRACK_OPTION,	EMobblerCommandTrackLove);
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_PLAYLIST_CREATE,		EMobblerCommandPlaylistCreate);
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_PLAYLIST_ADD_TRACK,	EMobblerCommandPlaylistAddTrack);
 		}
