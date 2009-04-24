@@ -31,6 +31,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 _LIT(KMobblerMifFile, "\\resource\\apps\\mobbler.mif");
 _LIT(KPngScrobble, "\\resource\\apps\\mobbler\\scrobble.png");
 _LIT(KPngTrackIcon, "\\resource\\apps\\mobbler\\icon_track.png");
+_LIT(KPngAlarmIcon, "\\resource\\apps\\mobbler\\icon_alarm.png");
 _LIT(KPngLastFm, "\\resource\\apps\\mobbler\\lastfm.png");
 
 const TUid KMusicAppUid = {0x102072C3};
@@ -116,6 +117,9 @@ CMobblerBitmap& CMobblerBitmapCollection::BitmapL(MMobblerBitmapObserver& aObser
 				break;
 			case EBitmapTrackIcon:
 				bitmap = CMobblerBitmap::NewL(aObserver, KPngTrackIcon, KImageTypePNGUid);
+				break;
+			case EBitmapAlarmIcon:
+				bitmap = CMobblerBitmap::NewL(aObserver, KPngAlarmIcon, KImageTypePNGUid);
 				break;
 			case EBitmapMore:
 				bitmap = CMobblerBitmap::NewL(aObserver, KMobblerMifFile, EMbmMobblerMore, EMbmMobblerMore_mask);

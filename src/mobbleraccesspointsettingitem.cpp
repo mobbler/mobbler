@@ -49,8 +49,10 @@ void CMobblerAccessPointSettingItem::LoadL()
 	CAknEnumeratedTextPopupSettingItem::LoadL();
 	}
 
-void CMobblerAccessPointSettingItem::LoadIapListL()
+TInt CMobblerAccessPointSettingItem::LoadIapListL()
 	{
+	TInt firstIapId(KErrNotFound);
+
 	// Add all the access point to the list
 	CCommsDatabase* commDb(CCommsDatabase::NewL(EDatabaseTypeIAP));
 	CleanupStack::PushL(commDb);
@@ -77,10 +79,18 @@ void CMobblerAccessPointSettingItem::LoadIapListL()
 			CleanupStack::PushL(enumText);
 			EnumeratedTextArray()->AppendL(enumText);
 			CleanupStack::Pop(enumText);
+
+			if (firstIapId == KErrNotFound)
+				{
+				firstIapId = iapId;
+				}
+
 			}
 
 	CleanupStack::PopAndDestroy(commView);
 	CleanupStack::PopAndDestroy(commDb);
+
+	return firstIapId;
 	}
 
 void CMobblerAccessPointSettingItem::CreateAndExecuteSettingPageL()

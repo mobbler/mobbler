@@ -33,7 +33,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #ifdef __WINS__
 _LIT(KLogPath, "C:");
 #else
-_LIT(KLogPath, "E:\\Mobbler\\");
+_LIT(KLogPath, "C:\\Mobbler\\");
 #endif
 
 _LIT(KLogFilename, "mobbler.log");

@@ -100,6 +100,8 @@ public:
 	void SetBufferSize(TTimeIntervalSeconds aBufferSize);
 	void SetAccelerometerGestures(TBool aAccelerometerGestures);
 	TBool AccelerometerGesturesAvailable() const;
+	void SetSleepTimerL(const TInt aMinutes);
+	void SetAlarmTimerL(const TTime aTime);
 	
 	TInt Scrobbled() const;
 	TInt Queued() const;
@@ -115,9 +117,14 @@ public:
 	TBool Backlight() const;
 	TInt ScrobblePercent() const;
 	TInt DownloadAlbumArt() const;
-	void SaveVolume();
+	void TrackStoppedL();
 
 	CMobblerResourceReader& CMobblerAppUi::ResourceReader() const;
+
+	TBool SleepTimerActive() const { return iSleepTimer->IsActive(); }
+	TBool AlarmActive() const { return iAlarmTimer->IsActive(); }
+	void RemoveSleepTimer();
+	void RemoveAlarm();
 
 public: // CEikAppUi
 	void HandleCommandL(TInt aCommand);
@@ -141,7 +148,7 @@ private:
 	
 	void LoadRadioStationsL();
 	void SaveRadioStationsL();
-	void SetSleepTimer();
+	void SleepL();
 	TBool RadioStartable() const;
 	
 	void LaunchFileEmbeddedL(const TDesC& aFilename);
@@ -218,7 +225,8 @@ private:
 
 	CMobblerSleepTimer* iSleepTimer;
 	TTime iTimeToSleep;
-	TInt iSleepAction;
+	TBool iSleepAfterTrackStopped;
+	CMobblerSleepTimer* iAlarmTimer;
 	
 	CMobblerWebServicesHelper* iWebServicesHelper;
 	

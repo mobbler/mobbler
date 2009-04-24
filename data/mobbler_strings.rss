@@ -246,7 +246,25 @@ RESOURCE STRING r_mobbler_playlist_description { text = STR_mobbler_playlist_des
 RESOURCE STRING r_mobbler_format_tracks { text = STR_mobbler_format_tracks; }
 
 RESOURCE STRING r_mobbler_love_track_option { text = STR_mobbler_love_track_option; }
-
 RESOURCE STRING r_mobbler_visit_lastfm { text = STR_mobbler_visit_lastfm; }
+
+RESOURCE STRING r_mobbler_sleep_timer_time				{ text = STR_mobbler_sleep_timer_time; }
+RESOURCE STRING r_mobbler_sleep_timer_minute			{ text = STR_mobbler_sleep_timer_minute; }
+RESOURCE STRING r_mobbler_sleep_timer_minutes			{ text = STR_mobbler_sleep_timer_minutes; }
+RESOURCE STRING r_mobbler_sleep_timer_setting_action	{ text = STR_mobbler_sleep_timer_setting_action; }
+RESOURCE STRING r_mobbler_sleep_timer_immediacy			{ text = STR_mobbler_sleep_timer_immediacy; }
+RESOURCE STRING r_mobbler_sleep_timer_immediate			{ text = STR_mobbler_sleep_timer_immediate; }
+RESOURCE STRING r_mobbler_sleep_timer_end_of_track		{ text = STR_mobbler_sleep_timer_end_of_track; }
+
+RESOURCE STRING r_mobbler_alarm					{ text = STR_mobbler_alarm; }
+RESOURCE STRING r_mobbler_alarm_prompt			{ text = STR_mobbler_alarm_prompt; }
+RESOURCE STRING r_mobbler_alarm_iap				{ text = STR_mobbler_alarm_iap; }
+RESOURCE STRING r_mobbler_alarm_expired			{ text = STR_mobbler_alarm_expired; }
+RESOURCE STRING r_mobbler_alarm_removed			{ text = STR_mobbler_alarm_removed; }
+RESOURCE STRING r_mobbler_alarm_hour_minute		{ text = STR_mobbler_alarm_hour_minute; }
+RESOURCE STRING r_mobbler_alarm_hour_minutes	{ text = STR_mobbler_alarm_hour_minutes; }
+RESOURCE STRING r_mobbler_alarm_hours_minute	{ text = STR_mobbler_alarm_hours_minute; }
+RESOURCE STRING r_mobbler_alarm_hours_minutes	{ text = STR_mobbler_alarm_hours_minutes; }
+RESOURCE STRING r_mobbler_alarm_disclaimer		{ text = STR_mobbler_alarm_disclaimer; }
 
 // End of file

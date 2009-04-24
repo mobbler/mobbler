@@ -30,7 +30,7 @@ class CMobblerAccessPointSettingItem : public CAknEnumeratedTextPopupSettingItem
     {
 public:
 	CMobblerAccessPointSettingItem(TInt aIdentifier, TInt& aValue);
-	void LoadIapListL();
+	TInt LoadIapListL();
 	void LoadL();
  
 private:

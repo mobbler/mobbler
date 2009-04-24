@@ -219,6 +219,7 @@ void CMobblerStatusControl::LoadGraphicsL()
 	iMobblerBitmapLastFm = &iAppUi.BitmapCollection().BitmapL(*this, CMobblerBitmapCollection::EBitmapLastFm);
 	iMobblerBitmapScrobble = &iAppUi.BitmapCollection().BitmapL(*this, CMobblerBitmapCollection::EBitmapScrobble);
 	iMobblerBitmapTrackIcon = &iAppUi.BitmapCollection().BitmapL(*this, CMobblerBitmapCollection::EBitmapTrackIcon);
+	iMobblerBitmapAlarmIcon = &iAppUi.BitmapCollection().BitmapL(*this, CMobblerBitmapCollection::EBitmapAlarmIcon);
 	iMobblerBitmapMore = &iAppUi.BitmapCollection().BitmapL(*this, CMobblerBitmapCollection::EBitmapMore);
 	iMobblerBitmapLove = &iAppUi.BitmapCollection().BitmapL(*this, CMobblerBitmapCollection::EBitmapLove);
 	iMobblerBitmapBan = &iAppUi.BitmapCollection().BitmapL(*this, CMobblerBitmapCollection::EBitmapBan);
@@ -798,6 +799,10 @@ void CMobblerStatusControl::Draw(const TRect& /*aRect*/) const
 		}
 	
 	BitBltMobblerBitmap(iMobblerBitmapTrackIcon, TPoint(iRectTitleText.iTl.iX -  iMobblerBitmapTrackIcon->SizeInPixels().iWidth, iRectTitleText.iTl.iY + 3));
+	if (iAppUi.AlarmActive())
+		{
+		BitBltMobblerBitmap(iMobblerBitmapAlarmIcon, TPoint(1, 1));
+		}
 		
 	SystemGc().BitBlt(TPoint(0, 0), iBackBuffer);
 	}
@@ -927,11 +932,23 @@ TKeyResponse CMobblerStatusControl::OfferKeyEventL(const TKeyEvent& aKeyEvent, T
 			const_cast<CMobblerAppUi&>(iAppUi).HandleCommandL(EMobblerCommandVisitWebPage);
 			response = EKeyWasConsumed;
 			break;
+#ifdef _DEBUG
+		case '4':
+			const_cast<CMobblerAppUi&>(iAppUi).HandleCommandL(EMobblerCommandSleepTimer);
+			response = EKeyWasConsumed;
+			break;
+#endif
 		case '5':
 			const_cast<CMobblerAppUi&>(iAppUi).HandleCommandL(EMobblerCommandToggleScrobbling);
 			DrawDeferred();
 			response = EKeyWasConsumed;
 			break;
+#ifdef _DEBUG
+		case '6':
+			const_cast<CMobblerAppUi&>(iAppUi).HandleCommandL(EMobblerCommandAlarm);
+			response = EKeyWasConsumed;
+			break;
+#endif
 #ifdef _DEBUG
 		case '7':
 			if (iAppUi.Backlight())

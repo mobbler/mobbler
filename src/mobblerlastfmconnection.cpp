@@ -1340,7 +1340,7 @@ void CMobblerLastFMConnection::TrackStoppedL()
 	SaveTrackQueue();
 	DoSubmitL();
 
-	static_cast<CMobblerAppUi*>(CEikonEnv::Static()->AppUi())->SaveVolume();
+	static_cast<CMobblerAppUi*>(CEikonEnv::Static()->AppUi())->TrackStoppedL();
 	}
 
 TBool CMobblerLastFMConnection::DoSubmitL()
@@ -1959,9 +1959,10 @@ void CMobblerLastFMConnection::LoadTrackQueueL()
 		RFileReadStream readStream(file);
 		CleanupClosePushL(readStream);
 		
-		const TInt KTrackCount(readStream.ReadInt32L());
+		TInt trackCount(0);
+		TRAP_IGNORE(trackCount = readStream.ReadInt32L());
 
-		for (TInt i(0) ; i < KTrackCount ; ++i)
+		for (TInt i(0); i < trackCount; ++i)
 			{
 			CMobblerTrack* track(CMobblerTrack::NewL(readStream));
 			CleanupStack::PushL(track);

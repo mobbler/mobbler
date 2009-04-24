@@ -33,6 +33,20 @@ _LIT(KSettingsFile, "c:settings.ini");
 class CMobblerSettingItemListSettings : public CBase
 	{
 public:
+	enum TSleepTimerAction
+		{
+		EStopPlaying,
+		EGoOffline,
+		ExitMobber
+		};
+
+	enum TSleepTimerImmediacy
+		{
+		EImmediately,
+		EEndOfTrack
+		};
+
+public:
 	static CMobblerSettingItemListSettings* NewL();
 	~CMobblerSettingItemListSettings();
 		
@@ -56,8 +70,8 @@ public:
 	TBool& CheckForUpdates() { return iCheckForUpdates; }
 	void SetCheckForUpdates(TBool aCheckForUpdates) { iCheckForUpdates = aCheckForUpdates; }
 	
-	TInt& IapID() { return iIapID; }
-	void SetIapID(TInt aIapID) { iIapID = aIapID; }
+	TInt& IapId() { return iIapId; }
+	void SetIapId(TInt aIapId) { iIapId = aIapId; }
 	
 	TInt& BufferSize() { return iBufferSize; }
 	void SetBufferSize(TInt aBufferSize) { iBufferSize = aBufferSize; }
@@ -85,13 +99,28 @@ public:
 
 	TBool& AccelerometerGestures() { return iAccelerometerGestures; }
 	void SetAccelerometerGestures(TBool aAccelerometerGestures) { iAccelerometerGestures = aAccelerometerGestures; }
+	
+	TInt& SleepTimerAction() { return iSleepTimerAction; }
+	void SetSleepTimerAction(TInt aSleepTimerAction) { iSleepTimerAction = aSleepTimerAction; }
+	
+	TInt& SleepTimerImmediacy() { return iSleepTimerImmediacy; }
+	void SetSleepTimerImmediacy(TInt aSleepTimerImmediacy) { iSleepTimerImmediacy = aSleepTimerImmediacy; }
 
+	TBool& AlarmOn() { return iAlarmOn; }
+	void SetAlarmOn(TBool aAlarmOn) { iAlarmOn = aAlarmOn; };
+
+	TTime& AlarmTime() { return iAlarmTime; }
+	void SetAlarmTime(TTime aAlarmTime) { iAlarmTime = aAlarmTime; }
+
+	TInt& AlarmIapId() { return iAlarmIapId; }
+	void SetAlarmIapId(TInt aAlarmIapId) { iAlarmIapId = aAlarmIapId; }
+	
 protected:
 	TBuf<30> iUsername;
 	TBuf<30> iPassword;
 	TBool iBacklight;
 	TBool iCheckForUpdates;
-	TInt iIapID;
+	TInt iIapId;
 	TInt iBufferSize;
 	TInt iEqualizerIndex;
 	TInt iScrobblePercent;
@@ -101,6 +130,11 @@ protected:
 	CMobblerLastFMConnection::TMode iMode;
 	TInt iDownloadAlbumArt;
 	TBool iAccelerometerGestures;
+	TInt iSleepTimerAction;
+	TInt iSleepTimerImmediacy;
+	TBool iAlarmOn;
+	TTime iAlarmTime;
+	TInt iAlarmIapId;
 	};
 
 #endif // __MOBBLERSETTINGITEMLISTSETTINGS_H__

@@ -37,6 +37,7 @@ public:
 		EBitmapLastFm,
 		EBitmapScrobble,
 		EBitmapTrackIcon,
+		EBitmapAlarmIcon,
 		EBitmapMore,
 		EBitmapLove,
 		EBitmapBan,

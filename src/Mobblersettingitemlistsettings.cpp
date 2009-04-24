@@ -39,7 +39,10 @@ const TInt KDefaultVolume(0);
 const TInt KDefaultVolume(5);
 #endif
 const TInt KDefaultSleepTimerMinutes(30);
-const TInt KDefaultDownloadAlbumArt(1);
+const TInt KDefaultDownloadAlbumArt(CMobblerAppUi::EOnlyRadio);
+const TInt KDefaultSleepTimerAction(CMobblerSettingItemListSettings::EGoOffline);
+const TInt KDefaultSleepTimerImmediacy(CMobblerSettingItemListSettings::EImmediately);
+_LIT(KDefaultAlarmTime, "070000."); // "HHMMSS."
 
 CMobblerSettingItemListSettings* CMobblerSettingItemListSettings::NewL()
 	{
@@ -77,7 +80,12 @@ void CMobblerSettingItemListSettings::LoadSettingValuesL()
 	CMobblerLastFMConnection::TMode mode(CMobblerLastFMConnection::EOffline);
 	TInt downloadAlbumArt(KDefaultDownloadAlbumArt);
 	TBool accelerometerGestures(EFalse);
-	
+	TInt sleepTimerAction(KDefaultSleepTimerAction);
+	TInt sleepTimerImmediacy(KDefaultSleepTimerImmediacy);
+	TBool alarmOn(EFalse);
+	TTime alarmTime(KDefaultAlarmTime);
+	TUint32 alarmIapId(0);
+
 	if (openError == KErrNone)
 		{
 		RFileReadStream readStream(file);
@@ -121,6 +129,18 @@ void CMobblerSettingItemListSettings::LoadSettingValuesL()
 		TRAP_IGNORE(downloadAlbumArt = readStream.ReadInt16L());
 		
 		TRAP_IGNORE(accelerometerGestures = readStream.ReadInt8L());
+		TRAP_IGNORE(sleepTimerAction = readStream.ReadInt16L());
+		TRAP_IGNORE(sleepTimerImmediacy = readStream.ReadInt16L());
+		TRAP_IGNORE(alarmOn = readStream.ReadInt8L());
+
+		TRAP(errorHigh, high = readStream.ReadInt32L());
+		TRAP(errorLow, low = readStream.ReadInt32L());
+		if (errorHigh == KErrNone && errorLow == KErrNone)
+			{
+			alarmTime = TTime(MAKE_TINT64(high, low));
+			}
+		alarmIapId = iapId;
+		TRAP_IGNORE(alarmIapId = readStream.ReadUint32L());
 		
 		SetUsername(username);
 		SetPassword(password);
@@ -136,7 +156,7 @@ void CMobblerSettingItemListSettings::LoadSettingValuesL()
 
 	SetBacklight(backlight);
 	SetCheckForUpdates(autoUpdatesOn);
-	SetIapID(iapId);
+	SetIapId(iapId);
 	SetBufferSize(bufferSize);
 	SetEqualizerIndex(equalizerIndex);
 	SetScrobblePercent(scrobblePercent);
@@ -146,6 +166,11 @@ void CMobblerSettingItemListSettings::LoadSettingValuesL()
 	SetMode(mode);
 	SetDownloadAlbumArt(downloadAlbumArt);
 	SetAccelerometerGestures(accelerometerGestures);
+	SetSleepTimerAction(sleepTimerAction);
+	SetSleepTimerImmediacy(sleepTimerImmediacy);
+	SetAlarmOn(alarmOn);
+	SetAlarmTime(alarmTime);
+	SetAlarmIapId(alarmIapId);
 
 	CleanupStack::PopAndDestroy(&file);
 	}
@@ -166,7 +191,7 @@ void CMobblerSettingItemListSettings::SaveSettingValuesL()
 		writeStream << Password();
 		writeStream.WriteInt8L(Backlight());
 		writeStream.WriteInt8L(CheckForUpdates());
-		writeStream.WriteUint32L(IapID());
+		writeStream.WriteUint32L(IapId());
 		writeStream.WriteUint8L(BufferSize());
 		writeStream.WriteInt16L(EqualizerIndex());
 		writeStream.WriteInt16L(ScrobblePercent());
@@ -177,6 +202,12 @@ void CMobblerSettingItemListSettings::SaveSettingValuesL()
 		writeStream.WriteInt8L(Mode());
 		writeStream.WriteInt16L(DownloadAlbumArt());
 		writeStream.WriteInt8L(AccelerometerGestures());
+		writeStream.WriteInt16L(SleepTimerAction());
+		writeStream.WriteInt16L(SleepTimerImmediacy());
+		writeStream.WriteInt8L(AlarmOn());
+		writeStream.WriteInt32L(I64HIGH(AlarmTime().Int64()));
+		writeStream.WriteInt32L(I64LOW(AlarmTime().Int64()));
+		writeStream.WriteUint32L(AlarmIapId());
 		
 		CleanupStack::PopAndDestroy(&writeStream);
 		}

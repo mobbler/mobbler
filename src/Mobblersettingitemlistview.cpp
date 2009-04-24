@@ -26,6 +26,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <mobbler.rsg>
 #include <mobbler_strings.rsg>
 
+#include "mobbler.hrh"
 #include "mobblerappui.h"
 #include "mobbleraccesspointsettingitem.h"
 #include "mobblerresourcereader.h"
@@ -72,10 +73,21 @@ void CMobblerSettingItemListView::HandleCommandL(TInt aCommand)
 		{
 		// save and set details then switch back to the status view
 		iSettings->SaveSettingValuesL();
-		static_cast<CMobblerAppUi*>(AppUi())->SetDetailsL(iSettings->Username(), iSettings->Password());
-		static_cast<CMobblerAppUi*>(AppUi())->SetIapIDL(iSettings->IapID());
-		static_cast<CMobblerAppUi*>(AppUi())->SetBufferSize(iSettings->BufferSize());
-		static_cast<CMobblerAppUi*>(AppUi())->SetAccelerometerGestures(iSettings->AccelerometerGestures());
+		if (iSettingsToSet == ENormalSettings)
+			{
+			static_cast<CMobblerAppUi*>(AppUi())->SetDetailsL(iSettings->Username(), iSettings->Password());
+			static_cast<CMobblerAppUi*>(AppUi())->SetIapIDL(iSettings->IapId());
+			static_cast<CMobblerAppUi*>(AppUi())->SetBufferSize(iSettings->BufferSize());
+			static_cast<CMobblerAppUi*>(AppUi())->SetAccelerometerGestures(iSettings->AccelerometerGestures());
+			}
+		else if (iSettingsToSet == ESleepTimer)
+			{
+			static_cast<CMobblerAppUi*>(AppUi())->SetSleepTimerL(iSettings->SleepTimerMinutes());
+			}
+		else if (iSettingsToSet == EAlarm)
+			{
+			static_cast<CMobblerAppUi*>(AppUi())->SetAlarmTimerL(iSettings->AlarmTime());
+			}
 		AppUi()->ActivateLocalViewL(TUid::Uid(0xA0007CA8));
 		}
 	else if (aCommand == EAknSoftkeyCancel)
@@ -84,14 +96,58 @@ void CMobblerSettingItemListView::HandleCommandL(TInt aCommand)
 		iSettings->LoadSettingValuesL();
 		AppUi()->ActivateLocalViewL(TUid::Uid(0xA0007CA8));
 		}
+	else if (aCommand == EMobblerCommandRemove)
+		{
+		// reset the details then switch back to the status view
+		iSettings->LoadSettingValuesL();
+
+		// TODO or send custom message to remove sleep/alarm?
+		if (iSettingsToSet == ESleepTimer)
+			{
+			static_cast<CMobblerAppUi*>(AppUi())->RemoveSleepTimer();
+			}
+		else if (iSettingsToSet == EAlarm)
+			{
+			static_cast<CMobblerAppUi*>(AppUi())->RemoveAlarm();
+			}
+
+		AppUi()->ActivateLocalViewL(TUid::Uid(0xA0007CA8));
+		}
 	else
 		{
 		AppUi()->HandleCommandL(aCommand);
 		}
 	}
 
-void CMobblerSettingItemListView::DoActivateL(const TVwsViewId& /*aPrevViewId*/, TUid /*aCustomMessageId*/, const TDesC8& /*aCustomMessage*/)
+void CMobblerSettingItemListView::DoActivateL(const TVwsViewId& /*aPrevViewId*/, TUid aCustomMessageId, const TDesC8& /*aCustomMessage*/)
 	{
+	iSettingsToSet = (TSettingsToSet)aCustomMessageId.iUid;
+
+	if ((iSettingsToSet == ESleepTimer && 
+		static_cast<CMobblerAppUi*>(AppUi())->SleepTimerActive())
+			||
+		(iSettingsToSet == EAlarm && 
+		static_cast<CMobblerAppUi*>(AppUi())->AlarmActive()))
+		{
+		// Change the Cancel softkey to Remove
+		TInt pos(Cba()->PositionById(EAknSoftkeyCancel));
+		if (pos != KErrNotFound)
+			{
+			Cba()->AddCommandToStackL(pos, EMobblerCommandRemove, 
+				static_cast<CMobblerAppUi*>(AppUi())->ResourceReader().ResourceL(R_MOBBLER_SOFTKEY_REMOVE));
+			Cba()->DrawNow();
+			}
+		}
+	else
+		{
+		TInt pos(Cba()->PositionById(EMobblerCommandRemove));
+		if (pos != KErrNotFound)
+			{
+			Cba()->RemoveCommandFromStack(pos, EMobblerCommandRemove);
+			Cba()->DrawNow();
+			}
+		}
+
 	if (!iMobblerSettingItemList)
 		{
 		iMobblerSettingItemList = new (ELeave) CMobblerSettingItemList(*iSettings, this);
@@ -99,9 +155,8 @@ void CMobblerSettingItemListView::DoActivateL(const TVwsViewId& /*aPrevViewId*/,
 		iMobblerSettingItemList->ConstructFromResourceL(R_MOBBLER_SETTING_ITEM_LIST);
 		iMobblerSettingItemList->LoadSettingsL();
 		
-		LoadListL();
-		
 		iSettings->LoadSettingValuesL();
+		LoadListL();
 		iMobblerSettingItemList->ActivateL();
 		AppUi()->AddToStackL(*this, iMobblerSettingItemList);
 		}
@@ -147,6 +202,19 @@ void CMobblerSettingItemListView::SetModeL(CMobblerLastFMConnection::TMode aMode
 	iSettings->SaveSettingValuesL();
 	}
 
+void CMobblerSettingItemListView::SetAlarmL(TBool aAlarmOn)
+	{
+	iSettings->SetAlarmOn(aAlarmOn);
+	iSettings->SaveSettingValuesL();
+	}
+
+void CMobblerSettingItemListView::SetAlarmL(TTime aAlarmTime)
+	{
+	iSettings->SetAlarmOn(ETrue);
+	iSettings->SetAlarmTime(aAlarmTime);
+	iSettings->SaveSettingValuesL();
+	}
+
 void CMobblerSettingItemListView::HandleStatusPaneSizeChange()
 	{
 	CAknView::HandleStatusPaneSizeChange();
@@ -162,62 +230,120 @@ void CMobblerSettingItemListView::LoadListL()
 	iIsNumberedStyle = iMobblerSettingItemList->IsNumberedStyle();
 	iIcons = iMobblerSettingItemList->ListBox()->ItemDrawer()->FormattedCellData()->IconArray();
 
-	// Username text setting item
-	CreateTextItemL(iSettings->Username(),
-					R_MOBBLER_USERNAME, 
-					R_MOBBLER_SETTING_PAGE_USERNAME);
-
-	// Password setting item
-	CreatePasswordItemL(iSettings->Password(),
-						R_MOBBLER_PASSWORD,
-						R_MOBBLER_SETTING_PAGE_PASSWORD);
-
-	// IAP enumerated text setting item
-	CreateIapItemL(iSettings->IapID(),
-				   R_MOBBLER_IAP,
-				   R_MOBBLER_SETTING_PAGE_ENUM);
-
-	// Buffer size slider setting item
-	CreateSliderItemL(iSettings->BufferSize(),
-					  R_MOBBLER_BUFFER_SIZE,
-					  R_MOBBLER_SLIDER_SETTING_PAGE_BUFFER_SIZE,
-					  R_MOBBLER_BUFFER_SIZE_SECOND,
-					  R_MOBBLER_BUFFER_SIZE_SECONDS);
-
-	// Download album art enumerated setting item
-	CreateEnumItemL(iSettings->DownloadAlbumArt(),
-					R_MOBBLER_DOWNLOAD_ALBUM_ART,
-					R_MOBBLER_SETTING_PAGE_ENUM);
-	
-	// Scrobble percent slider setting item
-	CreateSliderItemL(iSettings->ScrobblePercent(),
-					  R_MOBBLER_SCROBBLE_PERCENT,
-					  R_MOBBLER_SLIDER_SETTING_PAGE_SCROBBLE_PERCENT,
-					  R_MOBBLER_PERCENT,
-					  R_MOBBLER_PERCENT);
-
-	// Check for updates binary popup setting item
-	CreateBinaryItemL(iSettings->CheckForUpdates(),
-					  R_MOBBLER_CHECK_FOR_UPDATES_ONCE_A_WEEK,
-					  R_MOBBLER_BINARY_SETTING_PAGE,
-					  R_MOBBLER_CHECK_FOR_UPDATES_NO,
-					  R_MOBBLER_CHECK_FOR_UPDATES_YES);
-	
-	// Backlight binary popup setting item
-	CreateBinaryItemL(iSettings->Backlight(),
-					  R_MOBBLER_BACKLIGHT,
-					  R_MOBBLER_BINARY_SETTING_PAGE,
-					  R_MOBBLER_BACKLIGHT_SYSTEM_DEFAULT,
-					  R_MOBBLER_BACKLIGHT_ON_WHEN_ACTIVE);
-	
-	// Accelerometer gestures binary popup setting item
-	if (static_cast<CMobblerAppUi*>(AppUi())->AccelerometerGesturesAvailable())
+	if (iSettingsToSet == ENormalSettings)
 		{
-		CreateBinaryItemL(iSettings->AccelerometerGestures(),
-							  R_MOBBLER_ACCELEROMETER_GESTURES,
-							  R_MOBBLER_BINARY_SETTING_PAGE,
-							  R_MOBBLER_ACCELEROMETER_GESTURES_OFF,
-							  R_MOBBLER_ACCELEROMETER_GESTURES_ON);
+		// Username text setting item
+		CreateTextItemL(iSettings->Username(),
+						R_MOBBLER_USERNAME, 
+						R_MOBBLER_SETTING_PAGE_USERNAME);
+
+		// Password setting item
+		CreatePasswordItemL(iSettings->Password(),
+							R_MOBBLER_PASSWORD,
+							R_MOBBLER_SETTING_PAGE_PASSWORD);
+
+		// IAP enumerated text setting item
+		CreateIapItemL(iSettings->IapId(),
+					   R_MOBBLER_IAP,
+					   R_MOBBLER_SETTING_PAGE_ENUM);
+
+		// Buffer size slider setting item
+		CreateSliderItemL(iSettings->BufferSize(),
+						  R_MOBBLER_BUFFER_SIZE,
+						  R_MOBBLER_SLIDER_SETTING_PAGE_BUFFER_SIZE,
+						  R_MOBBLER_BUFFER_SIZE_SECOND,
+						  R_MOBBLER_BUFFER_SIZE_SECONDS);
+
+		// Download album art enumerated setting item
+		RArray<TInt> array;
+		CleanupClosePushL(array);
+		array.AppendL(R_MOBBLER_DOWNLOAD_ALBUM_ART_NEVER);
+		array.AppendL(R_MOBBLER_DOWNLOAD_ALBUM_ART_RADIO_ONLY);
+		array.AppendL(R_MOBBLER_DOWNLOAD_ALBUM_ART_ALWAYS_WHEN_ONLINE);
+		CreateEnumItemL(iSettings->DownloadAlbumArt(),
+						R_MOBBLER_DOWNLOAD_ALBUM_ART,
+						R_MOBBLER_SETTING_PAGE_ENUM,
+						array);
+		CleanupStack::PopAndDestroy(&array);
+		
+		// Scrobble percent slider setting item
+		CreateSliderItemL(iSettings->ScrobblePercent(),
+						  R_MOBBLER_SCROBBLE_PERCENT,
+						  R_MOBBLER_SLIDER_SETTING_PAGE_SCROBBLE_PERCENT,
+						  R_MOBBLER_PERCENT,
+						  R_MOBBLER_PERCENT);
+
+		// Check for updates binary popup setting item
+		CreateBinaryItemL(iSettings->CheckForUpdates(),
+						  R_MOBBLER_CHECK_FOR_UPDATES_ONCE_A_WEEK,
+						  R_MOBBLER_BINARY_SETTING_PAGE,
+						  R_MOBBLER_CHECK_FOR_UPDATES_NO,
+						  R_MOBBLER_CHECK_FOR_UPDATES_YES);
+		
+		// Backlight binary popup setting item
+		CreateBinaryItemL(iSettings->Backlight(),
+						  R_MOBBLER_BACKLIGHT,
+						  R_MOBBLER_BINARY_SETTING_PAGE,
+						  R_MOBBLER_BACKLIGHT_SYSTEM_DEFAULT,
+						  R_MOBBLER_BACKLIGHT_ON_WHEN_ACTIVE);
+		
+		// Accelerometer gestures binary popup setting item
+		if (static_cast<CMobblerAppUi*>(AppUi())->AccelerometerGesturesAvailable())
+			{
+			CreateBinaryItemL(iSettings->AccelerometerGestures(),
+								  R_MOBBLER_ACCELEROMETER_GESTURES,
+								  R_MOBBLER_BINARY_SETTING_PAGE,
+								  R_MOBBLER_ACCELEROMETER_GESTURES_OFF,
+								  R_MOBBLER_ACCELEROMETER_GESTURES_ON);
+			}
+		}
+	else if (iSettingsToSet == ESleepTimer)
+		{
+		// Minutes until sleep setting item
+		if (iSettings->SleepTimerMinutes() < 1)
+			{
+			iSettings->SetSleepTimerMinutes(1);
+			}
+		CreateSliderItemL(iSettings->SleepTimerMinutes(), // TODO or CreateIntegerItemL ?
+						  R_MOBBLER_SLEEP_TIMER_TIME,
+						  R_MOBBLER_SLIDER_SETTING_PAGE_SLEEP_MINUTES,
+						  R_MOBBLER_SLEEP_TIMER_MINUTE,
+						  R_MOBBLER_SLEEP_TIMER_MINUTES);
+
+		// Sleep timer action enumerated setting item
+		RArray<TInt> array;
+		CleanupClosePushL(array);
+		array.AppendL(R_MOBBLER_SLEEP_TIMER_ACTION_STOP);
+		array.AppendL(R_MOBBLER_SLEEP_TIMER_ACTION_OFFLINE);
+		array.AppendL(R_MOBBLER_SLEEP_TIMER_ACTION_EXIT);
+
+		CreateEnumItemL(iSettings->SleepTimerAction(),
+						R_MOBBLER_SLEEP_TIMER_SETTING_ACTION,
+						R_MOBBLER_SETTING_PAGE_ENUM,
+						array);
+
+		CleanupStack::PopAndDestroy(&array);
+
+/*		// TODO needs more testing, so don't show yet
+		// Sleep immediacy binary setting item
+		CreateBinaryItemL(iSettings->SleepTimerImmediacy(),
+						  R_MOBBLER_SLEEP_TIMER_IMMEDIACY,
+						  R_MOBBLER_BINARY_SETTING_PAGE,
+						  R_MOBBLER_SLEEP_TIMER_IMMEDIATE,
+						  R_MOBBLER_SLEEP_TIMER_END_OF_TRACK);*/
+		}
+	else if (iSettingsToSet == EAlarm)
+		{
+		// Alarm time setting item
+		CreateTimeItemL(iSettings->AlarmTime(),
+						R_MOBBLER_ALARM_PROMPT,
+						R_MOBBLER_TIME_SETTING_PAGE);
+
+		// Alarm IAP enumerated text setting item
+		CreateIapItemL(iSettings->AlarmIapId(),
+					   R_MOBBLER_IAP,
+					   R_MOBBLER_SETTING_PAGE_ENUM,
+					   EFalse);
 		}
 	
 	// Required when there is only one setting item
@@ -263,7 +389,8 @@ void CMobblerSettingItemListView::CreatePasswordItemL(TDes& aPassword,
 
 void CMobblerSettingItemListView::CreateIapItemL(TInt& aIapId, 
 												 const TInt aTitleResource, 
-												 const TInt aPageResource)
+												 const TInt aPageResource,
+												 const TBool aAlwaysAsk)
 	{
 	// To avoid "Setting Item Lis 6" panic
 	TInt tempIapId(aIapId);
@@ -282,18 +409,28 @@ void CMobblerSettingItemListView::CreateIapItemL(TInt& aIapId,
 	texts->ResetAndDestroy();
 	CAknEnumeratedText* enumText;
 
-	// "Always ask" text
-	enumText = new (ELeave) CAknEnumeratedText(0, static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->ResourceReader().ResourceL(R_MOBBLER_ALWAYS_ASK).AllocLC());
-	CleanupStack::Pop();
-	CleanupStack::PushL(enumText);
-	texts->AppendL(enumText);
-	CleanupStack::Pop(enumText);
+	if (aAlwaysAsk)
+		{
+		// "Always ask" text
+		enumText = new (ELeave) CAknEnumeratedText(0, static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->ResourceReader().ResourceL(R_MOBBLER_ALWAYS_ASK).AllocLC());
+		CleanupStack::Pop();
+		CleanupStack::PushL(enumText);
+		texts->AppendL(enumText);
+		CleanupStack::Pop(enumText);
+		}
 
 	// Load list of IAPs
-	item->LoadIapListL();
+	TInt firstIapId(item->LoadIapListL());
 
 	// Set the real value for the item
-	aIapId = tempIapId;
+	if (!aAlwaysAsk && firstIapId != KErrNotFound)
+		{
+		aIapId = firstIapId;
+		}
+	else
+		{
+		aIapId = tempIapId;
+		}	
 
 	// Load list of IAPs
 	item->LoadL();
@@ -364,7 +501,8 @@ void CMobblerSettingItemListView::CreateBinaryItemL(TBool& aBinaryValue,
 
 void CMobblerSettingItemListView::CreateEnumItemL(TInt& aEnumId, 
 												 const TInt aTitleResource, 
-												 const TInt aPageResource)
+												 const TInt aPageResource,
+												 RArray<TInt>& aEnumResources)
 	{
 
 	// To avoid "Setting Item Lis 6" panic. If it occurs, double check settings
@@ -385,34 +523,38 @@ void CMobblerSettingItemListView::CreateEnumItemL(TInt& aEnumId,
 	texts->ResetAndDestroy();
 	CAknEnumeratedText* enumText;
 
-	// Text 1
-	const TDesC& text1(static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->ResourceReader().ResourceL(R_MOBBLER_DOWNLOAD_ALBUM_ART_NEVER));
-	enumText = new (ELeave) CAknEnumeratedText(0, text1.AllocLC());
-	CleanupStack::Pop();
-	CleanupStack::PushL(enumText);
-	texts->AppendL(enumText);
-	CleanupStack::Pop(enumText);
-
-	// Text 2
-	const TDesC& text2(static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->ResourceReader().ResourceL(R_MOBBLER_DOWNLOAD_ALBUM_ART_RADIO_ONLY));
-	enumText = new (ELeave) CAknEnumeratedText(1, text2.AllocLC());
-	CleanupStack::Pop();
-	CleanupStack::PushL(enumText);
-	texts->AppendL(enumText);
-	CleanupStack::Pop(enumText);
-
-	// Text 3
-	const TDesC& text3(static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->ResourceReader().ResourceL(R_MOBBLER_DOWNLOAD_ALBUM_ART_ALWAYS_WHEN_ONLINE));
-	enumText = new (ELeave) CAknEnumeratedText(2, text3.AllocLC());
-	CleanupStack::Pop();
-	CleanupStack::PushL(enumText);
-	texts->AppendL(enumText);
-	CleanupStack::Pop(enumText);
+	for (TInt i(0); i < aEnumResources.Count(); ++i)
+		{
+		const TDesC& text(static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->ResourceReader().ResourceL(aEnumResources[i]));
+		enumText = new (ELeave) CAknEnumeratedText(i, text.AllocLC());
+		CleanupStack::Pop();
+		CleanupStack::PushL(enumText);
+		texts->AppendL(enumText);
+		CleanupStack::Pop(enumText);
+		}
 
 	// Set the real value for the item
 	aEnumId = tempEnumId;
 	// Tell the control to load in the value
 	item->LoadL();
+
+	iMobblerSettingItemList->SettingItemArray()->AppendL(item);
+	CleanupStack::Pop(item);
+	++iOrdinal;
+	}
+
+void CMobblerSettingItemListView::CreateTimeItemL(TTime& aValue, 
+													const TInt aTitleResource, 
+													const TInt aPageResource)
+	{
+	CAknTimeOrDateSettingItem* item(new (ELeave) 
+				CAknTimeOrDateSettingItem(iOrdinal, CAknTimeOrDateSettingItem::ETime, aValue));
+	CleanupStack::PushL(item);
+
+	const TDesC& title(static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->ResourceReader().ResourceL(aTitleResource));
+	
+	item->SetEmptyItemTextL(title);
+	item->ConstructL(iIsNumberedStyle, iOrdinal, title, iIcons, aPageResource, -1);
 
 	iMobblerSettingItemList->SettingItemArray()->AppendL(item);
 	CleanupStack::Pop(item);

@@ -39,6 +39,7 @@ public:
 									MMobblerSleepTimerNotify& aNotify);
 	~CMobblerSleepTimer();
 public:
+	void At(const TTime& aTime);
 	void AtUTC(const TTime& aUtcTime);
 	void After(TTimeIntervalMicroSeconds32 aInterval);
 	void Inactivity(TTimeIntervalSeconds aSeconds);

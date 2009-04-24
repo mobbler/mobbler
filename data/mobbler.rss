@@ -405,6 +405,10 @@ RESOURCE MENU_PANE r_mobbler_tools_submenu_pane
 			},
 		MENU_ITEM
 			{
+			command = EMobblerCommandAlarm;
+			},
+		MENU_ITEM
+			{
 			command = EMobblerCommandExportQueueToLogFile;
 			}
 		};
@@ -579,26 +583,68 @@ RESOURCE SLIDER r_mobbler_slider_setting_editor_scrobble_percent
 	minlabel = "50";
 	maxlabel = "100";
 	}
-	
-RESOURCE DIALOG r_mobbler_wait_dialog
-    {
-    flags = EAknWaitNoteFlags | EEikDialogFlagNotifyEsc;
-    buttons = R_AVKON_SOFTKEYS_CANCEL;
-    items =
-        {
-        DLG_LINE
-            {
-            type = EAknCtNote;
-            id = EMobblerWait;
-            control= AVKON_NOTE 
-                { 
-                layout = EWaitLayout;
-                animation = R_QGN_GRAF_WAIT_BAR_ANIM;
-                };
-            }
-        };
-    }
 
+RESOURCE AVKON_SETTING_PAGE r_mobbler_slider_setting_page_sleep_minutes
+	{
+	label = "";
+	type = EAknCtSlider;
+	editor_resource_id = r_mobbler_slider_setting_editor_sleep_minutes;
+	}
+
+RESOURCE SLIDER r_mobbler_slider_setting_editor_sleep_minutes
+	{
+	layout = EAknSettingsItemSliderLayout;
+	minvalue = 1;
+	maxvalue = 999; // 16 hours and 39 minutes
+	step = 1;
+	valuetype = EAknSliderValueBareFigure;
+	singular_valuelabel = STR_mobbler_sleep_timer_minute;
+	valuelabel = STR_mobbler_sleep_timer_minutes;
+	minlabel = "1";
+	maxlabel = "999";
+	}
+
+RESOURCE DIALOG r_mobbler_wait_dialog
+	{
+	flags = EAknWaitNoteFlags | EEikDialogFlagNotifyEsc;
+	buttons = R_AVKON_SOFTKEYS_CANCEL;
+	items =
+		{
+		DLG_LINE
+			{
+			type = EAknCtNote;
+			id = EMobblerWait;
+			control= AVKON_NOTE 
+				{ 
+				layout = EWaitLayout;
+				animation = R_QGN_GRAF_WAIT_BAR_ANIM;
+				};
+			}
+		};
+	}
+
+RESOURCE AVKON_SETTING_PAGE r_mobbler_time_setting_page
+	{
+	type = EEikCtTimeEditor;
+	editor_resource_id = r_mobbler_time_edwin;
+	}
+
+RESOURCE TIME_EDITOR r_mobbler_time_edwin
+	{
+	flags = EEikTimeWithoutSecondsField;
+	minTime = TIME
+		{
+		hour = 0;
+		minute = 0;
+		second = 0;
+		};
+	maxTime = TIME
+		{
+		hour = 23;
+		minute = 59;
+		second = 59;
+		};
+	}
 
 RESOURCE DIALOG r_mobbler_downloading_dialog
 	{
@@ -681,30 +727,6 @@ RESOURCE DIALOG r_mobbler_get_latest_language_dialog
 				{
 				layout = EConfirmationQueryLayout;
 				animation = R_QGN_NOTE_ERROR_ANIM;
-				};
-			}
-		};
-	}
-
-RESOURCE DIALOG r_mobbler_sleep_timer_query_dialog
-	{
-	flags = EGeneralQueryFlags;
-	buttons = R_AVKON_SOFTKEYS_OK_CANCEL;
-	items =
-		{
-		DLG_LINE
-			{
-			type = EAknCtQuery;
-			id = EGeneralQuery;
-			control= AVKON_DATA_QUERY
-				{
-				layout = ENumberLayout;
-				control = AVKON_INTEGER_EDWIN
-					{
-					min = 1;
-					max = 999; // 16 hours and 39 minutes
-					maxlength = 3;
-					};
 				};
 			}
 		};

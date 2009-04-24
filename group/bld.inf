@@ -53,5 +53,6 @@ PRJ_EXPORTS
 ..\gfx\default_tag_small.png								z:\resource\apps\mobbler\default_tag.png
 ..\gfx\audio-x-generic.png									z:\resource\apps\mobbler\default_track.png
 ..\gfx\default_user_small.png								z:\resource\apps\mobbler\default_user.png
+..\gfx\preferences-desktop-multimedia.png					z:\resource\apps\mobbler\icon_alarm.png
 
 // End of file

@@ -59,6 +59,13 @@ void CMobblerSleepTimer::After(TTimeIntervalMicroSeconds32 aInterval)
 	SetActive();
 	}
 
+void CMobblerSleepTimer::At(const TTime& aTime)
+	{
+	Cancel();
+	iTimer.At(iStatus, aTime);
+	SetActive();
+	}
+
 void CMobblerSleepTimer::AtUTC(const TTime& aUtcTime)
 	{
 	Cancel();

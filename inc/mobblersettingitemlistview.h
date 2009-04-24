@@ -35,6 +35,14 @@ class CMobblerSettingItemList;
 class CMobblerSettingItemListView : public CAknView
 	{
 public:
+	enum TSettingsToSet
+		{
+		ENormalSettings,
+		ESleepTimer,
+		EAlarm
+		};
+	
+public:
 	static CMobblerSettingItemListView* NewL();
 	~CMobblerSettingItemListView();
 	
@@ -45,7 +53,7 @@ public:
 	const TDesC& Password() const	{ return iSettings->Password(); }
 	TBool Backlight() const			{ return iSettings->Backlight(); }
 	TBool CheckForUpdates() const	{ return iSettings->CheckForUpdates(); }
-	TUint32 IapID() const			{ return iSettings->IapID(); };
+	TUint32 IapId() const			{ return iSettings->IapId(); };
 	TUint8 BufferSize() const		{ return iSettings->BufferSize(); }
 	TBool EqualizerIndex() const	{ return iSettings->EqualizerIndex(); }
 	TInt ScrobblePercent() const	{ return iSettings->ScrobblePercent(); }
@@ -55,12 +63,19 @@ public:
 	CMobblerLastFMConnection::TMode Mode() { return iSettings->Mode(); }
 	TInt DownloadAlbumArt() const	{ return iSettings->DownloadAlbumArt(); }
 	TBool AccelerometerGestures()	{ return iSettings->AccelerometerGestures(); }
+	TInt SleepTimerAction()			{ return iSettings->SleepTimerAction(); }
+	TInt SleepTimerImmediacy()		{ return iSettings->SleepTimerImmediacy(); }
+	TBool AlarmOn()					{ return iSettings->AlarmOn();    }
+	TTime AlarmTime()				{ return iSettings->AlarmTime();  }
+	TUint32 AlarmIapId()			{ return iSettings->AlarmIapId(); }
 	
 	void SetEqualizerIndexL(TInt aIndex);
 	void SetVolumeL(TInt aVolume);
 	void SetSleepTimerMinutesL(TInt aSleepTimerMinutes);
 	void SetNextUpdateCheckL(TTime aNextUpdateCheck);
 	void SetModeL(CMobblerLastFMConnection::TMode aMode);
+	void SetAlarmL(TBool aAlarmOn = ETrue);
+	void SetAlarmL(TTime aAlarmTime);
 	
 private:
 	CMobblerSettingItemListView();        
@@ -81,7 +96,8 @@ private:
 							const TInt aPageResource);
 	void CreateIapItemL(TInt& aIapId, 
 							const TInt aTitleResource, 
-							const TInt aPageResource);
+							const TInt aPageResource,
+							const TBool aAlwaysAsk = ETrue);
 	void CreateSliderItemL(TInt& aSliderValue, 
 							const TInt aTitleResource, 
 							const TInt aPageResource, 
@@ -92,8 +108,12 @@ private:
 							const TInt aPageResource,
 							const TInt aFirstEnumResource,
 							const TInt aSecondEnumResource);
-	void CreateEnumItemL(TInt& aEnumId, 
-							const TInt aTitleResource, 
+	void CreateEnumItemL(TInt& aEnumId,
+							const TInt aTitleResource,
+							const TInt aPageResource,
+							RArray<TInt>& aEnumResources);
+	void CreateTimeItemL(TTime& aTime,
+							const TInt aTitleResource,
 							const TInt aPageResource);
 
 private:
@@ -104,6 +124,8 @@ private:
 	TInt iOrdinal;
 	TBool iIsNumberedStyle;
 	CArrayPtr<CGulIcon>* iIcons;
+	
+	TSettingsToSet iSettingsToSet;
 	};
 
 #endif

@@ -41,6 +41,8 @@ enum TMobblerSettingItemListViewCommands
 	
 	EMobblerCommandToggleScrobbling,
 	EMobblerCommandSleepTimer,
+	EMobblerCommandAlarm,
+	EMobblerCommandRemove,
 	EMobblerCommandExportQueueToLogFile,
 	
 	EMobblerCommandEqualizer = 0x7000,
