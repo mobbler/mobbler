@@ -64,7 +64,7 @@ CMobblerBitmap* CMobblerBitmap::NewL(MMobblerBitmapObserver& aObserver, const TD
 	}
 
 CMobblerBitmap::CMobblerBitmap(MMobblerBitmapObserver& aObserver)
-	:CActive(CActive::EPriorityStandard), iObserver(aObserver)
+	:CActive(CActive::EPriorityStandard), iObserver(&aObserver)
 	{
 	CActiveScheduler::Add(this);
 	}
@@ -87,6 +87,19 @@ CMobblerBitmap::~CMobblerBitmap()
 	delete iImageDecoder;
 	delete iData;
 	delete iMifFileName;
+	}
+
+void CMobblerBitmap::SetCallbackCancelled(TBool aCallbackCancelled)
+	{
+	if (aCallbackCancelled)
+		{
+		iObserver = NULL;
+		}
+	}
+
+void CMobblerBitmap::SetObserver(MMobblerBitmapObserver& aObserver)
+	{
+	iObserver = &aObserver;
 	}
 	
 CFbsBitmap* CMobblerBitmap::Bitmap() const
@@ -267,7 +280,10 @@ void CMobblerBitmap::RunL()
 				}
 		
 			iBitmapLoaded = ETrue;
-			iObserver.BitmapLoadedL(this);
+			if (iObserver)
+				{
+				iObserver->BitmapLoadedL(this);
+				}
 			}
 		}
 	else
@@ -287,7 +303,10 @@ void CMobblerBitmap::RunL()
 			iScaledBitmap = NULL;
 			iScaleStatus = EMobblerScaleNone;
 
-			iObserver.BitmapResizedL(this);
+			if (iObserver)
+				{
+				iObserver->BitmapResizedL(this);
+				}
 			}
 		}
 	}

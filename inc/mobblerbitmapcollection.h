@@ -57,7 +57,7 @@ private:
 		static CBitmapCollectionItem* NewLC(CMobblerBitmap* aBitmap, TInt aBitmapId);
 		~CBitmapCollectionItem();
 		
-		CMobblerBitmap& Bitmap() const;
+		CMobblerBitmap* Bitmap() const;
 		
 		static TInt Compare(const CBitmapCollectionItem& aLeft, const CBitmapCollectionItem& aRight);
 		static TInt Compare(const TInt* aKey, const CBitmapCollectionItem& aItem);
@@ -75,7 +75,8 @@ public:
 	static CMobblerBitmapCollection* NewL();
 	~CMobblerBitmapCollection();
 	
-	CMobblerBitmap& BitmapL(MMobblerBitmapObserver& aObserver, TInt aBitmap) const;
+	CMobblerBitmap* BitmapL(MMobblerBitmapObserver& aObserver, TInt aBitmap) const;
+	void Cancel(CMobblerBitmap* aBitmap) const;
 	
 private:
 	CMobblerBitmapCollection();

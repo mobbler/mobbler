@@ -216,24 +216,24 @@ void CMobblerStatusControl::DoChangePaneTextL()
 
 void CMobblerStatusControl::LoadGraphicsL()
 	{
-	iMobblerBitmapLastFm = &iAppUi.BitmapCollection().BitmapL(*this, CMobblerBitmapCollection::EBitmapLastFm);
-	iMobblerBitmapScrobble = &iAppUi.BitmapCollection().BitmapL(*this, CMobblerBitmapCollection::EBitmapScrobble);
-	iMobblerBitmapTrackIcon = &iAppUi.BitmapCollection().BitmapL(*this, CMobblerBitmapCollection::EBitmapTrackIcon);
-	iMobblerBitmapAlarmIcon = &iAppUi.BitmapCollection().BitmapL(*this, CMobblerBitmapCollection::EBitmapAlarmIcon);
-	iMobblerBitmapMore = &iAppUi.BitmapCollection().BitmapL(*this, CMobblerBitmapCollection::EBitmapMore);
-	iMobblerBitmapLove = &iAppUi.BitmapCollection().BitmapL(*this, CMobblerBitmapCollection::EBitmapLove);
-	iMobblerBitmapBan = &iAppUi.BitmapCollection().BitmapL(*this, CMobblerBitmapCollection::EBitmapBan);
-	iMobblerBitmapPlay = &iAppUi.BitmapCollection().BitmapL(*this, CMobblerBitmapCollection::EBitmapPlay);
-	iMobblerBitmapNext = &iAppUi.BitmapCollection().BitmapL(*this, CMobblerBitmapCollection::EBitmapNext);
-	iMobblerBitmapStop = &iAppUi.BitmapCollection().BitmapL(*this, CMobblerBitmapCollection::EBitmapStop);
-	iMobblerBitmapSpeakerHigh = &iAppUi.BitmapCollection().BitmapL(*this, CMobblerBitmapCollection::EBitmapSpeakerHigh);
-	iMobblerBitmapSpeakerLow = &iAppUi.BitmapCollection().BitmapL(*this, CMobblerBitmapCollection::EBitmapSpeakerLow);
+	iMobblerBitmapLastFm = iAppUi.BitmapCollection().BitmapL(*this, CMobblerBitmapCollection::EBitmapLastFm);
+	iMobblerBitmapScrobble = iAppUi.BitmapCollection().BitmapL(*this, CMobblerBitmapCollection::EBitmapScrobble);
+	iMobblerBitmapTrackIcon = iAppUi.BitmapCollection().BitmapL(*this, CMobblerBitmapCollection::EBitmapTrackIcon);
+	iMobblerBitmapAlarmIcon = iAppUi.BitmapCollection().BitmapL(*this, CMobblerBitmapCollection::EBitmapAlarmIcon);
+	iMobblerBitmapMore = iAppUi.BitmapCollection().BitmapL(*this, CMobblerBitmapCollection::EBitmapMore);
+	iMobblerBitmapLove = iAppUi.BitmapCollection().BitmapL(*this, CMobblerBitmapCollection::EBitmapLove);
+	iMobblerBitmapBan = iAppUi.BitmapCollection().BitmapL(*this, CMobblerBitmapCollection::EBitmapBan);
+	iMobblerBitmapPlay = iAppUi.BitmapCollection().BitmapL(*this, CMobblerBitmapCollection::EBitmapPlay);
+	iMobblerBitmapNext = iAppUi.BitmapCollection().BitmapL(*this, CMobblerBitmapCollection::EBitmapNext);
+	iMobblerBitmapStop = iAppUi.BitmapCollection().BitmapL(*this, CMobblerBitmapCollection::EBitmapStop);
+	iMobblerBitmapSpeakerHigh = iAppUi.BitmapCollection().BitmapL(*this, CMobblerBitmapCollection::EBitmapSpeakerHigh);
+	iMobblerBitmapSpeakerLow = iAppUi.BitmapCollection().BitmapL(*this, CMobblerBitmapCollection::EBitmapSpeakerLow);
     
 	// Load the Music Player icon to display when a music player track is playing
-	iMobblerBitmapMusicAppIcon = &iAppUi.BitmapCollection().BitmapL(*this, CMobblerBitmapCollection::EBitmapMusicApp);
+	iMobblerBitmapMusicAppIcon = iAppUi.BitmapCollection().BitmapL(*this, CMobblerBitmapCollection::EBitmapMusicApp);
 	
 	// Load the Mobbler icon to display when a music player track is not playing
-	iMobblerBitmapAppIcon = &iAppUi.BitmapCollection().BitmapL(*this, CMobblerBitmapCollection::EBitmapMobblerApp);
+	iMobblerBitmapAppIcon = iAppUi.BitmapCollection().BitmapL(*this, CMobblerBitmapCollection::EBitmapMobblerApp);
 	
 	SetPositions();
 	}
@@ -532,6 +532,21 @@ CMobblerStatusControl::~CMobblerStatusControl()
 	delete iTitleMarquee;
 	delete iAlbumMarquee;
 	delete iArtistMarquee;
+	
+	iAppUi.BitmapCollection().Cancel(iMobblerBitmapLastFm);
+	iAppUi.BitmapCollection().Cancel(iMobblerBitmapScrobble);
+	iAppUi.BitmapCollection().Cancel(iMobblerBitmapTrackIcon);
+	iAppUi.BitmapCollection().Cancel(iMobblerBitmapAlarmIcon);
+	iAppUi.BitmapCollection().Cancel(iMobblerBitmapMore);
+	iAppUi.BitmapCollection().Cancel(iMobblerBitmapLove);
+	iAppUi.BitmapCollection().Cancel(iMobblerBitmapBan);
+	iAppUi.BitmapCollection().Cancel(iMobblerBitmapPlay);
+	iAppUi.BitmapCollection().Cancel(iMobblerBitmapNext);
+	iAppUi.BitmapCollection().Cancel(iMobblerBitmapStop);
+	iAppUi.BitmapCollection().Cancel(iMobblerBitmapSpeakerHigh);
+	iAppUi.BitmapCollection().Cancel(iMobblerBitmapSpeakerLow);
+	iAppUi.BitmapCollection().Cancel(iMobblerBitmapMusicAppIcon);
+	iAppUi.BitmapCollection().Cancel(iMobblerBitmapAppIcon);
 	
 #ifdef  __S60_50__
 	if (iMobblerFeedback)

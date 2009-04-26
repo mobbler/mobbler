@@ -71,9 +71,9 @@ TInt CMobblerBitmapCollection::CBitmapCollectionItem::Compare(const TInt* aKey, 
 	return *aKey - aItem.iId;
 	}
 
-CMobblerBitmap& CMobblerBitmapCollection::CBitmapCollectionItem::Bitmap() const
+CMobblerBitmap* CMobblerBitmapCollection::CBitmapCollectionItem::Bitmap() const
 	{
-	return *iBitmap;
+	return iBitmap;
 	}
 	
 CMobblerBitmapCollection* CMobblerBitmapCollection::NewL()
@@ -98,7 +98,7 @@ CMobblerBitmapCollection::~CMobblerBitmapCollection()
 	iBitmaps.ResetAndDestroy();
 	}
 	
-CMobblerBitmap& CMobblerBitmapCollection::BitmapL(MMobblerBitmapObserver& aObserver, TInt aId) const
+CMobblerBitmap* CMobblerBitmapCollection::BitmapL(MMobblerBitmapObserver& aObserver, TInt aId) const
 	{
 	CMobblerBitmap* bitmap(NULL);
 	
@@ -163,10 +163,26 @@ CMobblerBitmap& CMobblerBitmapCollection::BitmapL(MMobblerBitmapObserver& aObser
 	else
 		{
 		// it has already been created so just return it
-		bitmap = &iBitmaps[position]->Bitmap();
+		bitmap = iBitmaps[position]->Bitmap();
+		bitmap->SetCallbackCancelled(EFalse);
+		bitmap->SetObserver(aObserver);
 		}
 	
-	return *bitmap;
+	return bitmap;
+	}
+
+void CMobblerBitmapCollection::Cancel(CMobblerBitmap* aBitmap) const
+	{
+	// Cancel all the callbacks for this observer
+	const TInt KBitmapCount(iBitmaps.Count());
+	for (TInt i(0) ; i < KBitmapCount ; ++i)
+		{
+		if (iBitmaps[i]->Bitmap() == aBitmap)
+			{
+			iBitmaps[i]->Bitmap()->SetCallbackCancelled(ETrue);
+			break;
+			}
+		}
 	}
 	
 				
