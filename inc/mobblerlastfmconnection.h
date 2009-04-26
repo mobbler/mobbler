@@ -139,12 +139,15 @@ public:
 	void ArtistGetImageL(const TDesC& aArtist, MMobblerFlatDataObserver& aObserver);
 	void ArtistGetTagsL(const TDesC& aArtist, MMobblerFlatDataObserver& aObserver);
 	void ArtistOrTrackSearchL(TDesC& aArtist, TDesC& aTrack, MMobblerFlatDataObserver& aObserver);
-	void AlbumGetInfoL(const CMobblerTrack& aTrack, MMobblerFlatDataObserver& aObserver);
+	
+	void AlbumGetInfoL(const TDesC8& aMbId, MMobblerFlatDataObserver& aObserver);
 	void AlbumGetInfoL(const TDesC& aAlbum, const TDesC& aArtist, MMobblerFlatDataObserver& aObserver);
+	
 	void TracksOrAlbumsByArtistL(TDesC& aArtist, TBool aAlbums, MMobblerFlatDataObserver& aObserver);
 	
 	void PlaylistCreateL(const TDesC& aTitle, const TDesC& aDescription, MMobblerFlatDataObserver& aObserver);
 	void PlaylistFetchUserL(const TDesC8& aPlaylistId, MMobblerFlatDataObserver& aObserver);
+	void PlaylistFetchAlbumL(const TDesC8& aAlbumId, MMobblerFlatDataObserver& aObserver);
 	void PlaylistAddTrackL(const TDesC8& aPlaylistId, const TDesC8& aArtist, const TDesC8& aTrack, MMobblerFlatDataObserver& aObserver);
 	
 	TBool ExportQueueToLogFileL();

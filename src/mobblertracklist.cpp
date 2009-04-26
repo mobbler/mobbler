@@ -21,6 +21,8 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
+#include <sendomfragment.h>
+#include <senxmlutils.h> 
 
 #include "mobbler.hrh"
 #include "mobblerappui.h"
@@ -57,8 +59,14 @@ void CMobblerTrackList::ConstructL()
     	case EMobblerCommandSimilarTracks:
     		iAppUi.LastFMConnection().SimilarTracksL(iText1->String8(), iText2->String8(), *this);
     		break;
-    	case EMobblerCommandPlaylistFetch:
+    	case EMobblerCommandPlaylistFetchUser:
     		iAppUi.LastFMConnection().PlaylistFetchUserL(iText2->String8(), *this);
+    		break;
+    	case EMobblerCommandPlaylistFetchAlbum:
+    		delete iAlbumInfoObserver;
+    		iAlbumInfoObserver = CMobblerFlatDataObserverHelper::NewL(iAppUi.LastFMConnection(), *this, EFalse);
+    		iAppUi.LastFMConnection().AlbumGetInfoL(iText2->String8(), *iAlbumInfoObserver);
+    		break;
     	default:
     		break;
     	}
@@ -66,6 +74,7 @@ void CMobblerTrackList::ConstructL()
 
 CMobblerTrackList::~CMobblerTrackList()
 	{
+	delete iAlbumInfoObserver;
 	delete iWebServicesHelper;
 	}
 
@@ -132,6 +141,34 @@ void CMobblerTrackList::SupportedCommandsL(RArray<TInt>& aCommands)
 	aCommands.AppendL(EMobblerCommandPlaylistAddTrack);
 	}
 
+void CMobblerTrackList::DataL(CMobblerFlatDataObserverHelper* aObserver, const TDesC8& aData, CMobblerLastFMConnection::TError aError)
+	{
+	if (aError == CMobblerLastFMConnection::EErrorNone)
+		{
+		if (aObserver == iAlbumInfoObserver)
+			{
+			// Create the XML reader and DOM fragement and associate them with each other
+			CSenXmlReader* xmlReader(CSenXmlReader::NewL());
+			CleanupStack::PushL(xmlReader);
+			CSenDomFragment* domFragment(CSenDomFragment::NewL());
+			CleanupStack::PushL(domFragment);
+			xmlReader->SetContentHandler(*domFragment);
+			domFragment->SetReader(*xmlReader);
+			
+			// Parse the XML into the DOM fragment
+			xmlReader->ParseL(aData);
+			
+			iAppUi.LastFMConnection().PlaylistFetchAlbumL(domFragment->AsElement().Element(_L8("album"))->Element(_L8("id"))->Content(), *this);
+			
+			CleanupStack::PopAndDestroy(2);
+			}
+		}
+	else
+		{
+		
+		}
+	}
+
 void CMobblerTrackList::ParseL(const TDesC8& aXML)
 	{
     switch (iType)
@@ -148,7 +185,8 @@ void CMobblerTrackList::ParseL(const TDesC8& aXML)
     	case EMobblerCommandSimilarTracks:
     		CMobblerParser::ParseSimilarTracksL(aXML, *this, iList);
     		break;
-    	case EMobblerCommandPlaylistFetch:
+    	case EMobblerCommandPlaylistFetchUser:
+    	case EMobblerCommandPlaylistFetchAlbum:
     		CMobblerParser::ParsePlaylistL(aXML, *this, iList);
     	default:
     		break;

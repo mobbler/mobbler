@@ -430,7 +430,7 @@ RESOURCE DIALOG r_mobbler_text_query_dialog
 				control = EDWIN
 					{
 					flags= EEikEdwinNoHorizScrolling | EEikEdwinResizable;
-					maxlength = 50;
+					maxlength = EMobblerMaxQueryDialogLength;
 					width = 4;
 					lines = 1;
 					};

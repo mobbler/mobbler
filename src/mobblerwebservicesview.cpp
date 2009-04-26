@@ -133,18 +133,16 @@ void CMobblerWebServicesView::DynInitMenuPaneL(TInt aResourceId, CEikMenuPane* a
 	// Always support the exit command
 	supportedCommands.Append(EAknSoftkeyExit);
 	
-	if (iWebServicesControl->TopControl()->Count() > 0)
-		{
-		// Only allow list specific commands if there are items in the list
-		iWebServicesControl->TopControl()->SupportedCommandsL(supportedCommands);
-		}
+	// Find the commands that this list box supports
+	iWebServicesControl->TopControl()->SupportedCommandsL(supportedCommands);
 	
 	for (TInt i(EMobblerCommandOnline); i < EMobblerCommandLast; ++i)
 		{
 		TInt position(0);
 		if (aMenuPane->MenuItemExists(i, position))
 			{
-			aMenuPane->SetItemDimmed(i, supportedCommands.Find(i) == KErrNotFound);
+			aMenuPane->SetItemDimmed(i, supportedCommands.Find(i) == KErrNotFound && iWebServicesControl->TopControl()->Count() > 0 ||
+										supportedCommands.Find(i) == KErrNotFound && i == EMobblerCommandShout); // always display shout if it is supported
 			}
 		}
 	
@@ -152,10 +150,11 @@ void CMobblerWebServicesView::DynInitMenuPaneL(TInt aResourceId, CEikMenuPane* a
 	
 	if (aResourceId == R_MOBBLER_WEBSERVICES_MENU_PANE)
 		{
-		if (iWebServicesControl->TopControl()->Type() == EMobblerCommandFriends)
+		if (iWebServicesControl->TopControl()->Type() == EMobblerCommandFriends
+				&& !static_cast<CMobblerAppUi*>(AppUi())->CurrentTrack())
 			{
-			aMenuPane->SetItemDimmed(EMobblerCommandShare, 
-				!static_cast<CMobblerAppUi*>(AppUi())->CurrentTrack() || supportedCommands.Find(EMobblerCommandShare) == KErrNotFound);
+			// Do the share option for friends list even if there is no current track
+			aMenuPane->SetItemDimmed(EMobblerCommandShare, ETrue);
 			}
 		}
 	else if (aResourceId == R_MOBBLER_SHOUT_SUBMENU_PANE)
@@ -166,11 +165,13 @@ void CMobblerWebServicesView::DynInitMenuPaneL(TInt aResourceId, CEikMenuPane* a
 		HBufC* shoutTextUser(shoutbox->ShoutAtTextUserLC());
 		HBufC* shoutTextOwner(shoutbox->ShoutAtTextOwnerLC());
 
-		aMenuPane->SetItemTextL(EMobblerCommandShoutUser, *shoutTextUser);
+		aMenuPane->SetItemDimmed(EMobblerCommandShoutUser, EFalse);
+		aMenuPane->SetItemDimmed(EMobblerCommandShoutOwner, EFalse);
+		aMenuPane->SetItemTextL(EMobblerCommandShoutOwner, *shoutTextOwner);
 
 		shoutTextUser->Compare(*shoutTextOwner) == 0 ?
-			aMenuPane->SetItemDimmed(EMobblerCommandShoutOwner, ETrue) :
-			aMenuPane->SetItemTextL(EMobblerCommandShoutOwner, *shoutTextOwner);
+			aMenuPane->SetItemDimmed(EMobblerCommandShoutUser, ETrue) :
+			aMenuPane->SetItemTextL(EMobblerCommandShoutUser, *shoutTextUser);
 
 		CleanupStack::PopAndDestroy(shoutTextOwner);
 		CleanupStack::PopAndDestroy(shoutTextUser);

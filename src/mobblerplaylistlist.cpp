@@ -22,6 +22,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
 #include <aknquerydialog.h>
+#include <sendomfragment.h>
+#include <senxmlutils.h> 
+
 #include <mobbler.rsg>
 #include <mobbler_strings.rsg>
 
@@ -63,14 +66,14 @@ CMobblerListControl* CMobblerPlaylistList::HandleListCommandL(TInt aCommand)
 		{	
 		case EMobblerCommandOpen:
 			{
-			list = CMobblerListControl::CreateListL(iAppUi, iWebServicesControl, EMobblerCommandPlaylistFetch, iList[iListBox->CurrentItemIndex()]->Title()->String8(), iList[iListBox->CurrentItemIndex()]->Id());
+			list = CMobblerListControl::CreateListL(iAppUi, iWebServicesControl, EMobblerCommandPlaylistFetchUser, iList[iListBox->CurrentItemIndex()]->Title()->String8(), iList[iListBox->CurrentItemIndex()]->Id());
 			}
 			break;
 		case EMobblerCommandPlaylistAddTrack:
 			if (iAppUi.CurrentTrack())
 				{
 				delete iPlaylistAddObserver;
-				iPlaylistAddObserver = CMobblerFlatDataObserverHelper::NewL(iAppUi.LastFMConnection(), *this);
+				iPlaylistAddObserver = CMobblerFlatDataObserverHelper::NewL(iAppUi.LastFMConnection(), *this, ETrue);
 				iAppUi.LastFMConnection().PlaylistAddTrackL(iList[iListBox->CurrentItemIndex()]->Id(),
 																iAppUi.CurrentTrack()->Artist().String8(),
 																iAppUi.CurrentTrack()->Title().String8(),
@@ -80,8 +83,8 @@ CMobblerListControl* CMobblerPlaylistList::HandleListCommandL(TInt aCommand)
 		case EMobblerCommandPlaylistCreate:
 			{
 			// ask for title and description
-			TBuf<255> title;
-			TBuf<255> description;
+			TBuf<EMobblerMaxQueryDialogLength> title;
+			TBuf<EMobblerMaxQueryDialogLength> description;
 			
 			CAknTextQueryDialog* titleDialog(new(ELeave) CAknTextQueryDialog(title));
 			titleDialog->PrepareLC(R_MOBBLER_TEXT_QUERY_DIALOG);
@@ -98,7 +101,7 @@ CMobblerListControl* CMobblerPlaylistList::HandleListCommandL(TInt aCommand)
 				if (descriptionDialog->RunLD())
 					{
 					delete iPlaylistCreateObserver;
-					iPlaylistCreateObserver = CMobblerFlatDataObserverHelper::NewL(iAppUi.LastFMConnection(), *this);
+					iPlaylistCreateObserver = CMobblerFlatDataObserverHelper::NewL(iAppUi.LastFMConnection(), *this, ETrue);
 					
 					iAppUi.LastFMConnection().PlaylistCreateL(title, description, *iPlaylistCreateObserver);
 					
@@ -114,12 +117,34 @@ CMobblerListControl* CMobblerPlaylistList::HandleListCommandL(TInt aCommand)
 	return list;
 	}
 
-void CMobblerPlaylistList::DataL(CMobblerFlatDataObserverHelper* aObserver, const TDesC8& /*aData*/, CMobblerLastFMConnection::TError /*aError*/)
+void CMobblerPlaylistList::DataL(CMobblerFlatDataObserverHelper* aObserver, const TDesC8& aData, CMobblerLastFMConnection::TError /*aError*/)
 	{
 	if (aObserver == iPlaylistCreateObserver)
 		{
 		// refresh the playlist list
-		iAppUi.LastFMConnection().WebServicesCallL(_L8("user"), _L8("getplaylists"), iText1->String8(), *this);
+		// Create the XML reader and DOM fragement and associate them with each other
+		CSenXmlReader* xmlReader(CSenXmlReader::NewL());
+		CleanupStack::PushL(xmlReader);
+		CSenDomFragment* domFragment(CSenDomFragment::NewL());
+		CleanupStack::PushL(domFragment);
+		xmlReader->SetContentHandler(*domFragment);
+		domFragment->SetReader(*xmlReader);
+		
+		// Parse the XML into the DOM fragment
+		xmlReader->ParseL(aData);
+		
+		CSenElement* playlist = domFragment->AsElement().Element(_L8("playlists"))->Element(_L8("playlist"));
+		
+		CMobblerListItem* item = CMobblerListItem::NewL(*this,
+															playlist->Element(_L8("title"))->Content(),
+															playlist->Element(_L8("description"))->Content(),
+															playlist->Element(_L8("image"))->Content());
+		
+		item->SetIdL(playlist->Element(_L8("id"))->Content());
+		
+		iList.InsertL(item, 0);
+		
+		CleanupStack::PopAndDestroy(2);
 		}
 	else if (aObserver == iPlaylistAddObserver)
 		{
@@ -141,8 +166,6 @@ void CMobblerPlaylistList::SupportedCommandsL(RArray<TInt>& aCommands)
 
 void CMobblerPlaylistList::ParseL(const TDesC8& aXML)
 	{
-	iList.ResetAndDestroy();
-	iListBoxItems->Reset();
 	CMobblerParser::ParsePlaylistsL(aXML, *this, iList);
 	}
 

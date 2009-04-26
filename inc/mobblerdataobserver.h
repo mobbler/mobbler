@@ -53,12 +53,12 @@ public:
 class CMobblerFlatDataObserverHelper : public CBase, public MMobblerFlatDataObserver, public MProgressDialogCallback
 	{
 public:
-	static CMobblerFlatDataObserverHelper* NewL(CMobblerLastFMConnection& aConnection, MMobblerFlatDataObserverHelper& aObserver);
+	static CMobblerFlatDataObserverHelper* NewL(CMobblerLastFMConnection& aConnection, MMobblerFlatDataObserverHelper& aObserver, TBool aShowWaitDialog);
 	~CMobblerFlatDataObserverHelper();
 	
 private:
 	CMobblerFlatDataObserverHelper(CMobblerLastFMConnection& aConnection, MMobblerFlatDataObserverHelper& aObserver);
-	void ConstructL();
+	void ConstructL(TBool aShowWaitDialog);
 	
 	void DataL(const TDesC8& aData, CMobblerLastFMConnection::TError aError);
 	

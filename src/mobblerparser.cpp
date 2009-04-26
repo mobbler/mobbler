@@ -691,10 +691,15 @@ void CMobblerParser::ParseTopAlbumsL(const TDesC8& aXml, CMobblerAlbumList& aObs
 				KNullDesC8().AllocLC() :
 				items[i]->Element(KElementImage)->Content().AllocLC());
 		
+		
+		
 		CMobblerListItem* item(CMobblerListItem::NewL(aObserver,
 														*SenXmlUtils::DecodeHttpCharactersLC(items[i]->Element(_L8("name"))->Content()),
 														*SenXmlUtils::DecodeHttpCharactersLC(items[i]->Element(_L8("artist"))->Element(_L8("name"))->Content()),
 														*image));
+		
+		item->SetIdL(items[i]->Element(_L8("mbid"))->Content());
+		
 		CleanupStack::PopAndDestroy(3);
 		
 		CleanupStack::PushL(item);

@@ -26,11 +26,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "mobblerdataobserver.h"
 
-CMobblerFlatDataObserverHelper* CMobblerFlatDataObserverHelper::NewL(CMobblerLastFMConnection& aConnection, MMobblerFlatDataObserverHelper& aObserver)		
+CMobblerFlatDataObserverHelper* CMobblerFlatDataObserverHelper::NewL(CMobblerLastFMConnection& aConnection, MMobblerFlatDataObserverHelper& aObserver, TBool aShowWaitDialog)		
 	{
 	CMobblerFlatDataObserverHelper* self = new(ELeave) CMobblerFlatDataObserverHelper(aConnection, aObserver);
 	CleanupStack::PushL(self);
-	self->ConstructL();
+	self->ConstructL(aShowWaitDialog);
 	CleanupStack::Pop(self);
 	return self;
 	}
@@ -40,12 +40,15 @@ CMobblerFlatDataObserverHelper::CMobblerFlatDataObserverHelper(CMobblerLastFMCon
 	{
 	}
 
-void CMobblerFlatDataObserverHelper::ConstructL()
+void CMobblerFlatDataObserverHelper::ConstructL(TBool aShowWaitDialog)
 	{
-	iWaitDialog = new (ELeave) CAknWaitDialog((REINTERPRET_CAST(CEikDialog**, &iWaitDialog)), ETrue);
-	iWaitDialog->SetCallback(this);
-	iWaitDialog->SetTextL(_L("Please wait")); // TODO localise, how about "Please wait" or "Fetching" or "Fetching playlists"?
-	iWaitDialog->ExecuteLD(R_MOBBLER_WAIT_DIALOG);
+	if (aShowWaitDialog)
+		{
+		iWaitDialog = new (ELeave) CAknWaitDialog((REINTERPRET_CAST(CEikDialog**, &iWaitDialog)), ETrue);
+		iWaitDialog->SetCallback(this);
+		iWaitDialog->SetTextL(_L("Wait"));
+		iWaitDialog->ExecuteLD(R_MOBBLER_WAIT_DIALOG);
+		}
 	}
 
 CMobblerFlatDataObserverHelper::~CMobblerFlatDataObserverHelper()

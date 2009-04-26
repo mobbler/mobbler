@@ -624,7 +624,7 @@ void CMobblerTrack::FetchAlbumInfoL()
 	{
 	if (OkToDownloadAlbumArt())
 		{
-		static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->LastFMConnection().AlbumGetInfoL(*this, *this);
+		static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->LastFMConnection().AlbumGetInfoL(iAlbum->String(), iTitle->String(), *this);
 		iState = EFetchingAlbumInfo;
 		}
 	}

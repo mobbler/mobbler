@@ -471,7 +471,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 		case EMobblerCommandCheckForUpdates:
 			{
 			delete iCheckForUpdatesObserver;
-			iCheckForUpdatesObserver = CMobblerFlatDataObserverHelper::NewL(*iLastFMConnection, *this);
+			iCheckForUpdatesObserver = CMobblerFlatDataObserverHelper::NewL(*iLastFMConnection, *this, EFalse);
 			iLastFMConnection->CheckForUpdateL(*iCheckForUpdatesObserver);
 			}
 			break;
@@ -1077,7 +1077,7 @@ void CMobblerAppUi::HandleConnectCompleteL(TInt aError)
 				{
 				// do an update check
 				delete iCheckForUpdatesObserver;
-				iCheckForUpdatesObserver = CMobblerFlatDataObserverHelper::NewL(*iLastFMConnection, *this);
+				iCheckForUpdatesObserver = CMobblerFlatDataObserverHelper::NewL(*iLastFMConnection, *this, EFalse);
 				iLastFMConnection->CheckForUpdateL(*iCheckForUpdatesObserver);
 				}
 			}

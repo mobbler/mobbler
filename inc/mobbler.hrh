@@ -24,6 +24,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #ifndef __MOBBLER_HRH__
 #define __MOBBLER_HRH__
 
+enum
+	{
+	EMobblerMaxQueryDialogLength = 1000
+	};
+	
 enum TMobblerSettingItemListViewCommands
 	{
 	EMobblerCommandOffline = 0x6000,
@@ -93,7 +98,8 @@ enum TMobblerSettingItemListViewCommands
 	
 	EMobblerCommandPlaylistAddTrack,
 	EMobblerCommandPlaylistCreate,
-	EMobblerCommandPlaylistFetch,
+	EMobblerCommandPlaylistFetchUser,
+	EMobblerCommandPlaylistFetchAlbum,
 	
 	EMobblerCommandShout,
 	EMobblerCommandShoutOwner,

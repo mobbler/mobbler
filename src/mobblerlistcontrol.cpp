@@ -68,7 +68,8 @@ CMobblerListControl* CMobblerListControl::CreateListL(CMobblerAppUi& aAppUi, CMo
 		case EMobblerCommandArtistTopTracks:
 		case EMobblerCommandRecentTracks:
 		case EMobblerCommandSimilarTracks:
-		case EMobblerCommandPlaylistFetch:
+		case EMobblerCommandPlaylistFetchUser:
+		case EMobblerCommandPlaylistFetchAlbum:
 			self = new(ELeave) CMobblerTrackList(aAppUi, aWebServicesControl);
 			break;
 		case EMobblerCommandPlaylists:
@@ -213,7 +214,8 @@ HBufC* CMobblerListControl::NameL() const
 			format.Set(iAppUi.ResourceReader().ResourceL(R_MOBBLER_FORMAT_SIMILAR_TRACKS));
 			text.Set(iText2->String());
 			break;
-		case EMobblerCommandPlaylistFetch:
+		case EMobblerCommandPlaylistFetchUser:
+		case EMobblerCommandPlaylistFetchAlbum:
 			format.Set(_L("%S"));
 			break;
 		case EMobblerCommandPlaylists:

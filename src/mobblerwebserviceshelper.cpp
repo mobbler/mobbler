@@ -33,6 +33,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <mobbler.rsg> 
 #include <mobbler_strings.rsg> 
 
+#include "mobbler.hrh"
 #include "mobblerappui.h"
 #include "mobblerresourcereader.h"
 #include "mobblersettingitemlistview.h"
@@ -76,7 +77,7 @@ void CMobblerWebServicesHelper::TrackShareL()
 	CleanupStack::PushL(username);
 	
 	delete iFriendFetchObserverHelperTrackShare;
-	iFriendFetchObserverHelperTrackShare = CMobblerFlatDataObserverHelper::NewL(iAppUi.LastFMConnection(), *this);
+	iFriendFetchObserverHelperTrackShare = CMobblerFlatDataObserverHelper::NewL(iAppUi.LastFMConnection(), *this, ETrue);
 	iAppUi.LastFMConnection().WebServicesCallL(_L8("user"), _L8("getfriends"), username->String8(), *iFriendFetchObserverHelperTrackShare);
 	
 	CleanupStack::PopAndDestroy(username);
@@ -88,7 +89,7 @@ void CMobblerWebServicesHelper::ArtistShareL()
 	CleanupStack::PushL(username);
 	
 	delete iFriendFetchObserverHelperArtistShare;
-	iFriendFetchObserverHelperArtistShare = CMobblerFlatDataObserverHelper::NewL(iAppUi.LastFMConnection(), *this);
+	iFriendFetchObserverHelperArtistShare = CMobblerFlatDataObserverHelper::NewL(iAppUi.LastFMConnection(), *this, ETrue);
 	iAppUi.LastFMConnection().WebServicesCallL(_L8("user"), _L8("getfriends"), username->String8(), *iFriendFetchObserverHelperArtistShare);
 	
 	CleanupStack::PopAndDestroy(username);
@@ -100,7 +101,7 @@ void CMobblerWebServicesHelper::PlaylistAddL()
 	CleanupStack::PushL(username);
 	
 	delete iPlaylistFetchObserverHelper;
-	iPlaylistFetchObserverHelper = CMobblerFlatDataObserverHelper::NewL(iAppUi.LastFMConnection(), *this);
+	iPlaylistFetchObserverHelper = CMobblerFlatDataObserverHelper::NewL(iAppUi.LastFMConnection(), *this, ETrue);
 	iAppUi.LastFMConnection().WebServicesCallL(_L8("user"), _L8("getplaylists"), username->String8(), *iPlaylistFetchObserverHelper);
 	
 	CleanupStack::PopAndDestroy(username);
@@ -181,7 +182,7 @@ void CMobblerWebServicesHelper::DataL(CMobblerFlatDataObserverHelper* aObserver,
 		    
 		    if (popup->ExecuteLD())
 		    	{
-		    	TBuf<255> message;
+		    	TBuf<EMobblerMaxQueryDialogLength> message;
 		    	
 		    	CAknTextQueryDialog* shoutDialog(new(ELeave) CAknTextQueryDialog(message));
 		    	shoutDialog->PrepareLC(R_MOBBLER_TEXT_QUERY_DIALOG);
@@ -199,13 +200,13 @@ void CMobblerWebServicesHelper::DataL(CMobblerFlatDataObserverHelper* aObserver,
 					if (aObserver == iFriendFetchObserverHelperTrackShare)
 						{
 						delete iShareObserverHelper;
-						iShareObserverHelper = CMobblerFlatDataObserverHelper::NewL(iAppUi.LastFMConnection(), *this);
+						iShareObserverHelper = CMobblerFlatDataObserverHelper::NewL(iAppUi.LastFMConnection(), *this, ETrue);
 						iAppUi.LastFMConnection().TrackShareL(user->String8(), iTrack.Artist().String8(), iTrack.Title().String8(), messageString->String8(), *iShareObserverHelper);
 						}
 					else
 						{
 						delete iShareObserverHelper;
-						iShareObserverHelper = CMobblerFlatDataObserverHelper::NewL(iAppUi.LastFMConnection(), *this);
+						iShareObserverHelper = CMobblerFlatDataObserverHelper::NewL(iAppUi.LastFMConnection(), *this, ETrue);
 						iAppUi.LastFMConnection().ArtistShareL(user->String8(), iTrack.Artist().String8(), messageString->String8(), *iShareObserverHelper);
 						}
 					
@@ -256,7 +257,7 @@ void CMobblerWebServicesHelper::DataL(CMobblerFlatDataObserverHelper* aObserver,
 		    if (popup->ExecuteLD())
 		    	{
 		    	delete iPlaylistAddObserverHelper;
-		    	iPlaylistAddObserverHelper = CMobblerFlatDataObserverHelper::NewL(iAppUi.LastFMConnection(), *this);
+		    	iPlaylistAddObserverHelper = CMobblerFlatDataObserverHelper::NewL(iAppUi.LastFMConnection(), *this, ETrue);
 				iAppUi.LastFMConnection().PlaylistAddTrackL(playlists[list->CurrentItemIndex()]->Element(_L8("id"))->Content(), iTrack.Artist().String8(), iTrack.Title().String8(), *iPlaylistAddObserverHelper);
 		    	}
 		     

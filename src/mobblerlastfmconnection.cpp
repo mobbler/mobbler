@@ -23,13 +23,13 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <centralrepository.h>
 #include <chttpformencoder.h>
+#include <coemain.h>
 #include <commdbconnpref.h> 
 #include <httperr.h>
 #include <httpstringconstants.h>
 #include <ProfileEngineSDKCRKeys.h>
 #include <s32file.h>
 
-#include "coemain.h"
 #include "mobblerappui.h"
 #include "mobblerlastfmconnection.h"
 #include "mobblerlastfmconnectionobserver.h"
@@ -519,7 +519,36 @@ void CMobblerLastFMConnection::PlaylistFetchUserL(const TDesC8& aPlaylistId, MMo
 	CleanupStack::Pop(uri);
 	
 	AppendAndSubmitTransactionL(transaction);
+	}
+
+void CMobblerLastFMConnection::PlaylistFetchAlbumL(const TDesC8& aAlbumId, MMobblerFlatDataObserver& aObserver)
+	{
+	_LIT8(KUserPlaylistFormat, "lastfm://playlist/album/%S");
 	
+	CUri8* uri(CUri8::NewL());
+	CleanupStack::PushL(uri);
+	
+	uri->SetComponentL(KScheme, EUriScheme);
+	uri->SetComponentL(KWebServicesHost, EUriHost);
+	uri->SetComponentL(_L8("/2.0/"), EUriPath);
+	
+	CMobblerWebServicesQuery* query(CMobblerWebServicesQuery::NewLC(_L8("playlist.fetch")));
+	
+	HBufC8* playlistURL(HBufC8::NewLC(KUserPlaylistFormat().Length() + aAlbumId.Length()));
+	playlistURL->Des().Format(KUserPlaylistFormat, &aAlbumId);
+	query->AddFieldL(_L8("playlistURL"), *playlistURL);
+	CleanupStack::PopAndDestroy(playlistURL);
+			
+	uri->SetComponentL(*query->GetQueryLC(), EUriQuery);
+	CleanupStack::PopAndDestroy(); // *query->GetQueryLC()
+	CleanupStack::PopAndDestroy(query); // *query->GetQueryLC()
+
+	CMobblerTransaction* transaction(CMobblerTransaction::NewL(*this, uri));
+	transaction->SetFlatDataObserver(&aObserver);
+	
+	CleanupStack::Pop(uri);
+	
+	AppendAndSubmitTransactionL(transaction);
 	}
 
 void CMobblerLastFMConnection::PlaylistAddTrackL(const TDesC8& aPlaylistId, const TDesC8& aArtist, const TDesC8& aTrack, MMobblerFlatDataObserver& aObserver)
@@ -866,21 +895,6 @@ void CMobblerLastFMConnection::TracksOrAlbumsByArtistL(TDesC& aArtist, TBool aAl
 
 void CMobblerLastFMConnection::AlbumGetInfoL(const TDesC& aAlbum, const TDesC& aArtist, MMobblerFlatDataObserver& aObserver)
 	{
-	CMobblerString* artist(CMobblerString::NewL(aArtist));
-	CleanupStack::PushL(artist);
-	CMobblerString* album(CMobblerString::NewL(aAlbum));
-	CleanupStack::PushL(album);
-	
-	CMobblerTrack* track(CMobblerTrack::NewL(artist->String8(), album->String8(), /*KNullDesC8,*/ KNullDesC8, KNullDesC8, KNullDesC8, KNullDesC8, 0, KNullDesC8));
-	
-	CleanupStack::PopAndDestroy(2, artist);
-	
-	AlbumGetInfoL(*track, aObserver);
-	track->Release();
-	}
-
-void CMobblerLastFMConnection::AlbumGetInfoL(const CMobblerTrack& aTrack, MMobblerFlatDataObserver& aObserver)
-	{
 	CUri8* uri(CUri8::NewL());
 	CleanupStack::PushL(uri);
 	
@@ -890,10 +904,10 @@ void CMobblerLastFMConnection::AlbumGetInfoL(const CMobblerTrack& aTrack, MMobbl
 	
 	CMobblerWebServicesQuery* query(CMobblerWebServicesQuery::NewLC(_L8("album.getinfo")));
 	
-	query->AddFieldL(_L8("artist"), *MobblerUtility::URLEncodeLC(aTrack.Artist().String8()));
+	query->AddFieldL(_L8("artist"), *MobblerUtility::URLEncodeLC(aAlbum));
 	CleanupStack::PopAndDestroy(); // *MobblerUtility::URLEncodeLC(aArtist)
 
-	query->AddFieldL(_L8("album"), *MobblerUtility::URLEncodeLC(aTrack.Album().String8()));
+	query->AddFieldL(_L8("album"), *MobblerUtility::URLEncodeLC(aArtist));
 	CleanupStack::PopAndDestroy(); // *MobblerUtility::URLEncodeLC(aAlbum)
 	
 	uri->SetComponentL(*query->GetQueryLC(), EUriQuery);
@@ -907,6 +921,31 @@ void CMobblerLastFMConnection::AlbumGetInfoL(const CMobblerTrack& aTrack, MMobbl
 	
 	AppendAndSubmitTransactionL(transaction);
 	}
+
+void CMobblerLastFMConnection::AlbumGetInfoL(const TDesC8& aMbId, MMobblerFlatDataObserver& aObserver)
+	{
+	CUri8* uri(CUri8::NewL());
+	CleanupStack::PushL(uri);
+	
+	uri->SetComponentL(KScheme, EUriScheme);
+	uri->SetComponentL(KWebServicesHost, EUriHost);
+	uri->SetComponentL(_L8("/2.0/"), EUriPath);
+	
+	CMobblerWebServicesQuery* query(CMobblerWebServicesQuery::NewLC(_L8("album.getinfo")));
+	query->AddFieldL(_L8("mbid"), aMbId);
+	
+	uri->SetComponentL(*query->GetQueryLC(), EUriQuery);
+	CleanupStack::PopAndDestroy();
+
+	CMobblerTransaction* transaction(CMobblerTransaction::NewL(*this, uri));
+	transaction->SetFlatDataObserver(&aObserver);
+	
+	CleanupStack::PopAndDestroy(query);
+	CleanupStack::Pop(uri);
+	
+	AppendAndSubmitTransactionL(transaction);
+	}
+
 /*
 void CMobblerLastFMConnection::AddToLibrary(const TDesC& aArtist, const TDesC& aTrack, const TDesC& aAlbum, TInt aCommand)
 	{

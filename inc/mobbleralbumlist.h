@@ -24,6 +24,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #ifndef __MOBBLERALBUMLIST_H__
 #define __MOBBLERALBUMLIST_H__
 
+#include "mobblerdataobserver.h"
 #include "mobblerlistcontrol.h"
 
 class CMobblerAppUi;
@@ -38,7 +39,7 @@ public:
 	CMobblerListControl* HandleListCommandL(TInt aCommand);
 	void SupportedCommandsL(RArray<TInt>& aCommands);
 	void ParseL(const TDesC8& aXML);
-
+	
 private:
 	};
 

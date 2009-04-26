@@ -69,7 +69,7 @@ CMobblerListControl* CMobblerFriendList::HandleListCommandL(TInt aCommand)
 		case EMobblerCommandTrackShare:
 		case EMobblerCommandArtistShare:
 			{
-	    	TBuf<255> message;
+	    	TBuf<EMobblerMaxQueryDialogLength> message;
 	    	
 	    	CAknTextQueryDialog* shareDialog(new(ELeave) CAknTextQueryDialog(message));
 	    	shareDialog->PrepareLC(R_MOBBLER_TEXT_QUERY_DIALOG);
@@ -86,13 +86,13 @@ CMobblerListControl* CMobblerFriendList::HandleListCommandL(TInt aCommand)
 					if (aCommand == EMobblerCommandTrackShare)
 						{
 						delete iShareObserver;
-						iShareObserver = CMobblerFlatDataObserverHelper::NewL(iAppUi.LastFMConnection(), *this);
+						iShareObserver = CMobblerFlatDataObserverHelper::NewL(iAppUi.LastFMConnection(), *this, ETrue);
 						iAppUi.LastFMConnection().TrackShareL(iList[iListBox->CurrentItemIndex()]->Title()->String8(), iAppUi.CurrentTrack()->Artist().String8(), iAppUi.CurrentTrack()->Title().String8(), messageString->String8(), *iShareObserver);
 						}
 					else
 						{
 						delete iShareObserver;
-						iShareObserver = CMobblerFlatDataObserverHelper::NewL(iAppUi.LastFMConnection(), *this);
+						iShareObserver = CMobblerFlatDataObserverHelper::NewL(iAppUi.LastFMConnection(), *this, ETrue);
 						iAppUi.LastFMConnection().ArtistShareL(iList[iListBox->CurrentItemIndex()]->Title()->String8(), iAppUi.CurrentTrack()->Artist().String8(), messageString->String8(), *iShareObserver);
 						}
 					}

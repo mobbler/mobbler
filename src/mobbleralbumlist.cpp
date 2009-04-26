@@ -63,8 +63,8 @@ CMobblerListControl* CMobblerAlbumList::HandleListCommandL(TInt aCommand)
 	
 	switch (aCommand)
 		{	
-		case EMobblerCommandRadioStart:
-			iAppUi.RadioStartL(CMobblerLastFMConnection::EArtist, iList[iListBox->CurrentItemIndex()]->Description());
+		case EMobblerCommandOpen:
+			list = CMobblerListControl::CreateListL(iAppUi, iWebServicesControl, EMobblerCommandPlaylistFetchAlbum, iList[iListBox->CurrentItemIndex()]->Title()->String8(), iList[iListBox->CurrentItemIndex()]->Id());
 			break;
 		default:
 			break;	
@@ -75,7 +75,7 @@ CMobblerListControl* CMobblerAlbumList::HandleListCommandL(TInt aCommand)
 
 void CMobblerAlbumList::SupportedCommandsL(RArray<TInt>& aCommands)
 	{
-	aCommands.AppendL(EMobblerCommandRadioStart);
+	aCommands.AppendL(EMobblerCommandOpen);
 	}
 
 void CMobblerAlbumList::ParseL(const TDesC8& aXML)
