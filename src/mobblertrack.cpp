@@ -265,7 +265,8 @@ void CMobblerTrack::SetAlbumL(const TDesC& aAlbum)
 		{
 		// Not found track's path, check for %artist%.jpg in the cache
 		TFileName fileName(KArtistImageCache);
-		fileName.Append(iArtist->SafeFsString());
+		fileName.Append(iArtist->SafeFsString(fileName.Length() +
+											  KArtExtensionArray[0].Length()));
 		fileName.Append(KArtExtensionArray[0]);
 		if (BaflUtils::FileExists(CCoeEnv::Static()->FsSession(), fileName))
 			{
@@ -355,7 +356,8 @@ void CMobblerTrack::SetPathL(const TDesC& aPath)
 		for (TInt i(0); i < arraySize; ++i)
 			{
 			fileName.Copy(parse.DriveAndPath());
-			fileName.Append(iAlbum->String());
+			fileName.Append(iAlbum->SafeFsString(fileName.Length() +
+							KArtExtensionArray[i].Length()));
 			fileName.Append(KArtExtensionArray[i]);
 
 			if (BaflUtils::FileExists(CCoeEnv::Static()->FsSession(), fileName))
@@ -389,7 +391,8 @@ void CMobblerTrack::SetPathL(const TDesC& aPath)
 		for (TInt i(0); i < arraySize; ++i)
 			{
 			fileName.Copy(parse.DriveAndPath());
-			fileName.Append(iArtist->SafeFsString());
+			fileName.Append(iArtist->SafeFsString(fileName.Length() +
+											KArtExtensionArray[i].Length()));
 			fileName.Append(KArtExtensionArray[i]);
 
 			if (BaflUtils::FileExists(CCoeEnv::Static()->FsSession(), fileName))
@@ -736,15 +739,17 @@ void CMobblerTrack::SaveAlbumArtL(const TDesC8& aData)
 			CCoeEnv::Static()->FsSession().MkDirAll(albumArtFileName);
 			}
 		
+		TInt knownPathLength(albumArtFileName.Length() +
+							 KArtExtensionArray[0].Length());
 		if (iState == EFetchingAlbumArt)
 			{
-			albumArtFileName.Append(KArtFileArray[0]);
+			albumArtFileName.Append(iAlbum->SafeFsString(knownPathLength));
 			}
 		else
 			{
-			albumArtFileName.Append(iArtist->SafeFsString());
-			albumArtFileName.Append(KArtExtensionArray[0]);
+			albumArtFileName.Append(iArtist->SafeFsString(knownPathLength));
 			}
+		albumArtFileName.Append(KArtExtensionArray[0]);
 		LOG(albumArtFileName);
 		
 		RFile albumArtFile;

@@ -94,14 +94,14 @@ const TPtrC8& CMobblerString::String8() const
 	return iString8Ptr;
 	}
 
-const TPtrC CMobblerString::SafeFsString() const
+const TPtrC CMobblerString::SafeFsString(const TInt aKnownPathLength) const
 	{
 	TFileName stripped;
-	stripped.Copy(SafeFsString8());
+	stripped.Copy(SafeFsString8(aKnownPathLength));
 	return stripped;
 	}
 
-const TPtrC8 CMobblerString::SafeFsString8() const
+const TPtrC8 CMobblerString::SafeFsString8(const TInt aKnownPathLength) const
 	{
 	TBuf8<KMaxFileName> stripped8(iString8Ptr);
 
@@ -116,9 +116,10 @@ const TPtrC8 CMobblerString::SafeFsString8() const
 			}
 		}
 
-	if (stripped8.Length() > KMaxFileName)
+	TInt fullPathLength(stripped8.Length() + aKnownPathLength);
+	if (fullPathLength > KMaxFileName)
 		{
-		TInt pos(KMaxFileName - stripped8.Length());
+		TInt pos(KMaxFileName - fullPathLength);
 		TInt length(stripped8.Length() - pos);
 		stripped8.Delete(pos, length);
 		}

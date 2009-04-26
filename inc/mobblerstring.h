@@ -36,8 +36,8 @@ public:
 	const TPtrC& String() const;
 	const TPtrC8& String8() const;
 
-	const TPtrC SafeFsString() const;
-	const TPtrC8 SafeFsString8() const;
+	const TPtrC SafeFsString(const TInt aKnownPathLength = 0) const;
+	const TPtrC8 SafeFsString8(const TInt aKnownPathLength = 0) const;
 	
 private:
 	CMobblerString();
