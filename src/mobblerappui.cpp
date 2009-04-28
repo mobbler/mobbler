@@ -72,8 +72,8 @@ void CMobblerAppUi::ConstructL()
 	iInterfaceSelector = CRemConInterfaceSelector::NewL();
 	iCoreTarget = CRemConCoreApiTarget::NewL(*iInterfaceSelector, *this);
 	iInterfaceSelector->OpenTargetL();
-		
-#ifdef  __S60_50__
+	
+#ifdef __S60_50__
 	BaseConstructL(EAknTouchCompatible | EAknEnableSkin);
 #else
 	BaseConstructL(EAknEnableSkin);
@@ -109,6 +109,8 @@ void CMobblerAppUi::ConstructL()
 	AddViewL(iWebServicesView);
 	
 	iLastFMConnection->SetModeL(iSettingView->Mode());
+	iLastFMConnection->LoadCurrentTrackL();
+
 	if (iSettingView->AlarmOn())
 		{
 		// If the time has already passed, no problem, the timer will 
@@ -853,7 +855,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 			}
 			break;
 		case EMobblerCommandToggleScrobbling:
-			iLastFMConnection->ToggleScrobbling();
+			iLastFMConnection->ToggleScrobblingL();
 			iStatusView->DrawDeferred();
 			break;
 		case EMobblerCommandSleepTimer:

@@ -189,6 +189,7 @@ void CMobblerRadioPlayer::HandleAudioPositionChangeL()
 		}
 	
 	static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->StatusDrawDeferred();
+	iLastFMConnection.SaveCurrentTrackL();
 	}
 
 void CMobblerRadioPlayer::HandleAudioFinishedL(CMobblerAudioControl* aAudioControl, TInt aError)

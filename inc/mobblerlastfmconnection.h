@@ -153,7 +153,10 @@ public:
 	TBool ExportQueueToLogFileL();
 	
 	TBool ScrobblingOn() { return iScrobblingOn; }
-	void ToggleScrobbling() { iScrobblingOn = !iScrobblingOn; }
+	void ToggleScrobblingL();
+	
+	void LoadCurrentTrackL();
+	void SaveCurrentTrackL();
 	
 private:
 	void RunL();
@@ -208,6 +211,8 @@ private:  // utilities
 	void AppendAndSubmitTransactionL(CMobblerTransaction* aTransaction);
 	void CloseTransactionsL(TBool aCloseTransactionArray);
 	
+	void DeleteCurrentTrackFile();
+
 private:
 	RHTTPSession iHTTPSession;
 	RSocketServ iSocketServ;
@@ -262,6 +267,7 @@ private:
 	TBool iAuthenticated;
 	
 	TBool iScrobblingOn;
+	TBool iCurrentTrackSaved;
 	
 	RPointerArray<MMobblerConnectionStateObserver> iStateChangeObservers;
 	};

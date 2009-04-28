@@ -133,12 +133,12 @@ void CMobblerPlaylistList::DataL(CMobblerFlatDataObserverHelper* aObserver, cons
 		// Parse the XML into the DOM fragment
 		xmlReader->ParseL(aData);
 		
-		CSenElement* playlist = domFragment->AsElement().Element(_L8("playlists"))->Element(_L8("playlist"));
+		CSenElement* playlist(domFragment->AsElement().Element(_L8("playlists"))->Element(_L8("playlist")));
 		
-		CMobblerListItem* item = CMobblerListItem::NewL(*this,
+		CMobblerListItem* item(CMobblerListItem::NewL(*this,
 															playlist->Element(_L8("title"))->Content(),
 															playlist->Element(_L8("description"))->Content(),
-															playlist->Element(_L8("image"))->Content());
+															playlist->Element(_L8("image"))->Content()));
 		
 		item->SetIdL(playlist->Element(_L8("id"))->Content());
 		

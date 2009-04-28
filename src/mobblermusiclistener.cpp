@@ -424,6 +424,7 @@ void CMobblerMusicAppListener::PlayerPositionL(TTimeIntervalSeconds aPlayerPosit
 			{
 			iCurrentTrack->SetPlaybackPosition(aPlayerPosition);
 			static_cast<CMobblerAppUi*>(CEikonEnv::Static()->AppUi())->StatusDrawDeferred();
+			iLastFMConnection.SaveCurrentTrackL();
 			}
 		}
 	}

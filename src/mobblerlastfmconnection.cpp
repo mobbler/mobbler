@@ -72,6 +72,7 @@ _LIT8(KLatesverFileLocation, "http://www.mobbler.co.uk/latestver.xml");
 
 // The file name to store the queue of listened tracks
 _LIT(KTracksFile, "c:track_queue.dat");
+_LIT(KCurrentTrackFile, "c:current_track.dat");
 _LIT8(KLogFileHeader, "#AUDIOSCROBBLER/1.1\n#TZ/UTC\n#CLIENT/Mobbler ");
 _LIT8(KLogFileListenedRating, "L");
 _LIT8(KLogFileFieldSeperator, "\t");
@@ -1376,6 +1377,7 @@ void CMobblerLastFMConnection::TrackStoppedL()
 	static_cast<CMobblerAppUi*>(CEikonEnv::Static()->AppUi())->StatusDrawDeferred();
 
 	// Save the track queue and try to do a submission
+	DeleteCurrentTrackFile();
 	SaveTrackQueue();
 	DoSubmitL();
 
@@ -2167,6 +2169,86 @@ void CMobblerLastFMConnection::StripOutTabs(TDes8& aString)
 		aString.Delete(position, 1);
 		position = aString.Find(KLogFileFieldSeperator);
 		}
+	}
+
+void CMobblerLastFMConnection::ToggleScrobblingL()
+	{
+	iScrobblingOn = !iScrobblingOn;
+	
+	iScrobblingOn ?
+		SaveCurrentTrackL() :
+		DeleteCurrentTrackFile();
+	}
+
+void CMobblerLastFMConnection::LoadCurrentTrackL()
+	{
+	RFile file;
+	CleanupClosePushL(file);
+	TInt openError(file.Open(CCoeEnv::Static()->FsSession(),
+							   KCurrentTrackFile, EFileRead));
+	
+	if (openError == KErrNone)
+		{
+		RFileReadStream readStream(file);
+		CleanupClosePushL(readStream);
+		
+		if (iCurrentTrack)
+			{
+			//  There is already a current track so get rid of it
+			iCurrentTrack->Release();
+			}
+		iCurrentTrack  = CMobblerTrack::NewL(readStream);
+		iCurrentTrack->SetPlaybackPosition(readStream.ReadInt32L());
+		iCurrentTrack->SetTotalPlayed(readStream.ReadInt32L());
+		CleanupStack::PopAndDestroy(&readStream);
+		TrackStoppedL();
+		DeleteCurrentTrackFile();
+		}
+	CleanupStack::PopAndDestroy(&file);
+	}
+
+void CMobblerLastFMConnection::SaveCurrentTrackL()
+	{
+	if (!iCurrentTrackSaved &&
+		iScrobblingOn && 
+		iCurrentTrack)
+		{
+		TInt playbackPosition(Min(iCurrentTrack->PlaybackPosition().Int(), 
+								  iCurrentTrack->TrackLength().Int()));
+		TInt scrobbleTime(iCurrentTrack->InitialPlaybackPosition().Int() + 
+						  iCurrentTrack->ScrobbleDuration().Int());
+
+		if (playbackPosition >= scrobbleTime)
+			{
+			// Save the track to file
+			CCoeEnv::Static()->FsSession().MkDirAll(KCurrentTrackFile);
+			
+			RFile file;
+			CleanupClosePushL(file);
+			TInt createError(file.Create(CCoeEnv::Static()->FsSession(), 
+										   KCurrentTrackFile, EFileWrite));
+			
+			if (createError == KErrNone)
+				{
+				RFileWriteStream writeStream(file);
+				CleanupClosePushL(writeStream);
+				writeStream << *iCurrentTrack;
+				writeStream.WriteInt32L(iCurrentTrack->PlaybackPosition().Int());
+				writeStream.WriteInt32L(iCurrentTrack->TotalPlayed().Int());
+				
+				CleanupStack::PopAndDestroy(&writeStream);
+				iCurrentTrackSaved = ETrue;
+				}
+			
+			CleanupStack::PopAndDestroy(&file);
+			}
+		}
+	}
+
+void CMobblerLastFMConnection::DeleteCurrentTrackFile()
+	{
+	CCoeEnv::Static()->FsSession().Delete(KCurrentTrackFile);
+	iCurrentTrackSaved = EFalse;
 	}
 
 // End of file
