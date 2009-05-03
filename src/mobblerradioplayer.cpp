@@ -346,10 +346,12 @@ void CMobblerRadioPlayer::DataL(const TDesC8& aData, CMobblerLastFMConnection::T
 					}
 				else
 					{
+					CleanupStack::PushL(error);
 					DoChangeTransactionStateL(ENone);
 					
 					CAknInformationNote* note(new (ELeave) CAknInformationNote(EFalse));
 					note->ExecuteLD(error->Text());
+					CleanupStack::PopAndDestroy(error);
 					}
 				}
 				break;

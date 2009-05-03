@@ -78,7 +78,7 @@ void CMobblerSettingItemListView::HandleCommandL(TInt aCommand)
 			static_cast<CMobblerAppUi*>(AppUi())->SetDetailsL(iSettings->Username(), iSettings->Password());
 			static_cast<CMobblerAppUi*>(AppUi())->SetIapIDL(iSettings->IapId());
 			static_cast<CMobblerAppUi*>(AppUi())->SetBufferSize(iSettings->BufferSize());
-			static_cast<CMobblerAppUi*>(AppUi())->SetAccelerometerGestures(iSettings->AccelerometerGestures());
+			static_cast<CMobblerAppUi*>(AppUi())->SetAccelerometerGesturesL(iSettings->AccelerometerGestures());
 			}
 		else if (iSettingsToSet == ESleepTimer)
 			{
@@ -104,11 +104,11 @@ void CMobblerSettingItemListView::HandleCommandL(TInt aCommand)
 		// TODO or send custom message to remove sleep/alarm?
 		if (iSettingsToSet == ESleepTimer)
 			{
-			static_cast<CMobblerAppUi*>(AppUi())->RemoveSleepTimer();
+			static_cast<CMobblerAppUi*>(AppUi())->RemoveSleepTimerL();
 			}
 		else if (iSettingsToSet == EAlarm)
 			{
-			static_cast<CMobblerAppUi*>(AppUi())->RemoveAlarm();
+			static_cast<CMobblerAppUi*>(AppUi())->RemoveAlarmL();
 			}
 
 		AppUi()->ActivateLocalViewL(TUid::Uid(0xA0007CA8));

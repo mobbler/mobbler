@@ -59,25 +59,6 @@ void CMobblerWebServicesControl::ConstructL(const TRect& aRect, TUid aCustomMess
 	
 	switch (aCustomMessageId.iUid)
 		{
-		case EMobblerCommandFriends:
-		case EMobblerCommandUserTopArtists:
-		case EMobblerCommandRecommendedArtists:
-		case EMobblerCommandRecommendedEvents:
-		case EMobblerCommandUserTopAlbums:
-		case EMobblerCommandUserTopTracks:
-		case EMobblerCommandPlaylists:
-		case EMobblerCommandUserEvents:
-		case EMobblerCommandArtistEvents:
-		case EMobblerCommandUserTopTags:
-		case EMobblerCommandRecentTracks:
-		case EMobblerCommandUserShoutbox:
-		case EMobblerCommandArtistShoutbox:
-		case EMobblerCommandEventShoutbox:
-		case EMobblerCommandArtistTopAlbums:
-		case EMobblerCommandArtistTopTracks:
-		case EMobblerCommandArtistTopTags:
-			control = CMobblerListControl::CreateListL(iAppUi, *this, aCustomMessageId.iUid, aCustomMessage, KNullDesC8);
-			break;
 		case EMobblerCommandSimilarArtists:
 		case EMobblerCommandSimilarTracks:
 			// These can only be called if there is a current track playing
@@ -85,9 +66,9 @@ void CMobblerWebServicesControl::ConstructL(const TRect& aRect, TUid aCustomMess
 				{
 				control = CMobblerListControl::CreateListL(iAppUi, *this, aCustomMessageId.iUid, iAppUi.CurrentTrack()->Artist().String8(), iAppUi.CurrentTrack()->Title().String8());
 				}
-			
+			break;
 		default:
-			// we should panic if we get here
+			control = CMobblerListControl::CreateListL(iAppUi, *this, aCustomMessageId.iUid, aCustomMessage, KNullDesC8);
 			break;
 		};
 	

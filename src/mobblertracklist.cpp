@@ -67,6 +67,9 @@ void CMobblerTrackList::ConstructL()
     		iAlbumInfoObserver = CMobblerFlatDataObserverHelper::NewL(iAppUi.LastFMConnection(), *this, EFalse);
     		iAppUi.LastFMConnection().AlbumGetInfoL(iText2->String8(), *iAlbumInfoObserver);
     		break;
+        case EMobblerCommandSearchTrack:
+            iAppUi.LastFMConnection().WebServicesCallL(_L8("track"), _L8("search"), iText1->String8(), *this);
+            break;
     	default:
     		break;
     	}
@@ -111,13 +114,13 @@ CMobblerListControl* CMobblerTrackList::HandleListCommandL(TInt aCommand)
 			CMobblerTrack* track = CMobblerTrack::NewL(artist, title, KNullDesC8, KNullDesC8, KNullDesC8, KNullDesC8, 0, KNullDesC8);
 			
 			delete iWebServicesHelper;
-			iWebServicesHelper = CMobblerWebServicesHelper::NewL(iAppUi, *track);
+			iWebServicesHelper = CMobblerWebServicesHelper::NewL(iAppUi);
 			
 			switch (aCommand)
 				{
-				case EMobblerCommandTrackShare: iWebServicesHelper->TrackShareL(); break;
-				case EMobblerCommandArtistShare: iWebServicesHelper->ArtistShareL(); break;
-				case EMobblerCommandPlaylistAddTrack: iWebServicesHelper->PlaylistAddL(); break;
+				case EMobblerCommandTrackShare: iWebServicesHelper->TrackShareL(*track); break;
+				case EMobblerCommandArtistShare: iWebServicesHelper->ArtistShareL(*track); break;
+				case EMobblerCommandPlaylistAddTrack: iWebServicesHelper->PlaylistAddL(*track); break;
 				}
 						
 			track->Release();
@@ -188,6 +191,8 @@ void CMobblerTrackList::ParseL(const TDesC8& aXML)
     	case EMobblerCommandPlaylistFetchUser:
     	case EMobblerCommandPlaylistFetchAlbum:
     		CMobblerParser::ParsePlaylistL(aXML, *this, iList);
+        case EMobblerCommandSearchTrack:
+            CMobblerParser::ParseSearchTrackL(aXML, *this, iList);
     	default:
     		break;
     	}

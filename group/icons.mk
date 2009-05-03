@@ -52,14 +52,14 @@ RESOURCE :
 
 	mifconv $(ICONTARGETFILENAME) /X /h$(HEADERFILENAME) \
 		/c32,8 $(ICONDIR)\mobbler.svg \
-		$(ICONDIR)\more.svg \
-		$(ICONDIR)\love.svg \
-		$(ICONDIR)\ban.svg \
-		$(ICONDIR)\stop.svg \
-		$(ICONDIR)\play.svg \
-		$(ICONDIR)\next.svg \
-		$(ICONDIR)\speaker_low.svg \
-		$(ICONDIR)\speaker_high.svg
+		/c32,8 $(ICONDIR)\more.svg \
+		/c32,8 $(ICONDIR)\love.svg \
+		/c32,8 $(ICONDIR)\ban.svg \
+		/c32,8 $(ICONDIR)\stop.svg \
+		/c32,8 $(ICONDIR)\play.svg \
+		/c32,8 $(ICONDIR)\next.svg \
+		/c32,8 $(ICONDIR)\speaker_low.svg \
+		/c32,8 $(ICONDIR)\speaker_high.svg
 		
 FREEZE : do_nothing
 

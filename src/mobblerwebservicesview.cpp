@@ -104,6 +104,7 @@ void CMobblerWebServicesView::DynInitMenuPaneL(TInt aResourceId, CEikMenuPane* a
 		{
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_TRACK,			EMobblerCommandTrackShare);
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_ARTIST,			EMobblerCommandArtistShare);
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_EVENT,			EMobblerCommandEventShare);
 		}	
 	else if (aResourceId == R_MOBBLER_VIEW_SUBMENU_PANE)
 		{		
@@ -141,8 +142,16 @@ void CMobblerWebServicesView::DynInitMenuPaneL(TInt aResourceId, CEikMenuPane* a
 		TInt position(0);
 		if (aMenuPane->MenuItemExists(i, position))
 			{
-			aMenuPane->SetItemDimmed(i, supportedCommands.Find(i) == KErrNotFound && iWebServicesControl->TopControl()->Count() > 0 ||
-										supportedCommands.Find(i) == KErrNotFound && i == EMobblerCommandShout); // always display shout if it is supported
+			TBool commandNotSupported = (supportedCommands.Find(i) == KErrNotFound);
+			
+			aMenuPane->SetItemDimmed(i, commandNotSupported || iWebServicesControl->TopControl()->Count() == 0);
+			
+			if (!commandNotSupported &&
+					(i == EMobblerCommandShout || i == EMobblerCommandPlaylistCreate))
+				{
+				// Display these commands when they are supported even if there are no items
+				aMenuPane->SetItemDimmed(i, EFalse);
+				}
 			}
 		}
 	

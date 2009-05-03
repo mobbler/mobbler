@@ -58,10 +58,12 @@ CMobblerListControl* CMobblerListControl::CreateListL(CMobblerAppUi& aAppUi, CMo
 		case EMobblerCommandUserTopArtists:
 		case EMobblerCommandRecommendedArtists:
 		case EMobblerCommandSimilarArtists:
+		case EMobblerCommandSearchArtist:
 			self = new(ELeave) CMobblerArtistList(aAppUi, aWebServicesControl);
 			break;
 		case EMobblerCommandUserTopAlbums:
 		case EMobblerCommandArtistTopAlbums:
+		case EMobblerCommandSearchAlbum:
 			self = new(ELeave) CMobblerAlbumList(aAppUi, aWebServicesControl);
 			break;
 		case EMobblerCommandUserTopTracks:
@@ -70,6 +72,7 @@ CMobblerListControl* CMobblerListControl::CreateListL(CMobblerAppUi& aAppUi, CMo
 		case EMobblerCommandSimilarTracks:
 		case EMobblerCommandPlaylistFetchUser:
 		case EMobblerCommandPlaylistFetchAlbum:
+		case EMobblerCommandSearchTrack:
 			self = new(ELeave) CMobblerTrackList(aAppUi, aWebServicesControl);
 			break;
 		case EMobblerCommandPlaylists:
@@ -82,6 +85,7 @@ CMobblerListControl* CMobblerListControl::CreateListL(CMobblerAppUi& aAppUi, CMo
 			break;
 		case EMobblerCommandUserTopTags:
 		case EMobblerCommandArtistTopTags:
+		case EMobblerCommandSearchTag:
 			self = new(ELeave) CMobblerTagList(aAppUi, aWebServicesControl);
 			break;
 		case EMobblerCommandUserShoutbox:
@@ -94,9 +98,11 @@ CMobblerListControl* CMobblerListControl::CreateListL(CMobblerAppUi& aAppUi, CMo
 			break;
 		};
 	
-	CleanupStack::PushL(self);
-	self->ConstructListL(aType, aText1, aText2);
-	CleanupStack::Pop(self);
+
+    CleanupStack::PushL(self);
+    self->ConstructListL(aType, aText1, aText2);
+    CleanupStack::Pop(self);
+
 	return self;
 	}
 

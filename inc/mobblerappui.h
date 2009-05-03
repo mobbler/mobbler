@@ -98,7 +98,7 @@ public:
 	void SetDetailsL(const TDesC& aUsername, const TDesC& aPassword);
 	void SetIapIDL(TUint32 aIapID);
 	void SetBufferSize(TTimeIntervalSeconds aBufferSize);
-	void SetAccelerometerGestures(TBool aAccelerometerGestures);
+	void SetAccelerometerGesturesL(TBool aAccelerometerGestures);
 	TBool AccelerometerGesturesAvailable() const;
 	void SetSleepTimerL(const TInt aMinutes);
 	void SetAlarmTimerL(const TTime aTime);
@@ -123,8 +123,8 @@ public:
 
 	TBool SleepTimerActive() const { return iSleepTimer->IsActive(); }
 	TBool AlarmActive() const { return iAlarmTimer->IsActive(); }
-	void RemoveSleepTimer();
-	void RemoveAlarm();
+	void RemoveSleepTimerL();
+	void RemoveAlarmL();
 
 public: // CEikAppUi
 	void HandleCommandL(TInt aCommand);
@@ -149,7 +149,7 @@ private:
 	void LoadRadioStationsL();
 	void SaveRadioStationsL();
 	void SleepL();
-	TBool RadioStartable() const;
+	TBool RadioStartableL() const;
 	
 	void LaunchFileEmbeddedL(const TDesC& aFilename);
 	void GoToLastFmL(TInt aCommand);

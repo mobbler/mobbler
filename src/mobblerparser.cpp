@@ -473,6 +473,168 @@ CMobblerLastFMError* CMobblerParser::ParseBetaTestersHandshakeL(const TDesC8& aH
 	}
 #endif
 	
+
+void CMobblerParser::ParseSearchTrackL(const TDesC8& aXml, CMobblerTrackList& aObserver, RPointerArray<CMobblerListItem>& aList)
+    {
+    DUMPDATA(aXml, _L("searchtrack.xml"));
+    
+    // Create the XML reader and DOM fragement and associate them with each other
+    CSenXmlReader* xmlReader(CSenXmlReader::NewL());
+    CleanupStack::PushL(xmlReader);
+    CSenDomFragment* domFragment(CSenDomFragment::NewL());
+    CleanupStack::PushL(domFragment);
+    xmlReader->SetContentHandler(*domFragment);
+    domFragment->SetReader(*xmlReader);
+    
+    // Parse the XML into the DOM fragment
+    xmlReader->ParseL(aXml);
+    
+    RPointerArray<CSenElement>& items = domFragment->AsElement().Element(_L8("results"))->Element(_L8("trackmatches"))->ElementsL();
+        
+    const TInt KCount(items.Count());
+    for (TInt i(0); i < KCount; ++i)
+        {
+        HBufC8* image((items[i]->Element(KElementImage) == NULL) ?
+                        KNullDesC8().AllocLC() :
+                        items[i]->Element(KElementImage)->Content().AllocLC());
+        
+        CMobblerListItem* item(CMobblerListItem::NewL(aObserver,
+                                                        *SenXmlUtils::DecodeHttpCharactersLC(items[i]->Element(_L8("name"))->Content()),
+                                                        *SenXmlUtils::DecodeHttpCharactersLC(items[i]->Element(_L8("artist"))->Content()),
+                                                        *image));
+                                                        
+        CleanupStack::PopAndDestroy(3);
+                                                        
+        CleanupStack::PushL(item);
+        aList.AppendL(item);
+        CleanupStack::Pop(item);
+        }
+    
+    CleanupStack::PopAndDestroy(2, xmlReader);
+    }
+
+void CMobblerParser::ParseSearchAlbumL(const TDesC8& aXml, CMobblerAlbumList& aObserver, RPointerArray<CMobblerListItem>& aList)
+    {
+    DUMPDATA(aXml, _L("searchalbum.xml"));
+    
+    // Create the XML reader and DOM fragement and associate them with each other
+    CSenXmlReader* xmlReader(CSenXmlReader::NewL());
+    CleanupStack::PushL(xmlReader);
+    CSenDomFragment* domFragment(CSenDomFragment::NewL());
+    CleanupStack::PushL(domFragment);
+    xmlReader->SetContentHandler(*domFragment);
+    domFragment->SetReader(*xmlReader);
+    
+    // Parse the XML into the DOM fragment
+    xmlReader->ParseL(aXml);
+    
+    RPointerArray<CSenElement>& items = domFragment->AsElement().Element(_L8("results"))->Element(_L8("albummatches"))->ElementsL();
+        
+    const TInt KCount(items.Count());
+    for (TInt i(0); i < KCount; ++i)
+        {
+        HBufC8* image((items[i]->Element(KElementImage) == NULL) ?
+                        KNullDesC8().AllocLC() :
+                        items[i]->Element(KElementImage)->Content().AllocLC());
+        
+        CMobblerListItem* item(CMobblerListItem::NewL(aObserver,
+                                                        *SenXmlUtils::DecodeHttpCharactersLC(items[i]->Element(_L8("name"))->Content()),
+                                                        *SenXmlUtils::DecodeHttpCharactersLC(items[i]->Element(_L8("artist"))->Content()),
+                                                        *image));
+                                                        
+        CleanupStack::PopAndDestroy(3);
+        
+        item->SetIdL(items[i]->Element(_L8("id"))->Content());
+                                                        
+        CleanupStack::PushL(item);
+        aList.AppendL(item);
+        CleanupStack::Pop(item);
+        }
+    
+    CleanupStack::PopAndDestroy(2, xmlReader);
+    
+    }
+
+void CMobblerParser::ParseSearchArtistL(const TDesC8& aXml, CMobblerArtistList& aObserver, RPointerArray<CMobblerListItem>& aList)
+    {
+    DUMPDATA(aXml, _L("searchartist.xml"));
+    
+    // Create the XML reader and DOM fragement and associate them with each other
+    CSenXmlReader* xmlReader(CSenXmlReader::NewL());
+    CleanupStack::PushL(xmlReader);
+    CSenDomFragment* domFragment(CSenDomFragment::NewL());
+    CleanupStack::PushL(domFragment);
+    xmlReader->SetContentHandler(*domFragment);
+    domFragment->SetReader(*xmlReader);
+    
+    // Parse the XML into the DOM fragment
+    xmlReader->ParseL(aXml);
+    
+    RPointerArray<CSenElement>& items = domFragment->AsElement().Element(_L8("results"))->Element(_L8("artistmatches"))->ElementsL();
+        
+    const TInt KCount(items.Count());
+    for (TInt i(0); i < KCount; ++i)
+        {
+        HBufC8* image((items[i]->Element(KElementImage) == NULL) ?
+                        KNullDesC8().AllocLC() :
+                        items[i]->Element(KElementImage)->Content().AllocLC());
+        
+        CMobblerListItem* item(CMobblerListItem::NewL(aObserver,
+                                                        *SenXmlUtils::DecodeHttpCharactersLC(items[i]->Element(_L8("name"))->Content()),
+                                                        KNullDesC8,
+                                                        *image));
+                                                        
+        CleanupStack::PopAndDestroy(2);
+        
+        item->SetIdL(items[i]->Element(_L8("mbid"))->Content());
+                                                        
+        CleanupStack::PushL(item);
+        aList.AppendL(item);
+        CleanupStack::Pop(item);
+        }
+    
+    CleanupStack::PopAndDestroy(2, xmlReader);
+    }
+
+void CMobblerParser::ParseSearchTagL(const TDesC8& aXml, CMobblerTagList& aObserver, RPointerArray<CMobblerListItem>& aList)
+    {
+    DUMPDATA(aXml, _L("searchtag.xml"));
+    
+    // Create the XML reader and DOM fragement and associate them with each other
+    CSenXmlReader* xmlReader(CSenXmlReader::NewL());
+    CleanupStack::PushL(xmlReader);
+    CSenDomFragment* domFragment(CSenDomFragment::NewL());
+    CleanupStack::PushL(domFragment);
+    xmlReader->SetContentHandler(*domFragment);
+    domFragment->SetReader(*xmlReader);
+    
+    // Parse the XML into the DOM fragment
+    xmlReader->ParseL(aXml);
+    
+    RPointerArray<CSenElement>& items = domFragment->AsElement().Element(_L8("results"))->Element(_L8("tagmatches"))->ElementsL();
+        
+    const TInt KCount(items.Count());
+    for (TInt i(0); i < KCount; ++i)
+        {
+        HBufC8* image((items[i]->Element(KElementImage) == NULL) ?
+                        KNullDesC8().AllocLC() :
+                        items[i]->Element(KElementImage)->Content().AllocLC());
+        
+        CMobblerListItem* item(CMobblerListItem::NewL(aObserver,
+                                                        *SenXmlUtils::DecodeHttpCharactersLC(items[i]->Element(_L8("name"))->Content()),
+                                                        items[i]->Element(_L8("count"))->Content(),
+                                                        *image));
+                                                        
+        CleanupStack::PopAndDestroy(2);
+                                                        
+        CleanupStack::PushL(item);
+        aList.AppendL(item);
+        CleanupStack::Pop(item);
+        }
+    
+    CleanupStack::PopAndDestroy(2, xmlReader);
+    }
+
 void CMobblerParser::ParseFriendListL(const TDesC8& aXml, CMobblerFriendList& aObserver, RPointerArray<CMobblerListItem>& aList)
 	{
 	DUMPDATA(aXml, _L("usergetfriends.xml"));

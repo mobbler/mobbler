@@ -128,6 +128,7 @@ public:
 	
 	void TrackShareL(const TDesC8& aUser, const TDesC8& aArtist, const TDesC8& aTrack, const TDesC8& aMessage, MMobblerFlatDataObserver& aObserver);
 	void ArtistShareL(const TDesC8& aUser, const TDesC8& aArtist, const TDesC8& aMessage, MMobblerFlatDataObserver& aObserver);
+	void EventShareL(const TDesC8& aUser, const TDesC8& aEventId, const TDesC8& aMessage, MMobblerFlatDataObserver& aObserver);
 	
 	void RecommendedArtistsL(MMobblerFlatDataObserver& aObserver);
 	void RecommendedEventsL(MMobblerFlatDataObserver& aObserver);
@@ -138,12 +139,9 @@ public:
 	void SimilarArtistsL(const TDesC8& aArtist, MMobblerFlatDataObserver& aObserver);
 	void ArtistGetImageL(const TDesC& aArtist, MMobblerFlatDataObserver& aObserver);
 	void ArtistGetTagsL(const TDesC& aArtist, MMobblerFlatDataObserver& aObserver);
-	void ArtistOrTrackSearchL(TDesC& aArtist, TDesC& aTrack, MMobblerFlatDataObserver& aObserver);
 	
 	void AlbumGetInfoL(const TDesC8& aMbId, MMobblerFlatDataObserver& aObserver);
 	void AlbumGetInfoL(const TDesC& aAlbum, const TDesC& aArtist, MMobblerFlatDataObserver& aObserver);
-	
-	void TracksOrAlbumsByArtistL(TDesC& aArtist, TBool aAlbums, MMobblerFlatDataObserver& aObserver);
 	
 	void PlaylistCreateL(const TDesC& aTitle, const TDesC& aDescription, MMobblerFlatDataObserver& aObserver);
 	void PlaylistFetchUserL(const TDesC8& aPlaylistId, MMobblerFlatDataObserver& aObserver);
@@ -175,7 +173,7 @@ private:
 	void DoNowPlayingL();
 	TBool DoSubmitL();
 	
-	void ChangeState(TState aState);
+	void ChangeStateL(TState aState);
 	void DoSetModeL(TMode aMode);
 	
 	// handshaking
@@ -195,12 +193,12 @@ private:
 	CMobblerLastFMConnection(MMobblerLastFMConnectionObserver& aObserver, TUint32 aIapID);
 	
 private:  // utilities
-	void CreateAuthToken(TDes8& aHash, TTimeIntervalSeconds aUnixTimeStamp);
+	void CreateAuthTokenL(TDes8& aHash, TTimeIntervalSeconds aUnixTimeStamp);
 	void StripOutTabs(TDes8& aString);
 	
 	// track queue methods
 	void LoadTrackQueueL();
-	void SaveTrackQueue();
+	void SaveTrackQueueL();
 
 	void ConnectL();
 	void Disconnect();

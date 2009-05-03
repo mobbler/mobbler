@@ -48,6 +48,9 @@ void CMobblerAlbumList::ConstructL()
     	case EMobblerCommandArtistTopAlbums:
     		iAppUi.LastFMConnection().WebServicesCallL(_L8("artist"), _L8("gettopalbums"), iText1->String8(), *this);
     		break;
+        case EMobblerCommandSearchAlbum:
+            iAppUi.LastFMConnection().WebServicesCallL(_L8("album"), _L8("search"), iText1->String8(), *this);
+            break;
     	default:
     		break;
     	}
@@ -80,7 +83,18 @@ void CMobblerAlbumList::SupportedCommandsL(RArray<TInt>& aCommands)
 
 void CMobblerAlbumList::ParseL(const TDesC8& aXML)
 	{
-	CMobblerParser::ParseTopAlbumsL(aXML, *this, iList);
+	switch (iType)
+	    {
+	    case EMobblerCommandUserTopAlbums:
+	    case EMobblerCommandArtistTopAlbums:
+	        CMobblerParser::ParseTopAlbumsL(aXML, *this, iList);
+	        break;
+	    case EMobblerCommandSearchAlbum:
+	        CMobblerParser::ParseSearchAlbumL(aXML, *this, iList);
+	        break;
+	    default:
+	        break;
+	    }
 	}
 
 // End of file

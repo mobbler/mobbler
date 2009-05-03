@@ -239,8 +239,12 @@ void CMobblerBitmap::ConstructL(const TDesC8& aData, const TUid aFileUid)
 
 void CMobblerBitmap::ConstructL(TUid aAppUid)
 	{
-	AknsUtils::CreateAppIconLC(AknsUtils::SkinInstance(), aAppUid,  EAknsAppIconTypeContext, iBitmap, iMask);
+	CFbsBitmap* bitmap(NULL);
+	CFbsBitmap* mask(NULL);
+	AknsUtils::CreateAppIconLC(AknsUtils::SkinInstance(), aAppUid,  EAknsAppIconTypeContext, bitmap, mask);
 	CleanupStack::Pop(2);
+	iBitmap = bitmap;
+	iMask = mask;
 	iBitmapLoaded = ETrue;
 	}
 	

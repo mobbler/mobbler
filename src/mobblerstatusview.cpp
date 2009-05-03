@@ -117,6 +117,7 @@ void CMobblerStatusView::DynInitMenuPaneL(TInt aResourceId, CEikMenuPane* aMenuP
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_GO_ONLINE,		EMobblerCommandOnline);
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_GO_OFFLINE,		EMobblerCommandOffline);
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_VIEW,				EMobblerCommandView);
+        SetMenuItemTextL(aMenuPane, R_MOBBLER_SEARCH,           EMobblerCommandSearch);
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_EQUALIZER,		EMobblerCommandEqualizer);
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_TOOLS_SUBMENU,	EMobblerCommandTools);
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_SETTINGS,			EMobblerCommandEditSettings);
@@ -151,6 +152,13 @@ void CMobblerStatusView::DynInitMenuPaneL(TInt aResourceId, CEikMenuPane* aMenuP
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_SHOUTBOX,					EMobblerCommandArtistShoutbox);
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_SHOUTBOX,					EMobblerCommandEventShoutbox);
 		}
+   else if(aResourceId == R_MOBBLER_SEARCH_SUBMENU_PANE)
+        {
+        SetMenuItemTextL(aMenuPane, R_MOBBLER_SEARCH_TRACKS,				EMobblerCommandSearchTrack);
+        SetMenuItemTextL(aMenuPane, R_MOBBLER_SEARCH_ALBUMS,				EMobblerCommandSearchAlbum);
+        SetMenuItemTextL(aMenuPane, R_MOBBLER_SEARCH_ARTISTS,				EMobblerCommandSearchArtist);
+        SetMenuItemTextL(aMenuPane, R_MOBBLER_SEARCH_TAGS,					EMobblerCommandSearchTag);
+        }
 	else if(aResourceId == R_MOBBLER_EQUALIZER_SUBMENU_PANE)
 		{
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_EQUALIZER_PROFILE_DEFAULT, EMobblerCommandEqualizerDefault);

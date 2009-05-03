@@ -28,6 +28,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "mobblerlistitem.h"
 #include "mobblerparser.h"
 #include "mobblerstring.h"
+#include "mobblertrack.h"
+#include "mobblerwebserviceshelper.h"
 
 _LIT(KDefaultImage, "\\resource\\apps\\mobbler\\default_artist.png");
 
@@ -54,6 +56,9 @@ void CMobblerArtistList::ConstructL()
 	    case EMobblerCommandTagTopArtists:
 	    	iAppUi.LastFMConnection().WebServicesCallL(_L8("tag"), _L8("gettopartists"), iText1->String8(), *this);
 	    	break;
+	    case EMobblerCommandSearchArtist:
+            iAppUi.LastFMConnection().WebServicesCallL(_L8("artist"), _L8("search"), iText1->String8(), *this);
+            break;
 	    default:
 	    	break;
 	    }
@@ -90,6 +95,14 @@ CMobblerListControl* CMobblerArtistList::HandleListCommandL(TInt aCommand)
 		case EMobblerCommandArtistTopTags:
 			list = CMobblerListControl::CreateListL(iAppUi, iWebServicesControl, EMobblerCommandArtistTopTags, iList[iListBox->CurrentItemIndex()]->Title()->String8(), KNullDesC8);
 			break;
+		case EMobblerCommandArtistShare:
+		    {
+		    CMobblerTrack* track = CMobblerTrack::NewL(iList[iListBox->CurrentItemIndex()]->Title()->String8(), KNullDesC8, KNullDesC8, KNullDesC8, KNullDesC8, KNullDesC8, 0, KNullDesC8);
+            delete iWebServicesHelper;
+            iWebServicesHelper = CMobblerWebServicesHelper::NewL(iAppUi);
+            iWebServicesHelper->ArtistShareL(*track);            
+            track->Release();
+		    }
 		default:
 			break;	
 		}
@@ -108,7 +121,14 @@ void CMobblerArtistList::SupportedCommandsL(RArray<TInt>& aCommands)
 	aCommands.AppendL(EMobblerCommandArtistTopAlbums);
 	aCommands.AppendL(EMobblerCommandArtistTopTracks);
 	aCommands.AppendL(EMobblerCommandArtistTopTags);
+	
+    aCommands.AppendL(EMobblerCommandShare);
+    aCommands.AppendL(EMobblerCommandArtistShare);
 	}
+
+void CMobblerArtistList::DataL(CMobblerFlatDataObserverHelper* /*aObserver*/, const TDesC8& /*aData*/, CMobblerLastFMConnection::TError /*aError*/)
+    {
+    }
 
 void CMobblerArtistList::ParseL(const TDesC8& aXML)
 	{
@@ -126,6 +146,9 @@ void CMobblerArtistList::ParseL(const TDesC8& aXML)
 	    case EMobblerCommandTagTopArtists:
 	    	CMobblerParser::ParseTopArtistsL(aXML, *this, iList);
 	    	break;
+	    case EMobblerCommandSearchArtist:
+	        CMobblerParser::ParseSearchArtistL(aXML, *this, iList);
+	        break;
 	    default:
 	    	break;
 	    }

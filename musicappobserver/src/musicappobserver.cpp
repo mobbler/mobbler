@@ -84,17 +84,17 @@ CMobblerMusicAppObserver::~CMobblerMusicAppObserver()
 
 void CMobblerMusicAppObserver::CommandReceived(TMPlayerRemoteControlCommands aCmd)
 	{
-	iObserver->CommandReceivedL(aCmd);
+	TRAP_IGNORE(iObserver->CommandReceivedL(aCmd));
 	}
 
 void CMobblerMusicAppObserver::PlayerStateChanged(TMPlayerRemoteControlState aState)
 	{
-	iObserver->PlayerStateChangedL(aState);
+	TRAP_IGNORE(iObserver->PlayerStateChangedL(aState));
 	}
 	
 void CMobblerMusicAppObserver::TrackInfoChanged(const TDesC& aTitle, const TDesC& aArtist)
 	{
-	iObserver->TrackInfoChangedL(aTitle, aArtist);
+	TRAP_IGNORE(iObserver->TrackInfoChangedL(aTitle, aArtist));
 	}
 	
 void CMobblerMusicAppObserver::PlaylistChanged()
@@ -103,7 +103,7 @@ void CMobblerMusicAppObserver::PlaylistChanged()
 	
 void CMobblerMusicAppObserver::PlaybackPositionChanged(TInt aPosition)
 	{
-	iObserver->PlayerPositionL(aPosition);
+	TRAP_IGNORE(iObserver->PlayerPositionL(aPosition));
 	}
 	
 void CMobblerMusicAppObserver::EqualizerPresetChanged(TInt /*aPresetNameKey*/)

@@ -35,26 +35,31 @@ class CMobblerTrack;
 class CMobblerWebServicesHelper : public CBase,	public MMobblerFlatDataObserverHelper
 	{
 public:
-	static CMobblerWebServicesHelper* NewL(CMobblerAppUi& aAppUi, CMobblerTrack& aTrack);
+	static CMobblerWebServicesHelper* NewL(CMobblerAppUi& aAppUi);
 	~CMobblerWebServicesHelper();
 	
-	void TrackShareL();
-	void ArtistShareL();
-	void PlaylistAddL();
+	void TrackShareL(CMobblerTrack& iTrack);
+	void ArtistShareL(CMobblerTrack& iTrack);
+	void PlaylistAddL(CMobblerTrack& iTrack);
+	
+	void EventShareL(const TDesC8& aEventId);
 	
 private:
 	void ConstructL();
-	CMobblerWebServicesHelper(CMobblerAppUi& aAppUi, CMobblerTrack& aTrack);
+	CMobblerWebServicesHelper(CMobblerAppUi& aAppUi);
 
 private:
 	void DataL(CMobblerFlatDataObserverHelper* aObserver, const TDesC8& aData, CMobblerLastFMConnection::TError aError);
 	
 private:
 	CMobblerAppUi& iAppUi;
-	CMobblerTrack& iTrack;
+	
+	CMobblerTrack* iTrack;
+	HBufC8* iEventId;
 	
 	CMobblerFlatDataObserverHelper* iFriendFetchObserverHelperTrackShare;
 	CMobblerFlatDataObserverHelper* iFriendFetchObserverHelperArtistShare;
+	CMobblerFlatDataObserverHelper* iFriendFetchObserverHelperEventShare;
 	CMobblerFlatDataObserverHelper* iShareObserverHelper;
 	CMobblerFlatDataObserverHelper* iPlaylistAddObserverHelper;
 	CMobblerFlatDataObserverHelper* iPlaylistFetchObserverHelper;

@@ -28,6 +28,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "mobblerlistitem.h"
 #include "mobblerparser.h"
 #include "mobblerstring.h"
+#include "mobblerwebserviceshelper.h"
 
 #include "mobbler.hrh"
 
@@ -71,6 +72,10 @@ CMobblerListControl* CMobblerEventList::HandleListCommandL(TInt aCommand)
 		case EMobblerCommandEventShoutbox:
 			list = CMobblerListControl::CreateListL(iAppUi, iWebServicesControl, EMobblerCommandEventShoutbox, iList[iListBox->CurrentItemIndex()]->Title()->String8(), iList[iListBox->CurrentItemIndex()]->Id());
 			break;
+    	case EMobblerCommandEventShare:
+    		delete iWebServicesHelper;
+    		iWebServicesHelper = CMobblerWebServicesHelper::NewL(iAppUi);
+    		iWebServicesHelper->EventShareL(iList[iListBox->CurrentItemIndex()]->Id());
 		default:
 			break;	
 		}
@@ -82,6 +87,13 @@ void CMobblerEventList::SupportedCommandsL(RArray<TInt>& aCommands)
 	{
 	aCommands.AppendL(EMobblerCommandView);
 	aCommands.AppendL(EMobblerCommandEventShoutbox);
+
+	aCommands.AppendL(EMobblerCommandShare);
+	aCommands.AppendL(EMobblerCommandEventShare);
+	}
+
+void CMobblerEventList::DataL(CMobblerFlatDataObserverHelper* /*aObserver*/, const TDesC8& /*aData*/, CMobblerLastFMConnection::TError /*aError*/)
+	{
 	}
 
 void CMobblerEventList::ParseL(const TDesC8& aXML)

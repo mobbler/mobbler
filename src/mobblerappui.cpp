@@ -72,8 +72,8 @@ void CMobblerAppUi::ConstructL()
 	iInterfaceSelector = CRemConInterfaceSelector::NewL();
 	iCoreTarget = CRemConCoreApiTarget::NewL(*iInterfaceSelector, *this);
 	iInterfaceSelector->OpenTargetL();
-	
-#ifdef __S60_50__
+		
+#ifdef  __S60_50__
 	BaseConstructL(EAknTouchCompatible | EAknEnableSkin);
 #else
 	BaseConstructL(EAknEnableSkin);
@@ -84,10 +84,6 @@ void CMobblerAppUi::ConstructL()
 	// Create view object
 	iSettingView = CMobblerSettingItemListView::NewL();
 	iStatusView = CMobblerStatusView::NewL();
-	
-	AddViewL(iSettingView);
-	AddViewL(iStatusView);
-	ActivateLocalViewL(iStatusView->Id());
 	
 	iLastFMConnection = CMobblerLastFMConnection::NewL(*this, iSettingView->Username(), iSettingView->Password(), iSettingView->IapId());
 	iRadioPlayer = CMobblerRadioPlayer::NewL(*iLastFMConnection, iSettingView->BufferSize(), iSettingView->EqualizerIndex(), iSettingView->Volume());
@@ -106,7 +102,7 @@ void CMobblerAppUi::ConstructL()
 	iAlarmTimer = CMobblerSleepTimer::NewL(EPriorityLow, *this);
 
 	iWebServicesView = CMobblerWebServicesView::NewL();
-	AddViewL(iWebServicesView);
+	
 	
 	iLastFMConnection->SetModeL(iSettingView->Mode());
 	iLastFMConnection->LoadCurrentTrackL();
@@ -124,8 +120,13 @@ void CMobblerAppUi::ConstructL()
 	TRAP_IGNORE(LoadGesturesPluginL());
 	if (iGesturePlugin && iSettingView->AccelerometerGestures())
 		{
-		SetAccelerometerGestures(ETrue);
+		SetAccelerometerGesturesL(ETrue);
 		}
+	
+	AddViewL(iWebServicesView);
+    AddViewL(iSettingView);
+    AddViewL(iStatusView);
+    ActivateLocalViewL(iStatusView->Id());
 	}
 
 CMobblerAppUi::CMobblerAppUi()
@@ -229,7 +230,7 @@ void CMobblerAppUi::MrccatoCommand(TRemConCoreApiOperationId aOperationId, TRemC
 				{
 				if (iRadioPlayer->CurrentTrack())
 					{
-					iRadioPlayer->NextTrackL();
+					TRAP_IGNORE(iRadioPlayer->NextTrackL());
 					}
 				}
 			iCoreTarget->ForwardResponse(status, KErrNone);
@@ -326,7 +327,7 @@ void CMobblerAppUi::SetBufferSize(TTimeIntervalSeconds aBufferSize)
 	iRadioPlayer->SetPreBufferSize(aBufferSize);
 	}
 
-void CMobblerAppUi::SetAccelerometerGestures(TBool aAccelerometerGestures)
+void CMobblerAppUi::SetAccelerometerGesturesL(TBool aAccelerometerGestures)
 	{
 	if (iGesturePlugin && aAccelerometerGestures)
 		{
@@ -398,9 +399,9 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 	const CMobblerTrack* const currentTrack(CurrentTrack());
 	const CMobblerTrack* const currentRadioTrack(iRadioPlayer->CurrentTrack());
 	
-	TBuf<255> tag;
-	TBuf<255> artist;
-	TBuf<255> user;
+	TBuf<EMobblerMaxQueryDialogLength> tag;
+	TBuf<EMobblerMaxQueryDialogLength> artist;
+	TBuf<EMobblerMaxQueryDialogLength> user;
 
 	// Don't bother going online to Last.fm if no user details entered
 	if (aCommand >= EMobblerCommandOnline)
@@ -470,6 +471,26 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 				}
 				
 			break;
+		case EMobblerCommandSearchTrack:
+		case EMobblerCommandSearchAlbum:
+		case EMobblerCommandSearchArtist:
+		case EMobblerCommandSearchTag:
+		    {
+		    TBuf<EMobblerMaxQueryDialogLength> search;
+		    CAknTextQueryDialog* userDialog(new(ELeave) CAknTextQueryDialog(search));
+            userDialog->PrepareLC(R_MOBBLER_TEXT_QUERY_DIALOG);
+            userDialog->SetPromptL(iResourceReader->ResourceL(R_MOBBLER_SEARCH));
+            userDialog->SetPredictiveTextInputPermitted(ETrue);
+
+            if (userDialog->RunLD())
+                {
+                CMobblerString* searchString(CMobblerString::NewL(search));
+                CleanupStack::PushL(searchString);
+                ActivateLocalViewL(iWebServicesView->Id(), TUid::Uid(aCommand), searchString->String8());
+                CleanupStack::PopAndDestroy(searchString);
+                }
+		    }
+		    break;
 		case EMobblerCommandCheckForUpdates:
 			{
 			delete iCheckForUpdatesObserver;
@@ -549,7 +570,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 			break;
 		case EMobblerCommandRadioArtist:
 			{
-			if (!RadioStartable())
+			if (!RadioStartableL())
 				{
 				break;
 				}
@@ -575,7 +596,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 			break;
 		case EMobblerCommandRadioTag:
 			{
-			if (!RadioStartable())
+			if (!RadioStartableL())
 				{
 				break;
 				}
@@ -602,7 +623,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 			break;
 		case EMobblerCommandRadioUser:
 			{
-			if (!RadioStartable())
+			if (!RadioStartableL())
 				{
 				break;
 				}
@@ -737,12 +758,12 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 				    			if (CurrentTrack())
 				    				{
 				    				delete iWebServicesHelper;
-				    				iWebServicesHelper = CMobblerWebServicesHelper::NewL(*this, *CurrentTrack());
+				    				iWebServicesHelper = CMobblerWebServicesHelper::NewL(*this);
 				    				switch (list->CurrentItemIndex())
 				    					{
-				    					case 0: iWebServicesHelper->TrackShareL(); break;
-				    					case 1: iWebServicesHelper->ArtistShareL(); break;
-				    					case 2: iWebServicesHelper->PlaylistAddL(); break;
+				    					case 0: iWebServicesHelper->TrackShareL(*CurrentTrack()); break;
+				    					case 1: iWebServicesHelper->ArtistShareL(*CurrentTrack()); break;
+				    					case 2: iWebServicesHelper->PlaylistAddL(*CurrentTrack()); break;
 				    					}
 				    				}
 				    			else
@@ -950,7 +971,7 @@ void CMobblerAppUi::RadioStartL(CMobblerLastFMConnection::TRadioStation aRadioSt
 		SaveRadioStationsL();
 		}
 	
-	if (!RadioStartable())
+	if (!RadioStartableL())
 		{
 		return;
 		}
@@ -958,7 +979,7 @@ void CMobblerAppUi::RadioStartL(CMobblerLastFMConnection::TRadioStation aRadioSt
 	iRadioPlayer->StartL(aRadioStation, aRadioOption);
 	}
 			
-TBool CMobblerAppUi::RadioStartable() const
+TBool CMobblerAppUi::RadioStartableL() const
 	{
 	// Can start only if the music player isn't already playing.
 	if (iMusicListener->IsPlaying())
@@ -1495,7 +1516,7 @@ void CMobblerAppUi::SleepL()
 		}
 	}
 
-void CMobblerAppUi::RemoveSleepTimer()
+void CMobblerAppUi::RemoveSleepTimerL()
 	{
 	if (iSleepTimer->IsActive())
 		{
@@ -1505,7 +1526,7 @@ void CMobblerAppUi::RemoveSleepTimer()
 		}
 	}
 
-void CMobblerAppUi::RemoveAlarm()
+void CMobblerAppUi::RemoveAlarmL()
 	{
 	if (iAlarmTimer->IsActive())
 		{

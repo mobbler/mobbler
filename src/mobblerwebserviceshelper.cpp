@@ -41,19 +41,18 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "mobblertrack.h"
 #include "mobblerwebserviceshelper.h"
 
-CMobblerWebServicesHelper* CMobblerWebServicesHelper::NewL(CMobblerAppUi& aAppUi, CMobblerTrack& aTrack)
+CMobblerWebServicesHelper* CMobblerWebServicesHelper::NewL(CMobblerAppUi& aAppUi)
 	{
-	CMobblerWebServicesHelper* self = new(ELeave) CMobblerWebServicesHelper(aAppUi, aTrack);
+	CMobblerWebServicesHelper* self = new(ELeave) CMobblerWebServicesHelper(aAppUi);
 	CleanupStack::PushL(self);
 	self->ConstructL();
 	CleanupStack::Pop(self);
 	return self;
 	}
 
-CMobblerWebServicesHelper::CMobblerWebServicesHelper(CMobblerAppUi& aAppUi, CMobblerTrack& aTrack)
-	:iAppUi(aAppUi), iTrack(aTrack)
+CMobblerWebServicesHelper::CMobblerWebServicesHelper(CMobblerAppUi& aAppUi)
+	:iAppUi(aAppUi)
 	{
-	iTrack.Open();
 	}
 
 void CMobblerWebServicesHelper::ConstructL()
@@ -62,17 +61,25 @@ void CMobblerWebServicesHelper::ConstructL()
 
 CMobblerWebServicesHelper::~CMobblerWebServicesHelper()
 	{
+	delete iEventId;
 	delete iFriendFetchObserverHelperTrackShare;
 	delete iFriendFetchObserverHelperArtistShare;
+	delete iFriendFetchObserverHelperEventShare;
 	delete iShareObserverHelper;
 	delete iPlaylistAddObserverHelper;
 	delete iPlaylistFetchObserverHelper;
 	
-	iTrack.Release();
+	if (iTrack)
+		{
+		iTrack->Release();
+		}
 	}
 
-void CMobblerWebServicesHelper::TrackShareL()
+void CMobblerWebServicesHelper::TrackShareL(CMobblerTrack& aTrack)
 	{
+	iTrack = &aTrack;
+	iTrack->Open();
+	
 	CMobblerString* username(CMobblerString::NewL(iAppUi.SettingView().Username()));
 	CleanupStack::PushL(username);
 	
@@ -83,8 +90,11 @@ void CMobblerWebServicesHelper::TrackShareL()
 	CleanupStack::PopAndDestroy(username);
 	}
 
-void CMobblerWebServicesHelper::ArtistShareL()
+void CMobblerWebServicesHelper::ArtistShareL(CMobblerTrack& aTrack)
 	{
+	iTrack = &aTrack;
+	iTrack->Open();
+	
 	CMobblerString* username(CMobblerString::NewL(iAppUi.SettingView().Username()));
 	CleanupStack::PushL(username);
 	
@@ -95,14 +105,31 @@ void CMobblerWebServicesHelper::ArtistShareL()
 	CleanupStack::PopAndDestroy(username);
 	}
 
-void CMobblerWebServicesHelper::PlaylistAddL()
+void CMobblerWebServicesHelper::PlaylistAddL(CMobblerTrack& aTrack)
 	{
+	iTrack = &aTrack;
+	iTrack->Open();
+	
 	CMobblerString* username(CMobblerString::NewL(iAppUi.SettingView().Username()));
 	CleanupStack::PushL(username);
 	
 	delete iPlaylistFetchObserverHelper;
 	iPlaylistFetchObserverHelper = CMobblerFlatDataObserverHelper::NewL(iAppUi.LastFMConnection(), *this, ETrue);
 	iAppUi.LastFMConnection().WebServicesCallL(_L8("user"), _L8("getplaylists"), username->String8(), *iPlaylistFetchObserverHelper);
+	
+	CleanupStack::PopAndDestroy(username);
+	}
+
+void CMobblerWebServicesHelper::EventShareL(const TDesC8& aEventId)
+	{
+	iEventId = aEventId.AllocL();
+	
+	CMobblerString* username(CMobblerString::NewL(iAppUi.SettingView().Username()));
+	CleanupStack::PushL(username);
+	
+	delete iFriendFetchObserverHelperEventShare;
+	iFriendFetchObserverHelperEventShare = CMobblerFlatDataObserverHelper::NewL(iAppUi.LastFMConnection(), *this, ETrue);
+	iAppUi.LastFMConnection().WebServicesCallL(_L8("user"), _L8("getfriends"), username->String8(), *iFriendFetchObserverHelperEventShare);
 	
 	CleanupStack::PopAndDestroy(username);
 	}
@@ -142,7 +169,8 @@ void CMobblerWebServicesHelper::DataL(CMobblerFlatDataObserverHelper* aObserver,
 				}
 			}
 		else if (aObserver == iFriendFetchObserverHelperTrackShare ||
-					aObserver == iFriendFetchObserverHelperArtistShare)
+					aObserver == iFriendFetchObserverHelperArtistShare ||
+					aObserver == iFriendFetchObserverHelperEventShare)
 			{
 			// Parse and bring up a share with friends popup menu
 			
@@ -201,13 +229,20 @@ void CMobblerWebServicesHelper::DataL(CMobblerFlatDataObserverHelper* aObserver,
 						{
 						delete iShareObserverHelper;
 						iShareObserverHelper = CMobblerFlatDataObserverHelper::NewL(iAppUi.LastFMConnection(), *this, ETrue);
-						iAppUi.LastFMConnection().TrackShareL(user->String8(), iTrack.Artist().String8(), iTrack.Title().String8(), messageString->String8(), *iShareObserverHelper);
+						iAppUi.LastFMConnection().TrackShareL(user->String8(), iTrack->Artist().String8(), iTrack->Title().String8(), messageString->String8(), *iShareObserverHelper);
 						}
-					else
+					else if (aObserver == iFriendFetchObserverHelperArtistShare)
 						{
 						delete iShareObserverHelper;
 						iShareObserverHelper = CMobblerFlatDataObserverHelper::NewL(iAppUi.LastFMConnection(), *this, ETrue);
-						iAppUi.LastFMConnection().ArtistShareL(user->String8(), iTrack.Artist().String8(), messageString->String8(), *iShareObserverHelper);
+						iAppUi.LastFMConnection().ArtistShareL(user->String8(), iTrack->Artist().String8(), messageString->String8(), *iShareObserverHelper);
+						}
+					else
+						{
+						// This must be sharing an event
+						delete iShareObserverHelper;
+						iShareObserverHelper = CMobblerFlatDataObserverHelper::NewL(iAppUi.LastFMConnection(), *this, ETrue);
+						iAppUi.LastFMConnection().EventShareL(user->String8(), *iEventId, messageString->String8(), *iShareObserverHelper);
 						}
 					
 					CleanupStack::PopAndDestroy(2, messageString);
@@ -258,7 +293,7 @@ void CMobblerWebServicesHelper::DataL(CMobblerFlatDataObserverHelper* aObserver,
 		    	{
 		    	delete iPlaylistAddObserverHelper;
 		    	iPlaylistAddObserverHelper = CMobblerFlatDataObserverHelper::NewL(iAppUi.LastFMConnection(), *this, ETrue);
-				iAppUi.LastFMConnection().PlaylistAddTrackL(playlists[list->CurrentItemIndex()]->Element(_L8("id"))->Content(), iTrack.Artist().String8(), iTrack.Title().String8(), *iPlaylistAddObserverHelper);
+				iAppUi.LastFMConnection().PlaylistAddTrackL(playlists[list->CurrentItemIndex()]->Element(_L8("id"))->Content(), iTrack->Artist().String8(), iTrack->Title().String8(), *iPlaylistAddObserverHelper);
 		    	}
 		     
 		    CleanupStack::PopAndDestroy(list); //list
@@ -271,6 +306,15 @@ void CMobblerWebServicesHelper::DataL(CMobblerFlatDataObserverHelper* aObserver,
 		CAknInformationNote* note(new (ELeave) CAknInformationNote(EFalse));
 		note->ExecuteLD(_L("Error!"));
 		}
+	
+	if (iTrack)
+		{
+		iTrack->Release();
+		iTrack = NULL;
+		}
+	
+	delete iEventId;
+	iEventId = NULL;
 	}
 
 // End of file

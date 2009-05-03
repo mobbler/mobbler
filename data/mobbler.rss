@@ -187,6 +187,10 @@ RESOURCE MENU_PANE r_mobbler_share_submenu_pane
 		MENU_ITEM
 			{
 			command = EMobblerCommandArtistShare;
+			},
+		MENU_ITEM
+			{
+			command = EMobblerCommandEventShare;
 			}
 		};
 	}	
@@ -230,6 +234,11 @@ RESOURCE MENU_PANE r_mobbler_status_menu_pane
 			},
 		MENU_ITEM
 			{
+			command = EMobblerCommandSearch;
+			cascade = r_mobbler_search_submenu_pane;
+			},
+		MENU_ITEM
+			{
 			command = EMobblerCommandEqualizer;
 			cascade = r_mobbler_equalizer_submenu_pane;
 			},
@@ -249,6 +258,29 @@ RESOURCE MENU_PANE r_mobbler_status_menu_pane
 		MENU_ITEM
 			{
 			command = EAknSoftkeyExit;
+			}
+		};
+	}
+
+RESOURCE MENU_PANE r_mobbler_search_submenu_pane
+	{
+	items =
+		{
+		MENU_ITEM
+			{
+			command = EMobblerCommandSearchTrack;
+			},
+		MENU_ITEM
+            {
+			command = EMobblerCommandSearchAlbum;
+			},
+		MENU_ITEM
+			{
+			command = EMobblerCommandSearchArtist;
+			},
+		MENU_ITEM
+			{
+			command = EMobblerCommandSearchTag;
 			}
 		};
 	}

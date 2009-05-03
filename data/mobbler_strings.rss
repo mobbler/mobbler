@@ -267,4 +267,12 @@ RESOURCE STRING r_mobbler_alarm_hours_minute	{ text = STR_mobbler_alarm_hours_mi
 RESOURCE STRING r_mobbler_alarm_hours_minutes	{ text = STR_mobbler_alarm_hours_minutes; }
 RESOURCE STRING r_mobbler_alarm_disclaimer		{ text = STR_mobbler_alarm_disclaimer; }
 
+RESOURCE STRING r_mobbler_search                { text = STR_mobbler_search; }
+RESOURCE STRING r_mobbler_search_tracks         { text = STR_mobbler_search_tracks; }
+RESOURCE STRING r_mobbler_search_albums         { text = STR_mobbler_search_albums; }
+RESOURCE STRING r_mobbler_search_artists        { text = STR_mobbler_search_artists; }
+RESOURCE STRING r_mobbler_search_tags           { text = STR_mobbler_search_tags; }
+
+RESOURCE STRING r_mobbler_event                { text = STR_mobbler_event; }
+
 // End of file

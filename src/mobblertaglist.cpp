@@ -49,6 +49,9 @@ void CMobblerTagList::ConstructL()
     	case EMobblerCommandArtistTopTags:
     		iAppUi.LastFMConnection().WebServicesCallL(_L8("artist"), _L8("gettoptags"), iText1->String8(), *this);
     		break;
+    	case EMobblerCommandSearchTag:
+            iAppUi.LastFMConnection().WebServicesCallL(_L8("tag"), _L8("search"), iText1->String8(), *this);
+    	    break;
     	default:
     		break;
     	}
@@ -81,7 +84,18 @@ void CMobblerTagList::SupportedCommandsL(RArray<TInt>& aCommands)
 
 void CMobblerTagList::ParseL(const TDesC8& aXML)
 	{
-	CMobblerParser::ParseTopTagsL(aXML, *this, iList);
+	switch (iType)
+	    {
+	    case EMobblerCommandUserTopTags:
+        case EMobblerCommandArtistTopTags:
+	        CMobblerParser::ParseTopTagsL(aXML, *this, iList);
+	        break;
+	    case EMobblerCommandSearchTag:
+            CMobblerParser::ParseSearchTagL(aXML, *this, iList);
+            break;
+	    default:
+	        break;
+	    }
 	}
 
 // End of file

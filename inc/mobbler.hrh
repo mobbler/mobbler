@@ -105,14 +105,19 @@ enum TMobblerSettingItemListViewCommands
 	EMobblerCommandShoutOwner,
 	EMobblerCommandShoutUser,
 	
-	// most of these commands are avaliable
-	// when a track is playing
+	EMobblerCommandSearch,
+	EMobblerCommandSearchArtist,
+	EMobblerCommandSearchTrack,
+	EMobblerCommandSearchAlbum,
+	EMobblerCommandSearchTag,
+	
 	EMobblerCommandTrackLove,
 	EMobblerCommandTrackBan,
 	
 	EMobblerCommandShare,
 	EMobblerCommandTrackShare,
 	EMobblerCommandArtistShare,
+	EMobblerCommandEventShare,
 	
 	EMobblerCommandRadioStart,
 	EMobblerCommandResumeRadio,
@@ -123,10 +128,7 @@ enum TMobblerSettingItemListViewCommands
 	EMobblerCommandRadioPersonal,
 	EMobblerCommandRadioLoved,
 	EMobblerCommandRadioNeighbourhood,
-	EMobblerCommandRadioPlaylist,
-	EMobblerCommandRadioSearchArtist,
-	EMobblerCommandRadioSearchTrack,
-	EMobblerCommandRadioListTracks,
+	EMobblerCommandRadioPlaylist,	
 	
 	EMobblerCommandCheckForUpdates,
 
