@@ -271,7 +271,7 @@ RESOURCE MENU_PANE r_mobbler_search_submenu_pane
 			command = EMobblerCommandSearchTrack;
 			},
 		MENU_ITEM
-            {
+			{
 			command = EMobblerCommandSearchAlbum;
 			},
 		MENU_ITEM
@@ -711,7 +711,7 @@ RESOURCE DIALOG r_mobbler_yes_no_query_dialog
 			control = AVKON_CONFIRMATION_QUERY
 				{
 				layout = EConfirmationQueryLayout;
-				animation = R_QGN_NOTE_QUERY_ANIM;   
+				animation = R_QGN_NOTE_QUERY_ANIM;
 				};
 			}
 		};

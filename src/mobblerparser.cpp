@@ -473,7 +473,6 @@ CMobblerLastFMError* CMobblerParser::ParseBetaTestersHandshakeL(const TDesC8& aH
 	}
 #endif
 	
-
 void CMobblerParser::ParseSearchTrackL(const TDesC8& aXml, CMobblerTrackList& aObserver, RPointerArray<CMobblerListItem>& aList)
     {
     DUMPDATA(aXml, _L("searchtrack.xml"));

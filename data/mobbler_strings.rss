@@ -275,4 +275,8 @@ RESOURCE STRING r_mobbler_search_tags           { text = STR_mobbler_search_tags
 
 RESOURCE STRING r_mobbler_event                { text = STR_mobbler_event; }
 
+RESOURCE STRING r_mobbler_to_prompt				{ text = STR_mobbler_to_prompt; }
+RESOURCE STRING r_mobbler_message_prompt		{ text = STR_mobbler_message_prompt; }
+RESOURCE STRING r_mobbler_share_tagline			{ text = STR_mobbler_share_tagline; }
+
 // End of file

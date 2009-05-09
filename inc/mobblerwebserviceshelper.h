@@ -38,9 +38,9 @@ public:
 	static CMobblerWebServicesHelper* NewL(CMobblerAppUi& aAppUi);
 	~CMobblerWebServicesHelper();
 	
-	void TrackShareL(CMobblerTrack& iTrack);
-	void ArtistShareL(CMobblerTrack& iTrack);
-	void PlaylistAddL(CMobblerTrack& iTrack);
+	void TrackShareL(CMobblerTrack& aTrack);
+	void ArtistShareL(CMobblerTrack& aTrack);
+	void PlaylistAddL(CMobblerTrack& aTrack);
 	
 	void EventShareL(const TDesC8& aEventId);
 	

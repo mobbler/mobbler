@@ -97,7 +97,7 @@ CMobblerListControl* CMobblerArtistList::HandleListCommandL(TInt aCommand)
 			break;
 		case EMobblerCommandArtistShare:
 		    {
-		    CMobblerTrack* track = CMobblerTrack::NewL(iList[iListBox->CurrentItemIndex()]->Title()->String8(), KNullDesC8, KNullDesC8, KNullDesC8, KNullDesC8, KNullDesC8, 0, KNullDesC8);
+		    CMobblerTrack* track(CMobblerTrack::NewL(iList[iListBox->CurrentItemIndex()]->Title()->String8(), KNullDesC8, KNullDesC8, KNullDesC8, KNullDesC8, KNullDesC8, 0, KNullDesC8));
             delete iWebServicesHelper;
             iWebServicesHelper = CMobblerWebServicesHelper::NewL(iAppUi);
             iWebServicesHelper->ArtistShareL(*track);            

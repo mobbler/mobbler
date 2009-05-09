@@ -72,8 +72,8 @@ void CMobblerAppUi::ConstructL()
 	iInterfaceSelector = CRemConInterfaceSelector::NewL();
 	iCoreTarget = CRemConCoreApiTarget::NewL(*iInterfaceSelector, *this);
 	iInterfaceSelector->OpenTargetL();
-		
-#ifdef  __S60_50__
+	
+#ifdef __S60_50__
 	BaseConstructL(EAknTouchCompatible | EAknEnableSkin);
 #else
 	BaseConstructL(EAknEnableSkin);
@@ -102,7 +102,6 @@ void CMobblerAppUi::ConstructL()
 	iAlarmTimer = CMobblerSleepTimer::NewL(EPriorityLow, *this);
 
 	iWebServicesView = CMobblerWebServicesView::NewL();
-	
 	
 	iLastFMConnection->SetModeL(iSettingView->Mode());
 	iLastFMConnection->LoadCurrentTrackL();

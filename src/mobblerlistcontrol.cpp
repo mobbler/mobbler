@@ -98,11 +98,9 @@ CMobblerListControl* CMobblerListControl::CreateListL(CMobblerAppUi& aAppUi, CMo
 			break;
 		};
 	
-
-    CleanupStack::PushL(self);
-    self->ConstructListL(aType, aText1, aText2);
-    CleanupStack::Pop(self);
-
+	CleanupStack::PushL(self);
+	self->ConstructListL(aType, aText1, aText2);
+	CleanupStack::Pop(self);
 	return self;
 	}
 

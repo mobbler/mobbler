@@ -142,7 +142,7 @@ void CMobblerWebServicesView::DynInitMenuPaneL(TInt aResourceId, CEikMenuPane* a
 		TInt position(0);
 		if (aMenuPane->MenuItemExists(i, position))
 			{
-			TBool commandNotSupported = (supportedCommands.Find(i) == KErrNotFound);
+			TBool commandNotSupported(supportedCommands.Find(i) == KErrNotFound);
 			
 			aMenuPane->SetItemDimmed(i, commandNotSupported || iWebServicesControl->TopControl()->Count() == 0);
 			

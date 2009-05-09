@@ -27,6 +27,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <commdbconnpref.h> 
 #include <httperr.h>
 #include <httpstringconstants.h>
+#include <mobbler_strings.rsg>
 #include <ProfileEngineSDKCRKeys.h>
 #include <s32file.h>
 
@@ -36,6 +37,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "mobblerparser.h"
 #include "mobblerradioplayer.h"
 #include "mobblerradioplaylist.h"
+#include "mobblerresourcereader.h"
 #include "mobblerstring.h"
 #include "mobblertrack.h"
 #include "mobblertransaction.h"
@@ -890,7 +892,13 @@ void CMobblerLastFMConnection::TrackShareL(const TDesC8& aUserName, const TDesC8
 	query->AddFieldL(_L8("artist"), aArtist);
 	query->AddFieldL(_L8("track"), aTrack);
 	query->AddFieldL(_L8("recipient"), aUserName);
-	query->AddFieldL(_L8("message"), aMessage);
+
+	const TDesC& tagline(static_cast<CMobblerAppUi*>(CEikonEnv::Static()->AppUi())->ResourceReader().ResourceL(R_MOBBLER_SHARE_TAGLINE));
+	HBufC8* message(HBufC8::NewLC(aMessage.Length() + tagline.Length()));
+	message->Des().Append(aMessage);
+	message->Des().Append(tagline);
+	query->AddFieldL(_L8("message"), *message);
+	CleanupStack::PopAndDestroy(message);
 	
 	CMobblerTransaction* transaction(CMobblerTransaction::NewL(*this, uri, query));
 	transaction->SetFlatDataObserver(&aObserver);
@@ -911,8 +919,14 @@ void CMobblerLastFMConnection::ArtistShareL(const TDesC8& aUserName, const TDesC
 	CMobblerWebServicesQuery* query(CMobblerWebServicesQuery::NewLC(_L8("artist.share")));
 	query->AddFieldL(_L8("artist"), aArtist);
 	query->AddFieldL(_L8("recipient"), aUserName);
-	query->AddFieldL(_L8("message"), aMessage);
 	
+	const TDesC& tagline(static_cast<CMobblerAppUi*>(CEikonEnv::Static()->AppUi())->ResourceReader().ResourceL(R_MOBBLER_SHARE_TAGLINE));
+	HBufC8* message(HBufC8::NewLC(aMessage.Length() + tagline.Length()));
+	message->Des().Append(aMessage);
+	message->Des().Append(tagline);
+	query->AddFieldL(_L8("message"), *message);
+	CleanupStack::PopAndDestroy(message);
+
 	CMobblerTransaction* transaction(CMobblerTransaction::NewL(*this, uri, query));
 	transaction->SetFlatDataObserver(&aObserver);
 	

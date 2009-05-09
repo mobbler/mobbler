@@ -47,9 +47,9 @@ CMobblerFriendList::CMobblerFriendList(CMobblerAppUi& aAppUi, CMobblerWebService
 
 void CMobblerFriendList::ConstructL()
 	{
-    iDefaultImage = CMobblerBitmap::NewL(*this, KDefaultImage);
-    
-    iAppUi.LastFMConnection().WebServicesCallL(_L8("user"), _L8("getfriends"), iText1->String8(), *this);
+	iDefaultImage = CMobblerBitmap::NewL(*this, KDefaultImage);
+	
+	iAppUi.LastFMConnection().WebServicesCallL(_L8("user"), _L8("getfriends"), iText1->String8(), *this);
 	}
 
 CMobblerFriendList::~CMobblerFriendList()
@@ -69,19 +69,19 @@ CMobblerListControl* CMobblerFriendList::HandleListCommandL(TInt aCommand)
 		case EMobblerCommandTrackShare:
 		case EMobblerCommandArtistShare:
 			{
-	    	TBuf<EMobblerMaxQueryDialogLength> message;
-	    	
-	    	CAknTextQueryDialog* shareDialog(new(ELeave) CAknTextQueryDialog(message));
-	    	shareDialog->PrepareLC(R_MOBBLER_TEXT_QUERY_DIALOG);
-	    	shareDialog->SetPromptL(iAppUi.ResourceReader().ResourceL(R_MOBBLER_SHARE));
-	    	shareDialog->SetPredictiveTextInputPermitted(ETrue);
+			TBuf<EMobblerMaxQueryDialogLength> message;
+			
+			CAknTextQueryDialog* shareDialog(new(ELeave) CAknTextQueryDialog(message));
+			shareDialog->PrepareLC(R_MOBBLER_TEXT_QUERY_DIALOG);
+			shareDialog->SetPromptL(iAppUi.ResourceReader().ResourceL(R_MOBBLER_MESSAGE_PROMPT));
+			shareDialog->SetPredictiveTextInputPermitted(ETrue);
 
-	    	if (shareDialog->RunLD())
-	    		{
-	    		CMobblerString* messageString(CMobblerString::NewL(message));
-	    		CleanupStack::PushL(messageString);
-	    		
-	    		if (iAppUi.CurrentTrack())
+			if (shareDialog->RunLD())
+				{
+				CMobblerString* messageString(CMobblerString::NewL(message));
+				CleanupStack::PushL(messageString);
+				
+				if (iAppUi.CurrentTrack())
 					{
 					if (aCommand == EMobblerCommandTrackShare)
 						{
@@ -96,9 +96,9 @@ CMobblerListControl* CMobblerFriendList::HandleListCommandL(TInt aCommand)
 						iAppUi.LastFMConnection().ArtistShareL(iList[iListBox->CurrentItemIndex()]->Title()->String8(), iAppUi.CurrentTrack()->Artist().String8(), messageString->String8(), *iShareObserver);
 						}
 					}
-	    		
-	    		CleanupStack::PopAndDestroy(messageString);
-	    		}
+				
+				CleanupStack::PopAndDestroy(messageString);
+				}
 			}
 			break;
 		case EMobblerCommandRadioPersonal:

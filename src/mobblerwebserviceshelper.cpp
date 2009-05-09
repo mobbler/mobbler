@@ -43,7 +43,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 CMobblerWebServicesHelper* CMobblerWebServicesHelper::NewL(CMobblerAppUi& aAppUi)
 	{
-	CMobblerWebServicesHelper* self = new(ELeave) CMobblerWebServicesHelper(aAppUi);
+	CMobblerWebServicesHelper* self(new(ELeave) CMobblerWebServicesHelper(aAppUi));
 	CleanupStack::PushL(self);
 	self->ConstructL();
 	CleanupStack::Pop(self);
@@ -139,7 +139,7 @@ void CMobblerWebServicesHelper::DataL(CMobblerFlatDataObserverHelper* aObserver,
 	if (aError == CMobblerLastFMConnection::EErrorNone)
 		{
 		// create the xml reader and dom fragement and associate them with each other 
-	    CSenXmlReader* xmlReader = CSenXmlReader::NewL();
+		CSenXmlReader* xmlReader(CSenXmlReader::NewL());
 		CleanupStack::PushL(xmlReader);
 		CSenDomFragment* domFragment(CSenDomFragment::NewL());
 		CleanupStack::PushL(domFragment);
@@ -175,23 +175,23 @@ void CMobblerWebServicesHelper::DataL(CMobblerFlatDataObserverHelper* aObserver,
 			// Parse and bring up a share with friends popup menu
 			
 			CAknSinglePopupMenuStyleListBox* list(new(ELeave) CAknSinglePopupMenuStyleListBox);
-		    CleanupStack::PushL(list);
-		     
-		    CAknPopupList* popup = CAknPopupList::NewL(list, R_AVKON_SOFTKEYS_OK_CANCEL, AknPopupLayouts::EMenuWindow);
-		    CleanupStack::PushL(popup);
-		    
-		    list->ConstructL(popup, CEikListBox::ELeftDownInViewRect);
-	
-		    popup->SetTitleL(iAppUi.ResourceReader().ResourceL(R_MOBBLER_SHARE));
-		    
-		    list->CreateScrollBarFrameL(ETrue);
-		    list->ScrollBarFrame()->SetScrollBarVisibilityL(CEikScrollBarFrame::EOff, CEikScrollBarFrame::EAuto);
-		    
-		    CDesCArrayFlat* items = new(ELeave) CDesCArrayFlat(1);
-		    CleanupStack::PushL(items);
+			CleanupStack::PushL(list);
+			
+			CAknPopupList* popup = CAknPopupList::NewL(list, R_AVKON_SOFTKEYS_OK_CANCEL, AknPopupLayouts::EMenuWindow);
+			CleanupStack::PushL(popup);
+			
+			list->ConstructL(popup, CEikListBox::ELeftDownInViewRect);
+
+			popup->SetTitleL(iAppUi.ResourceReader().ResourceL(R_MOBBLER_TO_PROMPT));
+			
+			list->CreateScrollBarFrameL(ETrue);
+			list->ScrollBarFrame()->SetScrollBarVisibilityL(CEikScrollBarFrame::EOff, CEikScrollBarFrame::EAuto);
+			
+			CDesCArrayFlat* items = new(ELeave) CDesCArrayFlat(1);
+			CleanupStack::PushL(items);
 			
 			RPointerArray<CSenElement>& users(domFragment->AsElement().Element(_L8("friends"))->ElementsL());
-				
+			
 			const TInt KUserCount(users.Count());
 			for (TInt i(0) ; i < KUserCount; ++i)
 				{
@@ -201,28 +201,28 @@ void CMobblerWebServicesHelper::DataL(CMobblerFlatDataObserverHelper* aObserver,
 				CleanupStack::PopAndDestroy(user);
 				}
 	
-		    CleanupStack::Pop(items);
-		    
-		    list->Model()->SetItemTextArray(items);
-		    list->Model()->SetOwnershipType(ELbmOwnsItemArray);
-		    
-		    CleanupStack::Pop(popup); //popup
-		    
-		    if (popup->ExecuteLD())
-		    	{
-		    	TBuf<EMobblerMaxQueryDialogLength> message;
-		    	
-		    	CAknTextQueryDialog* shoutDialog(new(ELeave) CAknTextQueryDialog(message));
-		    	shoutDialog->PrepareLC(R_MOBBLER_TEXT_QUERY_DIALOG);
-		    	shoutDialog->SetPromptL(iAppUi.ResourceReader().ResourceL(R_MOBBLER_SHARE));
-		    	shoutDialog->SetPredictiveTextInputPermitted(ETrue);
-	
-		    	if (shoutDialog->RunLD())
-		    		{
-		    		CMobblerString* messageString(CMobblerString::NewL(message));
-		    		CleanupStack::PushL(messageString);
-		    		
-			    	CMobblerString* user(CMobblerString::NewL((*items)[list->CurrentItemIndex()]));
+			CleanupStack::Pop(items);
+			
+			list->Model()->SetItemTextArray(items);
+			list->Model()->SetOwnershipType(ELbmOwnsItemArray);
+			
+			CleanupStack::Pop(popup);
+			
+			if (popup->ExecuteLD())
+				{
+				TBuf<EMobblerMaxQueryDialogLength> message;
+				
+				CAknTextQueryDialog* shoutDialog(new(ELeave) CAknTextQueryDialog(message));
+				shoutDialog->PrepareLC(R_MOBBLER_TEXT_QUERY_DIALOG);
+				shoutDialog->SetPromptL(iAppUi.ResourceReader().ResourceL(R_MOBBLER_MESSAGE_PROMPT));
+				shoutDialog->SetPredictiveTextInputPermitted(ETrue);
+
+				if (shoutDialog->RunLD())
+					{
+					CMobblerString* messageString(CMobblerString::NewL(message));
+					CleanupStack::PushL(messageString);
+					
+					CMobblerString* user(CMobblerString::NewL((*items)[list->CurrentItemIndex()]));
 					CleanupStack::PushL(user);
 					
 					if (aObserver == iFriendFetchObserverHelperTrackShare)
@@ -246,30 +246,30 @@ void CMobblerWebServicesHelper::DataL(CMobblerFlatDataObserverHelper* aObserver,
 						}
 					
 					CleanupStack::PopAndDestroy(2, messageString);
-		    		}
-		    	}
-		     
-		    CleanupStack::PopAndDestroy(list); //list
+					}
+				}
+			
+			CleanupStack::PopAndDestroy(list); //list
 			}
 		else if (aObserver == iPlaylistFetchObserverHelper)
 			{
 			// parse and bring up an add to playlist popup menu
 			// create the xml reader and dom fragement and associate them with each other 
 			CAknSinglePopupMenuStyleListBox* list(new(ELeave) CAknSinglePopupMenuStyleListBox);
-		    CleanupStack::PushL(list);
-		     
-		    CAknPopupList* popup = CAknPopupList::NewL(list, R_AVKON_SOFTKEYS_OK_CANCEL, AknPopupLayouts::EMenuWindow);
-		    CleanupStack::PushL(popup);
-		    
-		    list->ConstructL(popup, CEikListBox::ELeftDownInViewRect);
+			CleanupStack::PushL(list);
+			
+			CAknPopupList* popup = CAknPopupList::NewL(list, R_AVKON_SOFTKEYS_OK_CANCEL, AknPopupLayouts::EMenuWindow);
+			CleanupStack::PushL(popup);
+			
+			list->ConstructL(popup, CEikListBox::ELeftDownInViewRect);
 	
-		    popup->SetTitleL(iAppUi.ResourceReader().ResourceL(R_MOBBLER_PLAYLIST_ADD_TRACK));
-		    
-		    list->CreateScrollBarFrameL(ETrue);
-		    list->ScrollBarFrame()->SetScrollBarVisibilityL(CEikScrollBarFrame::EOff, CEikScrollBarFrame::EAuto);
-		    
-		    CDesCArrayFlat* items = new(ELeave) CDesCArrayFlat(1);
-		    CleanupStack::PushL(items);
+			popup->SetTitleL(iAppUi.ResourceReader().ResourceL(R_MOBBLER_PLAYLIST_ADD_TRACK));
+			
+			list->CreateScrollBarFrameL(ETrue);
+			list->ScrollBarFrame()->SetScrollBarVisibilityL(CEikScrollBarFrame::EOff, CEikScrollBarFrame::EAuto);
+			
+			CDesCArrayFlat* items = new(ELeave) CDesCArrayFlat(1);
+			CleanupStack::PushL(items);
 			
 			RPointerArray<CSenElement>& playlists(domFragment->AsElement().Element(_L8("playlists"))->ElementsL());
 				
@@ -282,21 +282,21 @@ void CMobblerWebServicesHelper::DataL(CMobblerFlatDataObserverHelper* aObserver,
 				CleanupStack::PopAndDestroy(playlist);
 				}
 			
-		    CleanupStack::Pop(items);
-		    
-		    list->Model()->SetItemTextArray(items);
-		    list->Model()->SetOwnershipType(ELbmOwnsItemArray);
-		    
-		    CleanupStack::Pop(popup); //popup
-		    
-		    if (popup->ExecuteLD())
-		    	{
-		    	delete iPlaylistAddObserverHelper;
-		    	iPlaylistAddObserverHelper = CMobblerFlatDataObserverHelper::NewL(iAppUi.LastFMConnection(), *this, ETrue);
+			CleanupStack::Pop(items);
+			
+			list->Model()->SetItemTextArray(items);
+			list->Model()->SetOwnershipType(ELbmOwnsItemArray);
+			
+			CleanupStack::Pop(popup);
+			
+			if (popup->ExecuteLD())
+				{
+				delete iPlaylistAddObserverHelper;
+				iPlaylistAddObserverHelper = CMobblerFlatDataObserverHelper::NewL(iAppUi.LastFMConnection(), *this, ETrue);
 				iAppUi.LastFMConnection().PlaylistAddTrackL(playlists[list->CurrentItemIndex()]->Element(_L8("id"))->Content(), iTrack->Artist().String8(), iTrack->Title().String8(), *iPlaylistAddObserverHelper);
-		    	}
-		     
-		    CleanupStack::PopAndDestroy(list); //list
+				}
+			
+			CleanupStack::PopAndDestroy(list); //list
 			}
 		
 		CleanupStack::PopAndDestroy(2, xmlReader);
@@ -304,7 +304,7 @@ void CMobblerWebServicesHelper::DataL(CMobblerFlatDataObserverHelper* aObserver,
 	else
 		{
 		CAknInformationNote* note(new (ELeave) CAknInformationNote(EFalse));
-		note->ExecuteLD(_L("Error!"));
+		note->ExecuteLD(_L("Error!")); // TODO localise
 		}
 	
 	if (iTrack)
