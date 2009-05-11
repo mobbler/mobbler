@@ -124,7 +124,7 @@ void CMobblerStatusControl::HandleMusicAppChangeL()
 void CMobblerStatusControl::VolumeChanged()
 	{
 	iMobblerVolumeTimeout->Reset();
-	DrawDeferred();
+	//DrawDeferred();
 	}
 
 void CMobblerStatusControl::DoChangePaneTextL()

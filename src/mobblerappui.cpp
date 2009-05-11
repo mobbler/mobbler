@@ -1079,7 +1079,7 @@ void CMobblerAppUi::DataL(CMobblerFlatDataObserverHelper* aObserver, const TDesC
 
 void CMobblerAppUi::HandleConnectCompleteL(TInt aError)
 	{
-	iStatusView->DrawDeferred();
+//	iStatusView->DrawDeferred();
 	
 	if (aError != KErrNone)
 		{
@@ -1108,7 +1108,7 @@ void CMobblerAppUi::HandleConnectCompleteL(TInt aError)
 	
 void CMobblerAppUi::HandleLastFMErrorL(CMobblerLastFMError& aError)
 	{
-	iStatusView->DrawDeferred();
+	// iStatusView->DrawDeferred();
 	
 	CAknResourceNoteDialog *note(new (ELeave) CAknInformationNote(EFalse));
 	note->ExecuteLD(aError.Text());
@@ -1116,7 +1116,7 @@ void CMobblerAppUi::HandleLastFMErrorL(CMobblerLastFMError& aError)
 
 void CMobblerAppUi::HandleCommsErrorL(TInt aStatusCode, const TDesC8& aStatus)
 	{
-	iStatusView->DrawDeferred();
+	// iStatusView->DrawDeferred();
 	
 	HBufC* noteText(HBufC::NewLC(255));
 
@@ -1149,12 +1149,12 @@ TInt CMobblerAppUi::Queued() const
 void CMobblerAppUi::HandleTrackNowPlayingL(const CMobblerTrack& /*aTrack*/)
 	{
 	// Tell the status view that the track has changed
-	iStatusView->DrawDeferred();
+//	iStatusView->DrawDeferred();
 	}
 
 void CMobblerAppUi::HandleTrackSubmittedL(const CMobblerTrack& /*aTrack*/)
 	{
-	iStatusView->DrawDeferred();
+//	iStatusView->DrawDeferred();
 	++iTracksSubmitted;
 	--iTracksQueued;
 	}
@@ -1163,7 +1163,7 @@ void CMobblerAppUi::HandleTrackQueuedL(const CMobblerTrack& /*aTrack*/)
 	{		
 	if (iStatusView)
 		{
-		iStatusView->DrawDeferred();
+//		iStatusView->DrawDeferred();
 		}
 	// update the track queued count and change the status bar text
 	++iTracksQueued;
@@ -1171,7 +1171,7 @@ void CMobblerAppUi::HandleTrackQueuedL(const CMobblerTrack& /*aTrack*/)
 
 void CMobblerAppUi::HandleTrackDequeued(const CMobblerTrack& /*aTrack*/)
 	{
-	iStatusView->DrawDeferred();
+//	iStatusView->DrawDeferred();
 	--iTracksQueued;
 	}
 

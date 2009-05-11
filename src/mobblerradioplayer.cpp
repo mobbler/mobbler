@@ -595,7 +595,7 @@ void CMobblerRadioPlayer::DoStop(TBool aDeleteNextTrack)
 	iCurrentAudioControl = NULL;
 	
 	DoChangeStateL(EIdle);
-	static_cast<CMobblerAppUi*>(CEikonEnv::Static()->AppUi())->StatusDrawDeferred();
+//	static_cast<CMobblerAppUi*>(CEikonEnv::Static()->AppUi())->StatusDrawDeferred();
 	}
 
 CMobblerTrack* CMobblerRadioPlayer::CurrentTrack()

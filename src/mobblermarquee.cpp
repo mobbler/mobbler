@@ -148,7 +148,7 @@ void CMobblerMarquee::Update()
 			break;
 		}
 	
-	iStatusControl.DrawNow();
+	static_cast<CMobblerAppUi*>(CEikonEnv::Static()->AppUi())->StatusDrawDeferred();
 	}
 
 // End of file

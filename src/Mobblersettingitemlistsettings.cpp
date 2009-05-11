@@ -79,7 +79,11 @@ void CMobblerSettingItemListSettings::LoadSettingValuesL()
 	nextUpdateCheck += TTimeIntervalDays(KUpdateIntervalDays); // the default update check should be 7 days after install
 	CMobblerLastFMConnection::TMode mode(CMobblerLastFMConnection::EOffline);
 	TInt downloadAlbumArt(KDefaultDownloadAlbumArt);
+#ifdef _DEBUG
+	TBool accelerometerGestures(ETrue);
+#else
 	TBool accelerometerGestures(EFalse);
+#endif
 	TInt sleepTimerAction(KDefaultSleepTimerAction);
 	TInt sleepTimerImmediacy(KDefaultSleepTimerImmediacy);
 	TBool alarmOn(EFalse);
@@ -103,7 +107,11 @@ void CMobblerSettingItemListSettings::LoadSettingValuesL()
 		TRAP_IGNORE(bufferSize = readStream.ReadUint8L());
 		TRAP_IGNORE(equalizerIndex = readStream.ReadInt16L());
 		TRAP_IGNORE(scrobblePercent = readStream.ReadInt16L());
+#ifdef __WINS__
+		TRAP_IGNORE(readStream.ReadInt16L()); // always use default for WINS (zero) and ignore saved value
+#else
 		TRAP_IGNORE(volume = readStream.ReadInt16L());
+#endif
 		TRAP_IGNORE(sleepTimerMinutes = readStream.ReadInt16L());
 		
 		TUint32 high(0);
