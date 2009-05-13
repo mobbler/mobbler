@@ -840,7 +840,7 @@ void CMobblerStatusControl::DrawMobblerBitmap(const CMobblerBitmap* aMobblerBitm
 				}
 			else if (height > width)
 				{
-				rect.SetWidth(aRect.Height() * height/width);
+				rect.SetWidth(aRect.Width() * width/height);
 				}
 			
 			if (aMobblerBitmap->Mask())
