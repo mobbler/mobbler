@@ -797,10 +797,10 @@ void CMobblerLastFMConnection::AlbumGetInfoL(const TDesC& aAlbum, const TDesC& a
 	
 	CMobblerWebServicesQuery* query(CMobblerWebServicesQuery::NewLC(_L8("album.getinfo")));
 	
-	query->AddFieldL(_L8("artist"), *MobblerUtility::URLEncodeLC(aAlbum));
+	query->AddFieldL(_L8("artist"), *MobblerUtility::URLEncodeLC(aArtist));
 	CleanupStack::PopAndDestroy(); // *MobblerUtility::URLEncodeLC(aArtist)
 
-	query->AddFieldL(_L8("album"), *MobblerUtility::URLEncodeLC(aArtist));
+	query->AddFieldL(_L8("album"), *MobblerUtility::URLEncodeLC(aAlbum));
 	CleanupStack::PopAndDestroy(); // *MobblerUtility::URLEncodeLC(aAlbum)
 	
 	uri->SetComponentL(*query->GetQueryLC(), EUriQuery);

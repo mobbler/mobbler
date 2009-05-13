@@ -278,7 +278,7 @@ void CMobblerTrack::SetAlbumL(const TDesC& aAlbum)
 			}
 		}
 	
-	// Check if there's a something better online
+	// Check if there's something better online
 	if ((!iAlbumArt || iUsingArtistImage)
 				&& iState == ENone)
 		{
@@ -624,7 +624,7 @@ void CMobblerTrack::FetchAlbumInfoL()
 	{
 	if (OkToDownloadAlbumArt())
 		{
-		static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->LastFMConnection().AlbumGetInfoL(iAlbum->String(), iTitle->String(), *this);
+		static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->LastFMConnection().AlbumGetInfoL(iAlbum->String(), iArtist->String(), *this);
 		iState = EFetchingAlbumInfo;
 		}
 	}
