@@ -260,11 +260,36 @@ void CMobblerTrack::SetAlbumL(const TDesC& aAlbum)
 	delete iAlbum;
 	iAlbum = CMobblerString::NewL(aAlbum);
 
-	// First check the artist image cache
-	if (!iAlbumArt && iArtist->String().Length() > 0)
+	TFileName fileName;
+	TBool found(EFalse);
+
+	// First check for %album%.jpg/gif/png
+	if ((!iAlbumArt || iUsingArtistImage) 
+		&& iPath && iAlbum->String().Length() > 0)
+		{
+		const TInt arraySize(sizeof(KArtExtensionArray) / sizeof(TPtrC));
+		for (TInt i(0); i < arraySize; ++i)
+			{
+			fileName.Copy(*iPath);
+			fileName.Append(iAlbum->SafeFsString(fileName.Length() +
+							KArtExtensionArray[i].Length()));
+			fileName.Append(KArtExtensionArray[i]);
+
+			if (BaflUtils::FileExists(CCoeEnv::Static()->FsSession(), fileName))
+				{
+				LOG(_L8("Found %album%.jpg/gif/png"));
+				found = ETrue;
+				iUsingArtistImage = EFalse;
+				break;
+				}
+			}
+		}
+
+	// Next check the artist image cache
+	if (!found && !iAlbumArt && iArtist->String().Length() > 0)
 		{
 		// Not found track's path, check for %artist%.jpg in the cache
-		TFileName fileName(KArtistImageCache);
+		fileName.Copy(KArtistImageCache);
 		fileName.Append(iArtist->SafeFsString(fileName.Length() +
 											  KArtExtensionArray[0].Length()));
 		fileName.Append(KArtExtensionArray[0]);
@@ -272,10 +297,16 @@ void CMobblerTrack::SetAlbumL(const TDesC& aAlbum)
 			{
 			LOG(_L8("Found %artist%.jpg in cache"));
 			LOG(fileName);
+			found = ETrue;
 			iUsingArtistImage = ETrue;
-			delete iAlbumArt;
-			iAlbumArt = CMobblerBitmap::NewL(*this, fileName);
 			}
+		}
+
+	if (found)
+		{
+		LOG(fileName);
+		delete iAlbumArt;
+		iAlbumArt = CMobblerBitmap::NewL(*this, fileName);
 		}
 	
 	// Check if there's something better online
