@@ -40,6 +40,7 @@ public:
 	static void LogL(const TInt aFirstNumber, const TInt aSecondNumber);
 	static void LogL(const TInt aNumber);
 	static void LogL(const TDesC& aText);
+	static void LogL(const TDesC8& aText, const TInt aNumber);
 	static void LogL(const TDesC8& aText);
 
 #else // _DEBUG

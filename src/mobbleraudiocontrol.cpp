@@ -99,7 +99,7 @@ CMobblerAudioControl::~CMobblerAudioControl()
 
 void CMobblerAudioControl::RunL()
 	{
-	iObserver.HandleAudioFinishedL(this, iStatus.Int());	
+	iObserver.HandleAudioFinishedL(this, iStatus.Int());
 	}
 
 void CMobblerAudioControl::DoCancel()

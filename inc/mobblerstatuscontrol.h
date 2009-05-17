@@ -116,21 +116,22 @@ private:
 	CMobblerBitmap* iMobblerBitmapAppIcon;
 	
 	// for double buffering
-    CFbsBitmap*                     iBackBuffer;
-    CFbsBitmapDevice*               iBackBufferDevice;
-    CFbsBitGc*                      iBackBufferContext;
-    TSize                           iBackBufferSize;
-    
-    // text displayed
-    mutable TBuf<KMaxMobblerTextSize> iScrobbledQueued;
-    mutable TBuf<KMaxMobblerTextSize> iTitleText;
-    mutable TBuf<KMaxMobblerTextSize> iAlbumText;
-    mutable TBuf<KMaxMobblerTextSize> iArtistText;
+	CFbsBitmap*						iBackBuffer;
+	CFbsBitmapDevice*				iBackBufferDevice;
+	CFbsBitGc*						iBackBufferContext;
+	TSize							iBackBufferSize;
+
+	// text displayed
+	mutable TBuf<KMaxMobblerTextSize> iScrobbledQueued;
+	mutable TBuf<KMaxMobblerTextSize> iTitleText;
+	mutable TBuf<KMaxMobblerTextSize> iAlbumText;
+	mutable TBuf<KMaxMobblerTextSize> iArtistText;
 	mutable TBuf<KMaxMobblerTextSize> iPlaybackLeftText;
 	mutable TBuf<KMaxMobblerTextSize> iPlaybackGoneText;
 	
 	// graphics and text positions
 	TRect iRectAlbumArt;
+	TBool iShowAlbumArtFullscreen;
 	
 	TPoint iPointLastFm;
 	TPoint iPointMore;
@@ -159,7 +160,7 @@ private:
 	CMobblerTouchFeedbackInterface* iMobblerFeedback;
 	TUid iDtorIdKey;
 	};
-	
+
 #endif // __MOBBLERSTATUSCONTROL_H__
 
 // End of file

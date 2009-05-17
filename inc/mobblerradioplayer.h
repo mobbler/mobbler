@@ -80,7 +80,7 @@ public:
 	void SetPreBufferSize(TTimeIntervalSeconds aPreBufferSize);
 	
 	TInt Volume() const;
-	TInt MaxVolume() const;	
+	TInt MaxVolume() const;
 	TInt EqualizerIndex() const;
 	const CMobblerString& Station() const;
 	TBool HasPlaylist() const;

@@ -75,6 +75,15 @@ void CMobblerLogging::LogL(const TDesC& aText)
 	CleanupStack::PopAndDestroy(text8);
 	}
 
+void CMobblerLogging::LogL(const TDesC8& aText, const TInt aNumber)
+	{
+	TBuf8<255> text8;
+	text8.Append(aText);
+	text8.Append(_L8(", "));
+	text8.AppendNum(aNumber);
+	LogL(text8);
+	}
+
 void CMobblerLogging::LogL(const TDesC8& aText)
 	{
 	HBufC* text(HBufC::NewLC(aText.Length()));
