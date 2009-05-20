@@ -912,15 +912,14 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 				
 				if (okToReplaceLog)
 					{
+					TInt resourceId(R_MOBBLER_NOTE_QUEUE_EXPORTED);
 					if (!iLastFMConnection->ExportQueueToLogFileL())
 						{
 						BaflUtils::DeleteFile(CCoeEnv::Static()->FsSession(), KLogFile);
+						resourceId = R_MOBBLER_NOTE_QUEUE_NOT_EXPORTED;
 						}
-					
 					CAknResourceNoteDialog *note(new (ELeave) CAknInformationNote(EFalse));
-					note->ExecuteLD(iLastFMConnection->ExportQueueToLogFileL()?
-										iResourceReader->ResourceL(R_MOBBLER_NOTE_QUEUE_EXPORTED):
-										iResourceReader->ResourceL(R_MOBBLER_NOTE_QUEUE_NOT_EXPORTED));
+					note->ExecuteLD(iResourceReader->ResourceL(resourceId));
 					}
 				}
 			}
