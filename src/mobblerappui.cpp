@@ -143,7 +143,7 @@ CMobblerAppUi::~CMobblerAppUi()
 
 	delete iPreviousRadioArtist;
 	delete iPreviousRadioTag;
-	delete iPreviousRadioPersonal;
+	delete iPreviousRadioUser;
 	delete iMusicListener;
 	delete iRadioPlayer;
 	delete iLastFMConnection;
@@ -474,22 +474,22 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 		case EMobblerCommandSearchAlbum:
 		case EMobblerCommandSearchArtist:
 		case EMobblerCommandSearchTag:
-		    {
-		    TBuf<EMobblerMaxQueryDialogLength> search;
-		    CAknTextQueryDialog* userDialog(new(ELeave) CAknTextQueryDialog(search));
-            userDialog->PrepareLC(R_MOBBLER_TEXT_QUERY_DIALOG);
-            userDialog->SetPromptL(iResourceReader->ResourceL(R_MOBBLER_SEARCH));
-            userDialog->SetPredictiveTextInputPermitted(ETrue);
+			{
+			TBuf<EMobblerMaxQueryDialogLength> search;
+			CAknTextQueryDialog* userDialog(new(ELeave) CAknTextQueryDialog(search));
+			userDialog->PrepareLC(R_MOBBLER_TEXT_QUERY_DIALOG);
+			userDialog->SetPromptL(iResourceReader->ResourceL(R_MOBBLER_SEARCH));
+			userDialog->SetPredictiveTextInputPermitted(ETrue);
 
-            if (userDialog->RunLD())
-                {
-                CMobblerString* searchString(CMobblerString::NewL(search));
-                CleanupStack::PushL(searchString);
-                ActivateLocalViewL(iWebServicesView->Id(), TUid::Uid(aCommand), searchString->String8());
-                CleanupStack::PopAndDestroy(searchString);
-                }
-		    }
-		    break;
+			if (userDialog->RunLD())
+				{
+				CMobblerString* searchString(CMobblerString::NewL(search));
+				CleanupStack::PushL(searchString);
+				ActivateLocalViewL(iWebServicesView->Id(), TUid::Uid(aCommand), searchString->String8());
+				CleanupStack::PopAndDestroy(searchString);
+				}
+			}
+			break;
 		case EMobblerCommandCheckForUpdates:
 			{
 			delete iCheckForUpdatesObserver;
@@ -541,26 +541,20 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 				{
 				switch (iPreviousRadioStation)
 					{
-					case CMobblerLastFMConnection::EArtist:
+					case EMobblerCommandRadioArtist:
 						RadioStartL(iPreviousRadioStation, iPreviousRadioArtist, EFalse);
 						break;
-					case CMobblerLastFMConnection::ETag:
+					case EMobblerCommandRadioTag:
 						RadioStartL(iPreviousRadioStation, iPreviousRadioTag, EFalse);
 						break;
-					case CMobblerLastFMConnection::EPersonal:
-						if (iPreviousRadioPersonal)
-							{
-							RadioStartL(iPreviousRadioStation, iPreviousRadioPersonal, EFalse);
-							}
-						else
-							{
-							RadioStartL(iPreviousRadioStation, NULL, EFalse);
-							}
+					case EMobblerCommandRadioUser:
+						RadioStartL(iPreviousRadioStation, iPreviousRadioUser, EFalse);
 						break;
-					case CMobblerLastFMConnection::ERecommendations: // intentional fall-through
-					case CMobblerLastFMConnection::ENeighbourhood:
-					case CMobblerLastFMConnection::ELovedTracks:
-					case CMobblerLastFMConnection::EPlaylist:
+					case EMobblerCommandRadioRecommendations:	// intentional fall-through
+					case EMobblerCommandRadioPersonal:			// intentional fall-through
+					case EMobblerCommandRadioLoved:				// intentional fall-through
+					case EMobblerCommandRadioNeighbourhood:		// intentional fall-through
+					case EMobblerCommandRadioPlaylist:			// intentional fall-through
 					default:
 						RadioStartL(iPreviousRadioStation, NULL, EFalse);
 						break;
@@ -588,7 +582,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 				{
 				CMobblerString* artistString(CMobblerString::NewL(artist));
 				CleanupStack::PushL(artistString);
-				RadioStartL(CMobblerLastFMConnection::EArtist, artistString);
+				RadioStartL(EMobblerCommandRadioArtist, artistString);
 				CleanupStack::PopAndDestroy(artistString);
 				}
 			}
@@ -615,7 +609,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 				{
 				CMobblerString* tagString(CMobblerString::NewL(tag));
 				CleanupStack::PushL(tagString);
-				RadioStartL(CMobblerLastFMConnection::ETag, tagString);
+				RadioStartL(EMobblerCommandRadioTag, tagString);
 				CleanupStack::PopAndDestroy(tagString);
 				}
 			}
@@ -628,9 +622,9 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 				}
 			
 			// ask the user for the user
-			if (iPreviousRadioPersonal)
+			if (iPreviousRadioUser)
 				{
-				user = iPreviousRadioPersonal->String();
+				user = iPreviousRadioUser->String();
 				}
 			
 			CAknTextQueryDialog* userDialog(new(ELeave) CAknTextQueryDialog(user));
@@ -642,25 +636,17 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 				{
 				CMobblerString* userString(CMobblerString::NewL(user));
 				CleanupStack::PushL(userString);
-				RadioStartL(CMobblerLastFMConnection::EPersonal, userString);
+				RadioStartL(EMobblerCommandRadioUser, userString);
 				CleanupStack::PopAndDestroy(userString);
 				}
 			}
 			break;
-		case EMobblerCommandRadioRecommendations:
-			RadioStartL(CMobblerLastFMConnection::ERecommendations, NULL);
-			break;
-		case EMobblerCommandRadioPersonal:
-			RadioStartL(CMobblerLastFMConnection::EPersonal, NULL);
-			break;
-		case EMobblerCommandRadioLoved:
-			RadioStartL(CMobblerLastFMConnection::ELovedTracks, NULL);
-			break;
-		case EMobblerCommandRadioNeighbourhood:
-			RadioStartL(CMobblerLastFMConnection::ENeighbourhood, NULL);
-			break;
-		case EMobblerCommandRadioPlaylist:
-			RadioStartL(CMobblerLastFMConnection::EPlaylist, NULL);
+		case EMobblerCommandRadioRecommendations:	// intentional fall-through
+		case EMobblerCommandRadioPersonal:			// intentional fall-through
+		case EMobblerCommandRadioLoved:				// intentional fall-through
+		case EMobblerCommandRadioNeighbourhood:		// intentional fall-through
+		case EMobblerCommandRadioPlaylist:			// intentional fall-through
+			RadioStartL(aCommand, NULL);
 			break;
 		case EMobblerCommandTrackLove:
 			// you can love either radio or music player tracks
@@ -937,7 +923,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 		}
 	}
 
-void CMobblerAppUi::RadioStartL(CMobblerLastFMConnection::TRadioStation aRadioStation, 
+void CMobblerAppUi::RadioStartL(TInt aRadioStation, 
 								const CMobblerString* aRadioOption, 
 								TBool aSaveStations)
 	{
@@ -947,20 +933,17 @@ void CMobblerAppUi::RadioStartL(CMobblerLastFMConnection::TRadioStation aRadioSt
 		{
 		switch (iPreviousRadioStation)
 			{
-			case CMobblerLastFMConnection::EArtist:
+			case EMobblerCommandRadioArtist:
 				delete iPreviousRadioArtist;
 				iPreviousRadioArtist = CMobblerString::NewL(aRadioOption->String());
 				break;
-			case CMobblerLastFMConnection::ETag:
+			case EMobblerCommandRadioTag:
 				delete iPreviousRadioTag;
 				iPreviousRadioTag = CMobblerString::NewL(aRadioOption->String());
 				break;
-			case CMobblerLastFMConnection::EPersonal:
-				if (iPreviousRadioPersonal)
-					{
-					delete iPreviousRadioPersonal;
-					iPreviousRadioPersonal = CMobblerString::NewL(aRadioOption->String());
-					}
+			case EMobblerCommandRadioUser:
+				delete iPreviousRadioUser;
+				iPreviousRadioUser = CMobblerString::NewL(aRadioOption->String());
 				break;
 			default:
 				break;
@@ -973,10 +956,42 @@ void CMobblerAppUi::RadioStartL(CMobblerLastFMConnection::TRadioStation aRadioSt
 		{
 		return;
 		}
-
-	iRadioPlayer->StartL(aRadioStation, aRadioOption);
+	
+	CMobblerLastFMConnection::TRadioStation station(CMobblerLastFMConnection::EPersonal);
+	switch (aRadioStation)
+		{
+		case EMobblerCommandRadioArtist:
+			station = CMobblerLastFMConnection::EArtist;
+			break;
+		case EMobblerCommandRadioTag:
+			station = CMobblerLastFMConnection::ETag;
+			break;
+		case EMobblerCommandRadioUser:
+			station = CMobblerLastFMConnection::EPersonal;
+			break;
+		case EMobblerCommandRadioRecommendations:
+			station = CMobblerLastFMConnection::ERecommendations;
+			break;
+		case EMobblerCommandRadioPersonal:
+			station = CMobblerLastFMConnection::EPersonal;
+			break;
+		case EMobblerCommandRadioLoved:
+			station = CMobblerLastFMConnection::ELovedTracks;
+			break;
+		case EMobblerCommandRadioNeighbourhood:
+			station = CMobblerLastFMConnection::ENeighbourhood;
+			break;
+		case EMobblerCommandRadioPlaylist:
+			station = CMobblerLastFMConnection::EPlaylist;
+			break;
+		default:
+			station = CMobblerLastFMConnection::EPersonal;
+			break;
+		}
+	
+	iRadioPlayer->StartL(station, aRadioOption);
 	}
-			
+
 TBool CMobblerAppUi::RadioStartableL() const
 	{
 	// Can start only if the music player isn't already playing.
@@ -1001,7 +1016,7 @@ TBool CMobblerAppUi::RadioResumable() const
 	// and if a previous radio station is known.
 	if (!iRadioPlayer->CurrentTrack() &&
 		!iMusicListener->IsPlaying() &&
-		iPreviousRadioStation != CMobblerLastFMConnection::EUnknown)
+		iPreviousRadioStation != EMobblerCommandRadioUnknown)
 		{
 		return ETrue;
 		}
@@ -1245,7 +1260,12 @@ void CMobblerAppUi::LoadRadioStationsL()
 		CleanupClosePushL(readStream);
 
 		iPreviousRadioStation = (CMobblerLastFMConnection::TRadioStation)readStream.ReadInt32L();
-
+		if (iPreviousRadioStation <= EMobblerCommandRadioEnumFirst ||
+			iPreviousRadioStation >= EMobblerCommandRadioEnumLast)
+			{
+			iPreviousRadioStation = EMobblerCommandRadioUnknown;
+			}
+		
 		TBuf<255> radio;
 		if (readStream.ReadInt8L())
 			{
@@ -1262,15 +1282,15 @@ void CMobblerAppUi::LoadRadioStationsL()
 		if (readStream.ReadInt8L())
 			{
 			readStream >> radio;
-			delete iPreviousRadioPersonal;
-			iPreviousRadioPersonal = CMobblerString::NewL(radio);
+			delete iPreviousRadioUser;
+			iPreviousRadioUser = CMobblerString::NewL(radio);
 			}
 
 		CleanupStack::PopAndDestroy(&readStream);
 		}
 	else
 		{
-		iPreviousRadioStation = CMobblerLastFMConnection::EUnknown;
+		iPreviousRadioStation = EMobblerCommandRadioUnknown;
 		}
 
 	CleanupStack::PopAndDestroy(&file);
@@ -1311,10 +1331,10 @@ void CMobblerAppUi::SaveRadioStationsL()
 			writeStream.WriteInt8L(EFalse);
 			}
 
-		if (iPreviousRadioPersonal)
+		if (iPreviousRadioUser)
 			{
 			writeStream.WriteInt8L(ETrue);
-			writeStream << iPreviousRadioPersonal->String();
+			writeStream << iPreviousRadioUser->String();
 			}
 		else
 			{

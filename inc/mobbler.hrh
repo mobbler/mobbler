@@ -121,6 +121,8 @@ enum TMobblerSettingItemListViewCommands
 	
 	EMobblerCommandRadioStart,
 	EMobblerCommandResumeRadio,
+	EMobblerCommandRadioEnumFirst = 0x9000,
+	EMobblerCommandRadioUnknown,
 	EMobblerCommandRadioArtist,
 	EMobblerCommandRadioTag,
 	EMobblerCommandRadioUser,
@@ -128,7 +130,8 @@ enum TMobblerSettingItemListViewCommands
 	EMobblerCommandRadioPersonal,
 	EMobblerCommandRadioLoved,
 	EMobblerCommandRadioNeighbourhood,
-	EMobblerCommandRadioPlaylist,	
+	EMobblerCommandRadioPlaylist,
+	EMobblerCommandRadioEnumLast = 0xA000,
 	
 	EMobblerCommandCheckForUpdates,
 

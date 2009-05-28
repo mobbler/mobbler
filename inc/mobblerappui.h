@@ -91,7 +91,7 @@ public:
 	CMobblerSettingItemListView& SettingView() const;
 	const TDesC& MusicAppNameL() const;
 	
-	void RadioStartL(CMobblerLastFMConnection::TRadioStation aRadioStation, 
+	void RadioStartL(TInt aRadioStation, 
 					 const CMobblerString* aRadioOption, 
 					 TBool aSaveStations = ETrue);
 	
@@ -205,11 +205,11 @@ private:
 	TCallBack iVolumeUpCallBack;
 	TCallBack iVolumeDownCallBack;
 
-	CMobblerLastFMConnection::TRadioStation iPreviousRadioStation;
+	TInt iPreviousRadioStation;
 	
 	CMobblerString* iPreviousRadioArtist;
 	CMobblerString* iPreviousRadioTag;
-	CMobblerString* iPreviousRadioPersonal;
+	CMobblerString* iPreviousRadioUser;
 	
 	CMobblerBitmapCollection* iBitmapCollection;
 	
