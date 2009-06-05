@@ -67,7 +67,6 @@ public:
 		ERecommendations,
 		ENeighbourhood,
 		ELovedTracks,
-		EPlaylist,
 		EArtist,
 		ETag
 		};
@@ -179,9 +178,8 @@ private:
 	// handshaking
 	void AuthenticateL();
 	
-	void HandshakeL();
-	void WSHandshakeL();
-	void RadioHandshakeL();
+	void ScrobbleHandshakeL();
+	void WebServicesHandshakeL();
 #ifdef BETA_BUILD
 	void BetaHandshakeL();
 #endif
@@ -221,7 +219,6 @@ private:
 	
 	// authentication transactions
 	CMobblerTransaction* iHandshakeTransaction;
-	CMobblerTransaction* iRadioHandshakeTransaction;
 	CMobblerTransaction* iWebServicesHandshakeTransaction;
 #ifdef BETA_BUILD
 	CMobblerTransaction* iBetaTestersTransaction;
@@ -243,13 +240,9 @@ private:
 	CMobblerString* iUsername;
 	CMobblerString* iPassword;
 	
-	HBufC8* iSessionID;
+	HBufC8* iScrobbleSessionID;
 	
 	HBufC8* iWebServicesSessionKey;
-	
-	HBufC8* iRadioSessionID;
-	HBufC8* iRadioBaseURL;
-	HBufC8* iRadioBasePath;
 	
 	HBufC8* iNowPlayingURL;
 	HBufC8* iSubmitURL;

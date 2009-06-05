@@ -554,7 +554,6 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 					case EMobblerCommandRadioPersonal:			// intentional fall-through
 					case EMobblerCommandRadioLoved:				// intentional fall-through
 					case EMobblerCommandRadioNeighbourhood:		// intentional fall-through
-					case EMobblerCommandRadioPlaylist:			// intentional fall-through
 					default:
 						RadioStartL(iPreviousRadioStation, NULL, EFalse);
 						break;
@@ -645,7 +644,6 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 		case EMobblerCommandRadioPersonal:			// intentional fall-through
 		case EMobblerCommandRadioLoved:				// intentional fall-through
 		case EMobblerCommandRadioNeighbourhood:		// intentional fall-through
-		case EMobblerCommandRadioPlaylist:			// intentional fall-through
 			RadioStartL(aCommand, NULL);
 			break;
 		case EMobblerCommandTrackLove:

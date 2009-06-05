@@ -130,7 +130,7 @@ enum TMobblerSettingItemListViewCommands
 	EMobblerCommandRadioPersonal,
 	EMobblerCommandRadioLoved,
 	EMobblerCommandRadioNeighbourhood,
-	EMobblerCommandRadioPlaylist,
+	EMobblerCommandRadioListTracks,
 	EMobblerCommandRadioEnumLast = 0xA000,
 	
 	EMobblerCommandCheckForUpdates,

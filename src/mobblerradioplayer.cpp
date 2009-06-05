@@ -62,7 +62,7 @@ CMobblerRadioPlayer::CMobblerRadioPlayer(CMobblerLastFMConnection& aLastFMConnec
 void CMobblerRadioPlayer::ConstructL()
 	{
 	iIncomingCallMonitor = CMobblerIncomingCallMonitor::NewL(*this);
-	
+	iStation = CMobblerString::NewL(KNullDesC);
 	User::LeaveIfError(iTimer.CreateLocal());
 	}
 
@@ -267,9 +267,6 @@ void CMobblerRadioPlayer::StartL(CMobblerLastFMConnection::TRadioStation aRadioS
 		case CMobblerLastFMConnection::ELovedTracks:
 			station.Format(static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->ResourceReader().ResourceL(R_MOBBLER_LOVED_TRACKS_FORMAT), &text);
 			break;
-		case CMobblerLastFMConnection::EPlaylist:
-			station.Format(static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->ResourceReader().ResourceL(R_MOBBLER_PLAYLIST_FORMAT), &text);
-			break;
 		case CMobblerLastFMConnection::EArtist:
 			station.Format(static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->ResourceReader().ResourceL(R_MOBBLER_ARTIST_FORMAT), &text);
 			break;
@@ -309,17 +306,30 @@ void CMobblerRadioPlayer::StartL(CMobblerLastFMConnection::TRadioStation aRadioS
 
 void CMobblerRadioPlayer::DataL(const TDesC8& aData, CMobblerLastFMConnection::TError aError)
 	{
-	if (aError == CMobblerLastFMConnection::EErrorNone)
+	switch (iTransactionState)
 		{
-		switch (iTransactionState)
+		case ESelectingStation:
 			{
-			case ESelectingStation:
+			if (aError == CMobblerLastFMConnection::EErrorNone)
 				{
+				delete iStation;
+				iStation = CMobblerParser::ParseRadioTuneL(aData);
+				
 				DoChangeTransactionStateL(EFetchingPlaylist);
 				iLastFMConnection.RequestPlaylistL(this);
 				}
-				break;
-			case EFetchingPlaylist:
+			else
+				{
+				DoChangeTransactionStateL(ENone);
+				
+				CAknInformationNote* note = new (ELeave) CAknInformationNote(EFalse);
+				note->ExecuteLD(static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->ResourceReader().ResourceL(R_MOBBLER_NOTE_BAD_STATION));
+				}
+			}
+			break;
+		case EFetchingPlaylist:
+			{
+			if (aError == CMobblerLastFMConnection::EErrorNone)
 				{
 				DoChangeTransactionStateL(ENone);
 		
@@ -354,26 +364,33 @@ void CMobblerRadioPlayer::DataL(const TDesC8& aData, CMobblerLastFMConnection::T
 					CleanupStack::PopAndDestroy(error);
 					}
 				}
-				break;
-			default:
+			else
+				{
 				DoChangeTransactionStateL(ENone);
-				break;
+				
+				if (aData.Length() != 0)
+					{
+					// Display an error if we were given some text because this is a false response from Last.fm
+					
+					CMobblerString* errorText(CMobblerString::NewL(aData));
+					CleanupStack::PushL(errorText);
+					CAknInformationNote* note(new (ELeave) CAknInformationNote(EFalse));
+					note->ExecuteLD(errorText->String());
+					CleanupStack::PopAndDestroy(errorText);
+					}
+				else
+					{
+					DoChangeTransactionStateL(ENone);
+					
+					CAknInformationNote* note = new (ELeave) CAknInformationNote(EFalse);
+					note->ExecuteLD(static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->ResourceReader().ResourceL(R_MOBBLER_NOTE_BAD_STATION));
+					}
+				}
 			}
-		}
-	else
-		{
-		DoChangeTransactionStateL(ENone);
-		
-		if (aData.Length() != 0)
-			{
-			// Display an error if we were given some text because this is a false response from Last.fm
-			
-			CMobblerString* errorText(CMobblerString::NewL(aData));
-			CleanupStack::PushL(errorText);
-			CAknInformationNote* note(new (ELeave) CAknInformationNote(EFalse));
-			note->ExecuteLD(errorText->String());
-			CleanupStack::PopAndDestroy(errorText);
-			}
+			break;
+		default:
+			DoChangeTransactionStateL(ENone);
+			break;
 		}
 	}
 
@@ -533,15 +550,7 @@ TInt CMobblerRadioPlayer::EqualizerIndex() const
 
 const CMobblerString& CMobblerRadioPlayer::Station() const
 	{
-	const CMobblerString* station(&iCurrentPlaylist->Name());
-	
-	if (station->String().Length() == 0
-			&& iStation)
-		{
-		station = iStation;
-		}
-	
-	return *station;
+	return *iStation;
 	}
 
 void CMobblerRadioPlayer::SetPreBufferSize(TTimeIntervalSeconds aPreBufferSize)

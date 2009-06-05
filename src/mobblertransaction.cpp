@@ -32,56 +32,44 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 // The granurarity of the buffer that responses from last.fm are read into
 const TInt KBufferGranularity(256);
 
-_LIT8(KRadioStationQuery, "session=%S&url=%S&lang=%S");
-_LIT8(KRadioPlaylistQuery, "sk=%S&discovery=0&desktop=1.5.1");
-
 CMobblerTransaction* CMobblerTransaction::NewL(CMobblerLastFMConnection& aConnection, CUri8* aURI)
 	{
-	CMobblerTransaction* self = new(ELeave) CMobblerTransaction(aConnection);
+	CMobblerTransaction* self = new(ELeave) CMobblerTransaction(aConnection, EFalse);
 	CleanupStack::PushL(self);
 	self->ConstructL(aURI);
 	CleanupStack::Pop(self);
 	return self;
 	}
 
-CMobblerTransaction* CMobblerTransaction::NewL(CMobblerLastFMConnection& aConnection, CUri8* aURI, CHTTPFormEncoder* aForm)
+CMobblerTransaction* CMobblerTransaction::NewL(CMobblerLastFMConnection& aConnection, TBool aRequiresAuthentication, CUri8* aURI, CHTTPFormEncoder* aForm)
 	{
-	CMobblerTransaction* self = new(ELeave) CMobblerTransaction(aConnection);
+	CMobblerTransaction* self = new(ELeave) CMobblerTransaction(aConnection, aRequiresAuthentication);
 	CleanupStack::PushL(self);
 	self->ConstructL(aURI, aForm);
 	CleanupStack::Pop(self);
 	return self;
 	}
 
-CMobblerTransaction* CMobblerTransaction::NewL(CMobblerLastFMConnection& aConnection, CUri8* aURI, CMobblerWebServicesQuery* aQuery)
+CMobblerTransaction* CMobblerTransaction::NewL(CMobblerLastFMConnection& aConnection, TBool aRequiresAuthentication, CUri8* aURI, CMobblerWebServicesQuery* aQuery)
 	{
-	CMobblerTransaction* self = new(ELeave) CMobblerTransaction(aConnection);
+	CMobblerTransaction* self = new(ELeave) CMobblerTransaction(aConnection, aRequiresAuthentication);
 	CleanupStack::PushL(self);
 	self->ConstructL(aURI, aQuery);
 	CleanupStack::Pop(self);
 	return self;
 	}
 
-CMobblerTransaction* CMobblerTransaction::NewL(CMobblerLastFMConnection& aConnection, const TDesC8& aLastFMRadioURI)
+CMobblerTransaction* CMobblerTransaction::NewL(CMobblerLastFMConnection& aConnection, TBool aRequiresAuthentication)
 	{
-	CMobblerTransaction* self = new(ELeave) CMobblerTransaction(aConnection);
-	CleanupStack::PushL(self);
-	self->ConstructL(aLastFMRadioURI);
-	CleanupStack::Pop(self);
-	return self;
-	}
-
-CMobblerTransaction* CMobblerTransaction::NewL(CMobblerLastFMConnection& aConnection)
-	{
-	CMobblerTransaction* self = new(ELeave) CMobblerTransaction(aConnection);
+	CMobblerTransaction* self = new(ELeave) CMobblerTransaction(aConnection, aRequiresAuthentication);
 	//CleanupStack::PushL(self);
 	//self->ConstructL();
 	//CleanupStack::Pop(self);
 	return self;
 	}
 
-CMobblerTransaction::CMobblerTransaction(CMobblerLastFMConnection& aConnection)
-	:iConnection(aConnection)
+CMobblerTransaction::CMobblerTransaction(CMobblerLastFMConnection& aConnection, TBool aRequiresAuthentication)
+	:iConnection(aConnection), iRequiresAuthentication(aRequiresAuthentication)
 	{
 	}
 
@@ -102,48 +90,12 @@ void CMobblerTransaction::ConstructL(CUri8* aURI, CMobblerWebServicesQuery* aQue
 	iURI = aURI;
 	}
 
-void CMobblerTransaction::ConstructL(const TDesC8& aLastFMRadioURI)
-	{
-	iLastFMRadioURI = aLastFMRadioURI.AllocL();
-	}
-
 void CMobblerTransaction::SubmitL()
 	{
 	delete iBuffer;
 	iBuffer = CBufFlat::NewL(KBufferGranularity);
 	
-	if (iLastFMRadioURI)
-		{
-		// this is a start radio transaction
-
-		// setup the path
-		HBufC8* path(HBufC8::NewLC(255));
-		TPtr8 pathPtr(path->Des());
-		pathPtr.Copy(*iConnection.iRadioBasePath);
-		pathPtr.Append(_L8("/adjust.php"));
-		
-		TBuf8<2> language(MobblerUtility::LanguageL());
-		
-		HBufC8* query(HBufC8::NewLC(255));
-		
-		// setup the 
-		TPtr8 radioSessionIDPtr(iConnection.iRadioSessionID->Des());
-		TPtr8 radioURLPtr(iLastFMRadioURI->Des());
-		
-		query->Des().AppendFormat(KRadioStationQuery, &radioSessionIDPtr, &radioURLPtr, &language);
-		
-		CUri8* uri(CUri8::NewLC());
-		
-		uri->SetComponentL(_L8("http"), EUriScheme);
-		uri->SetComponentL(*iConnection.iRadioBaseURL, EUriHost);
-		uri->SetComponentL(pathPtr, EUriPath);
-		uri->SetComponentL(*query, EUriQuery);
-
-		iTransaction = iConnection.iHTTPSession.OpenTransactionL(uri->Uri(), *this);
-
-		CleanupStack::PopAndDestroy(3, path);
-		}
-	else if (iURI)
+	if (iURI)
 		{
 		if (iQuery)
 			{
@@ -177,32 +129,6 @@ void CMobblerTransaction::SubmitL()
 			iTransaction = iConnection.iHTTPSession.OpenTransactionL(iURI->Uri(), *this);
 			}
 		}
-	else
-		{
-		// this must be requesting a playlist
-		
-		// only try to request a playlist if we have the session ID
-		HBufC8* path(HBufC8::NewLC(255));
-		TPtr8 pathPtr(path->Des());
-		pathPtr.Copy(*iConnection.iRadioBasePath);
-		pathPtr.Append(_L8("/xspf.php"));
-		
-		TPtr8 radioSessionIDPtr(iConnection.iRadioSessionID->Des());
-		
-		HBufC8* query(HBufC8::NewLC(255));
-		query->Des().AppendFormat(KRadioPlaylistQuery, &radioSessionIDPtr);
-		
-		CUri8* uri(CUri8::NewLC());
-		
-		uri->SetComponentL(_L8("http"), EUriScheme);
-		uri->SetComponentL(*iConnection.iRadioBaseURL, EUriHost);
-		uri->SetComponentL(pathPtr, EUriPath);
-		uri->SetComponentL(*query, EUriQuery);
-		
-		iTransaction = iConnection.iHTTPSession.OpenTransactionL(uri->Uri(), *this);
-		
-		CleanupStack::PopAndDestroy(3, path);
-		}
 	
 	iTransaction.SubmitL();
 	}
@@ -213,7 +139,6 @@ CMobblerTransaction::~CMobblerTransaction()
 	delete iBuffer;
 	delete iForm;
 	delete iURI;
-	delete iLastFMRadioURI;
 	delete iQuery;
 	}
 
@@ -271,7 +196,7 @@ MMobblerFlatDataObserver* CMobblerTransaction::FlatDataObserver()
 
 TBool CMobblerTransaction::RequiresAuthentication() const
 	{
-	return iForm || iLastFMRadioURI;
+	return iRequiresAuthentication;
 	}
 
 // End of file

@@ -37,11 +37,10 @@ class CMobblerTransaction : public CBase, public MHTTPTransactionCallback
 	{
 public:
 	static CMobblerTransaction* NewL(CMobblerLastFMConnection& aConnection, CUri8* aURI);
-	static CMobblerTransaction* NewL(CMobblerLastFMConnection& aConnection, CUri8* aURI, CHTTPFormEncoder* aForm);
-	static CMobblerTransaction* NewL(CMobblerLastFMConnection& aConnection, CUri8* aURI, CMobblerWebServicesQuery* aQuery);
+	static CMobblerTransaction* NewL(CMobblerLastFMConnection& aConnection, TBool aRequiresAuthentication, CUri8* aURI, CHTTPFormEncoder* aForm);
+	static CMobblerTransaction* NewL(CMobblerLastFMConnection& aConnection, TBool aRequiresAuthentication, CUri8* aURI, CMobblerWebServicesQuery* aQuery);
 	
-	static CMobblerTransaction* NewL(CMobblerLastFMConnection& aConnection, const TDesC8& aLastFMRadioURI);
-	static CMobblerTransaction* NewL(CMobblerLastFMConnection& aConnection);
+	static CMobblerTransaction* NewL(CMobblerLastFMConnection& aConnection, TBool aRequiresAuthentication);
 	
 	~CMobblerTransaction();
 	
@@ -58,11 +57,10 @@ private: // from MHTTPTransactionCallback
 	TInt MHFRunError(TInt aError, RHTTPTransaction aTransaction, const THTTPEvent &aEvent);
 	
 private:
-	CMobblerTransaction(CMobblerLastFMConnection& aConnection);
+	CMobblerTransaction(CMobblerLastFMConnection& aConnection, TBool aRequiresAuthentication);
 	void ConstructL(CUri8* aURI);
 	void ConstructL(CUri8* aURI, CHTTPFormEncoder* aForm);
 	void ConstructL(CUri8* aURI, CMobblerWebServicesQuery* aQuery);
-	void ConstructL(const TDesC8& aLastFMRadioURI);
 	
 private:
 	CMobblerLastFMConnection& iConnection;
@@ -74,9 +72,9 @@ private:
 	CUri8* iURI;
 	CHTTPFormEncoder* iForm;
 	
-	HBufC8* iLastFMRadioURI;
-	
 	CBufBase* iBuffer;
+	
+	TBool iRequiresAuthentication;
 	};
 
 #endif // __MOBBLERTRANSACTION_H__

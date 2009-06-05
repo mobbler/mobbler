@@ -133,84 +133,6 @@ CMobblerLastFMError* CMobblerParser::ParseHandshakeL(const TDesC8& aHandshakeRes
 	return error;
 	}
 
-/*
-session
-stream_url=http://87.117.229.85:80/last.mp3?Session=ae1eb54a11615e605d61d6e83dde71bc
-subscriber=0
-framehack=0
-base_url=ws.audioscrobbler.com
-base_path=/radio
-info_message=
-fingerprint_upload_url=http://ws.audioscrobbler.com/fingerprint/upload.php
-*/
-CMobblerLastFMError* CMobblerParser::ParseRadioHandshakeL(const TDesC8& aRadioHandshakeResponse, HBufC8*& aRadioSessionID, HBufC8*& aRadioBaseUrl, HBufC8*& aRadioBasePath)
-	{
-	DUMPDATA(aRadioHandshakeResponse, _L("radiohandshakeresponse.txt"));
-	
-	CMobblerLastFMError* error(NULL);
-	
-	if (aRadioHandshakeResponse.MatchF(_L8("session*")) == 0)
-		{
-		if (aRadioHandshakeResponse.Find(_L8("session=FAILED")) == 0)
-			{
-			error = CMobblerLastFMError::NewL(static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->ResourceReader().ResourceL(R_MOBBLER_NOTE_BAD_AUTH), CMobblerLastFMError::EBadAuth);
-			}
-		else
-			{
-			RDesReadStream readStream(aRadioHandshakeResponse);
-			CleanupClosePushL(readStream);
-			
-			const TInt KLines(7);
-			
-			for (TInt i(0); i < KLines; ++i)
-				{
-				_LIT(KDelimeter, "\n");
-				
-				TBuf8<255> line;
-				readStream.ReadL(line, TChar(KDelimeter()[0]));
-				
-				_LIT8(KEquals, "=");
-				TInt equalPosition(KErrNotFound);
-				
-				equalPosition = line.Find(KEquals);
-				
-				if (i == 0)
-					{
-					//session id
-					delete aRadioSessionID;
-					aRadioSessionID = line.Mid(equalPosition + 1, line.Length() - (equalPosition + 1) - 1).AllocL();
-					}
-				else if (i == 1)
-					{
-					// stream URL
-					//delete aRadioStreamUrl;
-					//aRadioStreamUrl = line.Mid(equalPosition + 1, line.Length() - (equalPosition + 1) - 1).AllocL();
-					}
-				else if (i == 4)
-					{
-					//base URL
-					delete aRadioBaseUrl;
-					aRadioBaseUrl = line.Mid(equalPosition + 1, line.Length() - (equalPosition + 1) - 1).AllocL();
-					}
-				else if (i == 5)
-					{
-					//base path
-					delete aRadioBasePath;
-					aRadioBasePath = line.Mid(equalPosition + 1, line.Length() - (equalPosition + 1) - 1).AllocL();
-					}
-				}
-			
-			CleanupStack::PopAndDestroy(&readStream);
-			}
-		}
-	else
-		{
-		error = CMobblerLastFMError::NewL(aRadioHandshakeResponse, CMobblerLastFMError::EOther);
-		}
-
-	return error;	
-	}
-
 CMobblerLastFMError* CMobblerParser::ParseScrobbleResponseL(const TDesC8& aScrobbleResponse)
 	{
 	DUMPDATA(aScrobbleResponse, _L("scrobbleresponse.txt"));
@@ -283,6 +205,26 @@ HBufC8* CMobblerParser::DecodeURIStringLC(const TDesC8& aString)
 	return result;
 	}
 
+CMobblerString* CMobblerParser::ParseRadioTuneL(const TDesC8& aXml)
+	{
+	// Create the XML reader and DOM fragement and associate them with each other
+	CSenXmlReader* xmlReader(CSenXmlReader::NewL());
+	CleanupStack::PushL(xmlReader);
+	CSenDomFragment* domFragment(CSenDomFragment::NewL());
+	CleanupStack::PushL(domFragment);
+	xmlReader->SetContentHandler(*domFragment);
+	domFragment->SetReader(*xmlReader);
+	
+	// Parse the XML into the DOM fragment
+	xmlReader->ParseL(aXml);
+	
+	CMobblerString* station = CMobblerString::NewL(domFragment->AsElement().Element(_L8("station"))->Element(_L8("name"))->Content());		
+	
+	CleanupStack::PopAndDestroy(2, xmlReader);
+	
+	return station;
+	}
+
 
 CMobblerLastFMError* CMobblerParser::ParseRadioPlaylistL(const TDesC8& aXml, CMobblerRadioPlaylist*& aPlaylist)
 	{
@@ -304,68 +246,65 @@ CMobblerLastFMError* CMobblerParser::ParseRadioPlaylistL(const TDesC8& aXml, CMo
 	// Parse the XML into the DOM fragment
 	xmlReader->ParseL(aXml);
 	
-	HBufC8* radioName(DecodeURIStringLC(domFragment->AsElement().Element(KElementTitle)->Content()));
-	playlist->SetNameL(*radioName);
-	CleanupStack::PopAndDestroy();
+	RPointerArray<CSenElement>* tracks(NULL);
 	
-	HBufC8* skipsText(DecodeURIStringLC(domFragment->AsElement().Element(KElementLink)->Content()));
-	TLex8 lex8(*skipsText);
-	TInt skips(0);
-	lex8.Val(skips);
-	playlist->SetSkips(skips);
-	CleanupStack::PopAndDestroy(skipsText);
+	CSenElement& domElement = domFragment->AsElement();
 	
-	RPointerArray<CSenElement>& tracks = domFragment->AsElement().Element(KElementTrackList)->ElementsL();
+	const TDesC8& name = domElement.LocalName();
 	
-	const TInt KTrackCount(tracks.Count());
-	for (TInt i(0); i < KTrackCount; ++i)
+	CSenElement* element = domElement.Child(0);
+	
+	if (element)
 		{
-		// get the duration as a number
-		TLex8 lex(tracks[i]->Element(KElementDuration)->Content());
-		TInt durationMilliSeconds;
-		lex.Val(durationMilliSeconds);
-		TTimeIntervalSeconds durationSeconds(durationMilliSeconds / 1000);
+		element = element->Element(KElementTrackList);
 		
-		TPtrC8 creator(tracks[i]->Element(KElementCreator)->Content());
-		HBufC8* creatorBuf(HBufC8::NewLC(creator.Length()));
-		SenXmlUtils::DecodeHttpCharactersL(creator, creatorBuf);
-		TPtrC8 title(tracks[i]->Element(KElementTitle)->Content());
-		HBufC8* titleBuf(HBufC8::NewLC(title.Length()));
-		SenXmlUtils::DecodeHttpCharactersL(title, titleBuf);
-		TPtrC8 album(tracks[i]->Element(KElementAlbum)->Content());
-		HBufC8* albumBuf(HBufC8::NewLC(album.Length()));
-		SenXmlUtils::DecodeHttpCharactersL(album, albumBuf);
-/*		RPointerArray<CSenElement>& Elems = tracks[i]->ElementsL();
-		HBufC8* albumIDBuf(NULL);
-		for (TInt x = 0; x < Elems.Count(); x++)
+		if (element)
 			{
-			if (Elems[x]->LocalName() == _L8("albumId"))
-				{
-				TPtrC8 albumID(Elems[x]->Content());
-				albumIDBuf = HBufC8::NewLC(albumID.Length());
-				SenXmlUtils::DecodeHttpCharactersL(albumID, albumIDBuf);
-				break;
-				}
-			}*/
-		TPtrC8 image(tracks[i]->Element(KElementImage)->Content());
-		TPtrC8 location(tracks[i]->Element(KElementLocation)->Content());
-		TPtrC8 radioAuth(tracks[i]->Element(KNamespace, KElementRadioAuth)->Content());
-		TPtrC8 musicBrainzId(tracks[i]->Element(KElementId)->Content());
-		
-		CMobblerTrack* track(CMobblerTrack::NewL(*creatorBuf, *titleBuf, *albumBuf, /**albumIDBuf,*/ musicBrainzId, image, location, durationSeconds, radioAuth));
-		CleanupStack::PushL(track);
-		playlist->AppendTrackL(track);
-		CleanupStack::Pop(track);
-		
-		if (track->Album().String().Length() == 0)
-			{
-			// We do this so that the track knows for sure
-			// that there is no album name and will use the
-			// album art from the playlist
-			track->SetAlbumL(KNullDesC);
+			tracks = &element->ElementsL();
 			}
-		
-		CleanupStack::PopAndDestroy(3, creatorBuf);
+		}
+	
+	if (tracks)
+		{
+		const TInt KTrackCount(tracks->Count());
+		for (TInt i(0); i < KTrackCount; ++i)
+			{
+			// get the duration as a number
+			TLex8 lex((*tracks)[i]->Element(KElementDuration)->Content());
+			TInt durationMilliSeconds;
+			lex.Val(durationMilliSeconds);
+			TTimeIntervalSeconds durationSeconds(durationMilliSeconds / 1000);
+			
+			TPtrC8 creator((*tracks)[i]->Element(KElementCreator)->Content());
+			HBufC8* creatorBuf(HBufC8::NewLC(creator.Length()));
+			SenXmlUtils::DecodeHttpCharactersL(creator, creatorBuf);
+			TPtrC8 title((*tracks)[i]->Element(KElementTitle)->Content());
+			HBufC8* titleBuf(HBufC8::NewLC(title.Length()));
+			SenXmlUtils::DecodeHttpCharactersL(title, titleBuf);
+			TPtrC8 album((*tracks)[i]->Element(KElementAlbum)->Content());
+			HBufC8* albumBuf(HBufC8::NewLC(album.Length()));
+			SenXmlUtils::DecodeHttpCharactersL(album, albumBuf);
+			
+			TPtrC8 image((*tracks)[i]->Element(KElementImage)->Content());
+			TPtrC8 location((*tracks)[i]->Element(KElementLocation)->Content());
+			TPtrC8 identifier((*tracks)[i]->Element(_L8("identifier"))->Content());
+			TPtrC8 trackauth((*tracks)[i]->Element(_L8("extension"))->Element(_L8("trackauth"))->Content());
+			
+			CMobblerTrack* track(CMobblerTrack::NewL(*creatorBuf, *titleBuf, *albumBuf, identifier, image, location, durationSeconds, trackauth));
+			CleanupStack::PushL(track);
+			playlist->AppendTrackL(track);
+			CleanupStack::Pop(track);
+			
+			if (track->Album().String().Length() == 0)
+				{
+				// We do this so that the track knows for sure
+				// that there is no album name and will use the
+				// album art from the playlist
+				track->SetAlbumL(KNullDesC);
+				}
+			
+			CleanupStack::PopAndDestroy(3, creatorBuf);
+			}
 		}
 	
 	CleanupStack::PopAndDestroy(2, xmlReader);
@@ -379,20 +318,6 @@ CMobblerLastFMError* CMobblerParser::ParseRadioPlaylistL(const TDesC8& aXml, CMo
 		{
 		CleanupStack::Pop(playlist);
 		aPlaylist = playlist;
-		}
-	
-	return error;
-	}
-
-CMobblerLastFMError* CMobblerParser::ParseRadioSelectStationL(const TDesC8& aXml)
-	{
-	DUMPDATA(aXml, _L("radioselectresponse.xml"));
-	
-	CMobblerLastFMError* error(NULL);
-	
-	if (aXml.Find(_L8("response=OK")) != 0)
-		{
-		error = CMobblerLastFMError::NewL(static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->ResourceReader().ResourceL(R_MOBBLER_NOTE_BAD_STATION), CMobblerLastFMError::EBadStation);
 		}
 	
 	return error;

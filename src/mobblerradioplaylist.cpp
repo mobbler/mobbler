@@ -40,13 +40,10 @@ CMobblerRadioPlaylist::CMobblerRadioPlaylist()
 
 void CMobblerRadioPlaylist::ConstructL()
 	{
-	iName = CMobblerString::NewL(KNullDesC);
 	}
 
 CMobblerRadioPlaylist::~CMobblerRadioPlaylist()
 	{	
-	delete iName;
-	
 	const TInt KPlaylistCount(iPlaylist.Count());
 	for (TInt i(0) ; i < KPlaylistCount ; ++i)
 		{
@@ -66,12 +63,6 @@ void CMobblerRadioPlaylist::RemoveAndReleaseTrack(TInt aTrackIndex)
 	iPlaylist.Remove(aTrackIndex);
 	}
 
-void CMobblerRadioPlaylist::SetNameL(const TDesC8& aName)
-	{
-	delete iName;
-	iName = CMobblerString::NewL(aName);
-	}
-
 TInt CMobblerRadioPlaylist::Count() const
 	{
 	return iPlaylist.Count();
@@ -87,20 +78,6 @@ CMobblerTrack* CMobblerRadioPlaylist::operator[](TInt aCount)
 	return iPlaylist[aCount];
 	}
 
-const CMobblerString& CMobblerRadioPlaylist::Name() const
-	{
-	return *iName;
-	}
-
-void CMobblerRadioPlaylist::SetSkips(TInt aSkips)
-	{
-	iSkips = aSkips;
-	}
-
-TInt CMobblerRadioPlaylist::Skips() const
-	{
-	return iSkips;
-	}
 
 
 
