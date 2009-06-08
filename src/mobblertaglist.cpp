@@ -21,7 +21,6 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-
 #include "mobbler.hrh"
 #include "mobblerappui.h"
 #include "mobblerlastfmconnection.h"
@@ -39,22 +38,22 @@ CMobblerTagList::CMobblerTagList(CMobblerAppUi& aAppUi, CMobblerWebServicesContr
 
 void CMobblerTagList::ConstructL()
 	{
-    iDefaultImage = CMobblerBitmap::NewL(*this, KDefaultImage);
-    
-    switch (iType)
-    	{
-    	case EMobblerCommandUserTopTags:
-    		iAppUi.LastFMConnection().WebServicesCallL(_L8("user"), _L8("gettoptags"), iText1->String8(), *this);
-    		break;
-    	case EMobblerCommandArtistTopTags:
-    		iAppUi.LastFMConnection().WebServicesCallL(_L8("artist"), _L8("gettoptags"), iText1->String8(), *this);
-    		break;
-    	case EMobblerCommandSearchTag:
-            iAppUi.LastFMConnection().WebServicesCallL(_L8("tag"), _L8("search"), iText1->String8(), *this);
-    	    break;
-    	default:
-    		break;
-    	}
+	iDefaultImage = CMobblerBitmap::NewL(*this, KDefaultImage);
+	
+	switch (iType)
+		{
+		case EMobblerCommandUserTopTags:
+			iAppUi.LastFMConnection().WebServicesCallL(_L8("user"), _L8("gettoptags"), iText1->String8(), *this);
+			break;
+		case EMobblerCommandArtistTopTags:
+			iAppUi.LastFMConnection().WebServicesCallL(_L8("artist"), _L8("gettoptags"), iText1->String8(), *this);
+			break;
+		case EMobblerCommandSearchTag:
+			iAppUi.LastFMConnection().WebServicesCallL(_L8("tag"), _L8("search"), iText1->String8(), *this);
+			break;
+		default:
+			break;
+		}
 	}
 
 CMobblerTagList::~CMobblerTagList()
@@ -66,12 +65,12 @@ CMobblerListControl* CMobblerTagList::HandleListCommandL(TInt aCommand)
 	CMobblerListControl* list(NULL);
 	
 	switch (aCommand)
-		{	
+		{
 		case EMobblerCommandRadioStart:
-			iAppUi.RadioStartL(CMobblerLastFMConnection::ETag, iList[iListBox->CurrentItemIndex()]->Title());
+			iAppUi.RadioStartL(EMobblerCommandRadioTag, iList[iListBox->CurrentItemIndex()]->Title());
 			break;
 		default:
-			break;	
+			break;
 		}
 	
 	return list;
@@ -82,20 +81,20 @@ void CMobblerTagList::SupportedCommandsL(RArray<TInt>& aCommands)
 	aCommands.AppendL(EMobblerCommandRadioStart);
 	}
 
-void CMobblerTagList::ParseL(const TDesC8& aXML)
+void CMobblerTagList::ParseL(const TDesC8& aXml)
 	{
 	switch (iType)
-	    {
-	    case EMobblerCommandUserTopTags:
-        case EMobblerCommandArtistTopTags:
-	        CMobblerParser::ParseTopTagsL(aXML, *this, iList);
-	        break;
-	    case EMobblerCommandSearchTag:
-            CMobblerParser::ParseSearchTagL(aXML, *this, iList);
-            break;
-	    default:
-	        break;
-	    }
+		{
+		case EMobblerCommandUserTopTags:
+		case EMobblerCommandArtistTopTags:
+			CMobblerParser::ParseTopTagsL(aXml, *this, iList);
+			break;
+		case EMobblerCommandSearchTag:
+			CMobblerParser::ParseSearchTagL(aXml, *this, iList);
+			break;
+		default:
+			break;
+		}
 	}
 
 // End of file

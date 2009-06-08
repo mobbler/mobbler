@@ -62,7 +62,7 @@ CMobblerListControl* CMobblerFriendList::HandleListCommandL(TInt aCommand)
 	CMobblerListControl* list(NULL);
 	
 	switch (aCommand)
-		{	
+		{
 		case EMobblerCommandFriends:
 			list = CMobblerListControl::CreateListL(iAppUi, iWebServicesControl, EMobblerCommandFriends, iList[iListBox->CurrentItemIndex()]->Title()->String8(), KNullDesC8);
 			break;
@@ -75,7 +75,7 @@ CMobblerListControl* CMobblerFriendList::HandleListCommandL(TInt aCommand)
 			shareDialog->PrepareLC(R_MOBBLER_TEXT_QUERY_DIALOG);
 			shareDialog->SetPromptL(iAppUi.ResourceReader().ResourceL(R_MOBBLER_MESSAGE_PROMPT));
 			shareDialog->SetPredictiveTextInputPermitted(ETrue);
-
+			
 			if (shareDialog->RunLD())
 				{
 				CMobblerString* messageString(CMobblerString::NewL(message));
@@ -101,29 +101,19 @@ CMobblerListControl* CMobblerFriendList::HandleListCommandL(TInt aCommand)
 				}
 			}
 			break;
-		case EMobblerCommandRadioPersonal:
-			iAppUi.RadioStartL(CMobblerLastFMConnection::EPersonal, iList[iListBox->CurrentItemIndex()]->Title());
+		case EMobblerCommandRadioPersonal:			// intentional fall-through
+		case EMobblerCommandRadioLoved:				// intentional fall-through
+		case EMobblerCommandRadioNeighbourhood:		// intentional fall-through
+			iAppUi.RadioStartL(aCommand, iList[iListBox->CurrentItemIndex()]->Title());
 			break;
-		case EMobblerCommandRadioNeighbourhood:
-			iAppUi.RadioStartL(CMobblerLastFMConnection::ENeighbourhood, iList[iListBox->CurrentItemIndex()]->Title());
-			break;
-		case EMobblerCommandRadioLoved:
-			iAppUi.RadioStartL(CMobblerLastFMConnection::ELovedTracks, iList[iListBox->CurrentItemIndex()]->Title());
-			break;
-		case EMobblerCommandUserEvents:
-			list = CMobblerListControl::CreateListL(iAppUi, iWebServicesControl, EMobblerCommandUserEvents, iList[iListBox->CurrentItemIndex()]->Title()->String8(), KNullDesC8);
-			break;
-		case EMobblerCommandPlaylists:
-			list = CMobblerListControl::CreateListL(iAppUi, iWebServicesControl, EMobblerCommandPlaylists, iList[iListBox->CurrentItemIndex()]->Title()->String8(), KNullDesC8);
-			break;
-		case EMobblerCommandRecentTracks:
-			list = CMobblerListControl::CreateListL(iAppUi, iWebServicesControl, EMobblerCommandRecentTracks, iList[iListBox->CurrentItemIndex()]->Title()->String8(), KNullDesC8);
-			break;
-		case EMobblerCommandUserShoutbox:
-			list = CMobblerListControl::CreateListL(iAppUi, iWebServicesControl, EMobblerCommandUserShoutbox, iList[iListBox->CurrentItemIndex()]->Title()->String8(), KNullDesC8);
+		case EMobblerCommandUserEvents:				// intentional fall-through
+		case EMobblerCommandPlaylists:				// intentional fall-through
+		case EMobblerCommandRecentTracks:			// intentional fall-through
+		case EMobblerCommandUserShoutbox:			// intentional fall-through
+			list = CMobblerListControl::CreateListL(iAppUi, iWebServicesControl, aCommand, iList[iListBox->CurrentItemIndex()]->Title()->String8(), KNullDesC8);
 			break;
 		default:
-			break;	
+			break;
 		}
 	
 	return list;
@@ -147,7 +137,6 @@ void CMobblerFriendList::SupportedCommandsL(RArray<TInt>& aCommands)
 	aCommands.AppendL(EMobblerCommandRadioNeighbourhood);
 	aCommands.AppendL(EMobblerCommandRadioLoved);
 	}
-
 
 void CMobblerFriendList::DataL(CMobblerFlatDataObserverHelper* /*aObserver*/, const TDesC8& /*aData*/, CMobblerLastFMConnection::TError /*aError*/)
 	{

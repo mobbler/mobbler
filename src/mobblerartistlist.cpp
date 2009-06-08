@@ -40,28 +40,28 @@ CMobblerArtistList::CMobblerArtistList(CMobblerAppUi& aAppUi, CMobblerWebService
 
 void CMobblerArtistList::ConstructL()
 	{
-    iDefaultImage = CMobblerBitmap::NewL(*this, KDefaultImage);
-    
-    switch (iType)
-	    {
-	    case EMobblerCommandUserTopArtists:
-	    	iAppUi.LastFMConnection().WebServicesCallL(_L8("user"), _L8("gettopartists"), iText1->String8(), *this);
-	    	break;
-	    case EMobblerCommandRecommendedArtists:
-	    	iAppUi.LastFMConnection().RecommendedArtistsL(*this);
-	    	break;
-	    case EMobblerCommandSimilarArtists:
-	    	iAppUi.LastFMConnection().SimilarArtistsL(iText1->String8(), *this);
-	    	break;
-	    case EMobblerCommandTagTopArtists:
-	    	iAppUi.LastFMConnection().WebServicesCallL(_L8("tag"), _L8("gettopartists"), iText1->String8(), *this);
-	    	break;
-	    case EMobblerCommandSearchArtist:
-            iAppUi.LastFMConnection().WebServicesCallL(_L8("artist"), _L8("search"), iText1->String8(), *this);
-            break;
-	    default:
-	    	break;
-	    }
+	iDefaultImage = CMobblerBitmap::NewL(*this, KDefaultImage);
+	
+	switch (iType)
+		{
+		case EMobblerCommandUserTopArtists:
+			iAppUi.LastFMConnection().WebServicesCallL(_L8("user"), _L8("gettopartists"), iText1->String8(), *this);
+			break;
+		case EMobblerCommandRecommendedArtists:
+			iAppUi.LastFMConnection().RecommendedArtistsL(*this);
+			break;
+		case EMobblerCommandSimilarArtists:
+			iAppUi.LastFMConnection().SimilarArtistsL(iText1->String8(), *this);
+			break;
+		case EMobblerCommandTagTopArtists:
+			iAppUi.LastFMConnection().WebServicesCallL(_L8("tag"), _L8("gettopartists"), iText1->String8(), *this);
+			break;
+		case EMobblerCommandSearchArtist:
+			iAppUi.LastFMConnection().WebServicesCallL(_L8("artist"), _L8("search"), iText1->String8(), *this);
+			break;
+		default:
+			break;
+		}
 	}
 
 CMobblerArtistList::~CMobblerArtistList()
@@ -73,38 +73,28 @@ CMobblerListControl* CMobblerArtistList::HandleListCommandL(TInt aCommand)
 	CMobblerListControl* list(NULL);
 	
 	switch (aCommand)
-		{	
+		{
 		case EMobblerCommandRadioStart:
-			iAppUi.RadioStartL(CMobblerLastFMConnection::EArtist, iList[iListBox->CurrentItemIndex()]->Title());
+			iAppUi.RadioStartL(EMobblerCommandRadioArtist, iList[iListBox->CurrentItemIndex()]->Title());
 			break;
-		case EMobblerCommandSimilarArtists:
-			list = CMobblerListControl::CreateListL(iAppUi, iWebServicesControl, EMobblerCommandSimilarArtists, iList[iListBox->CurrentItemIndex()]->Title()->String8(), KNullDesC8);
-			break;
-		case EMobblerCommandArtistEvents:
-			list = CMobblerListControl::CreateListL(iAppUi, iWebServicesControl, EMobblerCommandArtistEvents, iList[iListBox->CurrentItemIndex()]->Title()->String8(), KNullDesC8);
-			break;
-		case EMobblerCommandArtistShoutbox:
-			list = CMobblerListControl::CreateListL(iAppUi, iWebServicesControl, EMobblerCommandArtistShoutbox, iList[iListBox->CurrentItemIndex()]->Title()->String8(), KNullDesC8);
-			break;
-		case EMobblerCommandArtistTopAlbums:
-			list = CMobblerListControl::CreateListL(iAppUi, iWebServicesControl, EMobblerCommandArtistTopAlbums, iList[iListBox->CurrentItemIndex()]->Title()->String8(), KNullDesC8);
-			break;
-		case EMobblerCommandArtistTopTracks:
-			list = CMobblerListControl::CreateListL(iAppUi, iWebServicesControl, EMobblerCommandArtistTopTracks, iList[iListBox->CurrentItemIndex()]->Title()->String8(), KNullDesC8);		
-			break;
-		case EMobblerCommandArtistTopTags:
-			list = CMobblerListControl::CreateListL(iAppUi, iWebServicesControl, EMobblerCommandArtistTopTags, iList[iListBox->CurrentItemIndex()]->Title()->String8(), KNullDesC8);
+		case EMobblerCommandSimilarArtists:		// intentional fall-through
+		case EMobblerCommandArtistEvents:		// intentional fall-through
+		case EMobblerCommandArtistShoutbox:		// intentional fall-through
+		case EMobblerCommandArtistTopAlbums:	// intentional fall-through
+		case EMobblerCommandArtistTopTracks:	// intentional fall-through
+		case EMobblerCommandArtistTopTags:		// intentional fall-through
+			list = CMobblerListControl::CreateListL(iAppUi, iWebServicesControl, aCommand, iList[iListBox->CurrentItemIndex()]->Title()->String8(), KNullDesC8);
 			break;
 		case EMobblerCommandArtistShare:
-		    {
-		    CMobblerTrack* track(CMobblerTrack::NewL(iList[iListBox->CurrentItemIndex()]->Title()->String8(), KNullDesC8, KNullDesC8, KNullDesC8, KNullDesC8, KNullDesC8, 0, KNullDesC8));
-            delete iWebServicesHelper;
-            iWebServicesHelper = CMobblerWebServicesHelper::NewL(iAppUi);
-            iWebServicesHelper->ArtistShareL(*track);            
-            track->Release();
-		    }
+			{
+			CMobblerTrack* track(CMobblerTrack::NewL(iList[iListBox->CurrentItemIndex()]->Title()->String8(), KNullDesC8, KNullDesC8, KNullDesC8, KNullDesC8, KNullDesC8, 0, KNullDesC8));
+			delete iWebServicesHelper;
+			iWebServicesHelper = CMobblerWebServicesHelper::NewL(iAppUi);
+			iWebServicesHelper->ArtistShareL(*track);            
+			track->Release();
+			}
 		default:
-			break;	
+			break;
 		}
 	
 	return list;
@@ -122,36 +112,36 @@ void CMobblerArtistList::SupportedCommandsL(RArray<TInt>& aCommands)
 	aCommands.AppendL(EMobblerCommandArtistTopTracks);
 	aCommands.AppendL(EMobblerCommandArtistTopTags);
 	
-    aCommands.AppendL(EMobblerCommandShare);
-    aCommands.AppendL(EMobblerCommandArtistShare);
+	aCommands.AppendL(EMobblerCommandShare);
+	aCommands.AppendL(EMobblerCommandArtistShare);
 	}
 
 void CMobblerArtistList::DataL(CMobblerFlatDataObserverHelper* /*aObserver*/, const TDesC8& /*aData*/, CMobblerLastFMConnection::TError /*aError*/)
-    {
-    }
+	{
+	}
 
-void CMobblerArtistList::ParseL(const TDesC8& aXML)
+void CMobblerArtistList::ParseL(const TDesC8& aXml)
 	{
 	switch (iType)
-	    {
-	    case EMobblerCommandUserTopArtists:
-	    	CMobblerParser::ParseTopArtistsL(aXML, *this, iList);
-	    	break;
-	    case EMobblerCommandRecommendedArtists:
-	    	CMobblerParser::ParseRecommendedArtistsL(aXML, *this, iList);
-	    	break;
-	    case EMobblerCommandSimilarArtists:
-	    	CMobblerParser::ParseSimilarArtistsL(aXML, *this, iList);
-	    	break;
-	    case EMobblerCommandTagTopArtists:
-	    	CMobblerParser::ParseTopArtistsL(aXML, *this, iList);
-	    	break;
-	    case EMobblerCommandSearchArtist:
-	        CMobblerParser::ParseSearchArtistL(aXML, *this, iList);
-	        break;
-	    default:
-	    	break;
-	    }
+		{
+		case EMobblerCommandUserTopArtists:
+			CMobblerParser::ParseTopArtistsL(aXml, *this, iList);
+			break;
+		case EMobblerCommandRecommendedArtists:
+			CMobblerParser::ParseRecommendedArtistsL(aXml, *this, iList);
+			break;
+		case EMobblerCommandSimilarArtists:
+			CMobblerParser::ParseSimilarArtistsL(aXml, *this, iList);
+			break;
+		case EMobblerCommandTagTopArtists:
+			CMobblerParser::ParseTopArtistsL(aXml, *this, iList);
+			break;
+		case EMobblerCommandSearchArtist:
+			CMobblerParser::ParseSearchArtistL(aXml, *this, iList);
+			break;
+		default:
+			break;
+		}
 	}
 
 // End of file
