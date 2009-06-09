@@ -191,8 +191,10 @@ void CMobblerTrackList::ParseL(const TDesC8& aXML)
     	case EMobblerCommandPlaylistFetchUser:
     	case EMobblerCommandPlaylistFetchAlbum:
     		CMobblerParser::ParsePlaylistL(aXML, *this, iList);
+    		break;
         case EMobblerCommandSearchTrack:
             CMobblerParser::ParseSearchTrackL(aXML, *this, iList);
+            break;
     	default:
     		break;
     	}
