@@ -47,22 +47,22 @@ CMobblerShoutbox::CMobblerShoutbox(CMobblerAppUi& aAppUi, CMobblerWebServicesCon
 
 void CMobblerShoutbox::ConstructL()
 	{
-    iDefaultImage = CMobblerBitmap::NewL(*this, KDefaultImage);
-    
-    switch (iType)
-    	{
-    	case EMobblerCommandUserShoutbox:
-    		iAppUi.LastFMConnection().WebServicesCallL(_L8("user"), _L8("getshouts"), iText1->String8(), *this);
-    		break;
-    	case EMobblerCommandEventShoutbox:
-    		iAppUi.LastFMConnection().WebServicesCallL(_L8("event"), _L8("getshouts"), iText2->String8(), *this);
-    		break;
-    	case EMobblerCommandArtistShoutbox:
-    		iAppUi.LastFMConnection().WebServicesCallL(_L8("artist"), _L8("getshouts"), iText1->String8(), *this);
-    		break;
-    	default:
-    		break;
-    	}
+	iDefaultImage = CMobblerBitmap::NewL(*this, KDefaultImage);
+	
+	switch (iType)
+		{
+		case EMobblerCommandUserShoutbox:
+			iAppUi.LastFMConnection().WebServicesCallL(_L8("user"), _L8("getshouts"), iText1->String8(), *this);
+			break;
+		case EMobblerCommandEventShoutbox:
+			iAppUi.LastFMConnection().WebServicesCallL(_L8("event"), _L8("getshouts"), iText2->String8(), *this);
+			break;
+		case EMobblerCommandArtistShoutbox:
+			iAppUi.LastFMConnection().WebServicesCallL(_L8("artist"), _L8("getshouts"), iText1->String8(), *this);
+			break;
+		default:
+			break;
+		}
 	}
 
 CMobblerShoutbox::~CMobblerShoutbox()
@@ -118,7 +118,7 @@ CMobblerListControl* CMobblerShoutbox::HandleListCommandL(TInt aCommand)
 	HBufC* dialogPromptText(NULL);
 	
 	switch (aCommand)
-		{	
+		{
 		case EMobblerCommandOpen:
 			{
 			// Show the shout in a dialog box
@@ -145,7 +145,7 @@ CMobblerListControl* CMobblerShoutbox::HandleListCommandL(TInt aCommand)
 			shoutDialog->PrepareLC(R_MOBBLER_TEXT_QUERY_DIALOG);
 			shoutDialog->SetPromptL(*dialogPromptText);
 			shoutDialog->SetPredictiveTextInputPermitted(ETrue);
-
+			
 			if (shoutDialog->RunLD())
 				{
 				CMobblerString* shout(CMobblerString::NewL(shoutMessage));
@@ -153,7 +153,19 @@ CMobblerListControl* CMobblerShoutbox::HandleListCommandL(TInt aCommand)
 				switch (iType)
 					{
 					case EMobblerCommandUserShoutbox:
-						iAppUi.LastFMConnection().ShoutL(_L8("user"), iList[iListBox->CurrentItemIndex()]->Title()->String8(), shout->String8());
+						if (aCommand == EMobblerCommandShoutUser)
+							{
+							iAppUi.LastFMConnection().ShoutL(_L8("user"), iList[iListBox->CurrentItemIndex()]->Title()->String8(), shout->String8());
+							}
+						else if (iText1->String().Length() == 0)
+							{
+							CMobblerString* name(CMobblerString::NewL(iAppUi.SettingView().Username()));
+							iAppUi.LastFMConnection().ShoutL(_L8("user"), name->String8(), shout->String8());
+							}
+						else
+							{
+							iAppUi.LastFMConnection().ShoutL(_L8("user"), iText1->String8(), shout->String8());
+							}
 						break;
 					case EMobblerCommandEventShoutbox:
 						iAppUi.LastFMConnection().ShoutL(_L8("event"), iText2->String8(), shout->String8());
@@ -186,9 +198,9 @@ void CMobblerShoutbox::SupportedCommandsL(RArray<TInt>& aCommands)
 	aCommands.AppendL(EMobblerCommandShoutOwner);
 	}
 
-void CMobblerShoutbox::ParseL(const TDesC8& aXML)
+void CMobblerShoutbox::ParseL(const TDesC8& aXml)
 	{
-	CMobblerParser::ParseShoutboxL(aXML, *this, iList);
+	CMobblerParser::ParseShoutboxL(aXml, *this, iList);
 	}
 
 // End of file
