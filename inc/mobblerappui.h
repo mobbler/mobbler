@@ -25,6 +25,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #define __MOBBLERAPPUI_H__
 
 #include <aknviewappui.h>
+#include <aknserverapp.h>	// MAknServerAppExitObserver
 #include <remconcoreapitargetobserver.h>    // link against RemConCoreApi.lib
 #include <remconcoreapitarget.h>            // and
 #include <remconinterfaceselector.h>        // RemConInterfaceBase.lib
@@ -209,6 +210,7 @@ private:
 	CMobblerString* iPreviousRadioArtist;
 	CMobblerString* iPreviousRadioTag;
 	CMobblerString* iPreviousRadioUser;
+	CMobblerString* iPreviousRadioPlaylistId;
 	
 	CMobblerBitmapCollection* iBitmapCollection;
 	

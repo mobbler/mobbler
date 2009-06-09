@@ -267,6 +267,9 @@ void CMobblerRadioPlayer::StartL(CMobblerLastFMConnection::TRadioStation aRadioS
 		case CMobblerLastFMConnection::ELovedTracks:
 			station.Format(static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->ResourceReader().ResourceL(R_MOBBLER_LOVED_TRACKS_FORMAT), &text);
 			break;
+		case CMobblerLastFMConnection::EPlaylist:
+			station.Format(static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->ResourceReader().ResourceL(R_MOBBLER_PLAYLIST_FORMAT), &text);
+			break;
 		case CMobblerLastFMConnection::EArtist:
 			station.Format(static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->ResourceReader().ResourceL(R_MOBBLER_ARTIST_FORMAT), &text);
 			break;
@@ -322,7 +325,7 @@ void CMobblerRadioPlayer::DataL(const TDesC8& aData, CMobblerLastFMConnection::T
 				{
 				DoChangeTransactionStateL(ENone);
 				
-				CAknInformationNote* note = new (ELeave) CAknInformationNote(EFalse);
+				CAknInformationNote* note(new (ELeave) CAknInformationNote(EFalse));
 				note->ExecuteLD(static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->ResourceReader().ResourceL(R_MOBBLER_NOTE_BAD_STATION));
 				}
 			}
@@ -382,7 +385,7 @@ void CMobblerRadioPlayer::DataL(const TDesC8& aData, CMobblerLastFMConnection::T
 					{
 					DoChangeTransactionStateL(ENone);
 					
-					CAknInformationNote* note = new (ELeave) CAknInformationNote(EFalse);
+					CAknInformationNote* note(new (ELeave) CAknInformationNote(EFalse));
 					note->ExecuteLD(static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->ResourceReader().ResourceL(R_MOBBLER_NOTE_BAD_STATION));
 					}
 				}

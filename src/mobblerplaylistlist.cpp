@@ -1,5 +1,5 @@
 /*
-mobblerartistlist.cpp
+mobblerplaylistlist.cpp
 
 Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
 Copyright (C) 2009  Michael Coffey
@@ -47,9 +47,9 @@ CMobblerPlaylistList::CMobblerPlaylistList(CMobblerAppUi& aAppUi, CMobblerWebSer
 
 void CMobblerPlaylistList::ConstructL()
 	{
-    iDefaultImage = CMobblerBitmap::NewL(*this, KDefaultImage);
-    
-    iAppUi.LastFMConnection().WebServicesCallL(_L8("user"), _L8("getplaylists"), iText1->String8(), *this);
+	iDefaultImage = CMobblerBitmap::NewL(*this, KDefaultImage);
+	
+	iAppUi.LastFMConnection().WebServicesCallL(_L8("user"), _L8("getplaylists"), iText1->String8(), *this);
 	}
 
 CMobblerPlaylistList::~CMobblerPlaylistList()
@@ -63,7 +63,13 @@ CMobblerListControl* CMobblerPlaylistList::HandleListCommandL(TInt aCommand)
 	CMobblerListControl* list(NULL);
 	
 	switch (aCommand)
-		{	
+		{
+		case EMobblerCommandRadioStart:
+			CMobblerString* playlistId(CMobblerString::NewL(iList[iListBox->CurrentItemIndex()]->Id()));
+			CleanupStack::PushL(playlistId);
+			iAppUi.RadioStartL(EMobblerCommandRadioPlaylist, playlistId);
+			CleanupStack::PopAndDestroy(playlistId);
+			break;
 		case EMobblerCommandOpen:
 			{
 			list = CMobblerListControl::CreateListL(iAppUi, iWebServicesControl, EMobblerCommandPlaylistFetchUser, iList[iListBox->CurrentItemIndex()]->Title()->String8(), iList[iListBox->CurrentItemIndex()]->Id());
@@ -90,7 +96,7 @@ CMobblerListControl* CMobblerPlaylistList::HandleListCommandL(TInt aCommand)
 			titleDialog->PrepareLC(R_MOBBLER_TEXT_QUERY_DIALOG);
 			titleDialog->SetPromptL(iAppUi.ResourceReader().ResourceL(R_MOBBLER_PLAYLIST_TITLE));
 			titleDialog->SetPredictiveTextInputPermitted(ETrue);
-
+			
 			if (titleDialog->RunLD())
 				{
 				CAknTextQueryDialog* descriptionDialog(new(ELeave) CAknTextQueryDialog(description));
@@ -111,7 +117,7 @@ CMobblerListControl* CMobblerPlaylistList::HandleListCommandL(TInt aCommand)
 			}
 			break;
 		default:
-			break;	
+			break;
 		}
 	
 	return list;
@@ -159,14 +165,15 @@ void CMobblerPlaylistList::SupportedCommandsL(RArray<TInt>& aCommands)
 		aCommands.AppendL(EMobblerCommandPlaylistAddTrack);
 		}
 	
+	aCommands.AppendL(EMobblerCommandRadioStart);
 	aCommands.AppendL(EMobblerCommandOpen);
 	aCommands.AppendL(EMobblerCommandPlaylistCreate);
 	}
 
 
-void CMobblerPlaylistList::ParseL(const TDesC8& aXML)
+void CMobblerPlaylistList::ParseL(const TDesC8& aXml)
 	{
-	CMobblerParser::ParsePlaylistsL(aXML, *this, iList);
+	CMobblerParser::ParsePlaylistsL(aXml, *this, iList);
 	}
 
 // End of file

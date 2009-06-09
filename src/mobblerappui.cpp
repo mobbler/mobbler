@@ -25,7 +25,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <akninfopopupnotecontroller.h>
 #include <AknLists.h>
 #include <aknnotewrappers.h>
-#include <aknserverapp.h>	// MAknServerAppExitObserver
 #include <aknsutils.h>
 #include <bautils.h> 
 
@@ -144,6 +143,7 @@ CMobblerAppUi::~CMobblerAppUi()
 	delete iPreviousRadioArtist;
 	delete iPreviousRadioTag;
 	delete iPreviousRadioUser;
+	delete iPreviousRadioPlaylistId;
 	delete iMusicListener;
 	delete iRadioPlayer;
 	delete iLastFMConnection;
@@ -550,6 +550,9 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 					case EMobblerCommandRadioUser:
 						RadioStartL(iPreviousRadioStation, iPreviousRadioUser, EFalse);
 						break;
+					case EMobblerCommandRadioPlaylist:
+						RadioStartL(iPreviousRadioStation, iPreviousRadioPlaylistId, EFalse);
+						break;
 					case EMobblerCommandRadioRecommendations:	// intentional fall-through
 					case EMobblerCommandRadioPersonal:			// intentional fall-through
 					case EMobblerCommandRadioLoved:				// intentional fall-through
@@ -943,6 +946,10 @@ void CMobblerAppUi::RadioStartL(TInt aRadioStation,
 				delete iPreviousRadioUser;
 				iPreviousRadioUser = CMobblerString::NewL(aRadioOption->String());
 				break;
+			case EMobblerCommandRadioPlaylist:
+				delete iPreviousRadioPlaylistId;
+				iPreviousRadioPlaylistId = CMobblerString::NewL(aRadioOption->String());
+				break;
 			default:
 				break;
 			}
@@ -1283,6 +1290,14 @@ void CMobblerAppUi::LoadRadioStationsL()
 			delete iPreviousRadioUser;
 			iPreviousRadioUser = CMobblerString::NewL(radio);
 			}
+		TBool loadIt(EFalse);
+		TRAP_IGNORE(loadIt = readStream.ReadInt8L());
+		if (loadIt)
+			{
+			readStream >> radio;
+			delete iPreviousRadioPlaylistId;
+			iPreviousRadioPlaylistId = CMobblerString::NewL(radio);
+			}
 
 		CleanupStack::PopAndDestroy(&readStream);
 		}
@@ -1333,6 +1348,16 @@ void CMobblerAppUi::SaveRadioStationsL()
 			{
 			writeStream.WriteInt8L(ETrue);
 			writeStream << iPreviousRadioUser->String();
+			}
+		else
+			{
+			writeStream.WriteInt8L(EFalse);
+			}
+
+		if (iPreviousRadioPlaylistId)
+			{
+			writeStream.WriteInt8L(ETrue);
+			writeStream << iPreviousRadioPlaylistId->String();
 			}
 		else
 			{

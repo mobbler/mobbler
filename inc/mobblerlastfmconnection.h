@@ -67,6 +67,7 @@ public:
 		ERecommendations,
 		ENeighbourhood,
 		ELovedTracks,
+		EPlaylist,
 		EArtist,
 		ETag
 		};

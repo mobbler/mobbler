@@ -55,6 +55,7 @@ _LIT8(KWebServicesHost, "ws.audioscrobbler.com");
 _LIT8(KScrobbleQuery, "hs=true&p=1.2&c=mlr&v=0.1&u=%S&t=%d&a=%S");
 
 _LIT8(KRadioStationPersonal, "lastfm://user/%S/library");
+_LIT8(KRadioStationPlaylist, "lastfm://playlist/%S");
 _LIT8(KRadioStationLoved, "lastfm://user/%S/loved");
 _LIT8(KRadioStationArtist, "lastfm://artist/%S/similarartists");
 _LIT8(KRadioStationTag, "lastfm://globaltags/%S");
@@ -926,7 +927,6 @@ void CMobblerLastFMConnection::ArtistShareL(const TDesC8& aUserName, const TDesC
 	AppendAndSubmitTransactionL(transaction);
 	}
 
-
 void CMobblerLastFMConnection::EventShareL(const TDesC8& aUserName, const TDesC8& aEventId, const TDesC8& aMessage, MMobblerFlatDataObserver& aObserver)
     {
     CUri8* uri(CUri8::NewLC());
@@ -981,6 +981,7 @@ void CMobblerLastFMConnection::SelectStationL(MMobblerFlatDataObserver* aObserve
 	switch (aRadioStation)
 		{
 		case EPersonal:	radioURL->Des().AppendFormat(KRadioStationPersonal, &textPtr); break;
+		case EPlaylist: radioURL->Des().AppendFormat(KRadioStationPlaylist, &textPtr); break;
 		case ERecommendations: radioURL->Des().AppendFormat(KRadioStationRecommended, &textPtr); break;
 		case ENeighbourhood: radioURL->Des().AppendFormat(KRadioStationNeighbours, &textPtr); break;
 		case ELovedTracks: radioURL->Des().AppendFormat(KRadioStationLoved, &textPtr); break;
