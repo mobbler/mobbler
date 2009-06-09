@@ -478,7 +478,26 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 			TBuf<EMobblerMaxQueryDialogLength> search;
 			CAknTextQueryDialog* userDialog(new(ELeave) CAknTextQueryDialog(search));
 			userDialog->PrepareLC(R_MOBBLER_TEXT_QUERY_DIALOG);
-			userDialog->SetPromptL(iResourceReader->ResourceL(R_MOBBLER_SEARCH));
+			TInt resourceId;
+			switch (aCommand)
+				{
+				case EMobblerCommandSearchTrack:
+					resourceId = R_MOBBLER_SEARCH_TRACK_PROMPT;
+					break;
+				case EMobblerCommandSearchAlbum:
+					resourceId = R_MOBBLER_SEARCH_ALBUM_PROMPT;
+					break;
+				case EMobblerCommandSearchArtist:
+					resourceId = R_MOBBLER_RADIO_ENTER_ARTIST;
+					break;
+				case EMobblerCommandSearchTag:
+					resourceId = R_MOBBLER_RADIO_ENTER_TAG;
+					break;
+				default:
+					resourceId = R_MOBBLER_SEARCH;
+					break;
+				}
+			userDialog->SetPromptL(iResourceReader->ResourceL(resourceId));
 			userDialog->SetPredictiveTextInputPermitted(ETrue);
 
 			if (userDialog->RunLD())

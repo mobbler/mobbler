@@ -218,13 +218,12 @@ CMobblerString* CMobblerParser::ParseRadioTuneL(const TDesC8& aXml)
 	// Parse the XML into the DOM fragment
 	xmlReader->ParseL(aXml);
 	
-	CMobblerString* station = CMobblerString::NewL(domFragment->AsElement().Element(_L8("station"))->Element(_L8("name"))->Content());		
+	CMobblerString* station(CMobblerString::NewL(domFragment->AsElement().Element(_L8("station"))->Element(_L8("name"))->Content()));
 	
 	CleanupStack::PopAndDestroy(2, xmlReader);
 	
 	return station;
 	}
-
 
 CMobblerLastFMError* CMobblerParser::ParseRadioPlaylistL(const TDesC8& aXml, CMobblerRadioPlaylist*& aPlaylist)
 	{
@@ -248,11 +247,11 @@ CMobblerLastFMError* CMobblerParser::ParseRadioPlaylistL(const TDesC8& aXml, CMo
 	
 	RPointerArray<CSenElement>* tracks(NULL);
 	
-	CSenElement& domElement = domFragment->AsElement();
+	CSenElement& domElement(domFragment->AsElement());
 	
-	const TDesC8& name = domElement.LocalName();
+//	const TDesC8& name(domElement.LocalName());
 	
-	CSenElement* element = domElement.Child(0);
+	CSenElement* element(domElement.Child(0));
 	
 	if (element)
 		{
