@@ -281,4 +281,8 @@ RESOURCE STRING r_mobbler_to_prompt				{ text = STR_mobbler_to_prompt; }
 RESOURCE STRING r_mobbler_message_prompt		{ text = STR_mobbler_message_prompt; }
 RESOURCE STRING r_mobbler_share_tagline			{ text = STR_mobbler_share_tagline; }
 
+RESOURCE STRING r_mobbler_please_wait			{ text = STR_mobbler_please_wait; }
+RESOURCE STRING r_mobbler_done					{ text = STR_mobbler_done; }
+RESOURCE STRING r_mobbler_error					{ text = STR_mobbler_error; }
+
 // End of file

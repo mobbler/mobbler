@@ -23,10 +23,13 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <aknwaitdialog.h>
 #include <mobbler.rsg>
+#include <mobbler_strings.rsg>
 
+#include "mobblerappui.h"
 #include "mobblerdataobserver.h"
+#include "mobblerresourcereader.h"
 
-CMobblerFlatDataObserverHelper* CMobblerFlatDataObserverHelper::NewL(CMobblerLastFMConnection& aConnection, MMobblerFlatDataObserverHelper& aObserver, TBool aShowWaitDialog)		
+CMobblerFlatDataObserverHelper* CMobblerFlatDataObserverHelper::NewL(CMobblerLastFMConnection& aConnection, MMobblerFlatDataObserverHelper& aObserver, TBool aShowWaitDialog)
 	{
 	CMobblerFlatDataObserverHelper* self = new(ELeave) CMobblerFlatDataObserverHelper(aConnection, aObserver);
 	CleanupStack::PushL(self);
@@ -36,7 +39,7 @@ CMobblerFlatDataObserverHelper* CMobblerFlatDataObserverHelper::NewL(CMobblerLas
 	}
 
 CMobblerFlatDataObserverHelper::CMobblerFlatDataObserverHelper(CMobblerLastFMConnection& aConnection, MMobblerFlatDataObserverHelper& aObserver)
-	:iConnection(aConnection), iObserver(aObserver)		
+	:iConnection(aConnection), iObserver(aObserver)
 	{
 	}
 
@@ -46,7 +49,7 @@ void CMobblerFlatDataObserverHelper::ConstructL(TBool aShowWaitDialog)
 		{
 		iWaitDialog = new (ELeave) CAknWaitDialog((REINTERPRET_CAST(CEikDialog**, &iWaitDialog)), ETrue);
 		iWaitDialog->SetCallback(this);
-		iWaitDialog->SetTextL(_L("Wait"));
+		iWaitDialog->SetTextL(static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->ResourceReader().ResourceL(R_MOBBLER_PLEASE_WAIT));
 		iWaitDialog->ExecuteLD(R_MOBBLER_WAIT_DIALOG);
 		}
 	}
@@ -54,9 +57,9 @@ void CMobblerFlatDataObserverHelper::ConstructL(TBool aShowWaitDialog)
 CMobblerFlatDataObserverHelper::~CMobblerFlatDataObserverHelper()
 	{
 	if(iWaitDialog)
-	   {
-	   iWaitDialog->ProcessFinishedL(); 
-	   }
+		{
+		iWaitDialog->ProcessFinishedL(); 
+		}
 	}
 
 void CMobblerFlatDataObserverHelper::DialogDismissedL(TInt aButtonId)
@@ -68,16 +71,16 @@ void CMobblerFlatDataObserverHelper::DialogDismissedL(TInt aButtonId)
 		iConnection.CancelTransaction(this);
 		}
 	}
-		
+
 void CMobblerFlatDataObserverHelper::DataL(const TDesC8& aData, CMobblerLastFMConnection::TError aError)
 	{
 	if (iWaitDialog)
-	   {
-	   iWaitDialog->ProcessFinishedL(); 
-	   iWaitDialog = NULL;
-	   }
+		{
+		iWaitDialog->ProcessFinishedL(); 
+		iWaitDialog = NULL;
+		}
 	
 	iObserver.DataL(this, aData, aError);
 	}
-	
-// End of file	
+
+// End of file

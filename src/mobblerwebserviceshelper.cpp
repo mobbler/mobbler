@@ -26,9 +26,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <aknmessagequerydialog.h>
 #include <aknnotewrappers.h>
 #include <aknsutils.h>
-#include <bautils.h> 
+#include <bautils.h>
 #include <sendomfragment.h>
-#include <senxmlutils.h> 
+#include <senxmlutils.h>
 
 #include <mobbler.rsg> 
 #include <mobbler_strings.rsg> 
@@ -138,7 +138,7 @@ void CMobblerWebServicesHelper::DataL(CMobblerFlatDataObserverHelper* aObserver,
 	{
 	if (aError == CMobblerLastFMConnection::EErrorNone)
 		{
-		// create the xml reader and dom fragement and associate them with each other 
+		// create the XML reader and DOM fragement and associate them with each other 
 		CSenXmlReader* xmlReader(CSenXmlReader::NewL());
 		CleanupStack::PushL(xmlReader);
 		CSenDomFragment* domFragment(CSenDomFragment::NewL());
@@ -146,7 +146,7 @@ void CMobblerWebServicesHelper::DataL(CMobblerFlatDataObserverHelper* aObserver,
 		xmlReader->SetContentHandler(*domFragment);
 		domFragment->SetReader(*xmlReader);
 		
-		// parse the xml into the dom fragment
+		// parse the XML into the DOM fragment
 		xmlReader->ParseL(aData);
 		
 		if (aObserver == iShareObserverHelper ||
@@ -156,7 +156,7 @@ void CMobblerWebServicesHelper::DataL(CMobblerFlatDataObserverHelper* aObserver,
 				{
 				// Everything worked
 				CAknConfirmationNote* note(new (ELeave) CAknConfirmationNote(EFalse));
-				note->ExecuteLD(_L("Done")); // TODO localise
+				note->ExecuteLD(static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->ResourceReader().ResourceL(R_MOBBLER_DONE));
 				}
 			else
 				{
@@ -181,7 +181,7 @@ void CMobblerWebServicesHelper::DataL(CMobblerFlatDataObserverHelper* aObserver,
 			CleanupStack::PushL(popup);
 			
 			list->ConstructL(popup, CEikListBox::ELeftDownInViewRect);
-
+			
 			popup->SetTitleL(iAppUi.ResourceReader().ResourceL(R_MOBBLER_TO_PROMPT));
 			
 			list->CreateScrollBarFrameL(ETrue);
@@ -200,7 +200,7 @@ void CMobblerWebServicesHelper::DataL(CMobblerFlatDataObserverHelper* aObserver,
 				items->AppendL(user->String());
 				CleanupStack::PopAndDestroy(user);
 				}
-	
+			
 			CleanupStack::Pop(items);
 			
 			list->Model()->SetItemTextArray(items);
@@ -216,7 +216,7 @@ void CMobblerWebServicesHelper::DataL(CMobblerFlatDataObserverHelper* aObserver,
 				shoutDialog->PrepareLC(R_MOBBLER_TEXT_QUERY_DIALOG);
 				shoutDialog->SetPromptL(iAppUi.ResourceReader().ResourceL(R_MOBBLER_MESSAGE_PROMPT));
 				shoutDialog->SetPredictiveTextInputPermitted(ETrue);
-
+				
 				if (shoutDialog->RunLD())
 					{
 					CMobblerString* messageString(CMobblerString::NewL(message));
@@ -254,7 +254,7 @@ void CMobblerWebServicesHelper::DataL(CMobblerFlatDataObserverHelper* aObserver,
 		else if (aObserver == iPlaylistFetchObserverHelper)
 			{
 			// parse and bring up an add to playlist popup menu
-			// create the xml reader and dom fragement and associate them with each other 
+			// create the XML reader and DOM fragement and associate them with each other 
 			CAknSinglePopupMenuStyleListBox* list(new(ELeave) CAknSinglePopupMenuStyleListBox);
 			CleanupStack::PushL(list);
 			
@@ -262,7 +262,7 @@ void CMobblerWebServicesHelper::DataL(CMobblerFlatDataObserverHelper* aObserver,
 			CleanupStack::PushL(popup);
 			
 			list->ConstructL(popup, CEikListBox::ELeftDownInViewRect);
-	
+			
 			popup->SetTitleL(iAppUi.ResourceReader().ResourceL(R_MOBBLER_PLAYLIST_ADD_TRACK));
 			
 			list->CreateScrollBarFrameL(ETrue);
@@ -272,7 +272,7 @@ void CMobblerWebServicesHelper::DataL(CMobblerFlatDataObserverHelper* aObserver,
 			CleanupStack::PushL(items);
 			
 			RPointerArray<CSenElement>& playlists(domFragment->AsElement().Element(_L8("playlists"))->ElementsL());
-				
+			
 			const TInt KPlaylistCount(playlists.Count());
 			for (TInt i(0) ; i < KPlaylistCount; ++i)
 				{
@@ -304,7 +304,7 @@ void CMobblerWebServicesHelper::DataL(CMobblerFlatDataObserverHelper* aObserver,
 	else
 		{
 		CAknInformationNote* note(new (ELeave) CAknInformationNote(EFalse));
-		note->ExecuteLD(_L("Error!")); // TODO localise
+		note->ExecuteLD(static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->ResourceReader().ResourceL(R_MOBBLER_ERROR));
 		}
 	
 	if (iTrack)
