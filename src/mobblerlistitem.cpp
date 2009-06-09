@@ -51,7 +51,7 @@ CMobblerListItem::~CMobblerListItem()
 	delete iDescription;
 	delete iTitle;
 	delete iImageLocation;
-	delete iImage;
+	iImage->Close();
 	delete iId;
 	}
 

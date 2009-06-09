@@ -30,6 +30,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "mobbler.hrh"
 #include "mobblerappui.h"
+#include "mobblerbitmapcollection.h"
 #include "mobblerlastfmconnection.h"
 #include "mobblerlistitem.h"
 #include "mobblerparser.h"
@@ -47,7 +48,7 @@ CMobblerPlaylistList::CMobblerPlaylistList(CMobblerAppUi& aAppUi, CMobblerWebSer
 
 void CMobblerPlaylistList::ConstructL()
 	{
-	iDefaultImage = CMobblerBitmap::NewL(*this, KDefaultImage);
+	iDefaultImage = iAppUi.BitmapCollection().BitmapL(*this, CMobblerBitmapCollection::EBitmapDefaultPlaylistImage);
 	
 	iAppUi.LastFMConnection().WebServicesCallL(_L8("user"), _L8("getplaylists"), iText1->String8(), *this);
 	}

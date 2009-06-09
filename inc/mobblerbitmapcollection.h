@@ -47,7 +47,14 @@ public:
 		EBitmapSpeakerHigh,
 		EBitmapSpeakerLow,
 		EBitmapMusicApp,
-		EBitmapMobblerApp
+		EBitmapMobblerApp,
+		EBitmapDefaultAlbumImage,
+		EBitmapDefaultArtistImage,
+		EBitmapDefaultEventImage,
+		EBitmapDefaultUserImage,
+		EBitmapDefaultPlaylistImage,
+		EBitmapDefaultTagImage,
+		EBitmapDefaultTrackImage
 		};
 	
 private:

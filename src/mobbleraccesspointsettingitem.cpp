@@ -24,6 +24,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <commdb.h>
 
 #include "mobbleraccesspointsettingitem.h"
+#include "mobblerappui.h"
+#include "mobblerdestinationsinterface.h"
 
 CMobblerAccessPointSettingItem::CMobblerAccessPointSettingItem(TInt aIdentifier, TInt& aValue)
 		:CAknEnumeratedTextPopupSettingItem(aIdentifier, aValue), iValue(aValue)
@@ -52,43 +54,55 @@ void CMobblerAccessPointSettingItem::LoadL()
 TInt CMobblerAccessPointSettingItem::LoadIapListL()
 	{
 	TInt firstIapId(KErrNotFound);
-
-	// Add all the access point to the list
-	CCommsDatabase* commDb(CCommsDatabase::NewL(EDatabaseTypeIAP));
-	CleanupStack::PushL(commDb);
-
-	// Open IAP table
-	CCommsDbTableView* commView(commDb->OpenIAPTableViewMatchingBearerSetLC(
-										ECommDbBearerGPRS | ECommDbBearerWLAN, 
-										ECommDbConnectionDirectionOutgoing));
-
-	// Search all IAPs
-	for (TInt error(commView->GotoFirstRecord());
-					error == KErrNone;
-					error = commView->GotoNextRecord())
-			{
-			TBuf<KCommsDbSvrMaxColumnNameLength> iapName;
-			TUint32 iapId;
-
-			commView->ReadTextL(TPtrC(COMMDB_NAME), iapName);
-			commView->ReadUintL(TPtrC(COMMDB_ID), iapId);
-
-			HBufC* text(iapName.AllocLC());
-			CAknEnumeratedText* enumText(new(ELeave) CAknEnumeratedText(iapId, text));
-			CleanupStack::Pop(text);
-			CleanupStack::PushL(enumText);
-			EnumeratedTextArray()->AppendL(enumText);
-			CleanupStack::Pop(enumText);
-
-			if (firstIapId == KErrNotFound)
+	
+	CMobblerDestinationsInterface* destinations = static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->Destinations();
+	
+	if (destinations)
+		{
+		firstIapId = destinations->LoadDestinationListL(*EnumeratedTextArray());
+		}
+	else
+		{
+		// The destinations API does not exist
+		// so list all the connection points
+	
+		// Add all the access points to the list
+		CCommsDatabase* commDb(CCommsDatabase::NewL(EDatabaseTypeIAP));
+		CleanupStack::PushL(commDb);
+	
+		// Open IAP table
+		CCommsDbTableView* commView(commDb->OpenIAPTableViewMatchingBearerSetLC(
+											ECommDbBearerGPRS | ECommDbBearerWLAN, 
+											ECommDbConnectionDirectionOutgoing));
+	
+		// Search all IAPs
+		for (TInt error(commView->GotoFirstRecord());
+						error == KErrNone;
+						error = commView->GotoNextRecord())
 				{
-				firstIapId = iapId;
+				TBuf<KCommsDbSvrMaxColumnNameLength> iapName;
+				TUint32 iapId;
+	
+				commView->ReadTextL(TPtrC(COMMDB_NAME), iapName);
+				commView->ReadUintL(TPtrC(COMMDB_ID), iapId);
+	
+				HBufC* text(iapName.AllocLC());
+				CAknEnumeratedText* enumText(new(ELeave) CAknEnumeratedText(iapId, text));
+				CleanupStack::Pop(text);
+				CleanupStack::PushL(enumText);
+				EnumeratedTextArray()->AppendL(enumText);
+				CleanupStack::Pop(enumText);
+	
+				if (firstIapId == KErrNotFound)
+					{
+					firstIapId = iapId;
+					}
+	
 				}
-
-			}
-
-	CleanupStack::PopAndDestroy(commView);
-	CleanupStack::PopAndDestroy(commDb);
+	
+		CleanupStack::PopAndDestroy(commView);
+		CleanupStack::PopAndDestroy(commDb);
+		}
 
 	return firstIapId;
 	}

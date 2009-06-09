@@ -21,20 +21,31 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
+#include "mobbler.mmh"
+
+#ifdef SYMBIAN_SIGNED
+TARGET		mobblercontentlisting_0x2002656D.dll
+TARGETTYPE	PLUGIN
+UID		0x10009D8D 0x2002656D
+#else
 TARGET		mobblercontentlisting.dll
 TARGETTYPE	PLUGIN
-
-UID		0x10009D8D 0xA000BEB2
-
-CAPABILITY	NetworkServices ReadUserData
+UID		0x10009D8D 0xA000BEB1
+#endif
 
 SOURCEPATH	..\src
 USERINCLUDE	..\inc
-SYSTEMINCLUDE	\epoc32\include
+SYSTEMINCLUDE	\epoc32\include \epoc32\include\middleware
 
 SOURCE		mobblercontentlisting.cpp
 
-RESOURCE	..\data\mobblercontentlisting.rss
+START RESOURCE ..\data\mobblercontentlisting.rss
+#ifdef SYMBIAN_SIGNED
+TARGET mobblercontentlisting_0x2002656D
+#else
+TARGET mobblercontentlisting
+#endif
+END
 
 LIBRARY		apgrfx.lib
 LIBRARY		apparc.lib

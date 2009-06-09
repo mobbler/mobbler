@@ -21,12 +21,18 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
+#ifdef __SYMBIAN_SIGNED__
+#include <mobbler_strings_0x2002655A.rsg>
+#else
+#include <mobbler_strings.rsg>
+#endif
+
 #include <aknnavide.h>
 #include <aknnavilabel.h>
 #include <aknsbasicbackgroundcontrolcontext.h>
 #include <aknsdrawutils.h>
 #include <aknutils.h>
-#include <mobbler_strings.rsg>
+#include <gulicon.h>
 
 #ifdef  __S60_50__
 #include <mobbler/mobblertouchfeedbackinterface.h>
@@ -34,6 +40,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #endif
 
 #include "mobbler.hrh"
+#include "mobbleralbumarttransition.h"
 #include "mobblerappui.h"
 #include "mobblerbitmapcollection.h"
 #include "mobblermarquee.h"
@@ -53,7 +60,11 @@ const TRgb KRgbProgressBarBuffer(0xAF, 0xBE, 0xCC, 0xFF);
 const TRgb KRgbProgressBarPlayback(0xD5, 0x10, 0x07, 0xFF);
 const TRgb KRgbTransparent(0x00, 0x00, 0x00, 0x00);
 
+#ifdef __SYMBIAN_SIGNED__
+const TUid KTouchFeedbackImplUID = {0x20026565};
+#else
 const TUid KTouchFeedbackImplUID = {0xA000B6CD};
+#endif 
 
 CMobblerStatusControl* CMobblerStatusControl::NewL(const TRect& aRect, const CMobblerAppUi& aAppUi)
 	{
@@ -83,6 +94,8 @@ void CMobblerStatusControl::ConstructL(const TRect& aRect)
 	InitComponentArrayL();
 	SetRect(aRect);
 	
+	EnableDragEvents();
+	
 	iBgContext = CAknsBasicBackgroundControlContext::NewL(KAknsIIDQsnBgAreaMain, aRect, ETrue);
 	
 	iNaviContainer = static_cast<CAknNavigationControlContainer*>(iEikonEnv->AppUiFactory()->StatusPane()->ControlL(TUid::Uid(EEikStatusPaneUidNavi)));
@@ -97,6 +110,7 @@ void CMobblerStatusControl::ConstructL(const TRect& aRect)
 	CreateBackBufferL();
 
 	iMobblerVolumeTimeout = CMobblerTimeout::NewL(2000000);
+	iAlbumArtTransition = CMobblerAlbumArtTransition::NewL(*this);
 	
 	iTitleMarquee = CMobblerMarquee::NewL(*this);
 	iAlbumMarquee = CMobblerMarquee::NewL(*this);
@@ -539,6 +553,8 @@ CMobblerStatusControl::~CMobblerStatusControl()
 	delete iAlbumMarquee;
 	delete iArtistMarquee;
 	
+	delete iAlbumArtTransition;
+	
 	iAppUi.BitmapCollection().Cancel(iMobblerBitmapLastFm);
 	iAppUi.BitmapCollection().Cancel(iMobblerBitmapScrobble);
 	iAppUi.BitmapCollection().Cancel(iMobblerBitmapTrackIcon);
@@ -588,61 +604,15 @@ void CMobblerStatusControl::Draw(const TRect& /*aRect*/) const
 		User::ResetInactivityTime();
 		}
 	
-	TRect rectAlbumArt(iRectAlbumArt);
-	TBool fullscreenAlbumArtReady(EFalse);
-	const CMobblerBitmap* albumArt(iMobblerBitmapAppIcon);
-	
-	if (iAppUi.CurrentTrack())
-		{
-		if (iAppUi.CurrentTrack()->AlbumArt() && 
-			iAppUi.CurrentTrack()->AlbumArt()->Bitmap())
-			{
-			// The current track has album art and it has finished loading
-			albumArt = iAppUi.CurrentTrack()->AlbumArt();
-			
-			if (iShowAlbumArtFullscreen)
-				{
-				fullscreenAlbumArtReady = ETrue;
-				rectAlbumArt = TRect(TPoint(0,0), TSize(Size().iWidth, Size().iWidth));
-				}
-			const_cast<CMobblerBitmap*>(albumArt)->ScaleL(rectAlbumArt.Size());
-			}
-		else if (iAppUi.CurrentTrack()->IsMusicPlayerTrack())
-			{
-			// This is a music player track with no current album art bitmap
-			albumArt = iMobblerBitmapMusicAppIcon;
-			}
-		}
-	
 	// Redraw the background using the default skin
 	MAknsSkinInstance* skin(AknsUtils::SkinInstance());
 	MAknsControlContext* cc(AknsDrawUtils::ControlContext(this));
 	AknsDrawUtils::DrawBackground(skin, cc, this, *iBackBufferContext, TPoint(0, 0), Rect(), KAknsDrawParamDefault);
 	
-	// Draw the album art
-	albumArt->LongSidesEqual(rectAlbumArt.Size())?
-		BitBltMobblerBitmap(albumArt, rectAlbumArt.iTl):
-		DrawMobblerBitmap(albumArt, rectAlbumArt);
-	
-	if (fullscreenAlbumArtReady)
-		{
-		if (iTitleMarquee)
-			{
-			iTitleMarquee->Reset();
-			}
-		if (iAlbumMarquee)
-			{
-			iAlbumMarquee->Reset();
-			}
-		if (iArtistMarquee)
-			{
-			iArtistMarquee->Reset();
-			}
-		
-		SystemGc().BitBlt(TPoint(0, 0), iBackBuffer);
-		// that's all we need to do!
-		return;
-		}
+	TRect rectAlbumArt(iRectAlbumArt);
+	TBool fullscreenAlbumArtReady(EFalse);
+	const CMobblerBitmap* albumArt(iMobblerBitmapAppIcon);
+	const CMobblerBitmap* nextAlbumArt(NULL);
 	
 	TInt playbackTotal(1);
 	TInt playbackPosition(0);
@@ -660,12 +630,44 @@ void CMobblerStatusControl::Draw(const TRect& /*aRect*/) const
 		{
 		love = iAppUi.CurrentTrack()->Love();
 		
+		if (iShowAlbumArtFullscreen && 
+				iAppUi.CurrentTrack()->AlbumArt() &&
+				iAppUi.CurrentTrack()->AlbumArt()->Bitmap())
+			{
+			// we can draw the album art full screen so do that
+			fullscreenAlbumArtReady = ETrue;
+			
+			TInt albumArtDimension(Min(Size().iWidth, Size().iHeight));
+			rectAlbumArt = TRect(TPoint(0,0), TSize(albumArtDimension, albumArtDimension));
+			}
+
 		if (iAppUi.CurrentTrack()->IsMusicPlayerTrack())
 			{
 			// This is a music player track
 			banDisabled = ETrue;
 			skipDisabled = ETrue;
 			playStopDisabled = ETrue;
+			}
+		else
+			{
+			// This is a radio track
+			if (iAppUi.CurrentTrack()->AlbumArt() && iAppUi.CurrentTrack()->AlbumArt()->Bitmap())
+				{
+				// The current track has album art and it has finished loading
+				albumArt = iAppUi.CurrentTrack()->AlbumArt();
+				const_cast<CMobblerBitmap*>(albumArt)->ScaleL(rectAlbumArt.Size());
+				}
+			
+			if (iAppUi.RadioPlayer().NextTrack() && iAppUi.RadioPlayer().NextTrack()->AlbumArt() && iAppUi.RadioPlayer().NextTrack()->AlbumArt()->Bitmap())
+				{
+				// The next track has album art and it has finished loading
+				nextAlbumArt = iAppUi.RadioPlayer().NextTrack()->AlbumArt();
+				const_cast<CMobblerBitmap*>(nextAlbumArt)->ScaleL(rectAlbumArt.Size());
+				}
+			else
+				{
+				nextAlbumArt = iMobblerBitmapAppIcon;
+				}
 			}
 		
 		iAppUi.CurrentTrack()->Title().String().Length() > 0 ?
@@ -714,27 +716,58 @@ void CMobblerStatusControl::Draw(const TRect& /*aRect*/) const
 		FormatTime(iPlaybackGoneText, 0);
 		}
 	
-	TRgb textColor; // text color when not highlighted
-	AknsUtils::GetCachedColor(skin, textColor, KAknsIIDQsnTextColors, EAknsCIQsnTextColorsCG6);
-	iBackBufferContext->SetPenColor(textColor);
+	// Draw the album art
+	iAlbumArtTransition->DrawAlbumArtL(albumArt, nextAlbumArt, rectAlbumArt, iFingerDownPosition.iX - iFingerNowPosition.iX);
 	
 	// If the track has been loved, draw the love icon in the bottom right corner
 	if (love)
 		{
-		BitBltMobblerBitmap(iMobblerBitmapLove, TPoint(iRectAlbumArt.iBr.iX - iMobblerBitmapLove->SizeInPixels().iWidth - 4, iRectAlbumArt.iBr.iX - iMobblerBitmapLove->SizeInPixels().iHeight - 4));
+		BitBltMobblerBitmap(iMobblerBitmapLove, 
+				TPoint(rectAlbumArt.iBr.iX - iMobblerBitmapLove->SizeInPixels().iWidth - 4, rectAlbumArt.iBr.iX - iMobblerBitmapLove->SizeInPixels().iHeight - 4),
+				TRect(TPoint(0, 0), iMobblerBitmapLove->SizeInPixels()));
 		}
+	
+	if (fullscreenAlbumArtReady)
+		{
+		if (iTitleMarquee)
+			{
+			iTitleMarquee->Reset();
+			}
+		if (iAlbumMarquee)
+			{
+			iAlbumMarquee->Reset();
+			}
+		if (iArtistMarquee)
+			{
+			iArtistMarquee->Reset();
+			}
+		
+		SystemGc().BitBlt(TPoint(0, 0), iBackBuffer);
+		// that's all we need to do!
+		return;
+		}
+	
+	TRgb textColor; // text color when not highlighted
+	AknsUtils::GetCachedColor(skin, textColor, KAknsIIDQsnTextColors, EAknsCIQsnTextColorsCG6);
+	iBackBufferContext->SetPenColor(textColor);
 	
 	if (iAppUi.ScrobblingOn())
 		{
 		iScrobbledQueued.Zero();
 		iScrobbledQueued.Format(iAppUi.ResourceReader().ResourceL(R_MOBBLER_SCROBBLED_QUEUED), iAppUi.Scrobbled(), iAppUi.Queued());
 		
-		BitBltMobblerBitmap(iMobblerBitmapScrobble, TPoint(iRectScrobbledQueuedText.iTl.iX - iMobblerBitmapTrackIcon->SizeInPixels().iWidth, iRectScrobbledQueuedText.iTl.iY + 3), EFalse);
+		BitBltMobblerBitmap(iMobblerBitmapScrobble,
+				TPoint(iRectScrobbledQueuedText.iTl.iX - iMobblerBitmapTrackIcon->SizeInPixels().iWidth, iRectScrobbledQueuedText.iTl.iY + 3),
+				TRect(TPoint(0,0), iMobblerBitmapScrobble->SizeInPixels()),
+				EFalse);
 		DrawText(iScrobbledQueued, iRectScrobbledQueuedText, textColor, CGraphicsContext::ELeft, iMobblerFont->WidthZeroInPixels());
 		}
 	else
 		{
-		BitBltMobblerBitmap(iMobblerBitmapScrobble, TPoint(iRectScrobbledQueuedText.iTl.iX - iMobblerBitmapTrackIcon->SizeInPixels().iWidth, iRectScrobbledQueuedText.iTl.iY + 3), ETrue);
+		BitBltMobblerBitmap(iMobblerBitmapScrobble, 
+				TPoint(iRectScrobbledQueuedText.iTl.iX - iMobblerBitmapTrackIcon->SizeInPixels().iWidth, iRectScrobbledQueuedText.iTl.iY + 3),
+				TRect(TPoint(0,0), iMobblerBitmapScrobble->SizeInPixels()),
+				ETrue);
 		DrawText(iAppUi.ResourceReader().ResourceL(R_MOBBLER_SCROBBLING_OFF), iRectScrobbledQueuedText, textColor, CGraphicsContext::ELeft, iMobblerFont->WidthZeroInPixels());
 		}
 	
@@ -759,8 +792,12 @@ void CMobblerStatusControl::Draw(const TRect& /*aRect*/) const
 		DrawText(volumeText, iRectProgressBar, KRgbBlack, CGraphicsContext::ECenter, iMobblerFont->WidthZeroInPixels());
 		
 		// Draw the speaker icons
-		BitBltMobblerBitmap(iMobblerBitmapSpeakerLow, TPoint(iRectProgressBar.iTl.iX + iMobblerFont->WidthZeroInPixels(), iRectProgressBar.iTl.iY));
-		BitBltMobblerBitmap(iMobblerBitmapSpeakerHigh, TPoint(iRectProgressBar.iBr.iX - iMobblerFont->WidthZeroInPixels() - iMobblerBitmapSpeakerHigh->SizeInPixels().iWidth, iRectProgressBar.iTl.iY));
+		BitBltMobblerBitmap(iMobblerBitmapSpeakerLow, 
+				TPoint(iRectProgressBar.iTl.iX + iMobblerFont->WidthZeroInPixels(), iRectProgressBar.iTl.iY),
+				TRect(TPoint(0,0), iMobblerBitmapSpeakerLow->SizeInPixels()));
+		BitBltMobblerBitmap(iMobblerBitmapSpeakerHigh, 
+				TPoint(iRectProgressBar.iBr.iX - iMobblerFont->WidthZeroInPixels() - iMobblerBitmapSpeakerHigh->SizeInPixels().iWidth, iRectProgressBar.iTl.iY),
+				TRect(TPoint(0, 0), iMobblerBitmapSpeakerHigh->SizeInPixels()));
 		}
 	else
 		{
@@ -797,25 +834,25 @@ void CMobblerStatusControl::Draw(const TRect& /*aRect*/) const
 		}
 	
 	// Draw the controls
-	BitBltMobblerBitmap(iMobblerBitmapMore, iPointMore, moreDisabled);
-	BitBltMobblerBitmap(iMobblerBitmapLove, iPointLove, loveDisabled);
-	BitBltMobblerBitmap(iMobblerBitmapBan, iPointBan, banDisabled);
-	BitBltMobblerBitmap(iMobblerBitmapNext, iPointSkip, skipDisabled);
+	BitBltMobblerBitmap(iMobblerBitmapMore, iPointMore, TRect(TPoint(0, 0), iMobblerBitmapMore->SizeInPixels()), moreDisabled);
+	BitBltMobblerBitmap(iMobblerBitmapLove, iPointLove, TRect(TPoint(0, 0), iMobblerBitmapLove->SizeInPixels()), loveDisabled);
+	BitBltMobblerBitmap(iMobblerBitmapBan, iPointBan, TRect(TPoint(0, 0), iMobblerBitmapBan->SizeInPixels()), banDisabled);
+	BitBltMobblerBitmap(iMobblerBitmapNext, iPointSkip, TRect(TPoint(0, 0), iMobblerBitmapNext->SizeInPixels()), skipDisabled);
 	
 	// Draw either play or stop depending on if there is a track playing
 	if (!iAppUi.CurrentTrack())
 		{
 		// There is no current track so display the play button
-		BitBltMobblerBitmap(iMobblerBitmapPlay, iPointPlayStop, playStopDisabled);
+		BitBltMobblerBitmap(iMobblerBitmapPlay, iPointPlayStop, TRect(TPoint(0, 0), iMobblerBitmapPlay->SizeInPixels()), playStopDisabled);
 		}
 	else
 		{
 		// There is a track playing
-		BitBltMobblerBitmap(iMobblerBitmapStop, iPointPlayStop, playStopDisabled);
+		BitBltMobblerBitmap(iMobblerBitmapStop, iPointPlayStop, TRect(TPoint(0, 0), iMobblerBitmapStop->SizeInPixels()), playStopDisabled);
 		}
 	
 	// Draw the Last.fm graphic
-	BitBltMobblerBitmap(iMobblerBitmapLastFm, iPointLastFm);
+	BitBltMobblerBitmap(iMobblerBitmapLastFm, iPointLastFm, TRect(TPoint(0, 0), iMobblerBitmapLastFm->SizeInPixels()));
 	
 	// Draw the title details line
 	iTitleMarquee->Start(iTitleText, iMobblerFont->WidthZeroInPixels(), iMobblerFont->TextWidthInPixels(iTitleText), iRectTitleText.Width());
@@ -841,16 +878,18 @@ void CMobblerStatusControl::Draw(const TRect& /*aRect*/) const
 		DrawText(iArtistText, iRectArtistText, textColor, CGraphicsContext::ELeft, iArtistMarquee->GetPosition2());
 		}
 	
-	BitBltMobblerBitmap(iMobblerBitmapTrackIcon, TPoint(iRectTitleText.iTl.iX -  iMobblerBitmapTrackIcon->SizeInPixels().iWidth, iRectTitleText.iTl.iY + 3));
+	BitBltMobblerBitmap(iMobblerBitmapTrackIcon, 
+			TPoint(iRectTitleText.iTl.iX -  iMobblerBitmapTrackIcon->SizeInPixels().iWidth, iRectTitleText.iTl.iY + 3),
+			TRect(TPoint(0, 0), iMobblerBitmapTrackIcon->SizeInPixels()));
 	if (iAppUi.AlarmActive())
 		{
-		BitBltMobblerBitmap(iMobblerBitmapAlarmIcon, TPoint(1, 1));
+		BitBltMobblerBitmap(iMobblerBitmapAlarmIcon, TPoint(1, 1), TRect(TPoint(0, 0), iMobblerBitmapAlarmIcon->SizeInPixels()));
 		}
 	
 	SystemGc().BitBlt(TPoint(0, 0), iBackBuffer);
 	}
 
-void CMobblerStatusControl::DrawMobblerBitmap(const CMobblerBitmap* aMobblerBitmap, const TRect& aRect, TBool aGray) const
+void CMobblerStatusControl::DrawMobblerBitmap(const CMobblerBitmap* aMobblerBitmap, const TRect& aRect, const TRect& aSourceRect, TBool aGray) const
 	{
 	if (aMobblerBitmap)
 		{
@@ -873,17 +912,17 @@ void CMobblerStatusControl::DrawMobblerBitmap(const CMobblerBitmap* aMobblerBitm
 			
 			if (aMobblerBitmap->Mask())
 				{
-				iBackBufferContext->DrawBitmapMasked(rect, bitmap, TRect(TPoint(0, 0), aMobblerBitmap->SizeInPixels()), aMobblerBitmap->Mask(), EFalse);
+				iBackBufferContext->DrawBitmapMasked(rect, bitmap, aSourceRect, aMobblerBitmap->Mask(), EFalse);
 				}
 			else
 				{
-				iBackBufferContext->DrawBitmap(rect, bitmap);
+				iBackBufferContext->DrawBitmap(rect, bitmap, aSourceRect);
 				}
 			}
 		}
 	}
 
-void CMobblerStatusControl::BitBltMobblerBitmap(const CMobblerBitmap* aMobblerBitmap, const TPoint& aPoint, TBool aGray) const
+void CMobblerStatusControl::BitBltMobblerBitmap(const CMobblerBitmap* aMobblerBitmap, const TPoint& aPoint, const TRect& aSourceRect, TBool aGray) const
 	{
 	if (aMobblerBitmap)
 		{
@@ -893,11 +932,11 @@ void CMobblerStatusControl::BitBltMobblerBitmap(const CMobblerBitmap* aMobblerBi
 			
 			if (aMobblerBitmap->Mask())
 				{
-				iBackBufferContext->BitBltMasked(aPoint, bitmap, aMobblerBitmap->Bitmap()->SizeInPixels(), aMobblerBitmap->Mask(), EFalse);
+				iBackBufferContext->BitBltMasked(aPoint, bitmap, aSourceRect, aMobblerBitmap->Mask(), EFalse);
 				}
 			else
 				{
-				iBackBufferContext->BitBlt(aPoint, bitmap);
+				iBackBufferContext->BitBlt(aPoint, bitmap, aSourceRect);
 				}
 			}
 		}
@@ -930,7 +969,7 @@ TKeyResponse CMobblerStatusControl::OfferKeyEventL(const TKeyEvent& aKeyEvent, T
 		case EKeyRightArrow: // skip to the next track
 			if (iAppUi.RadioPlayer().CurrentTrack())
 				{
-				iAppUi.RadioPlayer().NextTrackL();
+				iAppUi.RadioPlayer().SkipTrackL();
 				}
 			response = EKeyWasConsumed;
 			break;
@@ -1015,9 +1054,16 @@ TKeyResponse CMobblerStatusControl::OfferKeyEventL(const TKeyEvent& aKeyEvent, T
 				iAppUi.CurrentTrack()->AlbumArt())
 				{
 				iShowAlbumArtFullscreen = !iShowAlbumArtFullscreen;
-				iShowAlbumArtFullscreen?
-					const_cast<CMobblerBitmap*>(iAppUi.CurrentTrack()->AlbumArt())->ScaleL(iRectAlbumArt.Size()):
-					const_cast<CMobblerBitmap*>(iAppUi.CurrentTrack()->AlbumArt())->ScaleL(TSize(Size().iWidth, Size().iWidth));
+				
+				if (iShowAlbumArtFullscreen)
+					{
+					const_cast<CMobblerBitmap*>(iAppUi.CurrentTrack()->AlbumArt())->ScaleL(iRectAlbumArt.Size());
+					}
+				else
+					{
+					TInt albumArtDimension(Min(Size().iWidth, Size().iHeight));
+					const_cast<CMobblerBitmap*>(iAppUi.CurrentTrack()->AlbumArt())->ScaleL(TSize(albumArtDimension, albumArtDimension));
+					}
 				DoChangePaneTextL();
 				DrawDeferred();
 				}
@@ -1049,7 +1095,7 @@ void CMobblerStatusControl::HandlePointerEventL(const TPointerEvent& aPointerEve
 	switch( aPointerEvent.iType )
 		{
 		case TPointerEvent::EButton1Down:
-			
+			{
 			if (moreRect.Contains(aPointerEvent.iPosition))
 				event.iCode = EKeyLeftArrow;
 			else if (loveRect.Contains(aPointerEvent.iPosition))
@@ -1060,6 +1106,13 @@ void CMobblerStatusControl::HandlePointerEventL(const TPointerEvent& aPointerEve
 				event.iCode = EKeyDownArrow;
 			else if (skipRect.Contains(aPointerEvent.iPosition))
 				event.iCode = EKeyRightArrow;
+			else if (iRectAlbumArt.Contains(aPointerEvent.iPosition))
+				{
+				// Record the location that they put their finger down
+				iFingerDownPosition = aPointerEvent.iPosition;
+				iFingerNowPosition = aPointerEvent.iPosition;
+				}
+				
 			
 			if (event.iCode != EKeyNull)
 				{
@@ -1070,10 +1123,16 @@ void CMobblerStatusControl::HandlePointerEventL(const TPointerEvent& aPointerEve
 #endif
 					}
 				}
-			
+			}
+			break;
+		case TPointerEvent::EDrag:
+			{
+			iFingerNowPosition = aPointerEvent.iPosition;
+			DrawDeferred();
+			}
 			break;
 		case TPointerEvent::EButton1Up:
-			
+			{
 			if (moreRect.Contains(aPointerEvent.iPosition) && moreRect.Contains(iLastPointerEvent.iPosition))
 				event.iCode = EKeyLeftArrow;
 			else if (loveRect.Contains(aPointerEvent.iPosition) && loveRect.Contains(iLastPointerEvent.iPosition))
@@ -1085,11 +1144,37 @@ void CMobblerStatusControl::HandlePointerEventL(const TPointerEvent& aPointerEve
 			else if (skipRect.Contains(aPointerEvent.iPosition) && skipRect.Contains(iLastPointerEvent.iPosition))
 				event.iCode = EKeyRightArrow;
 			
+			if (iRectAlbumArt.Contains(iFingerDownPosition) &&
+					((2 * (iFingerDownPosition.iX - aPointerEvent.iPosition.iX)) > iRectAlbumArt.Size().iWidth) )
+				{
+				// Their finger went down on the album art and it has
+				// been dragged to the left more than half its size 
+				
+				if (iAppUi.RadioPlayer().CurrentTrack())
+					{
+					iAlbumArtTransition->FingerUpL(iFingerDownPosition.iX - aPointerEvent.iPosition.iX, CMobblerAlbumArtTransition::ESlideLeft);
+					iAppUi.RadioPlayer().SkipTrackL();
+					}
+				else
+					{
+					iAlbumArtTransition->FingerUpL(iFingerDownPosition.iX - aPointerEvent.iPosition.iX, CMobblerAlbumArtTransition::ESlideRight);
+					}
+				}
+			else if (iRectAlbumArt.Contains(iFingerDownPosition))
+				{
+				iAlbumArtTransition->FingerUpL(iFingerDownPosition.iX - aPointerEvent.iPosition.iX, CMobblerAlbumArtTransition::ESlideRight);
+				}
+			
+			
+			// reset the finger positions
+			iFingerDownPosition = TPoint(0, 0);
+			iFingerNowPosition = TPoint(0, 0);
+			
 			if (event.iCode != EKeyNull)
 				{
 				OfferKeyEventL(event, EEventNull);
 				}
-			
+			}
 			break;
 		default:
 			break;

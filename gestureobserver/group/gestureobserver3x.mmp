@@ -21,6 +21,8 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
+#include "mobbler.mmh"
+
 // Data logging for accelerometer.
 // Uncomment this macro to enable CSV file logging of received sensor data.
 // See KSensorCsvFilePath for the logfile location.
@@ -29,13 +31,17 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 // Verbose debug logging.
 // MACRO __GESTURE_DEBUG_LOGGING__
 
+#ifdef SYMBIAN_SIGNED
+TARGET		gestureobserver3x_0x20026566.dll
+TARGETTYPE	PLUGIN
+UID		0x10009D8D 0x20026566
+#else
 TARGET		gestureobserver3x.dll
 TARGETTYPE	PLUGIN
-EPOCALLOWDLLDATA
-
 UID		0x10009D8D 0xA000B6CE
+#endif
 
-CAPABILITY	NetworkServices ReadUserData
+EPOCALLOWDLLDATA
 
 SOURCEPATH	..\src
 USERINCLUDE	..\inc
@@ -46,7 +52,13 @@ SOURCE		gestureobserver3x.cpp
 SOURCE		gesturetimeout.cpp
 SOURCE		gestureskipaction.cpp
 
-RESOURCE    ..\data\gestureobserver3x.rss
+START RESOURCE ..\data\gestureobserver3x.rss
+#ifdef SYMBIAN_SIGNED
+TARGET gestureobserver3x_0x20026566
+#else
+TARGET gestureobserver3x
+#endif
+END
 
 LIBRARY		euser.lib
 LIBRARY		efsrv.lib

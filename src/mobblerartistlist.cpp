@@ -24,14 +24,13 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "mobbler.hrh"
 #include "mobblerappui.h"
 #include "mobblerartistlist.h"
+#include "mobblerbitmapcollection.h"
 #include "mobblerlastfmconnection.h"
 #include "mobblerlistitem.h"
 #include "mobblerparser.h"
 #include "mobblerstring.h"
 #include "mobblertrack.h"
 #include "mobblerwebserviceshelper.h"
-
-_LIT(KDefaultImage, "\\resource\\apps\\mobbler\\default_artist.png");
 
 CMobblerArtistList::CMobblerArtistList(CMobblerAppUi& aAppUi, CMobblerWebServicesControl& aWebServicesControl)
 	:CMobblerListControl(aAppUi, aWebServicesControl)
@@ -40,7 +39,7 @@ CMobblerArtistList::CMobblerArtistList(CMobblerAppUi& aAppUi, CMobblerWebService
 
 void CMobblerArtistList::ConstructL()
 	{
-	iDefaultImage = CMobblerBitmap::NewL(*this, KDefaultImage);
+    iDefaultImage = iAppUi.BitmapCollection().BitmapL(*this, CMobblerBitmapCollection::EBitmapDefaultArtistImage);
 	
 	switch (iType)
 		{

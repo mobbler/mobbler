@@ -25,18 +25,30 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 RESOURCE REGISTRY_INFO theInfo
 	{
+#ifdef __SYMBIAN_SIGNED__
+	dll_uid = 0x2002655E;
+#else
 	dll_uid = 0xA0007CAB;
+#endif
 	
 	interfaces = 
 		{
 		INTERFACE_INFO
 			{
+#ifdef __SYMBIAN_SIGNED__
+			interface_uid = 0x2002655D;
+#else
 			interface_uid = 0xA0007CAA;
+#endif
 			implementations = 
 				{
 				IMPLEMENTATION_INFO
 					{
+#ifdef __SYMBIAN_SIGNED__
+					implementation_uid = 0x2002655F;
+#else
 					implementation_uid = 0xA0007CAC;
+#endif
 					version_no = 2;
 					display_name = "Mobbler Music App Observer";
 					default_data = "";

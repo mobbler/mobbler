@@ -21,14 +21,20 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
+#ifdef __SYMBIAN_SIGNED__
+#include <mobbler_strings_0x2002655A.rsg>
+#include <mobbler_0x2002655A.rsg>
+#else
+#include <mobbler_strings.rsg>
+#include <mobbler.rsg>
+#endif
+
 #include <akncontext.h>
 #include <akntitle.h>
 #include <audioequalizerutility.h>
 #include <barsread.h>
 #include <eikmenub.h>
 #include <mdaaudiooutputstream.h>
-#include <mobbler.rsg>
-#include <mobbler_strings.rsg>
 
 #include "mobbler.hrh"
 #include "mobblerappui.h"
@@ -189,7 +195,7 @@ void CMobblerWebServicesView::DynInitMenuPaneL(TInt aResourceId, CEikMenuPane* a
 
 TUid CMobblerWebServicesView::Id() const
 	{
-	return TUid::Uid(0xA000B6CE);
+	return TUid::Uid(KMobblerWebServicesViewUid);
 	}
 
 void CMobblerWebServicesView::HandleCommandL(TInt aCommand)
@@ -210,7 +216,7 @@ void CMobblerWebServicesView::HandleCommandL(TInt aCommand)
 		case EMobblerCommandRadioNeighbourhood:
 		case EMobblerCommandRadioLoved:
 			// we have started a radio station so switch back to the status view
-			AppUi()->ActivateLocalViewL(TUid::Uid(0xA0007CA8)); 
+			AppUi()->ActivateLocalViewL(TUid::Uid(KMobblerStatusViewUid)); 
 			break;
 		default:
 			// do nothing

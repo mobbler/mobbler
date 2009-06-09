@@ -122,7 +122,7 @@ CMobblerTrack::~CMobblerTrack()
 	//delete iMbAlbumId;
 	delete iMp3Location;
 	delete iRadioAuth;
-	delete iAlbumArt;
+	iAlbumArt->Close();
 	delete iPath;
 	delete iImage;
 	
@@ -305,7 +305,7 @@ void CMobblerTrack::SetAlbumL(const TDesC& aAlbum)
 	if (found)
 		{
 		LOG(fileName);
-		delete iAlbumArt;
+		iAlbumArt->Close();
 		iAlbumArt = CMobblerBitmap::NewL(*this, fileName);
 		}
 	
@@ -439,7 +439,7 @@ void CMobblerTrack::SetPathL(const TDesC& aPath)
 	if (found)
 		{
 		LOG(fileName);
-		delete iAlbumArt;
+		iAlbumArt->Close();
 		iAlbumArt = CMobblerBitmap::NewL(*this, fileName);
 		}
 	}

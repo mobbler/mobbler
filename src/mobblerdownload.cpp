@@ -24,13 +24,17 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <eikenv.h>
 #include <apgcli.h>
 #include <aknwaitdialog.h>
-#include <mobbler.rsg>
+
+#ifdef __SYMBIAN_SIGNED__
+#include <mobbler_strings_0x2002655A.rsg>
+#include <mobbler_0x2002655A.rsg>
+#else
 #include <mobbler_strings.rsg>
+#include <mobbler.rsg>
+#endif
 
 #include "mobblerappui.h"
 #include "mobblerresourcereader.h"
-
-TUid KMobblerAppUid = {0xA0007648};
 
 CMobblerDownload* CMobblerDownload::NewL(MMobblerDownloadObserver& aDownloadObserver)
 	{
@@ -48,7 +52,7 @@ CMobblerDownload::CMobblerDownload(MMobblerDownloadObserver& aDownloadObserver)
 
 void CMobblerDownload::ConstructL()
 	{
-	iDownloadMgr.ConnectL(KMobblerAppUid, *this, EFalse);
+	iDownloadMgr.ConnectL(TUid::Uid(KMobblerAppUid), *this, EFalse);
     iDownloadMgr.DeleteAll();
 	}
 

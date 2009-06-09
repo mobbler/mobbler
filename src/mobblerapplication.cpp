@@ -23,8 +23,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "mobblerapplication.h"
 #include "mobblerdocument.h"
-
-const TUid KUidMobblerApp = {0xA0007648};
+#include "mobblerappui.h"
 
 CApaDocument* CMobblerApplication::CreateDocumentL()
 	{
@@ -33,7 +32,7 @@ CApaDocument* CMobblerApplication::CreateDocumentL()
 
 TUid CMobblerApplication::AppDllUid() const
 	{
-	return KUidMobblerApp;
+	return TUid::Uid(KMobblerAppUid);
 	}
 
 // End of file

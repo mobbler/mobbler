@@ -36,13 +36,26 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "mobblerlastfmconnectionobserver.h"
 #include "mobblersleeptimer.h"
 
-const TVersion KVersion(0, 5, 0);
 _LIT(KFormatTime, "%F%D %N %-B%J%:1%T%+B"); // 21 March 11:20 am
 
 #ifdef BETA_BUILD
 const TInt KUpdateIntervalDays(1);
 #else
 const TInt KUpdateIntervalDays(7);
+#endif
+
+#ifdef __SYMBIAN_SIGNED__
+const TVersion KVersion(1, 0, 0);
+const TInt KMobblerAppUid = 0x2002655A;
+const TInt KMobblerSettingsViewUid = 0x2002655C;
+const TInt KMobblerStatusViewUid = 0x2002655B;
+const TInt KMobblerWebServicesViewUid = 0x2002656B;
+#else
+const TVersion KVersion(0, 5, 0);
+const TInt KMobblerAppUid = 0xA0007648;
+const TInt KMobblerSettingsViewUid = 0xA0007CA9;
+const TInt KMobblerStatusViewUid = 0xA0007CA8;
+const TInt KMobblerWebServicesViewUid = 0xA000B6C3;
 #endif
 
 class CBrowserLauncher;
@@ -57,6 +70,7 @@ class CMobblerString;
 class CMobblerTrack;
 class CMobblerWebServicesView;
 class CMobblerWebServicesHelper;
+class CMobblerDestinationsInterface;
 
 class CMobblerAppUi : public CAknViewAppUi,
 						public MMobblerLastFMConnectionObserver,
@@ -87,6 +101,7 @@ public:
 	CMobblerLastFMConnection& LastFMConnection() const;
 	CMobblerMusicAppListener& MusicListener() const;
 	CMobblerBitmapCollection& BitmapCollection() const;
+	CMobblerDestinationsInterface* Destinations() const;
 	
 	CMobblerSettingItemListView& SettingView() const;
 	const TDesC& MusicAppNameL() const;
@@ -102,6 +117,7 @@ public:
 	TBool AccelerometerGesturesAvailable() const;
 	void SetSleepTimerL(const TInt aMinutes);
 	void SetAlarmTimerL(const TTime aTime);
+	void SetBitRateL(TInt aBitRate);
 	
 	TInt Scrobbled() const;
 	TInt Queued() const;
@@ -232,6 +248,9 @@ private:
 	CMobblerWebServicesHelper* iWebServicesHelper;
 	
 	CMobblerFlatDataObserverHelper* iCheckForUpdatesObserver;
+	
+	CMobblerDestinationsInterface* iDestinations;
+	TUid iDestinationsDtorUid;
 	};
 
 #endif // __MOBBLERAPPUI_H__

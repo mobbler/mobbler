@@ -25,17 +25,41 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <mobbler.mbg>
 
+#include "mobblerappui.h"
 #include "mobblerbitmap.h"
 #include "mobblerbitmapcollection.h"
 
+#if defined(__SYMBIAN_SIGNED__) && !defined(__WINS__)
+_LIT(KMobblerMifFile, "\\resource\\apps\\mobbler_0x2002655A.mif");
+_LIT(KPngScrobble, "\\resource\\apps\\mobbler_0x2002655A\\scrobble.png");
+_LIT(KPngTrackIcon, "\\resource\\apps\\mobbler_0x2002655A\\icon_track.png");
+_LIT(KPngAlarmIcon, "\\resource\\apps\\mobbler_0x2002655A\\icon_alarm.png");
+_LIT(KPngLastFm, "\\resource\\apps\\mobbler_0x2002655A\\lastfm.png");
+
+_LIT(KDefaultAlbumImage, "\\resource\\apps\\mobbler_0x2002655A\\default_album.gif");
+_LIT(KDefaultArtistImage, "\\resource\\apps\\mobbler_0x2002655A\\default_artist.png");
+_LIT(KDefaultEventImage, "\\resource\\apps\\mobbler_0x2002655A\\default_event.png");
+_LIT(KDefaultUserImage, "\\resource\\apps\\mobbler_0x2002655A\\default_user.png");
+_LIT(KDefaultPlaylistImage, "\\resource\\apps\\mobbler_0x2002655A\\default_playlist.png");
+_LIT(KDefaultTagImage, "\\resource\\apps\\mobbler_0x2002655A\\default_tag.png");
+_LIT(KDefaultTrackImage, "\\resource\\apps\\mobbler_0x2002655A\\default_track.png");
+#else
 _LIT(KMobblerMifFile, "\\resource\\apps\\mobbler.mif");
 _LIT(KPngScrobble, "\\resource\\apps\\mobbler\\scrobble.png");
 _LIT(KPngTrackIcon, "\\resource\\apps\\mobbler\\icon_track.png");
 _LIT(KPngAlarmIcon, "\\resource\\apps\\mobbler\\icon_alarm.png");
 _LIT(KPngLastFm, "\\resource\\apps\\mobbler\\lastfm.png");
 
+_LIT(KDefaultAlbumImage, "\\resource\\apps\\mobbler\\default_album.gif");
+_LIT(KDefaultArtistImage, "\\resource\\apps\\mobbler\\default_artist.png");
+_LIT(KDefaultEventImage, "\\resource\\apps\\mobbler\\default_event.png");
+_LIT(KDefaultUserImage, "\\resource\\apps\\mobbler\\default_user.png");
+_LIT(KDefaultPlaylistImage, "\\resource\\apps\\mobbler\\default_playlist.png");
+_LIT(KDefaultTagImage, "\\resource\\apps\\mobbler\\default_tag.png");
+_LIT(KDefaultTrackImage, "\\resource\\apps\\mobbler\\default_track.png");
+#endif
+
 const TUid KMusicAppUid = {0x102072C3};
-const TUid KMobblerUid = {0xA0007648};
 
 CMobblerBitmapCollection::CBitmapCollectionItem* CMobblerBitmapCollection::CBitmapCollectionItem::NewLC(CMobblerBitmap* aBitmap, TInt aBitmapId)
 	{
@@ -58,7 +82,7 @@ void CMobblerBitmapCollection::CBitmapCollectionItem::ConstructL(CMobblerBitmap*
 
 CMobblerBitmapCollection::CBitmapCollectionItem::~CBitmapCollectionItem()
 	{
-	delete iBitmap;
+	iBitmap->Close();
 	}
 		
 TInt CMobblerBitmapCollection::CBitmapCollectionItem::Compare(const CBitmapCollectionItem& aLeft, const CBitmapCollectionItem& aRight)
@@ -149,7 +173,28 @@ CMobblerBitmap* CMobblerBitmapCollection::BitmapL(MMobblerBitmapObserver& aObser
 				bitmap = CMobblerBitmap::NewL(aObserver, KMusicAppUid);
 				break;
 			case EBitmapMobblerApp:
-				bitmap = CMobblerBitmap::NewL(aObserver, KMobblerUid);
+				bitmap = CMobblerBitmap::NewL(aObserver, TUid::Uid(KMobblerAppUid));
+				break;
+			case EBitmapDefaultAlbumImage:
+				bitmap = CMobblerBitmap::NewL(aObserver, KDefaultAlbumImage);
+				break;
+			case EBitmapDefaultArtistImage:
+				bitmap = CMobblerBitmap::NewL(aObserver, KDefaultArtistImage);
+				break;
+			case EBitmapDefaultEventImage:
+				bitmap = CMobblerBitmap::NewL(aObserver, KDefaultEventImage);
+				break;
+			case EBitmapDefaultUserImage:
+				bitmap = CMobblerBitmap::NewL(aObserver, KDefaultUserImage);
+				break;
+			case EBitmapDefaultPlaylistImage:
+				bitmap = CMobblerBitmap::NewL(aObserver, KDefaultPlaylistImage);
+				break;
+			case EBitmapDefaultTagImage:
+				bitmap = CMobblerBitmap::NewL(aObserver, KDefaultTagImage);
+				break;
+			case EBitmapDefaultTrackImage:
+				bitmap = CMobblerBitmap::NewL(aObserver, KDefaultTrackImage);
 				break;
 			default:
 				break;

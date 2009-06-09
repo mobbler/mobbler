@@ -28,13 +28,26 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <aknsutils.h>
 #include <bautils.h> 
 
+
 #ifndef __WINS__
 #include <browserlauncher.h>
 #endif
 
 #include <DocumentHandler.h>
-#include <mobbler.rsg>
+
+#ifdef __SYMBIAN_SIGNED__
+#include <mobbler_strings_0x2002655A.rsg>
+#include <mobbler_0x2002655A.rsg>
+
+// SW Installer Launcher API
+#include <SWInstApi.h>
+#include <SWInstDefs.h>
+
+#else // !__SYMBIAN_SIGNED__
 #include <mobbler_strings.rsg>
+#include <mobbler.rsg>
+#endif
+
 #include <s32file.h>
 
 #include "mobbler.hrh"
@@ -57,10 +70,38 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 _LIT(KRadioFile, "C:radiostations.dat");
 
 // Gesture interface
+#ifdef __SYMBIAN_SIGNED__
+const TUid KGesturesInterfaceUid = {0x20026567};
+const TUid KDestinationImplUid = {0x20026621};
+const TUid KMobblerGesturePlugin5xUid = {0x2002656A};
+#else
 const TUid KGesturesInterfaceUid = {0xA000B6CF};
+const TUid KDestinationImplUid = {0xA000BEB6};
+const TUid KMobblerGesturePlugin5xUid = {0xA000B6C2};
+#endif
+
+_LIT8(KAmazonSearchLink, "http://www.amazon.co.uk/gp/search?ie=UTF8&keywords=%S&tag=mobbler-21&index=music&linkCode=ur2&camp=1634&creative=6738");
 
 void CMobblerAppUi::ConstructL()
 	{
+#if defined(__SYMBIAN_SIGNED__) && !defined(__WINS__)
+	// This is the symbian-signed version so try
+	// to silently remove the self-signed version
+	
+	SwiUI::RSWInstLauncher swInstLauncher;
+	CleanupClosePushL(swInstLauncher);
+	User::LeaveIfError(swInstLauncher.Connect());
+	
+	SwiUI::TUninstallOptions uninstallOptions;
+	uninstallOptions.iKillApp = SwiUI::EPolicyAllowed;
+	uninstallOptions.iBreakDependency = SwiUI::EPolicyAllowed;
+	SwiUI::TUninstallOptionsPckg optionsPckg(uninstallOptions); 
+
+	swInstLauncher.SilentUninstall(TUid::Uid(0xA0007648), optionsPckg, SwiUI::KSisxMimeType);
+	 
+	CleanupStack::PopAndDestroy(&swInstLauncher);
+#endif
+	
 	iResourceReader = CMobblerResourceReader::NewL();
 	
 	iBitmapCollection = CMobblerBitmapCollection::NewL();
@@ -72,7 +113,9 @@ void CMobblerAppUi::ConstructL()
 	iCoreTarget = CRemConCoreApiTarget::NewL(*iInterfaceSelector, *this);
 	iInterfaceSelector->OpenTargetL();
 	
-#ifdef __S60_50__
+	TRAP_IGNORE(iDestinations = static_cast<CMobblerDestinationsInterface*>(REComSession::CreateImplementationL(KDestinationImplUid, iDestinationsDtorUid)));
+	
+#ifdef  __S60_50__
 	BaseConstructL(EAknTouchCompatible | EAknEnableSkin);
 #else
 	BaseConstructL(EAknEnableSkin);
@@ -84,8 +127,8 @@ void CMobblerAppUi::ConstructL()
 	iSettingView = CMobblerSettingItemListView::NewL();
 	iStatusView = CMobblerStatusView::NewL();
 	
-	iLastFMConnection = CMobblerLastFMConnection::NewL(*this, iSettingView->Username(), iSettingView->Password(), iSettingView->IapId());
-	iRadioPlayer = CMobblerRadioPlayer::NewL(*iLastFMConnection, iSettingView->BufferSize(), iSettingView->EqualizerIndex(), iSettingView->Volume());
+	iLastFMConnection = CMobblerLastFMConnection::NewL(*this, iSettingView->Username(), iSettingView->Password(), iSettingView->IapId(), iSettingView->BitRate());
+	iRadioPlayer = CMobblerRadioPlayer::NewL(*iLastFMConnection, iSettingView->BufferSize(), iSettingView->EqualizerIndex(), iSettingView->Volume(), iSettingView->BitRate());
 	iMusicListener = CMobblerMusicAppListener::NewL(*iLastFMConnection);
 	
 	RProcess().SetPriority(EPriorityHigh);
@@ -136,8 +179,14 @@ CMobblerAppUi::~CMobblerAppUi()
 	{
 	if (iGesturePlugin)
 		{
-		REComSession::DestroyedImplementation(iGesturePluginDtorUid);
 		delete iGesturePlugin;
+		REComSession::DestroyedImplementation(iGesturePluginDtorUid);
+		}
+	
+	if (iDestinations)
+		{
+		delete iDestinations;
+		REComSession::DestroyedImplementation(iDestinationsDtorUid);
 		}
 
 	delete iPreviousRadioArtist;
@@ -229,7 +278,7 @@ void CMobblerAppUi::MrccatoCommand(TRemConCoreApiOperationId aOperationId, TRemC
 				{
 				if (iRadioPlayer->CurrentTrack())
 					{
-					TRAP_IGNORE(iRadioPlayer->NextTrackL());
+					TRAP_IGNORE(iRadioPlayer->SkipTrackL());
 					}
 				}
 			iCoreTarget->ForwardResponse(status, KErrNone);
@@ -326,6 +375,12 @@ void CMobblerAppUi::SetBufferSize(TTimeIntervalSeconds aBufferSize)
 	iRadioPlayer->SetPreBufferSize(aBufferSize);
 	}
 
+void CMobblerAppUi::SetBitRateL(TInt aBitRate)
+	{
+	iLastFMConnection->SetBitRateL(aBitRate);
+	iRadioPlayer->SetBitRateL(aBitRate);
+	}
+
 void CMobblerAppUi::SetAccelerometerGesturesL(TBool aAccelerometerGestures)
 	{
 	if (iGesturePlugin && aAccelerometerGestures)
@@ -380,6 +435,11 @@ CMobblerMusicAppListener& CMobblerAppUi::MusicListener() const
 CMobblerSettingItemListView& CMobblerAppUi::SettingView() const
 	{
 	return *iSettingView;
+	}
+
+CMobblerDestinationsInterface* CMobblerAppUi::Destinations() const
+	{
+	return iDestinations;
 	}
 
 const TDesC& CMobblerAppUi::MusicAppNameL() const
@@ -554,7 +614,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 			if (iRadioPlayer->HasPlaylist() && 
 				iLastFMConnection->Mode() == CMobblerLastFMConnection::EOnline)
 				{
-				iRadioPlayer->NextTrackL();
+				iRadioPlayer->SkipTrackL();
 				}
 			else
 				{
@@ -701,7 +761,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 					{
 					// send the web services API call
 					iLastFMConnection->TrackBanL(currentRadioTrack->Artist().String8(), currentRadioTrack->Title().String8());
-					iRadioPlayer->NextTrackL();
+					iRadioPlayer->SkipTrackL();
 					}
 				}
 			
@@ -1004,9 +1064,6 @@ void CMobblerAppUi::RadioStartL(TInt aRadioStation,
 			break;
 		case EMobblerCommandRadioNeighbourhood:
 			station = CMobblerLastFMConnection::ENeighbourhood;
-			break;
-		case EMobblerCommandRadioPlaylist:
-			station = CMobblerLastFMConnection::EPlaylist;
 			break;
 		default:
 			station = CMobblerLastFMConnection::EPersonal;
@@ -1606,8 +1663,6 @@ void CMobblerAppUi::LoadGesturesPluginL()
 	// Failing this, load the 3rd edition plugin.
 	// Otherwise, accelerometer support is not available.
 	
-	const TUid KMobblerGesturePlugin5xUid = {0xA000B6C2};
-	
 	RImplInfoPtrArray implInfoPtrArray;
 	CleanupClosePushL(implInfoPtrArray);
 	
@@ -1679,7 +1734,7 @@ void CMobblerAppUi::HandleSingleShakeL(TMobblerShakeGestureDirection aDirection)
 			// Using shake to the right for skip gesture
 			if (RadioPlayer().CurrentTrack())
 					{
-					RadioPlayer().NextTrackL();
+					RadioPlayer().SkipTrackL();
 					}
 			break;
 		default:

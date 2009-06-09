@@ -68,7 +68,6 @@ private: // from MMdaAudioOutputStreamCallback
     
 private:
 	CMdaAudioOutputStream* iStream;
-	TMdaAudioDataSettings iSet;
 	CAudioEqualizerUtility* iEqualizer;
 
 	TMobblerSharedData& iShared;  // reference to shared data with client

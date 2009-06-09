@@ -68,6 +68,7 @@ public:
 	TBool AlarmOn()					{ return iSettings->AlarmOn();    }
 	TTime AlarmTime()				{ return iSettings->AlarmTime();  }
 	TUint32 AlarmIapId()			{ return iSettings->AlarmIapId(); }
+	TInt BitRate()					{ return iSettings->BitRate(); }
 	
 	void SetEqualizerIndexL(TInt aIndex);
 	void SetVolumeL(TInt aVolume);

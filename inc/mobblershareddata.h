@@ -25,6 +25,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #define __MOBBLERSHAREDDATA_H__
 
 #include <e32std.h>
+#include <mda/common/audio.h>
 
 class CAudioEqualizerUtility;
 class CMobblerTrack;
@@ -50,13 +51,11 @@ public:
 	TBool iDownloadComplete;
 	TTimeIntervalSeconds iPreBufferSize;
 	TBool iCurrent;
+	TMdaAudioDataSettings iAudioDataSettings;
 	
 	// data that is sent for ECmdServiceBuffer
 	TInt iTotalDataSize;
 	TPtrC8 iAudioData;
-	
-	// data for ECmdSetVolume
-	TInt iVolume;
 	
 	// Data for ECmdSetEqualizer
 	TInt iEqualizerIndex;

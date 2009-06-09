@@ -24,6 +24,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <aknview.h>
 #include <aknviewappui.h>
 
+#include "mobblerappui.h"
 #include "mobblersettingitemlist.h"
 
 CMobblerSettingItemList::CMobblerSettingItemList(CMobblerSettingItemListSettings& aSettings, MEikCommandObserver* aCommandObserver)
@@ -45,7 +46,7 @@ void CMobblerSettingItemList::EditItemL(TInt aIndex, TBool aCalledFromMenu)
 void CMobblerSettingItemList::HandleResourceChange(TInt aType)
 	{
 	CAknSettingItemList::HandleResourceChange(aType);
-	SetRect(iAvkonViewAppUi->View(TUid::Uid(0xA0007CA8))->ClientRect());
+	SetRect(iAvkonViewAppUi->View(TUid::Uid(KMobblerSettingsViewUid))->ClientRect());
 	}
 
 TKeyResponse CMobblerSettingItemList::OfferKeyEventL(const TKeyEvent& aKeyEvent, TEventCode aType)

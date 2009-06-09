@@ -23,18 +23,36 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <aknnotewrappers.h>
 #include <barsread.h>
-#include <mobbler.rsg>
-#include <mobbler_strings.rsg>
 
 #include "mobblerresourcereader.h"
 
-#if defined(__WINS__)
+#ifdef __SYMBIAN_SIGNED__
+
+#include <mobbler_strings_0x2002655A.rsg>
+#include <mobbler_0x2002655A.rsg>
+
+#ifdef __WINS__
+_LIT(KLanguageRscFile, "\\Resource\\apps\\mobbler_strings_0x2002655A.r01");
+_LIT(KLanguageRscFile2,"Z:\\Resource\\apps\\mobbler_strings2.r01");
+#else
+_LIT(KLanguageRscFile, "\\Resource\\apps\\mobbler_strings_0x2002655A.rsc");
+_LIT(KLanguageRscFile2,"C:\\Resource\\apps\\mobbler_strings2.rsc");
+#endif
+
+#else // !__SYMBIAN_SIGNED__
+
+#include <mobbler_strings.rsg>
+#include <mobbler.rsg>
+
+#ifdef __WINS__
 _LIT(KLanguageRscFile, "\\Resource\\apps\\mobbler_strings.r01");
 _LIT(KLanguageRscFile2,"Z:\\Resource\\apps\\mobbler_strings2.r01");
 #else
 _LIT(KLanguageRscFile, "\\Resource\\apps\\mobbler_strings.rsc");
 _LIT(KLanguageRscFile2,"C:\\Resource\\apps\\mobbler_strings2.rsc");
 #endif
+
+#endif // __SYMBIAN_SIGNED__
 	
 const TInt KLanguageRscVersion(1);
 

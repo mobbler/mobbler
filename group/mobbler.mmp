@@ -21,46 +21,63 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-// uncomment this to use a beta build
-//MACRO BETA_BUILD
+#include "mobbler.mmh" 
+
+// Protected UIDS 0x2002655A - 0x2002656D
+//                0x2002661D - 0x20026626
 
 /* Mobbler UIDs
 
-0xA0007648 - Mobbler exe
+Protected - Unprotected - Purpose
 
-0xA0007CA8 - status view
-0xA0007CA9 - settings view
-0xA0007CAA - music app observer interface
-!0xA0007CAB - music app observer 3.1 dll 
-!0xA0007CAC - music app observer 3.1 implementation
-!0xA0007CAD - ?
-!0xA0007CAE - music app observer 3.0 dll
-!0xA0007CAF - music app observer 3.0 implementation
-0xA000B6CB - touch feedback dll
-0xA000B6CC - touch feedback interface
-0xA000B6CD - touch feedback implementation
-0xA000B6CE - gesture plug-in dll (3rd edition)
-0xA000B6CF - gesture plug-in interface
-0xA000B6D0 - gesture plug-in 3rd edition implementation
-0xA000B6D1 - gesture plug-in dll (5th edition)
-0xA000B6C2 - gesture plug-in 5th edition implementation
-0xA000B6C3 - unused
-0xA000B6D4 - unused
-0xA000BEB1 - content listing dll
-0xA000BEB2 - content listing interface
-0xA000BEB3 - content listing implementation
-0xA000BEB4 - unused
-0xA000BEB5 - unused
-0xA000BEB6 - unused
-0xA000BEB7 - unused
-0xA000BEB8 - unused
-0xA000BEB9 - unused
-0xA000BEBA - unused
+0x2002655A - 0xA0007648 - Mobbler exe
+
+0x2002655B - 0xA0007CA8 - status view
+0x2002655C - 0xA0007CA9 - settings view
+0x2002655D - 0xA0007CAA - music app observer interface
+0x2002655E - !0xA0007CAB - music app observer 3.1 dll 
+0x2002655F - !0xA0007CAC - music app observer 3.1 implementation
+0x20026560 - !0xA0007CAD - ?
+0x20026561 - !0xA0007CAE - music app observer 3.0 dll
+0x20026562 - !0xA0007CAF - music app observer 3.0 implementation
+0x20026563 - 0xA000B6CB - touch feedback dll
+0x20026564 - 0xA000B6CC - touch feedback interface
+0x20026565 - 0xA000B6CD - touch feedback implementation
+0x20026566 - 0xA000B6CE - gesture plug-in dll (3rd edition)
+0x20026567 - 0xA000B6CF - gesture plug-in interface
+0x20026568 - 0xA000B6D0 - gesture plug-in 3rd edition implementation
+0x20026569 - 0xA000B6D1 - gesture plug-in dll (5th edition)
+0x2002656A - 0xA000B6C2 - gesture plug-in 5th edition implementation
+0x2002656B - 0xA000B6C3 - web services view
+0x2002656C - 0xA000B6D4 - unused
+0x2002656D - 0xA000BEB1 - content listing dll
+0x2002661D - 0xA000BEB2 - content listing interface
+0x2002661E - 0xA000BEB3 - content listing implementation
+0x2002661F - 0xA000BEB4 - destinations dll
+0x20026620 - 0xA000BEB5 - destinations interface
+0x20026621 - 0xA000BEB6 - destinations implementation
+0x20026622 - 0xA000BEB7 - unused
+0x20026623 - 0xA000BEB8 - unused
+0x20026624 - 0xA000BEB9 - unused
+0x20026625 - 0xA000BEBA - unused
+0x20026626
 */
 
+#ifdef SYMBIAN_SIGNED
+TARGET			mobbler_0x2002655A.exe
+TARGETTYPE		exe
+UID				0x100039CE 0x2002655A
+SECUREID		0x2002655A
+
+#else // !SYMBIAN_SIGNED
 TARGET			mobbler.exe
 TARGETTYPE		exe
 UID				0x100039CE 0xA0007648
+SECUREID		0xA0007648
+
+CAPABILITY	NetworkServices ReadUserData
+#endif
+
 
 #ifdef WINS
 LANG 01
@@ -70,10 +87,11 @@ LANG 01 02 03 04 05 06 08 09 10 14 16 17 18 25 26 27 31 34 37 54 57 59 67 68 76 
 
 SOURCEPATH	..\src
 USERINCLUDE	..\inc
-SYSTEMINCLUDE	 \epoc32\include \epoc32\include\mmf\plugin
+SYSTEMINCLUDE	 \epoc32\include \epoc32\include\applications \epoc32\include\middleware \epoc32\include\domain\middleware \epoc32\include\osextensions \epoc32\include\mmf\plugin
 
 SOURCE		mobbler.cpp
 SOURCE		mobbleraccesspointsettingitem.cpp
+SOURCE		mobbleralbumarttransition.cpp
 SOURCE		mobbleralbumlist.cpp
 SOURCE		mobblerapplication.cpp
 SOURCE		mobblerappui.cpp
@@ -151,6 +169,7 @@ LIBRARY		estor.lib
 LIBRARY		euser.lib
 LIBRARY		fbscli.lib
 LIBRARY		gdi.lib
+LIBRARY		hal.lib
 LIBRARY		hash.lib
 LIBRARY		http.lib
 LIBRARY		imageconversion.lib
@@ -159,6 +178,11 @@ LIBRARY		mediaclientaudiostream.lib
 LIBRARY		RemConCoreApi.lib
 LIBRARY		RemConInterfaceBase.lib
 LIBRARY		senxml.lib
+#ifdef SYMBIAN_SIGNED
+#ifdef WINS
+LIBRARY		swinstcli.lib
+#endif
+#endif
 LIBRARY		ws32.lib
 
 #ifndef WINS
@@ -166,28 +190,43 @@ LIBRARY		browserlauncher.lib
 #endif
 
 VENDORID	0
-SECUREID	0xA0007648
-
-CAPABILITY	NetworkServices ReadUserData
 
 EPOCSTACKSIZE 0x14000
-EPOCHEAPSIZE  0x100000 0x200000
+EPOCHEAPSIZE  0x100000 0x500000
 
 START RESOURCE	..\data\mobbler.rss
 HEADER
+#ifdef SYMBIAN_SIGNED
+TARGET mobbler_0x2002655A
+#else
 TARGET mobbler
+#endif
 TARGETPATH resource\apps
 END //RESOURCE
 
 START RESOURCE	..\data\mobbler_strings.rss
 HEADER
+#ifdef SYMBIAN_SIGNED
+TARGET mobbler_strings_0x2002655A
+#else
 TARGET mobbler_strings
+#endif
 TARGETPATH resource\apps
 END //RESOURCE
 
 START RESOURCE	..\data\mobbler_reg.rss
 LANG 01
+#ifdef SYMBIAN_SIGNED
+TARGET mobbler_reg_0x2002655A
+#else
 TARGET mobbler_reg
+#endif
 TARGETPATH 	  \private\10003a3f\apps
 END //RESOURCE
+
+#ifdef SYMBIAN_SIGNED
+START RESOURCE ..\data\mobbler_startup.rss
+LANG 01
+END
+#endif
 

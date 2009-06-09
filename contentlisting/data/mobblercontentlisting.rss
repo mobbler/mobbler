@@ -25,18 +25,30 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 RESOURCE REGISTRY_INFO theInfo
 	{
-	dll_uid = 0xA000BEB2;
+#ifdef __SYMBIAN_SIGNED__
+	dll_uid = 0x2002656D;
+#else
+	dll_uid = 0xA000BEB1;
+#endif
 	
 	interfaces = 
 		{
 		INTERFACE_INFO
 			{
-			interface_uid = 0xA000BEB3;
+#ifdef __SYMBIAN_SIGNED__
+			interface_uid = 0x2002661D;
+#else
+			interface_uid = 0xA000BEB2;
+#endif
 			implementations = 
 				{
 				IMPLEMENTATION_INFO
 					{
-					implementation_uid = 0xA000BEB1;
+#ifdef __SYMBIAN_SIGNED__
+					implementation_uid = 0x2002661E;
+#else
+					implementation_uid = 0xA000BEB3;
+#endif
 					version_no = 1;
 					display_name = "Mobbler Content Listing";
 					default_data = "";

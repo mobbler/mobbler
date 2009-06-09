@@ -26,6 +26,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "mobbler.hrh"
 #include "mobblerappui.h"
+#include "mobblerbitmapcollection.h"
 #include "mobblerlastfmconnection.h"
 #include "mobblerlistitem.h"
 #include "mobblerparser.h"
@@ -34,8 +35,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "mobblertracklist.h"
 #include "mobblerwebserviceshelper.h"
 
-_LIT(KDefaultImage, "\\resource\\apps\\mobbler\\default_track.png");
-
 CMobblerTrackList::CMobblerTrackList(CMobblerAppUi& aAppUi, CMobblerWebServicesControl& aWebServicesControl)
 	:CMobblerListControl(aAppUi, aWebServicesControl)
 	{
@@ -43,7 +42,7 @@ CMobblerTrackList::CMobblerTrackList(CMobblerAppUi& aAppUi, CMobblerWebServicesC
 
 void CMobblerTrackList::ConstructL()
 	{
-    iDefaultImage = CMobblerBitmap::NewL(*this, KDefaultImage);
+	iDefaultImage = iAppUi.BitmapCollection().BitmapL(*this, CMobblerBitmapCollection::EBitmapDefaultTrackImage);
     
     switch (iType)
     	{

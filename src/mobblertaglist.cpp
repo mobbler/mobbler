@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "mobbler.hrh"
 #include "mobblerappui.h"
+#include "mobblerbitmapcollection.h"
 #include "mobblerlastfmconnection.h"
 #include "mobblerlistitem.h"
 #include "mobblerparser.h"
@@ -38,7 +39,7 @@ CMobblerTagList::CMobblerTagList(CMobblerAppUi& aAppUi, CMobblerWebServicesContr
 
 void CMobblerTagList::ConstructL()
 	{
-	iDefaultImage = CMobblerBitmap::NewL(*this, KDefaultImage);
+	iDefaultImage = iAppUi.BitmapCollection().BitmapL(*this, CMobblerBitmapCollection::EBitmapDefaultTagImage);
 	
 	switch (iType)
 		{

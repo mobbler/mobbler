@@ -24,9 +24,16 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <ecom/implementationproxy.h>
 #include "mobblertouchfeedback.h"
 
+#ifdef __SYMBIAN_SIGNED__
+const TInt KImplementationUid = {0x20026565};
+#else
+const TInt KImplementationUid = {0xA000B6CD};
+#endif
+
+
 const TImplementationProxy ImplementationTable[] =
     {
-    {{0xA000B6CD}, TProxyNewLPtr(CMobblerTouchFeedback::NewL)}
+    {KImplementationUid, TProxyNewLPtr(CMobblerTouchFeedback::NewL)}
     };
 
 EXPORT_C const TImplementationProxy* ImplementationGroupProxy(TInt& aTableCount)

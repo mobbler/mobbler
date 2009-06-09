@@ -31,6 +31,7 @@ mobbler.mmp
 ..\touchfeedback\group\mobblertouchfeedback.mmp
 ..\contentlisting\group\mobblercontentlisting.mmp
 ..\gestureobserver\group\gestureobserver3x.mmp
+..\destinations\group\mobblerdestinations.mmp
 
 // In 5th edition, the sensor framework now requires SymbianSigned (ReadDeviceData)
 // ..\gestureobserver\group\gestureobserver5x.mmp
@@ -41,6 +42,7 @@ PRJ_EXPORTS
 ..\inc\mobblertouchfeedbackinterface.h	mobbler\mobblertouchfeedbackinterface.h
 ..\inc\mobblercontentlistinginterface.h	mobbler\mobblercontentlistinginterface.h
 ..\inc\mobblergesturesinterface.h	mobbler\mobblergesturesinterface.h
+..\inc\mobblerdestinationsinterface.h	mobbler\mobblerdestinationsinterface.h
 
 // mobbler_gfx
 ..\gfx\icon_track.png						z:\resource\apps\mobbler\icon_track.png

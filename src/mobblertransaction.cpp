@@ -90,6 +90,11 @@ void CMobblerTransaction::ConstructL(CUri8* aURI, CMobblerWebServicesQuery* aQue
 	iURI = aURI;
 	}
 
+RHTTPTransaction& CMobblerTransaction::Transaction()
+	{
+	return iTransaction;
+	}
+
 void CMobblerTransaction::SubmitL()
 	{
 	delete iBuffer;
@@ -154,6 +159,24 @@ void CMobblerTransaction::MHFRunL(RHTTPTransaction aTransaction, const THTTPEven
 	
 	switch (aEvent.iStatus)
 		{
+		case THTTPEvent::EGotResponseHeaders:
+			{
+			RHTTPHeaders headers = aTransaction.Response().GetHeaderCollection();
+			 
+			THTTPHdrVal locationValue;			
+			if( headers.GetField(iConnection.iHTTPSession.StringPool().StringF(HTTP::ELocation, RHTTPSession::GetTable()), 0, locationValue) == KErrNone )
+				{
+				// This is a redirect so ask for the new location
+				
+				const TDesC8& urides(locationValue.StrF().DesC());
+				TUriParser8 uri;
+				uri.Parse(urides);
+				aTransaction.Cancel();						
+				iTransaction.Request().SetURIL(uri);
+				iTransaction.SubmitL();
+				}
+			}
+			break;
 		case THTTPEvent::EGotResponseBodyData:
 			aTransaction.Response().Body()->GetNextDataPart(nextDataPartPtr);
 			iBuffer->InsertL(iBuffer->Size(), nextDataPartPtr);

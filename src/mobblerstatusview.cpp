@@ -21,14 +21,20 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
+#ifdef __SYMBIAN_SIGNED__
+#include <mobbler_strings_0x2002655A.rsg>
+#include <mobbler_0x2002655A.rsg>
+#else
+#include <mobbler_strings.rsg>
+#include <mobbler.rsg>
+#endif
+
 #include <akncontext.h>
 #include <akntitle.h>
 #include <audioequalizerutility.h>
 #include <barsread.h>
 #include <eikmenub.h>
 #include <mdaaudiooutputstream.h>
-#include <mobbler.rsg>
-#include <mobbler_strings.rsg>
 
 #include "mobbler.hrh"
 #include "mobblerappui.h"
@@ -262,7 +268,7 @@ void CMobblerStatusView::DynInitMenuPaneL(TInt aResourceId, CEikMenuPane* aMenuP
 
 TUid CMobblerStatusView::Id() const
 	{
-	return TUid::Uid(0xA0007CA8);
+	return TUid::Uid(KMobblerStatusViewUid);
 	}
 
 void CMobblerStatusView::HandleCommandL(TInt aCommand)

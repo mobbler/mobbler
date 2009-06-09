@@ -21,10 +21,16 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
+#ifdef __SYMBIAN_SIGNED__
+#include <mobbler_strings_0x2002655A.rsg>
+#include <mobbler_0x2002655A.rsg>
+#else
+#include <mobbler_strings.rsg>
+#include <mobbler.rsg>
+#endif
+
 #include <AknTextSettingPage.h>
 #include <eikfrlbd.h>
-#include <mobbler.rsg>
-#include <mobbler_strings.rsg>
 
 #include "mobbler.hrh"
 #include "mobblerappui.h"
@@ -63,7 +69,7 @@ void CMobblerSettingItemListView::ConstructL()
 
 TUid CMobblerSettingItemListView::Id() const
 	{
-	return TUid::Uid(0xA0007CA9);
+	return TUid::Uid(KMobblerSettingsViewUid);
 	}
 
 void CMobblerSettingItemListView::HandleCommandL(TInt aCommand)
@@ -79,6 +85,7 @@ void CMobblerSettingItemListView::HandleCommandL(TInt aCommand)
 			static_cast<CMobblerAppUi*>(AppUi())->SetIapIDL(iSettings->IapId());
 			static_cast<CMobblerAppUi*>(AppUi())->SetBufferSize(iSettings->BufferSize());
 			static_cast<CMobblerAppUi*>(AppUi())->SetAccelerometerGesturesL(iSettings->AccelerometerGestures());
+			static_cast<CMobblerAppUi*>(AppUi())->SetBitRateL(iSettings->BitRate());
 			}
 		else if (iSettingsToSet == ESleepTimer)
 			{
@@ -88,13 +95,13 @@ void CMobblerSettingItemListView::HandleCommandL(TInt aCommand)
 			{
 			static_cast<CMobblerAppUi*>(AppUi())->SetAlarmTimerL(iSettings->AlarmTime());
 			}
-		AppUi()->ActivateLocalViewL(TUid::Uid(0xA0007CA8));
+		AppUi()->ActivateLocalViewL(TUid::Uid(KMobblerStatusViewUid));
 		}
 	else if (aCommand == EAknSoftkeyCancel)
 		{
 		// reset the details then switch back to the status view
 		iSettings->LoadSettingValuesL();
-		AppUi()->ActivateLocalViewL(TUid::Uid(0xA0007CA8));
+		AppUi()->ActivateLocalViewL(TUid::Uid(KMobblerStatusViewUid));
 		}
 	else if (aCommand == EMobblerCommandRemove)
 		{
@@ -111,7 +118,7 @@ void CMobblerSettingItemListView::HandleCommandL(TInt aCommand)
 			static_cast<CMobblerAppUi*>(AppUi())->RemoveAlarmL();
 			}
 
-		AppUi()->ActivateLocalViewL(TUid::Uid(0xA0007CA8));
+		AppUi()->ActivateLocalViewL(TUid::Uid(KMobblerStatusViewUid));
 		}
 	else
 		{
@@ -246,6 +253,17 @@ void CMobblerSettingItemListView::LoadListL()
 		CreateIapItemL(iSettings->IapId(),
 					   R_MOBBLER_IAP,
 					   R_MOBBLER_SETTING_PAGE_ENUM);
+		
+		// Bit rate (64 Kbps or 128 Kbps?)
+		RArray<TInt> bitRateArray;
+		CleanupClosePushL(bitRateArray);
+		bitRateArray.AppendL(R_MOBBLER_64_KBPS);
+		bitRateArray.AppendL(R_MOBBLER_128_KBPS);
+		CreateEnumItemL(iSettings->BitRate(),
+						R_MOBBLER_BIT_RATE,
+						R_MOBBLER_SETTING_PAGE_ENUM,
+						bitRateArray);
+		CleanupStack::PopAndDestroy(&bitRateArray);
 
 		// Buffer size slider setting item
 		CreateSliderItemL(iSettings->BufferSize(),
@@ -255,16 +273,16 @@ void CMobblerSettingItemListView::LoadListL()
 						  R_MOBBLER_BUFFER_SIZE_SECONDS);
 
 		// Download album art enumerated setting item
-		RArray<TInt> array;
-		CleanupClosePushL(array);
-		array.AppendL(R_MOBBLER_DOWNLOAD_ALBUM_ART_NEVER);
-		array.AppendL(R_MOBBLER_DOWNLOAD_ALBUM_ART_RADIO_ONLY);
-		array.AppendL(R_MOBBLER_DOWNLOAD_ALBUM_ART_ALWAYS_WHEN_ONLINE);
+		RArray<TInt> downloadAlbumArtArray;
+		CleanupClosePushL(downloadAlbumArtArray);
+		downloadAlbumArtArray.AppendL(R_MOBBLER_DOWNLOAD_ALBUM_ART_NEVER);
+		downloadAlbumArtArray.AppendL(R_MOBBLER_DOWNLOAD_ALBUM_ART_RADIO_ONLY);
+		downloadAlbumArtArray.AppendL(R_MOBBLER_DOWNLOAD_ALBUM_ART_ALWAYS_WHEN_ONLINE);
 		CreateEnumItemL(iSettings->DownloadAlbumArt(),
 						R_MOBBLER_DOWNLOAD_ALBUM_ART,
 						R_MOBBLER_SETTING_PAGE_ENUM,
-						array);
-		CleanupStack::PopAndDestroy(&array);
+						downloadAlbumArtArray);
+		CleanupStack::PopAndDestroy(&downloadAlbumArtArray);
 		
 		// Scrobble percent slider setting item
 		CreateSliderItemL(iSettings->ScrobblePercent(),

@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
 #include "mobblerappui.h"
+#include "mobblerbitmapcollection.h"
 #include "mobblereventlist.h"
 #include "mobblerlastfmconnection.h"
 #include "mobblerlistitem.h"
@@ -32,8 +33,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "mobbler.hrh"
 
-_LIT(KDefaultImage, "\\resource\\apps\\mobbler\\default_event.png");
-
 CMobblerEventList::CMobblerEventList(CMobblerAppUi& aAppUi, CMobblerWebServicesControl& aWebServicesControl)
 	:CMobblerListControl(aAppUi, aWebServicesControl)
 	{
@@ -41,7 +40,7 @@ CMobblerEventList::CMobblerEventList(CMobblerAppUi& aAppUi, CMobblerWebServicesC
 
 void CMobblerEventList::ConstructL()
 	{
-    iDefaultImage = CMobblerBitmap::NewL(*this, KDefaultImage);
+	iDefaultImage = iAppUi.BitmapCollection().BitmapL(*this, CMobblerBitmapCollection::EBitmapDefaultEventImage);
     
     switch (iType)
     	{
@@ -61,6 +60,7 @@ void CMobblerEventList::ConstructL()
 
 CMobblerEventList::~CMobblerEventList()
 	{
+	delete iWebServicesHelper;
 	}
 
 CMobblerListControl* CMobblerEventList::HandleListCommandL(TInt aCommand)

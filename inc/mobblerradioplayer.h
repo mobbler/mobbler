@@ -58,7 +58,11 @@ public:
 		};
 	
 public:
-	static CMobblerRadioPlayer* NewL(CMobblerLastFMConnection& aLastFMConnection, TTimeIntervalSeconds aPreBufferSize, TInt aEqualizerIndex, TInt aVolume);
+	static CMobblerRadioPlayer* NewL(CMobblerLastFMConnection& aLastFMConnection,
+										TTimeIntervalSeconds aPreBufferSize, 
+										TInt aEqualizerIndex, 
+										TInt aVolume,
+										TInt aBitRate);
 	~CMobblerRadioPlayer();
 	
 	void AddObserverL(MMobblerRadioStateChangeObserver* aObserver);
@@ -67,17 +71,19 @@ public:
 	void StartL(CMobblerLastFMConnection::TRadioStation aRadioStation, const CMobblerString* aRadioText);
 	
 	CMobblerTrack* CurrentTrack();
+	CMobblerTrack* NextTrack();
 	
 	TState State() const;
 	TTransactionState TransactionState() const;
 
-	void NextTrackL();
+	void SkipTrackL();
 	void Stop();
 	
 	void VolumeUp();
 	void VolumeDown();
 	void SetEqualizer(TInt aIndex);
 	void SetPreBufferSize(TTimeIntervalSeconds aPreBufferSize);
+	void SetBitRateL(TInt aBitRate);
 	
 	TInt Volume() const;
 	TInt MaxVolume() const;
@@ -90,7 +96,11 @@ private: // from MMobblerAudioControlObserver
 	void HandleAudioFinishedL(CMobblerAudioControl* aAudioControl, TInt aError);
 	
 private:
-	CMobblerRadioPlayer(CMobblerLastFMConnection& aSubmitter, TTimeIntervalSeconds aPreBufferSize, TInt aEqualizerIndex, TInt aVolume);
+	CMobblerRadioPlayer(CMobblerLastFMConnection& aSubmitter, 
+							TTimeIntervalSeconds aPreBufferSize, 
+							TInt aEqualizerIndex, 
+							TInt aVolume,
+							TInt aBitRate);
 	void ConstructL();
 	
 	void SubmitCurrentTrackL();
@@ -129,6 +139,7 @@ private:
 	TInt iVolume;
 	TInt iMaxVolume;
 	TInt iEqualizerIndex;
+	TInt iBitRate;
 	
 	TState iState;
 	TTransactionState iTransactionState;

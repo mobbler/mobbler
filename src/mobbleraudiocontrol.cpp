@@ -33,13 +33,15 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
 const TInt KTimerDuration(250000); // 1/4 second
-const TInt KMobblerHeapSize(1000000); // 1 MB
 
-CMobblerAudioControl* CMobblerAudioControl::NewL(MMobblerAudioControlObserver& aObserver, CMobblerTrack& aTrack, TTimeIntervalSeconds aPreBufferSize, TInt aVolume, TInt aEqualizerIndex)
+const TInt KMobblerAudioThreadMinHeapSize(0x100000); // 1 MB
+const TInt KMobblerAudioThreadMaxHeapSize(0x300000); // 3 MB
+
+CMobblerAudioControl* CMobblerAudioControl::NewL(MMobblerAudioControlObserver& aObserver, CMobblerTrack& aTrack, TTimeIntervalSeconds aPreBufferSize, TInt aVolume, TInt aEqualizerIndex, TInt aBitRate)
 	{
 	CMobblerAudioControl* self = new(ELeave) CMobblerAudioControl(aObserver);
 	CleanupStack::PushL(self);
-	self->ConstructL(aTrack, aPreBufferSize, aVolume, aEqualizerIndex);
+	self->ConstructL(aTrack, aPreBufferSize, aVolume, aEqualizerIndex, aBitRate);
 	CleanupStack::Pop(self);
 	return self;
 	}
@@ -50,18 +52,33 @@ CMobblerAudioControl::CMobblerAudioControl(MMobblerAudioControlObserver& aObserv
 	CActiveScheduler::Add(this);
 	}
 
-void CMobblerAudioControl::ConstructL(CMobblerTrack& aTrack, TTimeIntervalSeconds aPreBufferSize, TInt aVolume, TInt aEqualizerIndex)
+void CMobblerAudioControl::ConstructL(CMobblerTrack& aTrack, TTimeIntervalSeconds aPreBufferSize, TInt aVolume, TInt aEqualizerIndex, TInt aBitRate)
 	{
 	// Set up the shared memory
 	iShared.iDownloadComplete = EFalse;
 	iShared.iPlaying = EFalse;
 	iShared.iTrack = &aTrack;
 	iShared.iPreBufferSize = aPreBufferSize;
-	iShared.iVolume = aVolume;
+	iShared.iAudioDataSettings.iVolume = aVolume;
+	
+	switch (aBitRate)
+		{
+		case 0:
+			iShared.iAudioDataSettings.iSampleRate = TMdaAudioDataSettings::ESampleRate24000Hz;
+			break;
+		case 1:
+			iShared.iAudioDataSettings.iSampleRate = TMdaAudioDataSettings::ESampleRate44100Hz;
+			break;
+		default:
+			// TODO: should panic
+			break;
+		}
+	
+	iShared.iAudioDataSettings.iChannels = TMdaAudioDataSettings::EChannelsStereo;
 	iShared.iEqualizerIndex = aEqualizerIndex;
 	
 	// Create the audio thread and wait for it to finish loading
-	User::LeaveIfError(iAudioThread.Create(KNullDesC, ThreadFunction, KDefaultStackSize, KMinHeapSize, KMinHeapSize + KMobblerHeapSize, &iShared));
+	User::LeaveIfError(iAudioThread.Create(KNullDesC, ThreadFunction, KDefaultStackSize, KMobblerAudioThreadMinHeapSize, KMobblerAudioThreadMaxHeapSize, &iShared));
 	iAudioThread.SetPriority(EPriorityRealTime);
 	TRequestStatus status;
 	iAudioThread.Rendezvous(status);
@@ -149,7 +166,7 @@ void CMobblerAudioControl::DataCompleteL(CMobblerLastFMConnection::TError aError
 
 void CMobblerAudioControl::SetVolume(TInt aVolume)
 	{
-	iShared.iVolume = aVolume;
+	iShared.iAudioDataSettings.iVolume = aVolume;
 	SendCmd(ECmdSetVolume);
 	}
 
@@ -187,7 +204,7 @@ TTimeIntervalSeconds CMobblerAudioControl::PreBufferSize() const
 
 TInt CMobblerAudioControl::Volume() const
 	{
-	return iShared.iVolume;
+	return iShared.iAudioDataSettings.iVolume;
 	}
 
 TInt CMobblerAudioControl::MaxVolume() const

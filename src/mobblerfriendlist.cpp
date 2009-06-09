@@ -22,11 +22,18 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
 #include <aknquerydialog.h>
-#include <mobbler.rsg>
+
+#ifdef __SYMBIAN_SIGNED__
+#include <mobbler_strings_0x2002655A.rsg>
+#include <mobbler_0x2002655A.rsg>
+#else
 #include <mobbler_strings.rsg>
+#include <mobbler.rsg>
+#endif
 
 #include "mobbler.hrh"
 #include "mobblerappui.h"
+#include "mobblerbitmapcollection.h"
 #include "mobblerfriendlist.h"
 #include "mobblereventlist.h"
 #include "mobblerlastfmconnection.h"
@@ -38,8 +45,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "mobblerstring.h"
 #include "mobblertrack.h"
 
-_LIT(KDefaultImage, "\\resource\\apps\\mobbler\\default_user.png");
-
 CMobblerFriendList::CMobblerFriendList(CMobblerAppUi& aAppUi, CMobblerWebServicesControl& aWebServicesControl)
 	:CMobblerListControl(aAppUi, aWebServicesControl)
 	{
@@ -47,7 +52,7 @@ CMobblerFriendList::CMobblerFriendList(CMobblerAppUi& aAppUi, CMobblerWebService
 
 void CMobblerFriendList::ConstructL()
 	{
-	iDefaultImage = CMobblerBitmap::NewL(*this, KDefaultImage);
+	iDefaultImage = iAppUi.BitmapCollection().BitmapL(*this, CMobblerBitmapCollection::EBitmapDefaultUserImage);
 	
 	iAppUi.LastFMConnection().WebServicesCallL(_L8("user"), _L8("getfriends"), iText1->String8(), *this);
 	}

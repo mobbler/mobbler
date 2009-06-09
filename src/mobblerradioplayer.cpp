@@ -22,7 +22,14 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
 #include <aknnotewrappers.h>
+
+#ifdef __SYMBIAN_SIGNED__
+#include <mobbler_strings_0x2002655A.rsg>
+#include <mobbler_0x2002655A.rsg>
+#else
 #include <mobbler_strings.rsg>
+#include <mobbler.rsg>
+#endif
 
 #include "mobblerappui.h"
 #include "mobbleraudiocontrol.h"
@@ -44,17 +51,31 @@ const TInt KDefaultMaxVolume(10);
 // so that we do not get tracks that can't be downloaded when restarting
 const TTimeIntervalMicroSeconds32 KRadioTimeout(5 * 60 * 1000000);
 
-CMobblerRadioPlayer* CMobblerRadioPlayer::NewL(CMobblerLastFMConnection& aSubmitter, TTimeIntervalSeconds aPreBufferSize, TInt aEqualizerIndex, TInt aVolume)
+CMobblerRadioPlayer* CMobblerRadioPlayer::NewL(CMobblerLastFMConnection& aSubmitter, 
+												TTimeIntervalSeconds aPreBufferSize,
+												TInt aEqualizerIndex, 
+												TInt aVolume,
+												TInt aBitRate)
 	{
-	CMobblerRadioPlayer* self = new(ELeave) CMobblerRadioPlayer(aSubmitter, aPreBufferSize, aEqualizerIndex, aVolume);
+	CMobblerRadioPlayer* self = new(ELeave) CMobblerRadioPlayer(aSubmitter, aPreBufferSize, aEqualizerIndex, aVolume, aBitRate);
 	CleanupStack::PushL(self);
 	self->ConstructL();
 	CleanupStack::Pop(self);
 	return self;
 	}
 
-CMobblerRadioPlayer::CMobblerRadioPlayer(CMobblerLastFMConnection& aLastFMConnection, TTimeIntervalSeconds aPreBufferSize, TInt aEqualizerIndex, TInt aVolume)
-	:CActive(CActive::EPriorityStandard), iLastFMConnection(aLastFMConnection), iPreBufferSize(aPreBufferSize), iVolume(aVolume), iMaxVolume(KDefaultMaxVolume), iEqualizerIndex(aEqualizerIndex)
+CMobblerRadioPlayer::CMobblerRadioPlayer(CMobblerLastFMConnection& aLastFMConnection,
+											TTimeIntervalSeconds aPreBufferSize,
+											TInt aEqualizerIndex,
+											TInt aVolume,
+											TInt aBitRate)
+	:CActive(CActive::EPriorityStandard), 
+	iLastFMConnection(aLastFMConnection), 
+	iPreBufferSize(aPreBufferSize), 
+	iVolume(aVolume), 
+	iMaxVolume(KDefaultMaxVolume), 
+	iEqualizerIndex(aEqualizerIndex),
+	iBitRate(aBitRate)
 	{
 	CActiveScheduler::Add(this);
 	}
@@ -175,15 +196,15 @@ void CMobblerRadioPlayer::HandleAudioPositionChangeL()
 		if (iCurrentTrackIndex + 1 < iCurrentPlaylist->Count())
 			{
 			// There is more in the playlist so start fetching the next track
-			iNextAudioControl = CMobblerAudioControl::NewL(*this,  *(*iCurrentPlaylist)[iCurrentTrackIndex + 1], iPreBufferSize, iVolume, iEqualizerIndex);
-			iLastFMConnection.RequestMp3L(*iNextAudioControl, (*iCurrentPlaylist)[iCurrentTrackIndex + 1]);
+			iNextAudioControl = CMobblerAudioControl::NewL(*this,  *(*iCurrentPlaylist)[iCurrentTrackIndex + 1], iPreBufferSize, iVolume, iEqualizerIndex, iBitRate);
+			iLastFMConnection.RequestMp3L(*iNextAudioControl, (*iCurrentPlaylist)[iCurrentTrackIndex + 1]->Mp3Location());
 			DoChangeStateL(EPlaying);
 			}
 		else if (iNextPlaylist)
 			{
 			// there is another playlist so fetch the first track for that
-			iNextAudioControl = CMobblerAudioControl::NewL(*this,  *(*iNextPlaylist)[0], iPreBufferSize, iVolume, iEqualizerIndex);
-			iLastFMConnection.RequestMp3L(*iNextAudioControl, (*iNextPlaylist)[0]);
+			iNextAudioControl = CMobblerAudioControl::NewL(*this,  *(*iNextPlaylist)[0], iPreBufferSize, iVolume, iEqualizerIndex, iBitRate);
+			iLastFMConnection.RequestMp3L(*iNextAudioControl, (*iNextPlaylist)[0]->Mp3Location());
 			DoChangeStateL(EPlaying);
 			}
 		}
@@ -204,7 +225,7 @@ void CMobblerRadioPlayer::HandleAudioFinishedL(CMobblerAudioControl* aAudioContr
 		if (aAudioControl == iCurrentAudioControl)
 			{
 			// The current track has finished so try to start the new one 
-			NextTrackL();
+			SkipTrackL();
 			}
 		else if (aAudioControl == iNextAudioControl)
 			{
@@ -354,7 +375,7 @@ void CMobblerRadioPlayer::DataL(const TDesC8& aData, CMobblerLastFMConnection::T
 						iCurrentPlaylist = playlist;
 						
 						iCurrentTrackIndex = -1;
-						NextTrackL();
+						SkipTrackL();
 						}
 					}
 				else
@@ -397,7 +418,7 @@ void CMobblerRadioPlayer::DataL(const TDesC8& aData, CMobblerLastFMConnection::T
 		}
 	}
 
-void CMobblerRadioPlayer::NextTrackL()
+void CMobblerRadioPlayer::SkipTrackL()
 	{	
 	DoStop(EFalse);
 	
@@ -432,8 +453,8 @@ void CMobblerRadioPlayer::NextTrackL()
 				else
 					{
 					// Create the next audio control and request the mp3
-					iCurrentAudioControl = CMobblerAudioControl::NewL(*this, *(*iCurrentPlaylist)[iCurrentTrackIndex], iPreBufferSize, iVolume, iEqualizerIndex);
-					iLastFMConnection.RequestMp3L(*iCurrentAudioControl, (*iCurrentPlaylist)[iCurrentTrackIndex]);
+					iCurrentAudioControl = CMobblerAudioControl::NewL(*this, *(*iCurrentPlaylist)[iCurrentTrackIndex], iPreBufferSize, iVolume, iEqualizerIndex, iBitRate);
+					iLastFMConnection.RequestMp3L(*iCurrentAudioControl, (*iCurrentPlaylist)[iCurrentTrackIndex]->Mp3Location());
 					DoChangeStateL(EPlaying);
 					}
 				
@@ -473,7 +494,7 @@ void CMobblerRadioPlayer::NextTrackL()
 				iNextPlaylist = NULL;
 				
 				iCurrentTrackIndex = -1;
-				NextTrackL();
+				SkipTrackL();
 				}
 			}
 		}
@@ -565,6 +586,30 @@ void CMobblerRadioPlayer::SetPreBufferSize(TTimeIntervalSeconds aPreBufferSize)
 		}
 	}
 
+void CMobblerRadioPlayer::SetBitRateL(TInt aBitRate)
+	{
+	if (aBitRate != iBitRate)
+		{
+		// The sample rate has changed so we need to
+		// fetch a new playlist for the next song.
+		iBitRate = aBitRate;
+		
+		// remove the rest of the songs from this playlist		
+		for (TInt i(iCurrentPlaylist->Count() - 1) ; i > iCurrentTrackIndex ; --i)
+			{
+			iCurrentPlaylist->RemoveAndReleaseTrack(i);
+			}
+		
+		// remove the next playlist and fetch a new one
+		// the next track will have the correct new sample rate
+		delete iNextPlaylist;
+		iNextPlaylist == NULL;
+		
+		DoChangeTransactionStateL(EFetchingPlaylist);
+		iLastFMConnection.RequestPlaylistL(this);
+		}
+	}
+
 void CMobblerRadioPlayer::Stop()
 	{
 	DoStop(ETrue);
@@ -621,6 +666,21 @@ CMobblerTrack* CMobblerRadioPlayer::CurrentTrack()
 	return NULL;
 	}
 
+CMobblerTrack* CMobblerRadioPlayer::NextTrack()
+	{
+	if (iCurrentPlaylist && (iCurrentPlaylist->Count() > iCurrentTrackIndex + 1))
+		{
+		return (*iCurrentPlaylist)[iCurrentTrackIndex + 1];
+		}
+	else if (iCurrentPlaylist && (iCurrentPlaylist->Count() == iCurrentTrackIndex + 1) && iNextPlaylist && (iNextPlaylist->Count() > 0))
+		{
+		// The next track is the first song in the next playlist so return that
+		return (*iNextPlaylist)[0];
+		}
+	
+	return NULL;
+	}
+
 void CMobblerRadioPlayer::SubmitCurrentTrackL()
 	{
 	if (iCurrentAudioControl && (!iCurrentAudioControl->DownloadComplete() || iCurrentAudioControl->Playing()))
@@ -649,7 +709,7 @@ void CMobblerRadioPlayer::HandleIncomingCallL(TPSTelephonyCallState aPSTelephony
 			if (iRestartRadioOnCallDisconnect)
 				{
 				iRestartRadioOnCallDisconnect = EFalse;
-				NextTrackL();
+				SkipTrackL();
 				}
 			break;
 		case EPSTelephonyCallStateUninitialized:

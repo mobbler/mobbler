@@ -30,9 +30,15 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "mobblercontentlisting.h"
 #include "mobblercontentlistingobserver.h"
 
+#ifdef __SYMBIAN_SIGNED__
+const TInt KImplementationUid = {0x2002661E};
+#else
+const TInt KImplementationUid = {0xA000BEB3};
+#endif
+
 const TImplementationProxy ImplementationTable[] =
     {
-    {{0xA000BEB1}, TProxyNewLPtr(CMobblerContentListing::NewL)}
+    {KImplementationUid, TProxyNewLPtr(CMobblerContentListing::NewL)}
     };
 
 EXPORT_C const TImplementationProxy* ImplementationGroupProxy(TInt& aTableCount)

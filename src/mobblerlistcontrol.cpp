@@ -22,7 +22,12 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
 #include <gulicon.h>
+
+#ifdef __SYMBIAN_SIGNED__
+#include <mobbler_strings_0x2002655A.rsg>
+#else
 #include <mobbler_strings.rsg>
+#endif
 
 #include "mobbler.hrh"
 #include "mobbleralbumlist.h"
@@ -39,6 +44,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "mobblertaglist.h"
 #include "mobblertracklist.h"
 #include "mobblerwebservicescontrol.h"
+#include "mobblerbitmapcollection.h"
 
 _LIT(KDoubleLargeStyleListBoxTextFormat, "%d\t%S\t%S");
 _LIT(KRecentTracksTitleFormat, "%S - %S");
@@ -166,7 +172,7 @@ CMobblerListControl::~CMobblerListControl()
 	iList.ResetAndDestroy();
 	delete iListBox;
 	delete iListBoxItems;
-	delete iDefaultImage;
+	iAppUi.BitmapCollection().Cancel(iDefaultImage);
 	delete iText1;
 	delete iText2;
 	}
@@ -308,7 +314,7 @@ void CMobblerListControl::DataL(const TDesC8& aXml, CMobblerLastFMConnection::TE
 				case EMobblerCommandUserTopArtists:
 				case EMobblerCommandArtistTopTracks:
 					{
-					TInt descriptionFormatId;
+					TInt descriptionFormatId(0);
 
 					switch (iType)
 						{

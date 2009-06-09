@@ -56,7 +56,11 @@ RESOURCE LOCALISABLE_APP_INFO r_localisable_app_info
 		caption = STR_mobbler_mobbler;
 
 		number_of_icons = 1;
+#ifdef __SYMBIAN_SIGNED__
+		icon_file = "\\resource\\apps\\mobbler_0x2002655A.mif";
+#else
 		icon_file = "\\resource\\apps\\mobbler.mif";
+#endif
 		};
 	}
 

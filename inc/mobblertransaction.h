@@ -52,6 +52,8 @@ public:
 	void SetFlatDataObserver(MMobblerFlatDataObserver* aFlatDataObserver);
 	MMobblerFlatDataObserver* FlatDataObserver();
 	
+	RHTTPTransaction& Transaction();
+	
 private: // from MHTTPTransactionCallback
 	void MHFRunL(RHTTPTransaction aTransaction, const THTTPEvent& aEvent);
 	TInt MHFRunError(TInt aError, RHTTPTransaction aTransaction, const THTTPEvent &aEvent);

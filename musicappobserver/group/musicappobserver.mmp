@@ -21,12 +21,17 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
+#include "mobbler.mmh"
+
+#ifdef SYMBIAN_SIGNED
+TARGET		musicappobserver_0x2002655E.dll
+TARGETTYPE	PLUGIN
+UID		0x10009D8D 0x2002655E
+#else
 TARGET		musicappobserver.dll
 TARGETTYPE	PLUGIN
-
 UID		0x10009D8D 0xA0007CAB
-
-CAPABILITY	NetworkServices ReadUserData
+#endif
 
 SOURCEPATH	..\src
 USERINCLUDE	..\inc
@@ -34,7 +39,13 @@ SYSTEMINCLUDE	\epoc32\include
 
 SOURCE		musicappobserver.cpp
 
-RESOURCE	..\data\musicappobserver.rss
+START RESOURCE ..\data\musicappobserver.rss
+#ifdef SYMBIAN_SIGNED
+TARGET musicappobserver_0x2002655E
+#else
+TARGET musicappobserver
+#endif
+END
 
 LIBRARY		apgrfx.lib
 LIBRARY		apparc.lib

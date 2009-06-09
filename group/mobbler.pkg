@@ -58,6 +58,10 @@
 "$(EPOCROOT)epoc32\release\$(PLATFORM)\$(TARGET)\gestureobserver3x.dll"-"!:\sys\bin\gestureobserver3x.dll"
 "$(EPOCROOT)epoc32\data\z\resource\plugins\gestureobserver3x.rsc"-"!:\resource\plugins\gestureobserver3x.rsc"
 
+; Destinations (uses cmmanager.lib (3.2 onwards))
+"$(EPOCROOT)epoc32\release\$(PLATFORM)\$(TARGET)\mobblerdestinations.dll"-"!:\sys\bin\mobblerdestinations.dll"
+"$(EPOCROOT)epoc32\data\z\resource\plugins\mobblerdestinations.rsc"-"!:\resource\plugins\mobblerdestinations.rsc"
+
 ; Graphics
 "$(EPOCROOT)epoc32\data\z\resource\apps\mobbler\scrobble.png"-		"!:\resource\apps\mobbler\scrobble.png"
 "$(EPOCROOT)epoc32\data\z\resource\apps\mobbler\icon_alarm.png"-		"!:\resource\apps\mobbler\icon_alarm.png"

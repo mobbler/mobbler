@@ -32,8 +32,13 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "mobblerstring.h"
 #include "mobblertrack.h"
 
-const TUid KMobblerMusicAppImplUid = {0xA0007CAA};
-const TUid KContentListingImplUid = {0xA000BEB1};
+#ifdef __SYMBIAN_SIGNED__
+const TUid KMobblerMusicAppInterfaceUid = {0x2002655D};
+const TUid KContentListingImplUid = {0x2002661E};
+#else
+const TUid KMobblerMusicAppInterfaceUid = {0xA0007CAA};
+const TUid KContentListingImplUid = {0xA000BEB3};
+#endif
 
 CMobblerMusicAppListener* CMobblerMusicAppListener::NewL(CMobblerLastFMConnection& aSubmitter)
 	{
@@ -54,7 +59,7 @@ void CMobblerMusicAppListener::ConstructL()
 	RImplInfoPtrArray implInfoPtrArray;
 	CleanupClosePushL(implInfoPtrArray);
 	
-	REComSession::ListImplementationsL(KMobblerMusicAppImplUid, implInfoPtrArray);
+	REComSession::ListImplementationsL(KMobblerMusicAppInterfaceUid, implInfoPtrArray);
 	
 	const TInt KImplCount(implInfoPtrArray.Count());
 	for (TInt i(0); i < KImplCount ; ++i)

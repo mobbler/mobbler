@@ -42,7 +42,12 @@ public:
 class CMobblerAudioControl : public CActive, public MMobblerSegDataObserver
 	{
 public:
-	static CMobblerAudioControl* NewL(MMobblerAudioControlObserver& aObserver, CMobblerTrack& aTrack, TTimeIntervalSeconds aPreBufferSize, TInt aVolume, TInt aEqualizerIndex);
+	static CMobblerAudioControl* NewL(MMobblerAudioControlObserver& aObserver,
+										CMobblerTrack& aTrack,
+										TTimeIntervalSeconds aPreBufferSize, 
+										TInt aVolume,
+										TInt aEqualizerIndex,
+										TInt aSampleRate);
 	~CMobblerAudioControl();
 	
 	void SetVolume(TInt aVolume);
@@ -58,7 +63,7 @@ public:
 	
 private:
 	CMobblerAudioControl(MMobblerAudioControlObserver& aObserver);
-	void ConstructL(CMobblerTrack& aTrack, TTimeIntervalSeconds aPreBufferSize, TInt aVolume, TInt aEqualizerIndex);
+	void ConstructL(CMobblerTrack& aTrack, TTimeIntervalSeconds aPreBufferSize, TInt aVolume, TInt aEqualizerIndex, TInt aSampleRate);
 	
 	void SendCmd(TMobblerAudioCmd aCmd);
 	

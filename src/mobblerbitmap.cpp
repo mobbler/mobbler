@@ -29,7 +29,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 CMobblerBitmap* CMobblerBitmap::NewL(MMobblerBitmapObserver& aObserver, const TDesC& aMifFileName, TInt aBitmapIndex, TInt iMaskIndex)
 	{
-	CMobblerBitmap* self = new(ELeave) CMobblerBitmap(aObserver);
+	CMobblerBitmap* self = new(ELeave) CMobblerBitmap(&aObserver);
 	CleanupStack::PushL(self);
 	self->ConstructL(aMifFileName, aBitmapIndex, iMaskIndex);
 	CleanupStack::Pop(self);
@@ -38,7 +38,7 @@ CMobblerBitmap* CMobblerBitmap::NewL(MMobblerBitmapObserver& aObserver, const TD
 
 CMobblerBitmap* CMobblerBitmap::NewL(MMobblerBitmapObserver& aObserver, TUid aAppUid)
 	{
-	CMobblerBitmap* self = new(ELeave) CMobblerBitmap(aObserver);
+	CMobblerBitmap* self = new(ELeave) CMobblerBitmap(&aObserver);
 	CleanupStack::PushL(self);
 	self->ConstructL(aAppUid);
 	CleanupStack::Pop(self);
@@ -47,7 +47,7 @@ CMobblerBitmap* CMobblerBitmap::NewL(MMobblerBitmapObserver& aObserver, TUid aAp
 
 CMobblerBitmap* CMobblerBitmap::NewL(MMobblerBitmapObserver& aObserver, const TDesC& aFileName, const TUid aFileUid)
 	{
-	CMobblerBitmap* self = new(ELeave) CMobblerBitmap(aObserver);
+	CMobblerBitmap* self = new(ELeave) CMobblerBitmap(&aObserver);
 	CleanupStack::PushL(self);
 	self->ConstructL(aFileName, aFileUid);
 	CleanupStack::Pop(self);
@@ -56,15 +56,15 @@ CMobblerBitmap* CMobblerBitmap::NewL(MMobblerBitmapObserver& aObserver, const TD
 
 CMobblerBitmap* CMobblerBitmap::NewL(MMobblerBitmapObserver& aObserver, const TDesC8& aData, const TUid aFileUid)
 	{
-	CMobblerBitmap* self = new(ELeave) CMobblerBitmap(aObserver);
+	CMobblerBitmap* self = new(ELeave) CMobblerBitmap(&aObserver);
 	CleanupStack::PushL(self);
 	self->ConstructL(aData, aFileUid);
 	CleanupStack::Pop(self);
 	return self;
 	}
 
-CMobblerBitmap::CMobblerBitmap(MMobblerBitmapObserver& aObserver)
-	:CActive(CActive::EPriorityStandard), iObserver(&aObserver)
+CMobblerBitmap::CMobblerBitmap(MMobblerBitmapObserver* aObserver)
+	:CActive(CActive::EPriorityStandard), iObserver(aObserver), iRefCount(1)
 	{
 	CActiveScheduler::Add(this);
 	}
@@ -87,6 +87,19 @@ CMobblerBitmap::~CMobblerBitmap()
 	delete iImageDecoder;
 	delete iData;
 	delete iMifFileName;
+	}
+
+void CMobblerBitmap::Open() const
+	{
+	++iRefCount;
+	}
+
+void CMobblerBitmap::Close() const
+	{
+	if (this && --iRefCount == 0)
+		{
+		delete this;
+		}
 	}
 
 void CMobblerBitmap::SetCallbackCancelled(TBool aCallbackCancelled)
@@ -331,7 +344,7 @@ void CMobblerBitmap::DoCancel()
 void CMobblerBitmap::ScaleL(TSize aSize)
 	{
 	if (iBitmapLoaded && iScaleStatus != EMobblerScalePending
-			&& !LongSidesEqual(aSize))
+			&& !LongSidesEqual(iBitmap->SizeInPixels(), aSize))
 		{
 		// Delete and stop any previous attempt to scale and create a new scaler
 		Cancel();
@@ -363,14 +376,14 @@ CMobblerBitmap::TMobblerScaleStatus CMobblerBitmap::ScaleStatus() const
 	return iScaleStatus;
 	}
 
-TBool CMobblerBitmap::LongSidesEqual(TSize aSize) const
+TBool CMobblerBitmap::LongSidesEqual(TSize aLeftSize, TSize aRightSize)
 	{
-	TInt width(SizeInPixels().iWidth);
-	TInt height(SizeInPixels().iHeight);
+	TInt width(aLeftSize.iWidth);
+	TInt height(aLeftSize.iHeight);
 	
-	if ((width >= height && width == aSize.iWidth)
+	if ((width >= height && width == aRightSize.iWidth)
 			||
-		(height >= width && height == aSize.iHeight))
+		(height >= width && height == aRightSize.iHeight))
 		{
 		return ETrue;
 		}

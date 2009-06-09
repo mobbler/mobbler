@@ -23,11 +23,18 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <aknmessagequerydialog.h>
 #include <aknquerydialog.h>
+
+#ifdef __SYMBIAN_SIGNED__
+#include <mobbler_strings_0x2002655A.rsg>
+#include <mobbler_0x2002655A.rsg>
+#else
 #include <mobbler_strings.rsg>
 #include <mobbler.rsg>
+#endif
 
 #include "mobbler.hrh"
 #include "mobblerappui.h"
+#include "mobblerbitmapcollection.h"
 #include "mobblershoutbox.h"
 #include "mobblereventlist.h"
 #include "mobblerplaylistlist.h"
@@ -47,7 +54,7 @@ CMobblerShoutbox::CMobblerShoutbox(CMobblerAppUi& aAppUi, CMobblerWebServicesCon
 
 void CMobblerShoutbox::ConstructL()
 	{
-	iDefaultImage = CMobblerBitmap::NewL(*this, KDefaultImage);
+	iDefaultImage = iAppUi.BitmapCollection().BitmapL(*this, CMobblerBitmapCollection::EBitmapDefaultUserImage);
 	
 	switch (iType)
 		{

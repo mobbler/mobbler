@@ -28,9 +28,15 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 const TUid KMusicAppUID = {0x102072C3};
 
+#ifdef __SYMBIAN_SIGNED__
+const TInt KImplementationUid = {0x2002655F}; 
+#else
+const TInt KImplementationUid = {0xA0007CAC}; 
+#endif
+
 const TImplementationProxy ImplementationTable[] =
     {
-    {{0xA0007CAC}, TProxyNewLPtr(CMobblerMusicAppObserver::NewL)}
+    {KImplementationUid, TProxyNewLPtr(CMobblerMusicAppObserver::NewL)}
     };
 
 EXPORT_C const TImplementationProxy* ImplementationGroupProxy(TInt& aTableCount)

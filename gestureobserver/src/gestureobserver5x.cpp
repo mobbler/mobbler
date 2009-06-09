@@ -27,10 +27,16 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "gestureevent.h"
 #include "gestureobserver5x.h"
 
+#ifdef __SYMBIAN_SIGNED__
+const TInt KImplementationUid = {0x2002656A};
+#else
+const TInt KImplementationUid = {0xA000B6C2};
+#endif
+
 // Required for ECOM plugin
 const TImplementationProxy ImplementationTable[] =
     {
-    {{0xA000B6C2}, TProxyNewLPtr( CMobblerGestureObserver5x::NewL )}
+    {KImplementationUid, TProxyNewLPtr( CMobblerGestureObserver5x::NewL )}
     };
 
 EXPORT_C const TImplementationProxy* ImplementationGroupProxy(TInt& aTableCount)

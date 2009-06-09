@@ -29,11 +29,17 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 // Verbose debug logging.
 // MACRO __GESTURE_DEBUG_LOGGING__
 
+#ifdef __SYMBIAN_SIGNED__
+TARGET		gestureobserver5x_0x20026569.dll
+TARGETTYPE	PLUGIN
+UID		0x10009D8D 0x20026569
+#else
 TARGET		gestureobserver5x.dll
 TARGETTYPE	PLUGIN
-EPOCALLOWDLLDATA
-
 UID		0x10009D8D 0xA000B6D1
+#endif
+
+EPOCALLOWDLLDATA
 
 CAPABILITY	NetworkServices ReadUserData
 

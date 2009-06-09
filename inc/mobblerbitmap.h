@@ -48,12 +48,13 @@ public:
 		};
 	
 public:
-	
 	static CMobblerBitmap* NewL(MMobblerBitmapObserver& aObserver, const TDesC& aMifFileName, TInt aBitmapIndex, TInt iMaskIndex);
 	static CMobblerBitmap* NewL(MMobblerBitmapObserver& aObserver, TUid aAppUid);
 	static CMobblerBitmap* NewL(MMobblerBitmapObserver& aObserver, const TDesC& aFileName, const TUid aImageType = KNullUid);
 	static CMobblerBitmap* NewL(MMobblerBitmapObserver& aObserver, const TDesC8& aData, const TUid aImageType = KNullUid);
-	~CMobblerBitmap();
+	
+	void Open() const;
+	void Close() const;
 	
 	CFbsBitmap* Bitmap() const;
 	CFbsBitmap* BitmapGrayL() const;
@@ -64,7 +65,7 @@ public:
 
 	void ScaleL(TSize aSize);
 	TMobblerScaleStatus ScaleStatus() const;
-	TBool LongSidesEqual(TSize aSize) const;
+	static TBool LongSidesEqual(TSize aLeftSize, TSize aRightSize);
 	
 	void SetCallbackCancelled(TBool aCallbackCancelled);
 	void SetObserver(MMobblerBitmapObserver& aObserver);
@@ -75,7 +76,8 @@ private:
 	void ConstructL(TUid aAppUid);
 	void ConstructL(const TDesC& aMifFileName, TInt aBitmapIndex, TInt iMaskIndex);
 	
-	CMobblerBitmap(MMobblerBitmapObserver& aObserver);
+	CMobblerBitmap(MMobblerBitmapObserver* aObserver);
+	~CMobblerBitmap();
 	
 private:
 	void RunL();
@@ -100,6 +102,8 @@ private:
 	CFbsBitmap* iScaledBitmap;
 	CFbsBitmap* iOriginalBitmap;
 	TMobblerScaleStatus iScaleStatus;
+	
+	mutable TInt iRefCount;
 	};
 
 #endif

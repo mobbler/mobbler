@@ -72,6 +72,9 @@ public:
 	
 	TInt& IapId() { return iIapId; }
 	void SetIapId(TInt aIapId) { iIapId = aIapId; }
+		
+	TInt& BitRate() { return iBitRate; }
+	void SetBitRate(TInt aBitRate) { iBitRate = aBitRate; }
 	
 	TInt& BufferSize() { return iBufferSize; }
 	void SetBufferSize(TInt aBufferSize) { iBufferSize = aBufferSize; }
@@ -135,6 +138,7 @@ protected:
 	TBool iAlarmOn;
 	TTime iAlarmTime;
 	TInt iAlarmIapId;
+	TInt iBitRate;
 	};
 
 #endif // __MOBBLERSETTINGITEMLISTSETTINGS_H__

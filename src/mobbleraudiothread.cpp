@@ -74,11 +74,6 @@ CMobblerAudioThread::CMobblerAudioThread(TAny* aData)
 	{
 	CActiveScheduler::Add(this);
 	
-	// sound inits
-	iSet.iChannels = TMdaAudioDataSettings::EChannelsStereo;
-	iSet.iSampleRate = TMdaAudioDataSettings::ESampleRate44100Hz;
-	iSet.iVolume = iShared.iVolume;
-	
 	iShared.iPlaying = EFalse;
 	iPreBufferOffset = 0;
 	}
@@ -139,7 +134,7 @@ void CMobblerAudioThread::RunL()
 		case ECmdSetCurrent:
 			{
 			iStream = CMdaAudioOutputStream::NewL(*this);
-			iStream->Open(&iSet);
+			iStream->Open(&iShared.iAudioDataSettings);
 			TRAP_IGNORE(iEqualizer = CAudioEqualizerUtility::NewL(*iStream));
 			}
 			break;
@@ -186,7 +181,7 @@ void CMobblerAudioThread::SetVolume()
 	{
 	if (iStream)
 		{
-		iStream->SetVolume(iShared.iVolume);
+		iStream->SetVolume(iShared.iAudioDataSettings.iVolume);
 		}
 	}
 
@@ -289,8 +284,8 @@ void CMobblerAudioThread::MaoscBufferCopied(TInt /*aError*/, const TDesC8& /*aBu
 void CMobblerAudioThread::MaoscOpenComplete(TInt /*aError*/)
 	{
 	TRAP_IGNORE(iStream->SetDataTypeL(KMMFFourCCCodeMP3));
-	iStream->SetAudioPropertiesL(iSet.iSampleRate, iSet.iChannels);
-	iStream->SetVolume(iShared.iVolume);
+	iStream->SetAudioPropertiesL(iShared.iAudioDataSettings.iSampleRate, iShared.iAudioDataSettings.iChannels);
+	iStream->SetVolume(iShared.iAudioDataSettings.iVolume);
 	iShared.iMaxVolume = iStream->MaxVolume();
 	
 	SetEqualizerIndexL();

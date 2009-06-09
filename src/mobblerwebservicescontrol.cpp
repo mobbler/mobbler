@@ -21,10 +21,14 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
+#ifdef __SYMBIAN_SIGNED__
+#include <mobbler_strings_0x2002655A.rsg>
+#else
+#include <mobbler_strings.rsg>
+#endif
+
 #include <aknnavide.h>
 #include <aknnavilabel.h>
-
-#include <mobbler_strings.rsg>
 
 #include "mobblerappui.h"
 #include "mobblerlistcontrol.h"
@@ -202,7 +206,7 @@ void CMobblerWebServicesControl::Back()
 	if (iControls.Count() == 1)
 		{
 		// switch back to the staus view
-		iAppUi.ActivateLocalViewL(TUid::Uid(0xA0007CA8)); // switch back to the status view		
+		iAppUi.ActivateLocalViewL(TUid::Uid(KMobblerStatusViewUid)); // switch back to the status view		
 		}
 	else
 		{

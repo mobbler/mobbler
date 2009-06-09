@@ -27,11 +27,20 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <commdbconnpref.h> 
 #include <httperr.h>
 #include <httpstringconstants.h>
+
+#ifdef __SYMBIAN_SIGNED__
+#include <mobbler_strings_0x2002655A.rsg>
+#include <mobbler_0x2002655A.rsg>
+#else
 #include <mobbler_strings.rsg>
+#include <mobbler.rsg>
+#endif
+
 #include <ProfileEngineSDKCRKeys.h>
 #include <s32file.h>
 
 #include "mobblerappui.h"
+#include "mobblerdestinationsinterface.h"
 #include "mobblerlastfmconnection.h"
 #include "mobblerlastfmconnectionobserver.h"
 #include "mobblerparser.h"
@@ -81,17 +90,21 @@ const TInt KMaxSubmitTracks(50);
 
 const TInt KOfflineProfileId = 5;
 
-CMobblerLastFMConnection* CMobblerLastFMConnection::NewL(MMobblerLastFMConnectionObserver& aObserver, const TDesC& aUsername, const TDesC& aPassword, TUint32 aIapID)
+CMobblerLastFMConnection* CMobblerLastFMConnection::NewL(MMobblerLastFMConnectionObserver& aObserver, 
+															const TDesC& aUsername, 
+															const TDesC& aPassword, 
+															TUint32 aIapID, 
+															TInt aBitRate)
 	{
-	CMobblerLastFMConnection* self = new(ELeave) CMobblerLastFMConnection(aObserver, aIapID);
+	CMobblerLastFMConnection* self = new(ELeave) CMobblerLastFMConnection(aObserver, aIapID, aBitRate);
 	CleanupStack::PushL(self);
 	self->ConstructL(aUsername, aPassword);
 	CleanupStack::Pop(self);
 	return self;
 	}
 
-CMobblerLastFMConnection::CMobblerLastFMConnection(MMobblerLastFMConnectionObserver& aObserver, TUint32 aIapID)
-	:CActive(CActive::EPriorityStandard), iIapID(aIapID), iObserver(aObserver)
+CMobblerLastFMConnection::CMobblerLastFMConnection(MMobblerLastFMConnectionObserver& aObserver, TUint32 aIapID, TInt aBitRate)
+	:CActive(CActive::EPriorityStandard), iIapID(aIapID), iObserver(aObserver), iBitRate(aBitRate)
 	{
 	CActiveScheduler::Add(this);
 	}
@@ -112,6 +125,7 @@ CMobblerLastFMConnection::~CMobblerLastFMConnection()
 		}
 	iTrackQueue.Reset();
 	
+	delete iMp3Location;
 	iRadioAudioTransaction.Close();
 	
 	iStateChangeObservers.Close();
@@ -169,6 +183,11 @@ void CMobblerLastFMConnection::SetIapIDL(TUint32 aIapID)
 			ConnectL();
 			}
 		}
+	}
+
+void CMobblerLastFMConnection::SetBitRateL(TInt aBitRate)
+	{
+	iBitRate = aBitRate;
 	}
 
 TUint32 CMobblerLastFMConnection::IapID() const
@@ -271,11 +290,59 @@ void CMobblerLastFMConnection::RemoveStateChangeObserver(MMobblerConnectionState
 		iStateChangeObservers.Remove(pos);
 		}
 	}
+
+void CMobblerLastFMConnection::PreferredCarrierAvailable()
+	{
+	CloseTransactionsL(EFalse);
+	iHTTPSession.Close();
+	}
+
+void CMobblerLastFMConnection::NewCarrierActive()
+	{
+	User::LeaveIfError(iConnection.GetIntSetting(_L("IAP\\Id"), iCurrentIapID));
+	
+	iHTTPSession.OpenL();
+	
+	RStringPool strP(iHTTPSession.StringPool());
+	RHTTPConnectionInfo connInfo(iHTTPSession.ConnectionInfo());
+	connInfo.SetPropertyL(strP.StringF(HTTP::EHttpSocketServ, RHTTPSession::GetTable()), THTTPHdrVal(iSocketServ.Handle()));
+	TInt connPtr(REINTERPRET_CAST(TInt, &iConnection));
+	connInfo.SetPropertyL(strP.StringF(HTTP::EHttpSocketConnection, RHTTPSession::GetTable()), THTTPHdrVal(connPtr));
+	
+	
+	// submit any request that do not require authentication
+	TInt KTransactionCount(iTransactions.Count());
+	for (TInt i(0) ; i < KTransactionCount ; ++i)
+		{
+		if (!iTransactions[i]->RequiresAuthentication())
+			{
+			iTransactions[i]->SubmitL();
+			}
+		}
+	
+	if (iMp3Location)
+		{
+		// An mp3 had been requested after we had lost connection
+		// so ask for it again now
+		RequestMp3L(*iTrackDownloadObserver, *iMp3Location);
+		}
+	}
 	
 void CMobblerLastFMConnection::RunL()
 	{
 	if (iStatus.Int() == KErrNone)
 		{
+		CMobblerDestinationsInterface* destinations = static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->Destinations();
+		
+		if (destinations)
+			{
+			// Register for mobility this should connect us
+			// to better networks when they become avaliable 
+			
+			// TODO: leave this out for now as it is causing problems
+			//destinations->RegisterMobilityL(iConnection, this);
+			}
+		
 		User::LeaveIfError(iConnection.GetIntSetting(_L("IAP\\Id"), iCurrentIapID));
 		
 		iHTTPSession.Close();
@@ -286,8 +353,8 @@ void CMobblerLastFMConnection::RunL()
 		connInfo.SetPropertyL(strP.StringF(HTTP::EHttpSocketServ, RHTTPSession::GetTable()), THTTPHdrVal(iSocketServ.Handle()));
 		TInt connPtr(REINTERPRET_CAST(TInt, &iConnection));
 		connInfo.SetPropertyL(strP.StringF(HTTP::EHttpSocketConnection, RHTTPSession::GetTable()), THTTPHdrVal(connPtr));
-
-		// submit any request that does not require authentication
+				
+		// submit any request that do not require authentication
 		TInt KTransactionCount(iTransactions.Count());
 		for (TInt i(0) ; i < KTransactionCount ; ++i)
 			{
@@ -295,6 +362,13 @@ void CMobblerLastFMConnection::RunL()
 				{
 				iTransactions[i]->SubmitL();
 				}
+			}
+		
+		if (iMp3Location)
+			{
+			// An mp3 had been requested after we had lost connection
+			// so ask for it again now
+			RequestMp3L(*iTrackDownloadObserver, *iMp3Location);
 			}
 		
 		// Authenticate now so that API calls that require it will be submitted.
@@ -309,6 +383,9 @@ void CMobblerLastFMConnection::RunL()
 		
 		CloseTransactionsL(ETrue);
 		}
+	
+	delete iMp3Location;
+	iMp3Location = NULL;
 	}
 
 void CMobblerLastFMConnection::DoCancel()
@@ -337,14 +414,18 @@ void CMobblerLastFMConnection::ConnectL()
 	ChangeStateL(EConnecting);
 	
 	User::LeaveIfError(iConnection.Open(iSocketServ));
+
+	TConnPref* prefs;
+	TCommDbConnPref dbConnPrefs;
+	TConnSnapPref snapPrefs;
 	
-	TCommDbConnPref prefs;
-	prefs.SetIapId(iIapID);
 	if (iIapID == 0)
 		{
+		prefs = &dbConnPrefs;
+		
 		// This means the users has selected to always be asked
 		// which access point they want to use
-		prefs.SetDialogPreference(ECommDbDialogPrefPrompt);
+		dbConnPrefs.SetDialogPreference(ECommDbDialogPrefPrompt);
 
 	    // Filter out operator APs when the phone profile is offline
 		TInt activeProfileId;
@@ -354,15 +435,26 @@ void CMobblerLastFMConnection::ConnectL()
 
 	    if (activeProfileId == KOfflineProfileId)
 	        {
-			prefs.SetBearerSet(ECommDbBearerWLAN);
+	        dbConnPrefs.SetBearerSet(ECommDbBearerWLAN);
 	        }
 		}
 	else
-		{
-		prefs.SetDialogPreference(ECommDbDialogPrefDoNotPrompt);
-		}
+		{	
+		if (static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->Destinations())
+			{
+			// We are using destinations so use the TCommSnapPref
+			prefs = &snapPrefs;
+			snapPrefs.SetSnap(iIapID);
+			}
+		else
+			{
+			prefs = &dbConnPrefs;
+			dbConnPrefs.SetDialogPreference(ECommDbDialogPrefDoNotPrompt);
+			}
+		}	
 	
-	iConnection.Start(prefs, iStatus);
+	iConnection.Start(*prefs, iStatus);
+	
 	SetActive();
 	}
 
@@ -918,7 +1010,7 @@ void CMobblerLastFMConnection::ArtistShareL(const TDesC8& aUserName, const TDesC
 	query->AddFieldL(_L8("message"), *message);
 	CleanupStack::PopAndDestroy(message);
 
-	CMobblerTransaction* transaction(CMobblerTransaction::NewL(*this, uri, query));
+	CMobblerTransaction* transaction(CMobblerTransaction::NewL(*this, ETrue, uri, query));
 	transaction->SetFlatDataObserver(&aObserver);
 	
 	CleanupStack::Pop(query);
@@ -939,7 +1031,7 @@ void CMobblerLastFMConnection::EventShareL(const TDesC8& aUserName, const TDesC8
     query->AddFieldL(_L8("recipient"), aUserName);
     query->AddFieldL(_L8("message"), aMessage);
     
-    CMobblerTransaction* transaction(CMobblerTransaction::NewL(*this, uri, query));
+    CMobblerTransaction* transaction(CMobblerTransaction::NewL(*this, ETrue, uri, query));
     transaction->SetFlatDataObserver(&aObserver);
     
     CleanupStack::Pop(query);
@@ -1021,6 +1113,25 @@ void CMobblerLastFMConnection::RequestPlaylistL(MMobblerFlatDataObserver* aObser
 	
 	CMobblerWebServicesQuery* query(CMobblerWebServicesQuery::NewLC(_L8("radio.getPlaylist")));
 	
+	//query->AddFieldL(_L8("rtp"), _L8("?"));
+	
+	// always ask for the mp3 to be downloaded at twice the speed that it plays at
+	// should improve batery life by downloading for less time
+	query->AddFieldL(_L8("speed_multiplier"), _L8("2.0"));
+	
+	switch (iBitRate)
+		{
+		case 0:
+			query->AddFieldL(_L8("bitrate"), _L8("64"));
+			break;
+		case 1:
+			query->AddFieldL(_L8("bitrate"), _L8("128"));
+			break;
+		default:
+			// TODO: should panic
+			break;
+		}
+	
 	CMobblerTransaction* transaction(CMobblerTransaction::NewL(*this, ETrue, uri, query));
 	transaction->SetFlatDataObserver(aObserver);
 	
@@ -1030,7 +1141,7 @@ void CMobblerLastFMConnection::RequestPlaylistL(MMobblerFlatDataObserver* aObser
 	AppendAndSubmitTransactionL(transaction);
 	}
 
-void CMobblerLastFMConnection::RequestMp3L(MMobblerSegDataObserver& aObserver, CMobblerTrack* aTrack)
+void CMobblerLastFMConnection::RequestMp3L(MMobblerSegDataObserver& aObserver, const TDesC8& aMp3Location)
 	{
 	if (iMode == EOnline)
 		{
@@ -1040,14 +1151,20 @@ void CMobblerLastFMConnection::RequestMp3L(MMobblerSegDataObserver& aObserver, C
 			{
 			// Request the mp3 data
 			TUriParser8 urimp3Parser;
-			urimp3Parser.Parse(aTrack->Mp3Location());
+			urimp3Parser.Parse(aMp3Location);
 			
 			iRadioAudioTransaction.Close();
 			iRadioAudioTransaction = iHTTPSession.OpenTransactionL(urimp3Parser, *this);
+			
+			RStringF mobbler = iHTTPSession.StringPool().OpenFStringL(_L8("mobbler"));
+			iRadioAudioTransaction.Request().GetHeaderCollection().SetFieldL(iHTTPSession.StringPool().StringF(HTTP::EConnection, RHTTPSession::GetTable()), mobbler);
+			mobbler.Close();
+			
 			iRadioAudioTransaction.SubmitL();
 			}
 		else if (iState != EConnecting && iState != EHandshaking)
 			{
+			iMp3Location = aMp3Location.AllocL();
 			ConnectL();
 			}
 		}
@@ -1727,7 +1844,7 @@ void CMobblerLastFMConnection::MHFRunL(RHTTPTransaction aTransaction, const THTT
 			}
 			break;
 		case THTTPEvent::EFailed:
-			if (iTrackDownloadObserver)
+			if (iTrackDownloadObserver && aTransaction.Response().StatusCode() != 302)
 				{
 				iTrackDownloadObserver->DataCompleteL(EErrorFailed, aTransaction.Response().StatusCode(), aTransaction.Response().StatusText().DesC());
 				iTrackDownloadObserver = NULL;
@@ -1737,7 +1854,7 @@ void CMobblerLastFMConnection::MHFRunL(RHTTPTransaction aTransaction, const THTT
 		case THTTPEvent::ECancel:
 		case THTTPEvent::EClosed:
 			// tell the radio player that the track has finished downloading
-			if (iTrackDownloadObserver)
+			if (iTrackDownloadObserver && aTransaction.Response().StatusCode() != 302)
 				{
 				iTrackDownloadObserver->DataCompleteL(EErrorCancel, aTransaction.Response().StatusCode(), aTransaction.Response().StatusText().DesC());
 				iTrackDownloadObserver = NULL;
@@ -1745,7 +1862,7 @@ void CMobblerLastFMConnection::MHFRunL(RHTTPTransaction aTransaction, const THTT
 			break;
 		case THTTPEvent::ESucceeded:
 			// tell the radio player that the track has finished downloading
-			if (iTrackDownloadObserver)
+			if (iTrackDownloadObserver && aTransaction.Response().StatusCode() != 302)
 				{
 				iTrackDownloadObserver->DataCompleteL(EErrorNone, aTransaction.Response().StatusCode(), aTransaction.Response().StatusText().DesC());
 				iTrackDownloadObserver = NULL;

@@ -285,4 +285,7 @@ RESOURCE STRING r_mobbler_please_wait			{ text = STR_mobbler_please_wait; }
 RESOURCE STRING r_mobbler_done					{ text = STR_mobbler_done; }
 RESOURCE STRING r_mobbler_error					{ text = STR_mobbler_error; }
 
+RESOURCE STRING r_mobbler_bit_rate				{ text = STR_mobbler_bit_rate; }
+RESOURCE STRING r_mobbler_64_kbps				{ text = STR_mobbler_64_kbps; }
+RESOURCE STRING r_mobbler_128_kbps				{ text = STR_mobbler_128_kbps; }
 // End of file

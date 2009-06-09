@@ -28,11 +28,13 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <es_sock.h>
 #include <http/mhttptransactioncallback.h> 
 #include <http/rhttpsession.h>
+#include <mobbler/mobblerdestinationsinterface.h>
 
 #include "mobblerlastfmerror.h"
 
 _LIT(KLogFile, "c:\\Data\\Mobbler\\.scrobbler.log");
 
+class CHTTPFormEncoder;
 class CMobblerString;
 class CMobblerTrack;
 class CMobblerTransaction;
@@ -46,7 +48,7 @@ public:
 	virtual void HandleConnectionStateChangedL() = 0;
 	};
 
-class CMobblerLastFMConnection : public CActive, public MHTTPTransactionCallback
+class CMobblerLastFMConnection : public CActive, public MHTTPTransactionCallback, public MMobblerDestinationsInterfaceObserver
 	{
 public:
 	friend class CMobblerTransaction;
@@ -86,7 +88,11 @@ public:
 		};
 	
 public:
-	static CMobblerLastFMConnection* NewL(MMobblerLastFMConnectionObserver& aObserver, const TDesC& aUsername, const TDesC& aPassword, TUint32 aIapID);
+	static CMobblerLastFMConnection* NewL(MMobblerLastFMConnectionObserver& aObserver, 
+											const TDesC& aUsername, 
+											const TDesC& aPassword,
+											TUint32 aIapID, 
+											TInt aBitRate);
 	~CMobblerLastFMConnection();
 	
 	void SetDetailsL(const TDesC& aUsername, const TDesC& aPassword);
@@ -96,6 +102,8 @@ public:
 	
 	void SetIapIDL(TUint32 aIadID);
 	TUint32 IapID() const;
+	
+	void SetBitRateL(TInt aBitRate);
 	
 	// state observers
 	void AddStateChangeObserverL(MMobblerConnectionStateObserver* aObserver);
@@ -112,7 +120,7 @@ public:
 	void SelectStationL(MMobblerFlatDataObserver* aObserver, TRadioStation aRadioStation, const TDesC8& aRadioText);
 	void RequestPlaylistL(MMobblerFlatDataObserver* aObserver);
 	
-	void RequestMp3L(MMobblerSegDataObserver& aObserver, CMobblerTrack* aTrack);
+	void RequestMp3L(MMobblerSegDataObserver& aObserver, const TDesC8& aMp3Location);
 	void RadioStop();
 	
 	void RequestImageL(MMobblerFlatDataObserver* aObserver, const TDesC8& aImageLocation);
@@ -160,6 +168,10 @@ private:
 	void RunL();
 	void DoCancel();
 	
+private: // fomr MMobblerDestinationsInterfaceObserver
+	void PreferredCarrierAvailable();
+	void NewCarrierActive();
+	
 private: // from MHTTPTransactionCallback
 	void MHFRunL(RHTTPTransaction aTransaction, const THTTPEvent &aEvent);
 	TInt MHFRunError(TInt aError, RHTTPTransaction aTransaction, const THTTPEvent &aEvent);
@@ -189,7 +201,7 @@ private:
 	
 private:
 	void ConstructL(const TDesC& aUsername, const TDesC& aPassword);
-	CMobblerLastFMConnection(MMobblerLastFMConnectionObserver& aObserver, TUint32 aIapID);
+	CMobblerLastFMConnection(MMobblerLastFMConnectionObserver& aObserver, TUint32 aIapID, TInt aBitRate);
 	
 private:  // utilities
 	void CreateAuthTokenL(TDes8& aHash, TTimeIntervalSeconds aUnixTimeStamp);
@@ -233,6 +245,7 @@ private:
 	// audio transaction
 	RHTTPTransaction iRadioAudioTransaction;
 	MMobblerSegDataObserver* iTrackDownloadObserver;
+	HBufC8* iMp3Location;
 	
 	RPointerArray<CMobblerTransaction> iTransactions;
 	
@@ -262,6 +275,8 @@ private:
 	TBool iCurrentTrackSaved;
 	
 	RPointerArray<MMobblerConnectionStateObserver> iStateChangeObservers;
+
+	TInt iBitRate;
 	};
 
 #endif // __MOBBLERLASTFMCONNECTION_H__

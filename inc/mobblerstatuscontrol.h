@@ -40,6 +40,7 @@ class CMobblerMarquee;
 class CMobblerTimeout;
 class CMobblerTouchFeedbackInterface;
 class CMobblerTrack;
+class CMobblerAlbumArtTransition;
 
 class CMobblerStatusControl : public CCoeControl,
 								public MMobblerBitmapObserver,
@@ -47,6 +48,9 @@ class CMobblerStatusControl : public CCoeControl,
 								public MMobblerConnectionStateObserver,
 								public MMobblerMusicAppListenerObserver
 	{
+public:
+	friend class CMobblerAlbumArtTransition;
+	
 public:
 	static CMobblerStatusControl* NewL(const TRect& aRect, const CMobblerAppUi& aAppUi);
 	~CMobblerStatusControl();
@@ -70,8 +74,8 @@ private:
 	void BitmapResizedL(const CMobblerBitmap* aMobblerBitmap);
 	
 	// Drawing helper methods
-	void DrawMobblerBitmap(const CMobblerBitmap* aMobblerBitmap, const TRect& aRect, TBool aGray = EFalse) const;
-	void BitBltMobblerBitmap(const CMobblerBitmap* aMobblerBitmap, const TPoint& aPoint, TBool aGray = EFalse) const;
+	void DrawMobblerBitmap(const CMobblerBitmap* aMobblerBitmap, const TRect& aRect, const TRect& aSourceRect, TBool aGray = EFalse) const;
+	void BitBltMobblerBitmap(const CMobblerBitmap* aMobblerBitmap, const TPoint& aPoint, const TRect& aSourceRect, TBool aGray = EFalse) const;
 	void DrawText(const TDesC& aText, const TRect& aRect, const TRgb& aPenColor, CGraphicsContext::TTextAlign aTextAlign, TInt aOffset) const;
 	void DrawRect(const TRect& aRect, const TRgb& aPenColor, const TRgb& aBrushColor) const;
 	
@@ -159,6 +163,11 @@ private:
 	
 	CMobblerTouchFeedbackInterface* iMobblerFeedback;
 	TUid iDtorIdKey;
+	
+	CMobblerAlbumArtTransition* iAlbumArtTransition;
+	
+	TPoint iFingerDownPosition;
+	TPoint iFingerNowPosition;
 	};
 
 #endif // __MOBBLERSTATUSCONTROL_H__
