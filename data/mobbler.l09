@@ -233,7 +233,7 @@ rls_string STR_mobbler_alarm_hour_minute "Time left until alarm: %U hour and %U 
 rls_string STR_mobbler_alarm_hour_minutes "Time left until alarm: %U hour and %U minutes"
 rls_string STR_mobbler_alarm_hours_minute "Time left until alarm: %U hours and %U minute"
 rls_string STR_mobbler_alarm_hours_minutes "Time left until alarm: %U hours and %U minutes"
-rls_string STR_mobbler_alarm_disclaimer "Alarms are set at owners risk. The makers of Mobbler cannot be held resposible for tardiness."
+rls_string STR_mobbler_alarm_disclaimer "Alarms are set at owner's risk. The makers of Mobbler cannot be held responsible for tardiness."
 rls_string STR_mobbler_search "Search"
 rls_string STR_mobbler_search_tracks "Tracks"
 rls_string STR_mobbler_search_albums "Albums"
