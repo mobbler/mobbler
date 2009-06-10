@@ -62,9 +62,18 @@ void CMobblerTrackList::ConstructL()
     		iAppUi.LastFMConnection().PlaylistFetchUserL(iText2->String8(), *this);
     		break;
     	case EMobblerCommandPlaylistFetchAlbum:
-    		delete iAlbumInfoObserver;
-    		iAlbumInfoObserver = CMobblerFlatDataObserverHelper::NewL(iAppUi.LastFMConnection(), *this, EFalse);
-    		iAppUi.LastFMConnection().AlbumGetInfoL(iText2->String8(), *iAlbumInfoObserver);
+    		if (iText2->String8().Length() > 10)
+    			{
+    			// This is a music brainz id so fetch the Last.fm id before getting the playlist
+				delete iAlbumInfoObserver;
+				iAlbumInfoObserver = CMobblerFlatDataObserverHelper::NewL(iAppUi.LastFMConnection(), *this, EFalse);
+				iAppUi.LastFMConnection().AlbumGetInfoL(iText2->String8(), *iAlbumInfoObserver);
+    			}
+    		else
+    			{
+    			// This is the Last.fm id so just fetch the playlist using it
+    			iAppUi.LastFMConnection().PlaylistFetchAlbumL(iText2->String8(), *this);
+    			}
     		break;
         case EMobblerCommandSearchTrack:
             iAppUi.LastFMConnection().WebServicesCallL(_L8("track"), _L8("search"), iText1->String8(), *this);
