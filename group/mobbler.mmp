@@ -64,18 +64,19 @@ Protected - Unprotected - Purpose
 */
 
 #ifdef SYMBIAN_SIGNED
+
 TARGET			mobbler_0x2002655A.exe
 TARGETTYPE		exe
 UID				0x100039CE 0x2002655A
 SECUREID		0x2002655A
 
 #else // !SYMBIAN_SIGNED
+
 TARGET			mobbler.exe
 TARGETTYPE		exe
 UID				0x100039CE 0xA0007648
 SECUREID		0xA0007648
 
-CAPABILITY	NetworkServices ReadUserData
 #endif
 
 

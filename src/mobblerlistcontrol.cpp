@@ -244,6 +244,12 @@ HBufC* CMobblerListControl::NameL() const
 		case EMobblerCommandEventShoutbox:
 			format.Set(iAppUi.ResourceReader().ResourceL(R_MOBBLER_FORMAT_SHOUTBOX));
 			break;
+		case EMobblerCommandSearchTrack:
+		case EMobblerCommandSearchAlbum:
+		case EMobblerCommandSearchArtist:
+		case EMobblerCommandSearchTag:
+			format.Set(iAppUi.ResourceReader().ResourceL(R_MOBBLER_FORMAT_SEARCH));
+			break;
 		default:
 			// we should panic if we get here
 			break;
