@@ -635,7 +635,6 @@ void CMobblerStatusControl::Draw(const TRect& /*aRect*/) const
 			{
 			// The current track has album art and it has finished loading
 			albumArt = iAppUi.CurrentTrack()->AlbumArt();
-			const_cast<CMobblerBitmap*>(albumArt)->ScaleL(rectAlbumArt.Size());
 			
 			if (iShowAlbumArtFullscreen)
 				{
@@ -645,6 +644,7 @@ void CMobblerStatusControl::Draw(const TRect& /*aRect*/) const
 				TInt albumArtDimension(Min(Size().iWidth, Size().iHeight));
 				rectAlbumArt = TRect(TPoint(0,0), TSize(albumArtDimension, albumArtDimension));
 				}
+			const_cast<CMobblerBitmap*>(albumArt)->ScaleL(rectAlbumArt.Size());
 			}
 
 		if (iAppUi.CurrentTrack()->IsMusicPlayerTrack())
