@@ -28,7 +28,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <aknsutils.h>
 #include <bautils.h> 
 
-
 #ifndef __WINS__
 #include <browserlauncher.h>
 #endif
@@ -85,7 +84,7 @@ _LIT8(KAmazonSearchLink, "http://www.amazon.co.uk/gp/search?ie=UTF8&keywords=%S&
 void CMobblerAppUi::ConstructL()
 	{
 #if defined(__SYMBIAN_SIGNED__) && !defined(__WINS__)
-	// This is the symbian-signed version so try
+	// This is the Symbian Signed version so try
 	// to silently remove the self-signed version
 	
 	SwiUI::RSWInstLauncher swInstLauncher;
@@ -115,7 +114,7 @@ void CMobblerAppUi::ConstructL()
 	
 	TRAP_IGNORE(iDestinations = static_cast<CMobblerDestinationsInterface*>(REComSession::CreateImplementationL(KDestinationImplUid, iDestinationsDtorUid)));
 	
-#ifdef  __S60_50__
+#ifdef __S60_50__
 	BaseConstructL(EAknTouchCompatible | EAknEnableSkin);
 #else
 	BaseConstructL(EAknEnableSkin);
@@ -1064,6 +1063,9 @@ void CMobblerAppUi::RadioStartL(TInt aRadioStation,
 			break;
 		case EMobblerCommandRadioNeighbourhood:
 			station = CMobblerLastFMConnection::ENeighbourhood;
+			break;
+		case EMobblerCommandRadioPlaylist:
+			station = CMobblerLastFMConnection::EPlaylist;
 			break;
 		default:
 			station = CMobblerLastFMConnection::EPersonal;

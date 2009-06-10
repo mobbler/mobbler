@@ -290,4 +290,5 @@ RESOURCE STRING r_mobbler_64_kbps				{ text = STR_mobbler_64_kbps; }
 RESOURCE STRING r_mobbler_128_kbps				{ text = STR_mobbler_128_kbps; }
 
 RESOURCE STRING r_mobbler_format_search			{ text = STR_mobbler_format_search; }
+
 // End of file

@@ -2,7 +2,7 @@
 mobbleralbumarttransition.h
 
 Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
-Copyright (C) 2008  Michael Coffey
+Copyright (C) 2009  Michael Coffey
 
 http://code.google.com/p/mobbler
 
@@ -29,8 +29,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 class CFbsBitmap;
 class CGulIcon;
 class CMobblerBitmap;
-class CPeriodic;
 class CMobblerStatusControl;
+class CPeriodic;
 
 class CMobblerAlbumArtTransition : public CBase
 	{
@@ -41,7 +41,7 @@ public:
 		ESlideLeft,
 		ESlideRight
 		};
-	
+
 public:
 	static CMobblerAlbumArtTransition* NewL(CMobblerStatusControl& aStatusControl);
 	~CMobblerAlbumArtTransition();
@@ -49,7 +49,7 @@ public:
 	void DrawAlbumArtL(const CMobblerBitmap* aAlbumArt, const CMobblerBitmap* aNextAlbumArt, TRect aAlbumArtSize, TInt aSlideAmount);
 	
 	void FingerUpL(TInt aPosition, TSlide aSlide);
-
+	
 private:
 	CMobblerAlbumArtTransition(CMobblerStatusControl& aStatusControl);
 	void ConstructL();
@@ -72,7 +72,7 @@ private:
 	CFbsBitmap* iDoubleBitmap;
 	CFbsBitmap* iDoubleMask;
 	
-	CPeriodic* iTimer;	
+	CPeriodic* iTimer;
 	TUint iStartTickCount;
 	TUint iNowTickCount;
 	
@@ -81,3 +81,5 @@ private:
 	};
 
 #endif // __MOBBLERALBUMARTTRANSITION_H__
+
+// End of file

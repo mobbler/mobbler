@@ -64,14 +64,14 @@ void CMobblerTrackList::ConstructL()
     	case EMobblerCommandPlaylistFetchAlbum:
     		if (iText2->String8().Length() > 10)
     			{
-    			// This is a music brainz id so fetch the Last.fm id before getting the playlist
+    			// This is a MusicBrainz ID so fetch the Last.fm ID before getting the playlist
 				delete iAlbumInfoObserver;
 				iAlbumInfoObserver = CMobblerFlatDataObserverHelper::NewL(iAppUi.LastFMConnection(), *this, EFalse);
 				iAppUi.LastFMConnection().AlbumGetInfoL(iText2->String8(), *iAlbumInfoObserver);
     			}
     		else
     			{
-    			// This is the Last.fm id so just fetch the playlist using it
+    			// This is the Last.fm ID so just fetch the playlist using it
     			iAppUi.LastFMConnection().PlaylistFetchAlbumL(iText2->String8(), *this);
     			}
     		break;

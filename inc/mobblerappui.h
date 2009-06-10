@@ -60,6 +60,7 @@ const TInt KMobblerWebServicesViewUid = 0xA000B6C3;
 
 class CBrowserLauncher;
 class CMobblerBitmapCollection;
+class CMobblerDestinationsInterface;
 class CMobblerDownload;
 class CMobblerMusicAppListener;
 class CMobblerRadioPlayer;
@@ -70,7 +71,6 @@ class CMobblerString;
 class CMobblerTrack;
 class CMobblerWebServicesView;
 class CMobblerWebServicesHelper;
-class CMobblerDestinationsInterface;
 
 class CMobblerAppUi : public CAknViewAppUi,
 						public MMobblerLastFMConnectionObserver,

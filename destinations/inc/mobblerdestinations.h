@@ -2,7 +2,7 @@
 mobblerdestinations.h
 
 Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
-Copyright (C) 2008  Michael Coffey
+Copyright (C) 2009  Michael Coffey
 
 http://code.google.com/p/mobbler
 
@@ -56,3 +56,5 @@ private:
 	};
 
 #endif // __MOBBLERDESTINATIONS_H__
+
+// End of file

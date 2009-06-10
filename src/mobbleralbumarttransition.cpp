@@ -2,7 +2,7 @@
 mobbleralbumarttransition.cpp
 
 Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
-Copyright (C) 2008  Michael Coffey
+Copyright (C) 2009  Michael Coffey
 
 http://code.google.com/p/mobbler
 
@@ -21,9 +21,9 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
+#include <e32math.h>
 #include <gulicon.h>
 #include <hal.h>
-#include <e32math.h>
 
 #include "mobbleralbumarttransition.h"
 #include "mobblerappui.h"
@@ -53,23 +53,23 @@ void CMobblerAlbumArtTransition::ConstructL()
 
 TInt CMobblerAlbumArtTransition::Clamp(TReal aValue, TReal aMin, TReal aMax) const
 	{
-    // Restrict value to the bounds of min and max.
-    // If value is less than min, return min.
-    // If value is more than max, return max.
-    // Else return value.
+	// Restrict value to the bounds of min and max.
+	// If value is less than min, return min.
+	// If value is more than max, return max.
+	// Else return value.
 	
-    if (aValue < aMin)
-    	{
-        return aMin;
-        }
-    else if (aValue > aMax)
-        {
-        return aMax;
-        }
-    else
-        {
-        return aValue;
-        }
+	if (aValue < aMin)
+		{
+		return aMin;
+		}
+	else if (aValue > aMax)
+		{
+		return aMax;
+		}
+	else
+		{
+		return aValue;
+		}
 	}
 
 TInt CMobblerAlbumArtTransition::Slide(TReal aTime, TReal aTotal, TReal aStart, TReal aEnd) const
@@ -83,7 +83,7 @@ TInt CMobblerAlbumArtTransition::SlideAmount(TInt aWidth) const
 	{
 	TInt tickPeriod;
 	HAL::Get(HAL::ESystemTickPeriod, tickPeriod);
-	TInt timeSoFar = ((iNowTickCount  - iStartTickCount) * tickPeriod);
+	TInt timeSoFar((iNowTickCount  - iStartTickCount) * tickPeriod);
 	return Slide(timeSoFar, KTotalSlideTime, 0, aWidth);
 	}
 
@@ -140,7 +140,7 @@ void CMobblerAlbumArtTransition::DrawAlbumArtL(const CMobblerBitmap* aCurrentAlb
 		}
 	
 	iNowTickCount = User::TickCount();
-			
+	
 	if (!iTimer || iTimer && (SlideAmount(aAlbumArtRect.Width()) >= aAlbumArtRect.Width()))
 		{
 		if (iTimer)
@@ -162,7 +162,7 @@ void CMobblerAlbumArtTransition::DrawAlbumArtL(const CMobblerBitmap* aCurrentAlb
 			}
 		else
 			{
-			// It's not transationing or being moved by a finger
+			// It's not transitioning or being moved by a finger
 			// so just display the current album art
 			CMobblerBitmap::LongSidesEqual(aCurrentAlbumArt->Bitmap()->SizeInPixels(), aAlbumArtRect.Size())?
 				iStatusControl.BitBltMobblerBitmap(aCurrentAlbumArt, aAlbumArtRect.iTl, TRect(TPoint(0, 0), aCurrentAlbumArt->SizeInPixels())):
@@ -183,14 +183,14 @@ void CMobblerAlbumArtTransition::DrawAlbumArtL(const CMobblerBitmap* aCurrentAlb
 			case ESlideLeft:
 				{
 				TInt slideAmount(SlideAmount(aAlbumArtRect.Width()));
-				TInt actualSlideAmount = iFingerUpOffset + (slideAmount * (aAlbumArtRect.Width() - iFingerUpOffset)) / aAlbumArtRect.Width();
+				TInt actualSlideAmount(iFingerUpOffset + (slideAmount * (aAlbumArtRect.Width() - iFingerUpOffset)) / aAlbumArtRect.Width());
 				DoDrawAlbumArtL(iLastAlbumArt, iCurrentAlbumArt, aAlbumArtRect, Clamp(actualSlideAmount, 0, aAlbumArtRect.Width()));
 				}
 				break;
 			case ESlideRight:
 				{
 				TInt slideAmount(SlideAmount(aAlbumArtRect.Width()));
-				TInt actualSlideAmount = iFingerUpOffset - (slideAmount * iFingerUpOffset) / aAlbumArtRect.Width();
+				TInt actualSlideAmount(iFingerUpOffset - (slideAmount * iFingerUpOffset) / aAlbumArtRect.Width());
 				DoDrawAlbumArtL(aCurrentAlbumArt, aNextAlbumArt, aAlbumArtRect, Clamp(actualSlideAmount, 0, aAlbumArtRect.Width()));
 				}
 				break;

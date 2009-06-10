@@ -2,7 +2,7 @@
 mobblerdestinations.cpp
 
 Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
-Copyright (C) 2008  Michael Coffey
+Copyright (C) 2009  Michael Coffey
 
 http://code.google.com/p/mobbler
 
@@ -22,8 +22,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
 #include <aknsettingitemlist.h>
-#include <ecom/implementationproxy.h>
 #include <cmdestination.h>
+#include <ecom/implementationproxy.h>
 
 #include "mobblerdestinations.h"
 
@@ -34,15 +34,15 @@ const TInt KImplementationUid = {0xA000BEB6};
 #endif
 
 const TImplementationProxy ImplementationTable[] =
-    {
-    {KImplementationUid, TProxyNewLPtr(CMobblerDestinations::NewL)}
-    };
+	{
+	{KImplementationUid, TProxyNewLPtr(CMobblerDestinations::NewL)}
+	};
 
 EXPORT_C const TImplementationProxy* ImplementationGroupProxy(TInt& aTableCount)
-    {
-    aTableCount = sizeof(ImplementationTable) / sizeof(TImplementationProxy);
-    return ImplementationTable;
-    }
+	{
+	aTableCount = sizeof(ImplementationTable) / sizeof(TImplementationProxy);
+	return ImplementationTable;
+	}
 
 CMobblerDestinations* CMobblerDestinations::NewL()
 	{
@@ -52,16 +52,16 @@ CMobblerDestinations* CMobblerDestinations::NewL()
 	CleanupStack::Pop(self);
 	return self;
 	}
-	
+
 CMobblerDestinations::CMobblerDestinations()
 	{
 	}
-	
+
 void CMobblerDestinations::ConstructL()
 	{
 	iCmManager.OpenL();
 	}
-	
+
 CMobblerDestinations::~CMobblerDestinations()
 	{
 	delete iMobility;
@@ -76,21 +76,21 @@ void CMobblerDestinations::RegisterMobilityL(RConnection& aConnection, MMobblerD
 	iMobility = CActiveCommsMobilityApiExt::NewL(aConnection, *this);
 	}
 
-void CMobblerDestinations::PreferredCarrierAvailable(TAccessPointInfo aOldAPInfo, TAccessPointInfo aNewAPInfo, TBool aIsUpgrade, TBool aIsSeamless)
+void CMobblerDestinations::PreferredCarrierAvailable(TAccessPointInfo /*aOldAPInfo*/, TAccessPointInfo /*aNewAPInfo*/, TBool aIsUpgrade, TBool aIsSeamless)
 	{
-    // aOldAPInfo contains the current IAP used by the connection.
-    // aNewAPInfo contains the newly available IAP that can be used by the connection.
+	// aOldAPInfo contains the current IAP used by the connection.
+	// aNewAPInfo contains the newly available IAP that can be used by the connection.
 
 	if (aIsSeamless)
 		{
-		User::InfoPrint(_L("Seamless start"));
-		// It is Seamless. E.g. Mobile IP enabled.
+		User::InfoPrint(_L("Seamless start"));	// TODO localise?
+		// It is seamless e.g. mobile IP enabled.
 		}
 	else
 		{
 		aIsUpgrade ?
-			User::InfoPrint(_L("Non-Seamless upgrade")):
-			User::InfoPrint(_L("Non-Seamless downgrade"));
+			User::InfoPrint(_L("Non-Seamless upgrade")):	// TODO localise?
+			User::InfoPrint(_L("Non-Seamless downgrade"));	// TODO localise?
 			
 		if (aIsUpgrade) 
 			{
@@ -102,25 +102,25 @@ void CMobblerDestinations::PreferredCarrierAvailable(TAccessPointInfo aOldAPInfo
 		}
 	}
 
-void CMobblerDestinations::NewCarrierActive(TAccessPointInfo aNewAPInfo, TBool aIsSeamless)
+void CMobblerDestinations::NewCarrierActive(TAccessPointInfo /*aNewAPInfo*/, TBool aIsSeamless)
 	{
-    // aNewAPInfo contains the newly started IAP used now by the connection.
-    if (aIsSeamless)
-        {
-        // It is Seamless. E.g. Mobile IP enabled.
-        User::InfoPrint(_L("Seamless active"));
-        }
-    else
-        {
-        User::InfoPrint(_L("Non-Seamless active"));
-        // sockets used by the connection should be reopened here.
-        // We accept the new IAP.
-        iMobilityObserver->NewCarrierActive();
-        iMobility->NewCarrierAccepted();
-        }
+	// aNewAPInfo contains the newly started IAP used now by the connection.
+	if (aIsSeamless)
+		{
+		// It is seamless e.g. mobile IP enabled.
+		User::InfoPrint(_L("Seamless active")); // TODO localise?
+		}
+	else
+		{
+		User::InfoPrint(_L("Non-Seamless active")); // TODO localise?
+		// Sockets used by the connection should be reopened here.
+		// We accept the new IAP.
+		iMobilityObserver->NewCarrierActive();
+		iMobility->NewCarrierAccepted();
+		}
 	}
 
-void CMobblerDestinations::Error(TInt aError)
+void CMobblerDestinations::Error(TInt /*aError*/)
 	{
 	}
 
@@ -156,3 +156,4 @@ TInt CMobblerDestinations::LoadDestinationListL(CArrayPtr<CAknEnumeratedText>& a
 	return firstIapId;
 	}
 
+// End of file

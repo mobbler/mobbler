@@ -161,7 +161,7 @@ void CMobblerTransaction::MHFRunL(RHTTPTransaction aTransaction, const THTTPEven
 		{
 		case THTTPEvent::EGotResponseHeaders:
 			{
-			RHTTPHeaders headers = aTransaction.Response().GetHeaderCollection();
+			RHTTPHeaders headers(aTransaction.Response().GetHeaderCollection());
 			 
 			THTTPHdrVal locationValue;			
 			if( headers.GetField(iConnection.iHTTPSession.StringPool().StringF(HTTP::ELocation, RHTTPSession::GetTable()), 0, locationValue) == KErrNone )

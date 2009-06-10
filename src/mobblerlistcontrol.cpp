@@ -33,6 +33,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "mobbleralbumlist.h"
 #include "mobblerappui.h"
 #include "mobblerartistlist.h"
+#include "mobblerbitmapcollection.h"
 #include "mobblereventlist.h"
 #include "mobblerfriendlist.h"
 #include "mobblerlistcontrol.h"
@@ -44,7 +45,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "mobblertaglist.h"
 #include "mobblertracklist.h"
 #include "mobblerwebservicescontrol.h"
-#include "mobblerbitmapcollection.h"
 
 _LIT(KDoubleLargeStyleListBoxTextFormat, "%d\t%S\t%S");
 _LIT(KRecentTracksTitleFormat, "%S - %S");

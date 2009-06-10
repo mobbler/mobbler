@@ -332,11 +332,11 @@ void CMobblerLastFMConnection::RunL()
 	{
 	if (iStatus.Int() == KErrNone)
 		{
-		CMobblerDestinationsInterface* destinations = static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->Destinations();
+		CMobblerDestinationsInterface* destinations(static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->Destinations());
 		
 		if (destinations)
 			{
-			// Register for mobility this should connect us
+			// Register for mobility: this should connect us
 			// to better networks when they become avaliable 
 			
 			// TODO: leave this out for now as it is causing problems
@@ -353,8 +353,8 @@ void CMobblerLastFMConnection::RunL()
 		connInfo.SetPropertyL(strP.StringF(HTTP::EHttpSocketServ, RHTTPSession::GetTable()), THTTPHdrVal(iSocketServ.Handle()));
 		TInt connPtr(REINTERPRET_CAST(TInt, &iConnection));
 		connInfo.SetPropertyL(strP.StringF(HTTP::EHttpSocketConnection, RHTTPSession::GetTable()), THTTPHdrVal(connPtr));
-				
-		// submit any request that do not require authentication
+		
+		// submit any request that does not require authentication
 		TInt KTransactionCount(iTransactions.Count());
 		for (TInt i(0) ; i < KTransactionCount ; ++i)
 			{
@@ -1116,7 +1116,7 @@ void CMobblerLastFMConnection::RequestPlaylistL(MMobblerFlatDataObserver* aObser
 	//query->AddFieldL(_L8("rtp"), _L8("?"));
 	
 	// always ask for the mp3 to be downloaded at twice the speed that it plays at
-	// should improve batery life by downloading for less time
+	// should improve battery life by downloading for less time
 	query->AddFieldL(_L8("speed_multiplier"), _L8("2.0"));
 	
 	switch (iBitRate)
@@ -1156,7 +1156,7 @@ void CMobblerLastFMConnection::RequestMp3L(MMobblerSegDataObserver& aObserver, c
 			iRadioAudioTransaction.Close();
 			iRadioAudioTransaction = iHTTPSession.OpenTransactionL(urimp3Parser, *this);
 			
-			RStringF mobbler = iHTTPSession.StringPool().OpenFStringL(_L8("mobbler"));
+			RStringF mobbler(iHTTPSession.StringPool().OpenFStringL(_L8("mobbler")));
 			iRadioAudioTransaction.Request().GetHeaderCollection().SetFieldL(iHTTPSession.StringPool().StringF(HTTP::EConnection, RHTTPSession::GetTable()), mobbler);
 			mobbler.Close();
 			

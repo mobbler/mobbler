@@ -72,9 +72,6 @@ public:
 	
 	TInt& IapId() { return iIapId; }
 	void SetIapId(TInt aIapId) { iIapId = aIapId; }
-		
-	TInt& BitRate() { return iBitRate; }
-	void SetBitRate(TInt aBitRate) { iBitRate = aBitRate; }
 	
 	TInt& BufferSize() { return iBufferSize; }
 	void SetBufferSize(TInt aBufferSize) { iBufferSize = aBufferSize; }
@@ -118,6 +115,9 @@ public:
 	TInt& AlarmIapId() { return iAlarmIapId; }
 	void SetAlarmIapId(TInt aAlarmIapId) { iAlarmIapId = aAlarmIapId; }
 	
+	TInt& BitRate() { return iBitRate; }
+	void SetBitRate(TInt aBitRate) { iBitRate = aBitRate; }
+		
 protected:
 	TBuf<30> iUsername;
 	TBuf<30> iPassword;

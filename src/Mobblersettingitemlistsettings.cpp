@@ -29,7 +29,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <mobbler.rsg>
 #endif
 
-#include <coemain.h>
 #include <s32file.h>
 
 #include "mobblerappui.h"
@@ -218,7 +217,7 @@ void CMobblerSettingItemListSettings::SaveSettingValuesL()
 		writeStream << Password();
 		writeStream.WriteInt8L(Backlight());
 		writeStream.WriteInt8L(CheckForUpdates());
-		writeStream.WriteUint32L(IapId()); // this is for without destinations
+		writeStream.WriteUint32L(IapId()); // this is for ?TODO? without destinations
 		writeStream.WriteUint8L(BufferSize());
 		writeStream.WriteInt16L(EqualizerIndex());
 		writeStream.WriteInt16L(ScrobblePercent());
@@ -236,7 +235,7 @@ void CMobblerSettingItemListSettings::SaveSettingValuesL()
 		writeStream.WriteInt32L(I64LOW(AlarmTime().Int64()));
 		writeStream.WriteUint32L(AlarmIapId());
 		writeStream.WriteUint8L(BitRate());
-		writeStream.WriteUint32L(IapId()); // this is for with destinations
+		writeStream.WriteUint32L(IapId()); // this is for ?TODO? with destinations
 		
 		CleanupStack::PopAndDestroy(&writeStream);
 		}

@@ -254,7 +254,7 @@ void CMobblerSettingItemListView::LoadListL()
 					   R_MOBBLER_IAP,
 					   R_MOBBLER_SETTING_PAGE_ENUM);
 		
-		// Bit rate (64 Kbps or 128 Kbps?)
+		// Bit rate (64 kbps or 128 kbps?)
 		RArray<TInt> bitRateArray;
 		CleanupClosePushL(bitRateArray);
 		bitRateArray.AppendL(R_MOBBLER_64_KBPS);

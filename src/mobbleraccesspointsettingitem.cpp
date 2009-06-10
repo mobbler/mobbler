@@ -55,7 +55,7 @@ TInt CMobblerAccessPointSettingItem::LoadIapListL()
 	{
 	TInt firstIapId(KErrNotFound);
 	
-	CMobblerDestinationsInterface* destinations = static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->Destinations();
+	CMobblerDestinationsInterface* destinations(static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->Destinations());
 	
 	if (destinations)
 		{

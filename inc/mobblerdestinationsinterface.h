@@ -1,5 +1,5 @@
 /*
-mobblerdestinataionsinterface.h
+mobblerdestinationsinterface.h
 
 Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
 Copyright (C) 2009  Michael Coffey
@@ -24,8 +24,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #ifndef __MOBBLERDESTINATIONSINTERFACE_H__
 #define __MOBBLERDESTINATIONSINTERFACE_H__
 
-#include <e32base.h>
 #include <aknsettingitemlist.h>
+#include <e32base.h>
 
 class RConnection;
 

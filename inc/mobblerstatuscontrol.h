@@ -34,13 +34,13 @@ class CAknNavigationControlContainer;
 class CAknNavigationDecorator;
 class CAknsBasicBackgroundControlContext;
 class CBitmapScaler;
+class CMobblerAlbumArtTransition;
 class CMobblerAppUi;
 class CMobblerBitmap;
 class CMobblerMarquee;
 class CMobblerTimeout;
 class CMobblerTouchFeedbackInterface;
 class CMobblerTrack;
-class CMobblerAlbumArtTransition;
 
 class CMobblerStatusControl : public CCoeControl,
 								public MMobblerBitmapObserver,
