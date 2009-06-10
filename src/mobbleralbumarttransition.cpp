@@ -208,7 +208,7 @@ void CMobblerAlbumArtTransition::DoDrawAlbumArtL(const CMobblerBitmap* aLeft, co
 				TRect(TPoint(aPosition, 0), TSize(aAlbumArtRect.Width() - aPosition, aLeft->SizeInPixels().iHeight))):
 		iStatusControl.DrawMobblerBitmap(aLeft, 
 				TRect(aAlbumArtRect.iTl, TSize(aAlbumArtRect.Width() - aPosition, aAlbumArtRect.Height())),
-				TRect(TPoint(aPosition, 0), TSize(aLeft->SizeInPixels().iWidth - aPosition, aLeft->SizeInPixels().iHeight)));
+				TRect(TPoint(aPosition, 0), TSize((((aLeft->SizeInPixels().iWidth - aPosition) * aLeft->SizeInPixels().iWidth) / aAlbumArtRect.Width()), aLeft->SizeInPixels().iHeight)));
 	
 	// Draw the second bitmap by the slide amount
 	CMobblerBitmap::LongSidesEqual(aRight->Bitmap()->SizeInPixels(), aAlbumArtRect.Size())?
@@ -217,7 +217,7 @@ void CMobblerAlbumArtTransition::DoDrawAlbumArtL(const CMobblerBitmap* aLeft, co
 				TRect(TPoint(0, 0), TSize(aPosition, aRight->SizeInPixels().iHeight))):
 		iStatusControl.DrawMobblerBitmap(aRight,
 				TRect(aAlbumArtRect.iTl - TPoint(aPosition - aAlbumArtRect.Width(), 0), TSize(aPosition, aAlbumArtRect.Height())), 
-				TRect(TPoint(0, 0), TSize(aPosition, aRight->SizeInPixels().iHeight)));
+				TRect(TPoint(0, 0), TSize(((aPosition * aRight->SizeInPixels().iWidth) / aAlbumArtRect.Width()), aRight->SizeInPixels().iHeight)));
 	}
 
 void CMobblerAlbumArtTransition::FingerUpL(TInt aPosition, TSlide aSlide)
