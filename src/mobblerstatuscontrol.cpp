@@ -629,16 +629,22 @@ void CMobblerStatusControl::Draw(const TRect& /*aRect*/) const
 	if (iAppUi.CurrentTrack())
 		{
 		love = iAppUi.CurrentTrack()->Love();
-		
-		if (iShowAlbumArtFullscreen && 
-				iAppUi.CurrentTrack()->AlbumArt() &&
-				iAppUi.CurrentTrack()->AlbumArt()->Bitmap())
+
+		if (iAppUi.CurrentTrack()->AlbumArt() && 
+			iAppUi.CurrentTrack()->AlbumArt()->Bitmap())
 			{
-			// we can draw the album art full screen so do that
-			fullscreenAlbumArtReady = ETrue;
+			// The current track has album art and it has finished loading
+			albumArt = iAppUi.CurrentTrack()->AlbumArt();
+			const_cast<CMobblerBitmap*>(albumArt)->ScaleL(rectAlbumArt.Size());
 			
-			TInt albumArtDimension(Min(Size().iWidth, Size().iHeight));
-			rectAlbumArt = TRect(TPoint(0,0), TSize(albumArtDimension, albumArtDimension));
+			if (iShowAlbumArtFullscreen)
+				{
+				// we can draw the album art full screen so do that
+				fullscreenAlbumArtReady = ETrue;
+				
+				TInt albumArtDimension(Min(Size().iWidth, Size().iHeight));
+				rectAlbumArt = TRect(TPoint(0,0), TSize(albumArtDimension, albumArtDimension));
+				}
 			}
 
 		if (iAppUi.CurrentTrack()->IsMusicPlayerTrack())
@@ -651,12 +657,6 @@ void CMobblerStatusControl::Draw(const TRect& /*aRect*/) const
 		else
 			{
 			// This is a radio track
-			if (iAppUi.CurrentTrack()->AlbumArt() && iAppUi.CurrentTrack()->AlbumArt()->Bitmap())
-				{
-				// The current track has album art and it has finished loading
-				albumArt = iAppUi.CurrentTrack()->AlbumArt();
-				const_cast<CMobblerBitmap*>(albumArt)->ScaleL(rectAlbumArt.Size());
-				}
 			
 			if (iAppUi.RadioPlayer().NextTrack() && iAppUi.RadioPlayer().NextTrack()->AlbumArt() && iAppUi.RadioPlayer().NextTrack()->AlbumArt()->Bitmap())
 				{
