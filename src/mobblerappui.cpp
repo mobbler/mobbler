@@ -945,7 +945,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 			break;
 		case EMobblerCommandAlarm:
 			CAknQueryDialog* disclaimerDlg(CAknQueryDialog::NewL());
-			if(disclaimerDlg->ExecuteLD(R_MOBBLER_YES_NO_QUERY_DIALOG, 
+			if(disclaimerDlg->ExecuteLD(R_MOBBLER_OK_CANCEL_QUERY_DIALOG, 
 					iResourceReader->ResourceL(R_MOBBLER_ALARM_DISCLAIMER)))
 				{
 				ActivateLocalViewL(iSettingView->Id(),

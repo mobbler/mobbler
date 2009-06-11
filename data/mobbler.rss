@@ -717,6 +717,26 @@ RESOURCE DIALOG r_mobbler_yes_no_query_dialog
 		};
 	}
 
+RESOURCE DIALOG r_mobbler_ok_cancel_query_dialog
+	{
+	flags = EGeneralQueryFlags;
+	buttons = R_AVKON_SOFTKEYS_OK_CANCEL;
+	items =
+		{
+		DLG_LINE
+			{
+			type = EAknCtQuery;
+			id = EMobblerQuery;
+			
+			control = AVKON_CONFIRMATION_QUERY
+				{
+				layout = EConfirmationQueryLayout;
+				animation = R_QGN_NOTE_QUERY_ANIM;
+				};
+			}
+		};
+	}
+
 RESOURCE DIALOG r_mobbler_about_box
 	{
 	flags = EEikDialogFlagNoDrag | EEikDialogFlagCbaButtons | EEikDialogFlagWait;
