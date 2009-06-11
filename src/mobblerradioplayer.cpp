@@ -588,19 +588,22 @@ void CMobblerRadioPlayer::SetBitRateL(TInt aBitRate)
 		// fetch a new playlist for the next song.
 		iBitRate = aBitRate;
 		
-		// Remove the rest of the songs from this playlist
-		for (TInt i(iCurrentPlaylist->Count() - 1) ; i > iCurrentTrackIndex ; --i)
+		if (iCurrentPlaylist)
 			{
-			iCurrentPlaylist->RemoveAndReleaseTrack(i);
+			// Remove the rest of the songs from this playlist
+			for (TInt i(iCurrentPlaylist->Count() - 1) ; i > iCurrentTrackIndex ; --i)
+				{
+				iCurrentPlaylist->RemoveAndReleaseTrack(i);
+				}
+			
+			// Remove the next playlist and fetch a new one.
+			// The next track will have the correct new sample rate.
+			delete iNextPlaylist;
+			iNextPlaylist = NULL;
+			
+			DoChangeTransactionStateL(EFetchingPlaylist);
+			iLastFMConnection.RequestPlaylistL(this);
 			}
-		
-		// Remove the next playlist and fetch a new one.
-		// The next track will have the correct new sample rate.
-		delete iNextPlaylist;
-		iNextPlaylist = NULL;
-		
-		DoChangeTransactionStateL(EFetchingPlaylist);
-		iLastFMConnection.RequestPlaylistL(this);
 		}
 	}
 
