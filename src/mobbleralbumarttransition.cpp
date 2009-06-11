@@ -235,7 +235,7 @@ void CMobblerAlbumArtTransition::FingerUpL(TInt aPosition, TSlide aSlide)
 	iStartTickCount = User::TickCount();
 	}
 
-TInt CMobblerAlbumArtTransition::CallBack(TAny* aRef)
+TInt CMobblerAlbumArtTransition::CallBack(TAny* /*aRef*/)
 	{
 	static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->StatusDrawDeferred();
 	return KErrNone;

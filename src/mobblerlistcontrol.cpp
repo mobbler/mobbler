@@ -23,13 +23,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <gulicon.h>
 
-#ifdef __SYMBIAN_SIGNED__
-#include <mobbler_strings_0x2002655A.rsg>
-#else
-#include <mobbler_strings.rsg>
-#endif
-
 #include "mobbler.hrh"
+#include "mobbler_strings.rsg.h"
 #include "mobbleralbumlist.h"
 #include "mobblerappui.h"
 #include "mobblerartistlist.h"

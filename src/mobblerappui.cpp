@@ -35,21 +35,16 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <DocumentHandler.h>
 
 #ifdef __SYMBIAN_SIGNED__
-#include <mobbler_strings_0x2002655A.rsg>
-#include <mobbler_0x2002655A.rsg>
-
 // SW Installer Launcher API
 #include <SWInstApi.h>
 #include <SWInstDefs.h>
-
-#else // !__SYMBIAN_SIGNED__
-#include <mobbler_strings.rsg>
-#include <mobbler.rsg>
 #endif
 
 #include <s32file.h>
 
 #include "mobbler.hrh"
+#include "mobbler.rsg.h"
+#include "mobbler_strings.rsg.h"
 #include "mobblerappui.h"
 #include "mobblerbitmapcollection.h"
 #include "mobblerlogging.h"
@@ -79,7 +74,7 @@ const TUid KDestinationImplUid = {0xA000BEB6};
 const TUid KMobblerGesturePlugin5xUid = {0xA000B6C2};
 #endif
 
-_LIT8(KAmazonSearchLink, "http://www.amazon.co.uk/gp/search?ie=UTF8&keywords=%S&tag=mobbler-21&index=music&linkCode=ur2&camp=1634&creative=6738");
+//_LIT8(KAmazonSearchLink, "http://www.amazon.co.uk/gp/search?ie=UTF8&keywords=%S&tag=mobbler-21&index=music&linkCode=ur2&camp=1634&creative=6738");
 
 void CMobblerAppUi::ConstructL()
 	{

@@ -1,8 +1,8 @@
 /*
-mobbler_reg.rss
+mobbler.rsg.h
 
-mobbler, a last.fm mobile scrobbler for Symbian smartphones.
-Copyright (C) 2008  Michael Coffey
+Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
+Copyright (C) 2009  Michael Coffey
 
 http://code.google.com/p/mobbler
 
@@ -21,33 +21,15 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-#include "mobbler.hrh"
-#include "mobbler.rsg.h"
-#include <appinfo.rh>
-
-CHARACTER_SET UTF8
-
-UID2 KUidAppRegistrationResourceFile
+#ifndef __MOBBLER_RSG_H__
+#define __MOBBLER_RSG_H__
 
 #ifdef __SYMBIAN_SIGNED__
-UID3 0x2002655A
+#include <mobbler_0x2002655A.rsg>
 #else
-UID3 0xA0007648
+#include <mobbler.rsg>
 #endif
 
-RESOURCE APP_REGISTRATION_INFO
-	{
-#ifdef __SYMBIAN_SIGNED__
-	app_file = "mobbler_0x2002655A";
-	localisable_resource_file =  "\\resource\\apps\\mobbler_0x2002655A";
-#else
-	app_file = "mobbler";
-	localisable_resource_file =  "\\resource\\apps\\mobbler";
-#endif
-	
-	localisable_resource_id = R_LOCALISABLE_APP_INFO;
+#endif // __MOBBLERSTRINGS_RSG_H__
 
-	embeddability=KAppNotEmbeddable;
-	newfile=KAppDoesNotSupportNewFile;
-	}
-
+// End of file

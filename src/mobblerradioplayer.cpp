@@ -23,14 +23,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <aknnotewrappers.h>
 
-#ifdef __SYMBIAN_SIGNED__
-#include <mobbler_strings_0x2002655A.rsg>
-#include <mobbler_0x2002655A.rsg>
-#else
-#include <mobbler_strings.rsg>
-#include <mobbler.rsg>
-#endif
-
+#include "mobbler.rsg.h"
+#include "mobbler_strings.rsg.h"
 #include "mobblerappui.h"
 #include "mobbleraudiocontrol.h"
 #include "mobbleraudiothread.h"

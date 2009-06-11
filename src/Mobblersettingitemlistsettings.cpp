@@ -21,16 +21,10 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-#ifdef __SYMBIAN_SIGNED__
-#include <mobbler_strings_0x2002655A.rsg>
-#include <mobbler_0x2002655A.rsg>
-#else
-#include <mobbler_strings.rsg>
-#include <mobbler.rsg>
-#endif
-
 #include <s32file.h>
 
+#include "mobbler.rsg.h"
+#include "mobbler_strings.rsg.h"
 #include "mobblerappui.h"
 #include "mobblerstring.h"
 #include "mobblerresourcereader.h"

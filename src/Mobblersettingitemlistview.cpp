@@ -21,18 +21,12 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-#ifdef __SYMBIAN_SIGNED__
-#include <mobbler_strings_0x2002655A.rsg>
-#include <mobbler_0x2002655A.rsg>
-#else
-#include <mobbler_strings.rsg>
-#include <mobbler.rsg>
-#endif
-
 #include <AknTextSettingPage.h>
 #include <eikfrlbd.h>
 
 #include "mobbler.hrh"
+#include "mobbler.rsg.h"
+#include "mobbler_strings.rsg.h"
 #include "mobblerappui.h"
 #include "mobbleraccesspointsettingitem.h"
 #include "mobblerresourcereader.h"
@@ -254,16 +248,12 @@ void CMobblerSettingItemListView::LoadListL()
 					   R_MOBBLER_IAP,
 					   R_MOBBLER_SETTING_PAGE_ENUM);
 		
-		// Bit rate (64 kbps or 128 kbps?)
-		RArray<TInt> bitRateArray;
-		CleanupClosePushL(bitRateArray);
-		bitRateArray.AppendL(R_MOBBLER_64_KBPS);
-		bitRateArray.AppendL(R_MOBBLER_128_KBPS);
-		CreateEnumItemL(iSettings->BitRate(),
-						R_MOBBLER_BIT_RATE,
-						R_MOBBLER_SETTING_PAGE_ENUM,
-						bitRateArray);
-		CleanupStack::PopAndDestroy(&bitRateArray);
+		// Bitrate (64 kbps or 128 kbps)
+		CreateBinaryItemL(iSettings->BitRate(),
+						  R_MOBBLER_BIT_RATE,
+						  R_MOBBLER_BINARY_SETTING_PAGE,
+						  R_MOBBLER_64_KBPS,
+						  R_MOBBLER_128_KBPS);
 
 		// Buffer size slider setting item
 		CreateSliderItemL(iSettings->BufferSize(),

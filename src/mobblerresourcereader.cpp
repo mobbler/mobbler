@@ -24,12 +24,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <aknnotewrappers.h>
 #include <barsread.h>
 
+#include "mobbler.rsg.h"
+#include "mobbler_strings.rsg.h"
 #include "mobblerresourcereader.h"
 
 #ifdef __SYMBIAN_SIGNED__
-
-#include <mobbler_strings_0x2002655A.rsg>
-#include <mobbler_0x2002655A.rsg>
 
 #ifdef __WINS__
 _LIT(KLanguageRscFile, "\\Resource\\apps\\mobbler_strings_0x2002655A.r01");
@@ -41,9 +40,6 @@ _LIT(KLanguageRscFile2,"C:\\Resource\\apps\\mobbler_strings2.rsc");
 
 #else // !__SYMBIAN_SIGNED__
 
-#include <mobbler_strings.rsg>
-#include <mobbler.rsg>
-
 #ifdef __WINS__
 _LIT(KLanguageRscFile, "\\Resource\\apps\\mobbler_strings.r01");
 _LIT(KLanguageRscFile2,"Z:\\Resource\\apps\\mobbler_strings2.r01");
@@ -53,7 +49,7 @@ _LIT(KLanguageRscFile2,"C:\\Resource\\apps\\mobbler_strings2.rsc");
 #endif
 
 #endif // __SYMBIAN_SIGNED__
-	
+
 const TInt KLanguageRscVersion(1);
 
 _LIT(KStringNotFoundInResouce, "???");
@@ -214,7 +210,7 @@ const TDesC& CMobblerResourceReader::ResourceL(TInt aResourceId)
 				CAknQueryDialog* dlg(CAknQueryDialog::NewL());
 				dlg->ExecuteLD(R_MOBBLER_GET_LATEST_LANGUAGE_DIALOG, 
 							   ResourceL(R_MOBBLER_GET_LATEST_LANGUAGE));
-	
+				
 				iErrorDialogShown = ETrue;
 				
 				return *iStringNotFoundInResouce;

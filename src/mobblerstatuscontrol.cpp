@@ -21,12 +21,6 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-#ifdef __SYMBIAN_SIGNED__
-#include <mobbler_strings_0x2002655A.rsg>
-#else
-#include <mobbler_strings.rsg>
-#endif
-
 #include <aknnavide.h>
 #include <aknnavilabel.h>
 #include <aknsbasicbackgroundcontrolcontext.h>
@@ -40,6 +34,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #endif
 
 #include "mobbler.hrh"
+#include "mobbler_strings.rsg.h"
 #include "mobbleralbumarttransition.h"
 #include "mobblerappui.h"
 #include "mobblerbitmapcollection.h"
@@ -642,7 +637,8 @@ void CMobblerStatusControl::Draw(const TRect& /*aRect*/) const
 				fullscreenAlbumArtReady = ETrue;
 				
 				TInt albumArtDimension(Min(Size().iWidth, Size().iHeight));
-				rectAlbumArt = TRect(TPoint(0,0), TSize(albumArtDimension, albumArtDimension));
+				TInt x((Size().iWidth - albumArtDimension) / 2); // to centre it
+				rectAlbumArt = TRect(TPoint(x, 0), TSize(albumArtDimension, albumArtDimension));
 				}
 			const_cast<CMobblerBitmap*>(albumArt)->ScaleL(rectAlbumArt.Size());
 			}
