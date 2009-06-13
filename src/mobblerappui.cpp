@@ -159,9 +159,9 @@ void CMobblerAppUi::ConstructL()
 		}
 	
 	AddViewL(iWebServicesView);
-    AddViewL(iSettingView);
-    AddViewL(iStatusView);
-    ActivateLocalViewL(iStatusView->Id());
+	AddViewL(iSettingView);
+	AddViewL(iStatusView);
+	ActivateLocalViewL(iStatusView->Id());
 	}
 
 CMobblerAppUi::CMobblerAppUi()
@@ -765,100 +765,100 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 			if (currentTrack)
 				{
 				CAknSinglePopupMenuStyleListBox* list(new(ELeave) CAknSinglePopupMenuStyleListBox);
-			    CleanupStack::PushL(list);
-			     
-			    CAknPopupList* popup = CAknPopupList::NewL(list, R_AVKON_SOFTKEYS_OK_CANCEL, AknPopupLayouts::EMenuWindow);
-			    CleanupStack::PushL(popup);
-			    
-			    list->ConstructL(popup, CEikListBox::ELeftDownInViewRect);
+				CleanupStack::PushL(list);
+				 
+				CAknPopupList* popup = CAknPopupList::NewL(list, R_AVKON_SOFTKEYS_OK_CANCEL, AknPopupLayouts::EMenuWindow);
+				CleanupStack::PushL(popup);
+				
+				list->ConstructL(popup, CEikListBox::ELeftDownInViewRect);
+				
+				popup->SetTitleL(iResourceReader->ResourceL(R_MOBBLER_CURRENT_TRACK));
+				
+				list->CreateScrollBarFrameL(ETrue);
+				list->ScrollBarFrame()->SetScrollBarVisibilityL(CEikScrollBarFrame::EOff, CEikScrollBarFrame::EAuto);
+				
+				CDesCArrayFlat* items = new(ELeave) CDesCArrayFlat(10);
+				CleanupStack::PushL(items);
+				
+				items->AppendL(iResourceReader->ResourceL(R_MOBBLER_SHARE_TRACK));
+				items->AppendL(iResourceReader->ResourceL(R_MOBBLER_SHARE_ARTIST));
+				items->AppendL(iResourceReader->ResourceL(R_MOBBLER_PLAYLIST_ADD_TRACK));
+				items->AppendL(iResourceReader->ResourceL(R_MOBBLER_SIMILAR_ARTISTS));
+				items->AppendL(iResourceReader->ResourceL(R_MOBBLER_SIMILAR_TRACKS));
+				items->AppendL(iResourceReader->ResourceL(R_MOBBLER_EVENTS));
+				items->AppendL(iResourceReader->ResourceL(R_MOBBLER_ARTIST_SHOUTBOX));
+				items->AppendL(iResourceReader->ResourceL(R_MOBBLER_TOP_ALBUMS));
+				items->AppendL(iResourceReader->ResourceL(R_MOBBLER_TOP_TRACKS));
+				items->AppendL(iResourceReader->ResourceL(R_MOBBLER_TOP_TAGS));
 
-			    popup->SetTitleL(iResourceReader->ResourceL(R_MOBBLER_CURRENT_TRACK));
-			    
-			    list->CreateScrollBarFrameL(ETrue);
-			    list->ScrollBarFrame()->SetScrollBarVisibilityL(CEikScrollBarFrame::EOff, CEikScrollBarFrame::EAuto);
-			    
-			    CDesCArrayFlat* items = new(ELeave) CDesCArrayFlat(10);
-			    CleanupStack::PushL(items);
-			    
-			    items->AppendL(iResourceReader->ResourceL(R_MOBBLER_SHARE_TRACK));
-			    items->AppendL(iResourceReader->ResourceL(R_MOBBLER_SHARE_ARTIST));
-			    items->AppendL(iResourceReader->ResourceL(R_MOBBLER_PLAYLIST_ADD_TRACK));
-			    items->AppendL(iResourceReader->ResourceL(R_MOBBLER_SIMILAR_ARTISTS));
-			    items->AppendL(iResourceReader->ResourceL(R_MOBBLER_SIMILAR_TRACKS));
-			    items->AppendL(iResourceReader->ResourceL(R_MOBBLER_EVENTS));
-			    items->AppendL(iResourceReader->ResourceL(R_MOBBLER_ARTIST_SHOUTBOX));
-			    items->AppendL(iResourceReader->ResourceL(R_MOBBLER_TOP_ALBUMS));
-			    items->AppendL(iResourceReader->ResourceL(R_MOBBLER_TOP_TRACKS));
-			    items->AppendL(iResourceReader->ResourceL(R_MOBBLER_TOP_TAGS));
 
-
-			    CleanupStack::Pop(items);
-			    
-			    list->Model()->SetItemTextArray(items);
-			    list->Model()->SetOwnershipType(ELbmOwnsItemArray);
-			    
-			    CleanupStack::Pop(popup);
-			    
-			    if (popup->ExecuteLD())
-			    	{
-			    	if (iLastFMConnection->Mode() != CMobblerLastFMConnection::EOnline && GoOnlineL())
-			    		{
-			    		iLastFMConnection->SetModeL(CMobblerLastFMConnection::EOnline);
-			    		}
-			    	
-			    	if (iLastFMConnection->Mode() == CMobblerLastFMConnection::EOnline)
-			    		{
-				    	switch (list->CurrentItemIndex())
-				    		{
-				    		case 0:
-				    		case 1:
-				    		case 2:
-				    			{
-				    			if (CurrentTrack())
-				    				{
-				    				delete iWebServicesHelper;
-				    				iWebServicesHelper = CMobblerWebServicesHelper::NewL(*this);
-				    				switch (list->CurrentItemIndex())
-				    					{
-				    					case 0: iWebServicesHelper->TrackShareL(*CurrentTrack()); break;
-				    					case 1: iWebServicesHelper->ArtistShareL(*CurrentTrack()); break;
-				    					case 2: iWebServicesHelper->PlaylistAddL(*CurrentTrack()); break;
-				    					}
-				    				}
-				    			else
-				    				{
-				    				// TODO: display an error
-				    				}
-				    			}
-					    		break;
-				    		case 3:
-				    			ActivateLocalViewL(iWebServicesView->Id(), TUid::Uid(EMobblerCommandSimilarArtists), currentTrack->Artist().String8());
-				    			break;
-				    		case 4:
-				    			ActivateLocalViewL(iWebServicesView->Id(), TUid::Uid(EMobblerCommandSimilarTracks), currentTrack->MbTrackId().String8());
-				    			break;
-				    		case 5:
-				    			ActivateLocalViewL(iWebServicesView->Id(), TUid::Uid(EMobblerCommandArtistEvents), currentTrack->Artist().String8());
-				    			break;
-				    		case 6:
-				    			ActivateLocalViewL(iWebServicesView->Id(), TUid::Uid(EMobblerCommandArtistShoutbox), currentTrack->Artist().String8());
-				    			break;
-				    		case 7:
-				    			ActivateLocalViewL(iWebServicesView->Id(), TUid::Uid(EMobblerCommandArtistTopAlbums), currentTrack->Artist().String8());
-				    			break;
-				    		case 8:
-				    			ActivateLocalViewL(iWebServicesView->Id(), TUid::Uid(EMobblerCommandArtistTopTracks), currentTrack->Artist().String8());
-				    			break;
-				    		case 9:
-				    			ActivateLocalViewL(iWebServicesView->Id(), TUid::Uid(EMobblerCommandArtistTopTags), currentTrack->Artist().String8()); 	
-				    			break;
-				    		default:
-				    			break;
-				    		}
-			    		}
-			    	}
-			     
-			    CleanupStack::PopAndDestroy(list);
+				CleanupStack::Pop(items);
+				
+				list->Model()->SetItemTextArray(items);
+				list->Model()->SetOwnershipType(ELbmOwnsItemArray);
+				
+				CleanupStack::Pop(popup);
+				
+				if (popup->ExecuteLD())
+					{
+					if (iLastFMConnection->Mode() != CMobblerLastFMConnection::EOnline && GoOnlineL())
+						{
+						iLastFMConnection->SetModeL(CMobblerLastFMConnection::EOnline);
+						}
+					
+					if (iLastFMConnection->Mode() == CMobblerLastFMConnection::EOnline)
+						{
+						switch (list->CurrentItemIndex())
+							{
+							case 0:
+							case 1:
+							case 2:
+								{
+								if (CurrentTrack())
+									{
+									delete iWebServicesHelper;
+									iWebServicesHelper = CMobblerWebServicesHelper::NewL(*this);
+									switch (list->CurrentItemIndex())
+										{
+										case 0: iWebServicesHelper->TrackShareL(*CurrentTrack()); break;
+										case 1: iWebServicesHelper->ArtistShareL(*CurrentTrack()); break;
+										case 2: iWebServicesHelper->PlaylistAddL(*CurrentTrack()); break;
+										}
+									}
+								else
+									{
+									// TODO: display an error
+									}
+								}
+								break;
+							case 3:
+								ActivateLocalViewL(iWebServicesView->Id(), TUid::Uid(EMobblerCommandSimilarArtists), currentTrack->Artist().String8());
+								break;
+							case 4:
+								ActivateLocalViewL(iWebServicesView->Id(), TUid::Uid(EMobblerCommandSimilarTracks), currentTrack->MbTrackId().String8());
+								break;
+							case 5:
+								ActivateLocalViewL(iWebServicesView->Id(), TUid::Uid(EMobblerCommandArtistEvents), currentTrack->Artist().String8());
+								break;
+							case 6:
+								ActivateLocalViewL(iWebServicesView->Id(), TUid::Uid(EMobblerCommandArtistShoutbox), currentTrack->Artist().String8());
+								break;
+							case 7:
+								ActivateLocalViewL(iWebServicesView->Id(), TUid::Uid(EMobblerCommandArtistTopAlbums), currentTrack->Artist().String8());
+								break;
+							case 8:
+								ActivateLocalViewL(iWebServicesView->Id(), TUid::Uid(EMobblerCommandArtistTopTracks), currentTrack->Artist().String8());
+								break;
+							case 9:
+								ActivateLocalViewL(iWebServicesView->Id(), TUid::Uid(EMobblerCommandArtistTopTags), currentTrack->Artist().String8()); 	
+								break;
+							default:
+								break;
+							}
+						}
+					}
+				 
+				CleanupStack::PopAndDestroy(list);
 				}
 			
 			break;
@@ -872,40 +872,40 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 										 R_AVKON_SOFTKEYS_SELECT_CANCEL,
 										 AknPopupLayouts::EMenuWindow));
 				CleanupStack::PushL(popupList);
-
+				
 				list->ConstructL(popupList, CEikListBox::ELeftDownInViewRect);
 				list->CreateScrollBarFrameL(ETrue);
 				list->ScrollBarFrame()->SetScrollBarVisibilityL(CEikScrollBarFrame::EOff,
 																CEikScrollBarFrame::EAuto);
-
+				
 				CDesCArrayFlat* items(new CDesCArrayFlat(4));
 				CleanupStack::PushL(items);
-
+				
 				HBufC* action(CurrentTrack()->Title().String().AllocLC());
 				items->AppendL(*action);
 				CleanupStack::PopAndDestroy(action);
-
+				
 				action = CurrentTrack()->Artist().String().AllocLC();
 				items->AppendL(*action);
 				CleanupStack::PopAndDestroy(action);
-
+				
 				if (CurrentTrack()->Album().String().Length() > 0)
 					{
 					action = CurrentTrack()->Album().String().AllocLC();
 					items->AppendL(*action);
 					CleanupStack::PopAndDestroy(action);
 					}
-
+				
 				items->AppendL(iResourceReader->ResourceL(R_MOBBLER_EVENTS));
-
+				
 				
 				CTextListBoxModel* model(list->Model());
 				model->SetItemTextArray(items);
 				model->SetOwnershipType(ELbmOwnsItemArray);
 				CleanupStack::Pop();
-
+				
 				popupList->SetTitleL(iResourceReader->ResourceL(R_MOBBLER_VISIT_LASTFM));
-		
+				
 				list->SetCurrentItemIndex(1);
 				TInt popupOk(popupList->ExecuteLD());
 				CleanupStack::Pop();
@@ -921,8 +921,13 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 							GoToLastFmL(EMobblerCommandArtistWebPage);
 							break;
 						case 2:
-							GoToLastFmL(EMobblerCommandAlbumWebPage);
-							break;
+							if (CurrentTrack()->Album().String().Length() > 0)
+								{
+								GoToLastFmL(EMobblerCommandAlbumWebPage);
+								break;
+								}
+							// else no album so it's an event; 
+							// intentional fall-through
 						case 3:
 							GoToLastFmL(EMobblerCommandEventsWebPage);
 							break;
@@ -930,7 +935,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 							break;
 						}
 					}
-			    CleanupStack::PopAndDestroy(list);
+				CleanupStack::PopAndDestroy(list);
 				}
 			}
 			break;
@@ -1769,12 +1774,12 @@ void CMobblerAppUi::GoToLastFmL(TInt aCommand)
 		_LIT(KSlash, "/");
 		_LIT(KUnderscoreSlash, "_/");
 		_LIT(KPlusEvents, "+events");
-
+		
 		TBuf<255> url(MobblerUtility::LocalLastFmDomainL());
 		url.Append(KMusicSlash);
 		url.Append(currentTrack->Artist().String());
 		url.Append(KSlash);
-
+		
 		switch (aCommand)
 			{
 			case EMobblerCommandArtistWebPage:
@@ -1789,11 +1794,10 @@ void CMobblerAppUi::GoToLastFmL(TInt aCommand)
 			case EMobblerCommandEventsWebPage:
 				url.Append(KPlusEvents);
 				break;
-
 			default:
 				break;
 			}
-
+		
 		// replace space with '+' in the artist name for the URL
 		TInt position(url.Find(_L(" ")));
 		while (position != KErrNotFound)
