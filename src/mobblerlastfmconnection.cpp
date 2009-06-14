@@ -56,6 +56,13 @@ _LIT8(KWebServicesHost, "ws.audioscrobbler.com");
 // The format for the handshake URL 
 _LIT8(KScrobbleQuery, "hs=true&p=1.2&c=mlr&v=0.1&u=%S&t=%d&a=%S");
 
+// Old radio defines
+_LIT8(KRadioStationQuery, "session=%S&url=%S&lang=%S");
+_LIT8(KRadioPlaylistQuery, "sk=%S&discovery=0&desktop=1.5.1");
+_LIT8(KRadioHost, "ws.audioscrobbler.com");
+_LIT8(KRadioPath, "/radio/handshake.php");
+_LIT8(KRadioQuery, "version=1.5.1&platform=symbian&username=%S&passwordmd5=%S&language=%S&player=mobbler");
+
 _LIT8(KRadioStationPersonal, "lastfm://user/%S/library");
 _LIT8(KRadioStationPlaylist, "lastfm://playlist/%S");
 _LIT8(KRadioStationLoved, "lastfm://user/%S/loved");
@@ -381,6 +388,11 @@ void CMobblerLastFMConnection::RunL()
 	iMp3Location = NULL;
 	}
 
+CMobblerLastFMConnection::TLastFMMemberType CMobblerLastFMConnection::MemberType() const
+	{
+	return iMemberType;
+	}
+
 void CMobblerLastFMConnection::DoCancel()
 	{
 	iConnection.Close();
@@ -464,10 +476,47 @@ void CMobblerLastFMConnection::AuthenticateL()
 	BetaHandshakeL();
 #endif
 	}
+	
+void CMobblerLastFMConnection::OldRadioHandshakeL()
+	{
+	// start the radio handshake transaction
+	
+	delete iOldRadioSessionID;
+	iOldRadioSessionID = NULL;
+	delete iOldRadioBaseURL;
+	iOldRadioBaseURL = NULL;
+	delete iOldRadioBasePath;
+	iOldRadioBasePath = NULL;
+	
+	HBufC8* passwordHash(MobblerUtility::MD5LC(iPassword->String8()));
+	TPtr8 passwordHashPtr(passwordHash->Des());
+	
+	HBufC8* path(HBufC8::NewLC(255));
+
+	// get the phone language code
+	TBuf8<2> language(MobblerUtility::LanguageL());
+	
+	path->Des().AppendFormat(KRadioQuery, &iUsername->String8(), &passwordHashPtr, &language);
+	
+	CUri8* uri(CUri8::NewLC());
+	
+	uri->SetComponentL(KScheme, EUriScheme);
+	uri->SetComponentL(KRadioHost, EUriHost);
+	uri->SetComponentL(KRadioPath, EUriPath);
+	uri->SetComponentL(*path, EUriQuery);
+	
+	delete iOldRadioHandshakeTransaction;
+	iOldRadioHandshakeTransaction = CMobblerTransaction::NewL(*this, uri);
+	iOldRadioHandshakeTransaction->SubmitL();
+	
+	CleanupStack::Pop(uri);
+	CleanupStack::PopAndDestroy(2, passwordHash);
+	}
 
 void CMobblerLastFMConnection::WebServicesHandshakeL()
 	{
 	// start the web services authentications
+	iMemberType = EMemberTypeUnknown;
 
 	delete iWebServicesSessionKey;
 	iWebServicesSessionKey = NULL;
@@ -1076,21 +1125,63 @@ void CMobblerLastFMConnection::SelectStationL(MMobblerFlatDataObserver* aObserve
 		default: break;
 		}
 	
-	CUri8* uri(CUri8::NewLC());
+	CMobblerTransaction* transaction(NULL);
 	
-	uri->SetComponentL(KScheme, EUriScheme);
-	uri->SetComponentL(KWebServicesHost, EUriHost);
-	uri->SetComponentL(_L8("/2.0/"), EUriPath);
+	if (iMemberType == ESubscriber)
+		{
+		CUri8* uri(CUri8::NewLC());
 	
-	CMobblerWebServicesQuery* query(CMobblerWebServicesQuery::NewLC(_L8("radio.tune")));
-	query->AddFieldL(_L8("lang"), MobblerUtility::LanguageL());
-	query->AddFieldL(_L8("station"), *radioURL);
+		uri->SetComponentL(KScheme, EUriScheme);
+		uri->SetComponentL(KWebServicesHost, EUriHost);
+		uri->SetComponentL(_L8("/2.0/"), EUriPath);
+		
+		CMobblerWebServicesQuery* query(CMobblerWebServicesQuery::NewLC(_L8("radio.tune")));
+		query->AddFieldL(_L8("lang"), MobblerUtility::LanguageL());
+		query->AddFieldL(_L8("station"), *radioURL);
+		
+		transaction = CMobblerTransaction::NewL(*this, ETrue, uri, query);
+		transaction->SetFlatDataObserver(aObserver);
+		
+		CleanupStack::Pop(query);
+		CleanupStack::Pop(uri);
+		}
+	else if (iMemberType == EMember)
+		{
+		// This is a non-subscriber so use the old API
+		
+		if (iOldRadioSessionID)
+			{
+			// setup the path
+			HBufC8* path(HBufC8::NewLC(255));
+			TPtr8 pathPtr(path->Des());
+			pathPtr.Copy(*iOldRadioBasePath);
+			pathPtr.Append(_L8("/adjust.php"));
+			
+			TBuf8<2> language(MobblerUtility::LanguageL());
+			
+			HBufC8* query(HBufC8::NewLC(255));
+			
+			// setup the 
+			TPtr8 radioSessionIDPtr(iRadioSessionID->Des());
+			TPtr8 radioURLPtr(radioURL->Des());
+			
+			query->Des().AppendFormat(KRadioStationQuery, &radioSessionIDPtr, &radioURLPtr, &language);
+			
+			CUri8* uri(CUri8::NewLC());
+			
+			uri->SetComponentL(_L8("http"), EUriScheme);
+			uri->SetComponentL(*iOldRadioBaseURL, EUriHost);
+			uri->SetComponentL(pathPtr, EUriPath);
+			uri->SetComponentL(*query, EUriQuery);
 	
-	CMobblerTransaction* transaction(CMobblerTransaction::NewL(*this, ETrue, uri, query));
-	transaction->SetFlatDataObserver(aObserver);
+			transaction = CMobblerTransaction::NewL(*this, uri);
+			transaction->SetFlatDataObserver(aObserver);
 	
-	CleanupStack::Pop(query);
-	CleanupStack::Pop(uri);
+			CleanupStack::Pop(uri);
+			CleanupStack::PopAndDestroy(2, path);
+			}
+		}
+	
 	CleanupStack::PopAndDestroy(text);
 	CleanupStack::PopAndDestroy(radioURL);
 	
@@ -1099,38 +1190,72 @@ void CMobblerLastFMConnection::SelectStationL(MMobblerFlatDataObserver* aObserve
 
 void CMobblerLastFMConnection::RequestPlaylistL(MMobblerFlatDataObserver* aObserver)
 	{
-	CUri8* uri(CUri8::NewLC());
+	CMobblerTransaction* transaction(NULL);
 	
-	uri->SetComponentL(KScheme, EUriScheme);
-	uri->SetComponentL(KWebServicesHost, EUriHost);
-	uri->SetComponentL(_L8("/2.0/"), EUriPath);
-	
-	CMobblerWebServicesQuery* query(CMobblerWebServicesQuery::NewLC(_L8("radio.getPlaylist")));
-	
-	//query->AddFieldL(_L8("rtp"), _L8("?"));
-	
-	// Always ask for the mp3 to be downloaded at twice the speed that it plays at.
-	// Should improve battery life by downloading for less time.
-	query->AddFieldL(_L8("speed_multiplier"), _L8("2.0"));
-	
-	switch (iBitRate)
+	if (iMemberType == ESubscriber)
 		{
-		case 0:
-			query->AddFieldL(_L8("bitrate"), _L8("64"));
-			break;
-		case 1:
-			query->AddFieldL(_L8("bitrate"), _L8("128"));
-			break;
-		default:
-			// TODO: should panic
-			break;
+		CUri8* uri(CUri8::NewLC());
+		
+		uri->SetComponentL(KScheme, EUriScheme);
+		uri->SetComponentL(KWebServicesHost, EUriHost);
+		uri->SetComponentL(_L8("/2.0/"), EUriPath);
+		
+		CMobblerWebServicesQuery* query(CMobblerWebServicesQuery::NewLC(_L8("radio.getPlaylist")));
+		
+		//query->AddFieldL(_L8("rtp"), _L8("?"));
+		
+		// Always ask for the mp3 to be downloaded at twice the speed that it plays at.
+		// Should improve battery life by downloading for less time.
+		query->AddFieldL(_L8("speed_multiplier"), _L8("2.0"));
+		
+		switch (iBitRate)
+			{
+			case 0:
+				query->AddFieldL(_L8("bitrate"), _L8("64"));
+				break;
+			case 1:
+				query->AddFieldL(_L8("bitrate"), _L8("128"));
+				break;
+			default:
+				// TODO: should panic
+				break;
+			}
+		
+		transaction = CMobblerTransaction::NewL(*this, ETrue, uri, query);
+		transaction->SetFlatDataObserver(aObserver);
+		
+		CleanupStack::Pop(query);
+		CleanupStack::Pop(uri);
 		}
-	
-	CMobblerTransaction* transaction(CMobblerTransaction::NewL(*this, ETrue, uri, query));
-	transaction->SetFlatDataObserver(aObserver);
-	
-	CleanupStack::Pop(query);
-	CleanupStack::Pop(uri);
+	else if (iMemberType == EMember)
+		{
+		
+		if (iOldRadioSessionID)
+			{
+			HBufC8* path(HBufC8::NewLC(255));
+			TPtr8 pathPtr(path->Des());
+			pathPtr.Copy(*iOldRadioBasePath);
+			pathPtr.Append(_L8("/xspf.php"));
+			
+			TPtr8 radioSessionIDPtr(iRadioSessionID->Des());
+			
+			HBufC8* query(HBufC8::NewLC(255));
+			query->Des().AppendFormat(KRadioPlaylistQuery, &radioSessionIDPtr);
+			
+			CUri8* uri(CUri8::NewLC());
+			
+			uri->SetComponentL(_L8("http"), EUriScheme);
+			uri->SetComponentL(*iOldRadioBaseURL, EUriHost);
+			uri->SetComponentL(pathPtr, EUriPath);
+			uri->SetComponentL(*query, EUriQuery);
+			
+			transaction = CMobblerTransaction::NewL(*this, uri);
+			transaction->SetFlatDataObserver(aObserver);
+			
+			CleanupStack::Pop(uri);
+			CleanupStack::PopAndDestroy(2, path);
+			}
+		}
 	
 	AppendAndSubmitTransactionL(transaction);
 	}
@@ -1466,26 +1591,35 @@ void CMobblerLastFMConnection::HandleHandshakeErrorL(CMobblerLastFMError* aError
 #endif
 				)
 			{
-			iAuthenticated = ETrue;
-			
-			// only notify the UI when we are fully connected
-			iObserver.HandleConnectCompleteL(KErrNone);
-			ChangeStateL(ENone);
-			
-			DoSubmitL();
-			
-			const TInt KTransactionCount(iTransactions.Count());
-			for (TInt i(0) ; i < KTransactionCount ; ++i)
+			if (iMemberType == EMember && !iOldRadioSessionID)
 				{
-				iTransactions[i]->SubmitL();
+				// This person is not a subscriber and we don't have the
+				//  radio seesion id so try to use the old radio API
+				OldRadioHandshakeL();
 				}
-			
-			if (iTrackDownloadObserver)
+			else
 				{
-				// There is a track observer so this must be because
-				// we failed to start downloading a track, but have now reconnected
-				iTrackDownloadObserver->DataCompleteL(EErrorHandshake, KErrNone, KNullDesC8);
-				iTrackDownloadObserver = NULL;
+				iAuthenticated = ETrue;
+				
+				// only notify the UI when we are fully connected
+				iObserver.HandleConnectCompleteL(KErrNone);
+				ChangeStateL(ENone);
+				
+				DoSubmitL();
+				
+				const TInt KTransactionCount(iTransactions.Count());
+				for (TInt i(0) ; i < KTransactionCount ; ++i)
+					{
+					iTransactions[i]->SubmitL();
+					}
+				
+				if (iTrackDownloadObserver)
+					{
+					// There is a track observer so this must be because
+					// we failed to start downloading a track, but have now reconnected
+					iTrackDownloadObserver->DataCompleteL(EErrorHandshake, KErrNone, KNullDesC8);
+					iTrackDownloadObserver = NULL;
+					}
 				}
 			}
 		}
@@ -1512,7 +1646,10 @@ void CMobblerLastFMConnection::HandleHandshakeErrorL(CMobblerLastFMError* aError
 
 void CMobblerLastFMConnection::AppendAndSubmitTransactionL(CMobblerTransaction* aTransaction)
 	{
-	iTransactions.AppendL(aTransaction);
+	if (aTransaction)
+		{
+		iTransactions.AppendL(aTransaction);
+		}
 	
 	if (iMode != EOnline)
 		{
@@ -1528,7 +1665,7 @@ void CMobblerLastFMConnection::AppendAndSubmitTransactionL(CMobblerTransaction* 
 				}
 			}
 		}
-	else if (iAuthenticated && Connected())
+	else if (aTransaction && iAuthenticated && Connected())
 		{
 		// we are online and we have authenticated
 		aTransaction->SubmitL();
@@ -1603,7 +1740,14 @@ void CMobblerLastFMConnection::TransactionResponseL(CMobblerTransaction* aTransa
 		}
 	else if (aTransaction == iWebServicesHandshakeTransaction)
 		{
-		CMobblerLastFMError* error(CMobblerParser::ParseWebServicesHandshakeL(aResponse, iWebServicesSessionKey));
+		CMobblerLastFMError* error(CMobblerParser::ParseWebServicesHandshakeL(aResponse, iWebServicesSessionKey, iMemberType));
+		CleanupStack::PushL(error);
+		HandleHandshakeErrorL(error);
+		CleanupStack::PopAndDestroy(error);
+		}
+	else if (aTransaction == iOldRadioHandshakeTransaction)
+		{
+		CMobblerLastFMError* error(CMobblerParser::ParseOldRadioHandshakeL(aResponse, iOldRadioSessionID, iOldRadioBaseURL, iOldRadioBasePath));
 		CleanupStack::PushL(error);
 		HandleHandshakeErrorL(error);
 		CleanupStack::PopAndDestroy(error);

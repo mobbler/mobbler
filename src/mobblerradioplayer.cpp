@@ -328,10 +328,23 @@ void CMobblerRadioPlayer::DataL(const TDesC8& aData, CMobblerLastFMConnection::T
 		{
 		case ESelectingStation:
 			{
-			if (aError == CMobblerLastFMConnection::EErrorNone)
+			CMobblerLastFMError* oldRadioError(NULL);
+			
+			if (iLastFMConnection.MemberType() == CMobblerLastFMConnection::EMember)
+					{
+					oldRadioError = CMobblerParser::ParseOldRadioTuneL(aData);
+					}
+			
+			if (aError == CMobblerLastFMConnection::EErrorNone
+					&& !oldRadioError)
 				{
-				delete iStation;
-				iStation = CMobblerParser::ParseRadioTuneL(aData);
+				// There were no error selecting the station
+				
+				if (iLastFMConnection.MemberType() == CMobblerLastFMConnection::ESubscriber)
+					{
+					delete iStation;
+					iStation = CMobblerParser::ParseRadioTuneL(aData);
+					}
 				
 				DoChangeTransactionStateL(EFetchingPlaylist);
 				iLastFMConnection.RequestPlaylistL(this);
@@ -352,7 +365,16 @@ void CMobblerRadioPlayer::DataL(const TDesC8& aData, CMobblerLastFMConnection::T
 				DoChangeTransactionStateL(ENone);
 		
 				CMobblerRadioPlaylist* playlist(NULL);
-				CMobblerLastFMError* error(CMobblerParser::ParseRadioPlaylistL(aData, playlist));
+				CMobblerLastFMError* error(NULL);
+				
+				if (iLastFMConnection.MemberType() == CMobblerLastFMConnection::ESubscriber)
+					{
+					error = CMobblerParser::ParseRadioPlaylistL(aData, playlist);
+					}
+				else
+					{
+					error = CMobblerParser::ParseOldRadioPlaylistL(aData, playlist);
+					}
 				
 				if (!error)
 					{

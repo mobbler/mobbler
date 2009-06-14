@@ -53,6 +53,13 @@ class CMobblerLastFMConnection : public CActive, public MHTTPTransactionCallback
 public:
 	friend class CMobblerTransaction;
 public:
+	enum TLastFMMemberType
+		{
+		EMemberTypeUnknown,
+		EMember,
+		ESubscriber
+		};
+	
 	enum TError
 		{
 		EErrorNone,
@@ -104,6 +111,8 @@ public:
 	TUint32 IapID() const;
 	
 	void SetBitRateL(TInt aBitRate);
+	
+	TLastFMMemberType MemberType() const;
 	
 	// state observers
 	void AddStateChangeObserverL(MMobblerConnectionStateObserver* aObserver);
@@ -193,6 +202,7 @@ private:
 	
 	void ScrobbleHandshakeL();
 	void WebServicesHandshakeL();
+	void OldRadioHandshakeL();
 #ifdef BETA_BUILD
 	void BetaHandshakeL();
 #endif
@@ -233,10 +243,16 @@ private:
 	// authentication transactions
 	CMobblerTransaction* iHandshakeTransaction;
 	CMobblerTransaction* iWebServicesHandshakeTransaction;
+	CMobblerTransaction* iOldRadioHandshakeTransaction;
 #ifdef BETA_BUILD
 	CMobblerTransaction* iBetaTestersTransaction;
 	TBool iIsBetaTester;
 #endif
+	
+	// Old radio things
+	HBufC8* iOldRadioSessionID;
+	HBufC8* iOldRadioBaseURL;
+	HBufC8* iOldRadioBasePath;
 	
 	// scrobble transactions
 	CMobblerTransaction* iNowPlayingTransaction;
@@ -277,6 +293,8 @@ private:
 	RPointerArray<MMobblerConnectionStateObserver> iStateChangeObservers;
 
 	TInt iBitRate;
+	
+	TLastFMMemberType iMemberType;
 	};
 
 #endif // __MOBBLERLASTFMCONNECTION_H__
