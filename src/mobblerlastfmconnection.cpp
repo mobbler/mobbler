@@ -1162,7 +1162,7 @@ void CMobblerLastFMConnection::SelectStationL(MMobblerFlatDataObserver* aObserve
 			HBufC8* query(HBufC8::NewLC(255));
 			
 			// setup the 
-			TPtr8 radioSessionIDPtr(iRadioSessionID->Des());
+			TPtr8 radioSessionIDPtr(iOldRadioSessionID->Des());
 			TPtr8 radioURLPtr(radioURL->Des());
 			
 			query->Des().AppendFormat(KRadioStationQuery, &radioSessionIDPtr, &radioURLPtr, &language);
@@ -1237,7 +1237,7 @@ void CMobblerLastFMConnection::RequestPlaylistL(MMobblerFlatDataObserver* aObser
 			pathPtr.Copy(*iOldRadioBasePath);
 			pathPtr.Append(_L8("/xspf.php"));
 			
-			TPtr8 radioSessionIDPtr(iRadioSessionID->Des());
+			TPtr8 radioSessionIDPtr(iOldRadioSessionID->Des());
 			
 			HBufC8* query(HBufC8::NewLC(255));
 			query->Des().AppendFormat(KRadioPlaylistQuery, &radioSessionIDPtr);
