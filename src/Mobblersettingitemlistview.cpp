@@ -352,6 +352,11 @@ void CMobblerSettingItemListView::LoadListL()
 					   R_MOBBLER_IAP,
 					   R_MOBBLER_SETTING_PAGE_ENUM,
 					   EFalse);
+		
+		// Alarm volume seting item
+		CreateVolumeItemL(iSettings->AlarmVolume(),
+						  R_MOBBLER_VOLUME,
+						  R_MOBBLER_VOLUME_SETTING_PAGE);
 		}
 	
 	// Required when there is only one setting item
@@ -557,6 +562,28 @@ void CMobblerSettingItemListView::CreateTimeItemL(TTime& aValue,
 	{
 	CAknTimeOrDateSettingItem* item(new (ELeave) 
 				CAknTimeOrDateSettingItem(iOrdinal, CAknTimeOrDateSettingItem::ETime, aValue));
+	CleanupStack::PushL(item);
+
+	const TDesC& title(static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->ResourceReader().ResourceL(aTitleResource));
+	
+	item->SetEmptyItemTextL(title);
+	item->ConstructL(iIsNumberedStyle, iOrdinal, title, iIcons, aPageResource, -1);
+
+	iMobblerSettingItemList->SettingItemArray()->AppendL(item);
+	CleanupStack::Pop(item);
+	++iOrdinal;
+	}
+
+void CMobblerSettingItemListView::CreateVolumeItemL(TInt& aValue, 
+													const TInt aTitleResource, 
+													const TInt aPageResource)
+	{
+	if (aValue < 1)
+		{
+		aValue = 1;
+		}
+	
+	CAknVolumeSettingItem* item(new (ELeave) CAknVolumeSettingItem(iOrdinal, aValue));
 	CleanupStack::PushL(item);
 
 	const TDesC& title(static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->ResourceReader().ResourceL(aTitleResource));

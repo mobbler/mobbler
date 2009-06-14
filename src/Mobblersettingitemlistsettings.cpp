@@ -91,7 +91,8 @@ void CMobblerSettingItemListSettings::LoadSettingValuesL()
 	TUint32 alarmIapId(0);
 	TUint8 bitRate(1);
 	TUint32 destinationId(0);
-
+	TInt alarmVolume(KDefaultVolume);
+	
 	if (openError == KErrNone)
 		{
 		RFileReadStream readStream(file);
@@ -153,10 +154,11 @@ void CMobblerSettingItemListSettings::LoadSettingValuesL()
 		TRAP_IGNORE(alarmIapId = readStream.ReadUint32L());
 		TRAP_IGNORE(bitRate = readStream.ReadUint8L());
 		TRAP_IGNORE(destinationId = readStream.ReadUint32L());
+		TRAP_IGNORE(alarmVolume = readStream.ReadInt16L());
 		
 		SetUsername(username);
 		SetPassword(password);
-
+		
 		CleanupStack::PopAndDestroy(&readStream);
 		}
 	else
@@ -191,6 +193,7 @@ void CMobblerSettingItemListSettings::LoadSettingValuesL()
 	SetAlarmTime(alarmTime);
 	SetAlarmIapId(alarmIapId);
 	SetBitRate(bitRate);
+	SetAlarmVolume(alarmVolume);
 
 	CleanupStack::PopAndDestroy(&file);
 	}
@@ -230,6 +233,7 @@ void CMobblerSettingItemListSettings::SaveSettingValuesL()
 		writeStream.WriteUint32L(AlarmIapId());
 		writeStream.WriteUint8L(BitRate());
 		writeStream.WriteUint32L(IapId()); // this is for ?TODO? with destinations
+		writeStream.WriteInt16L(AlarmVolume());
 		
 		CleanupStack::PopAndDestroy(&writeStream);
 		}

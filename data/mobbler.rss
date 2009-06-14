@@ -678,6 +678,18 @@ RESOURCE TIME_EDITOR r_mobbler_time_edwin
 		};
 	}
 
+RESOURCE AVKON_SETTING_PAGE r_mobbler_volume_setting_page
+	{
+	type = EAknCtVolumeControl;
+	editor_resource_id = r_mobbler_volume_control;
+	}
+
+RESOURCE VOLUME r_mobbler_volume_control
+	{
+	flags = ESettingsVolumeControl;
+	value = 10;
+	}
+
 RESOURCE DIALOG r_mobbler_downloading_dialog
 	{
 	flags = EAknWaitNoteFlags;

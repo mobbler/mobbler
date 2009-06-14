@@ -81,6 +81,7 @@ public:
 	
 	void VolumeUp();
 	void VolumeDown();
+	void SetVolume(TInt aVolume);
 	void SetEqualizer(TInt aIndex);
 	void SetPreBufferSize(TTimeIntervalSeconds aPreBufferSize);
 	void SetBitRateL(TInt aBitRate);

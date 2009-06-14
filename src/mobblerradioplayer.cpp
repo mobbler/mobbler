@@ -338,7 +338,7 @@ void CMobblerRadioPlayer::DataL(const TDesC8& aData, CMobblerLastFMConnection::T
 			if (aError == CMobblerLastFMConnection::EErrorNone
 					&& !oldRadioError)
 				{
-				// There were no error selecting the station
+				// There were no errors selecting the station
 				
 				if (iLastFMConnection.MemberType() == CMobblerLastFMConnection::ESubscriber)
 					{
@@ -516,30 +516,8 @@ void CMobblerRadioPlayer::SkipTrackL()
 		}
 	}
 
-void CMobblerRadioPlayer::VolumeUp()
+void CMobblerRadioPlayer::UpdateVolume()
 	{
-	TInt volume(Volume());
-	TInt maxVolume(MaxVolume());
-	iVolume = Min(volume + (maxVolume / 10), maxVolume);
-
-	if (iCurrentAudioControl)
-		{
-		iCurrentAudioControl->SetVolume(iVolume);
-		}
-	if (iNextAudioControl)
-		{
-		iNextAudioControl->SetVolume(iVolume);
-		}
-
-	static_cast<CMobblerAppUi*>(CEikonEnv::Static()->AppUi())->StatusDrawDeferred();
-	}
-
-void CMobblerRadioPlayer::VolumeDown()
-	{
-	TInt volume(Volume());
-	TInt maxVolume(MaxVolume());
-	iVolume = Max(volume - (maxVolume / 10), 0);
-		
 	if (iCurrentAudioControl)
 		{
 		iCurrentAudioControl->SetVolume(iVolume);
@@ -550,6 +528,32 @@ void CMobblerRadioPlayer::VolumeDown()
 		}
 	
 	static_cast<CMobblerAppUi*>(CEikonEnv::Static()->AppUi())->StatusDrawDeferred();
+	}
+
+void CMobblerRadioPlayer::VolumeUp()
+	{
+	TInt volume(Volume());
+	TInt maxVolume(MaxVolume());
+	iVolume = Min(volume + (maxVolume / 10), maxVolume);
+	
+	UpdateVolume();
+	}
+
+void CMobblerRadioPlayer::VolumeDown()
+	{
+	TInt volume(Volume());
+	TInt maxVolume(MaxVolume());
+	iVolume = Max(volume - (maxVolume / 10), 0);
+	
+	UpdateVolume();
+	}
+
+void CMobblerRadioPlayer::SetVolume(TInt aVolume)
+	{
+	iVolume = Min(aVolume, MaxVolume());
+	iVolume = Max(iVolume, 0);
+	
+	UpdateVolume();
 	}
 
 TInt CMobblerRadioPlayer::Volume() const
@@ -676,8 +680,9 @@ void CMobblerRadioPlayer::DoStop(TBool aDeleteNextTrack)
 
 CMobblerTrack* CMobblerRadioPlayer::CurrentTrack()
 	{
-	if (iCurrentAudioControl && (!iCurrentAudioControl->DownloadComplete() ||
-			iCurrentAudioControl->Playing()) && (iCurrentPlaylist && (iCurrentPlaylist->Count() > iCurrentTrackIndex)) )
+	if (iCurrentAudioControl && 
+		(!iCurrentAudioControl->DownloadComplete() || iCurrentAudioControl->Playing()) && 
+		(iCurrentPlaylist && (iCurrentPlaylist->Count() > iCurrentTrackIndex)))
 		{
 		return (*iCurrentPlaylist)[iCurrentTrackIndex];
 		}

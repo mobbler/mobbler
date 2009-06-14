@@ -69,6 +69,7 @@ public:
 	TTime AlarmTime()				{ return iSettings->AlarmTime();  }
 	TUint32 AlarmIapId()			{ return iSettings->AlarmIapId(); }
 	TInt BitRate()					{ return iSettings->BitRate(); }
+	TInt AlarmVolume()				{ return iSettings->AlarmVolume(); }
 	
 	void SetEqualizerIndexL(TInt aIndex);
 	void SetVolumeL(TInt aVolume);
@@ -114,6 +115,9 @@ private:
 							const TInt aPageResource,
 							RArray<TInt>& aEnumResources);
 	void CreateTimeItemL(TTime& aTime,
+							const TInt aTitleResource,
+							const TInt aPageResource);
+	void CreateVolumeItemL(TInt& aVolume,
 							const TInt aTitleResource,
 							const TInt aPageResource);
 

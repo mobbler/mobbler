@@ -117,7 +117,10 @@ public:
 	
 	TInt& BitRate() { return iBitRate; }
 	void SetBitRate(TInt aBitRate) { iBitRate = aBitRate; }
-		
+	
+	TInt& AlarmVolume() { return iAlarmVolume; }
+	void SetAlarmVolume(TInt aAlarmVolume) { iAlarmVolume = aAlarmVolume; }
+
 protected:
 	TBuf<30> iUsername;
 	TBuf<30> iPassword;
@@ -139,6 +142,7 @@ protected:
 	TTime iAlarmTime;
 	TInt iAlarmIapId;
 	TInt iBitRate;
+	TInt iAlarmVolume;
 	};
 
 #endif // __MOBBLERSETTINGITEMLISTSETTINGS_H__

@@ -1563,7 +1563,7 @@ void CMobblerAppUi::TimerExpiredL(TAny* aTimer, TInt aError)
 			SleepL();
 			}
 		}
-
+	
 	// When the system time changes, At() timers will complete immediately with
 	// KErrAbort. This can happen either if the user changes the time, or if 
 	// the phone is set to auto-update with the network operator time.
@@ -1571,7 +1571,7 @@ void CMobblerAppUi::TimerExpiredL(TAny* aTimer, TInt aError)
 		{
 		// Reset the timer
 		iSleepTimer->AtUTC(iTimeToSleep);
-		}	
+		}
 	else if (aTimer == iAlarmTimer && aError == KErrNone)
 		{
 		iSettingView->SetAlarmL(EFalse);
@@ -1584,15 +1584,15 @@ void CMobblerAppUi::TimerExpiredL(TAny* aTimer, TInt aError)
 			}
 		
 		HandleCommandL(EMobblerCommandOnline);
-
+		
 		TApaTask task(iEikonEnv->WsSession());
 		task.SetWgId(CEikonEnv::Static()->RootWin().Identifier());
 		task.BringToForeground();
-
+		
 		CAknInformationNote* note(new (ELeave) CAknInformationNote(ETrue));
 		note->ExecuteLD(iResourceReader->ResourceL(R_MOBBLER_ALARM_EXPIRED));
-
-		//User::After(5000000);
+		
+		iRadioPlayer->SetVolume(iSettingView->AlarmVolume());
 		HandleCommandL(EMobblerCommandResumeRadio);
 		}
 	else if (aTimer == iAlarmTimer && aError == KErrAbort)
