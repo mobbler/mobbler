@@ -51,7 +51,7 @@ void CMobblerAlbumArtTransition::ConstructL()
 	{
 	}
 
-TInt CMobblerAlbumArtTransition::Clamp(TReal aValue, TReal aMin, TReal aMax) const
+TInt CMobblerAlbumArtTransition::Clamp(TInt aValue, TInt aMin, TInt aMax) const
 	{
 	// Restrict value to the bounds of min and max.
 	// If value is less than min, return min.
@@ -72,10 +72,10 @@ TInt CMobblerAlbumArtTransition::Clamp(TReal aValue, TReal aMin, TReal aMax) con
 		}
 	}
 
-TInt CMobblerAlbumArtTransition::Slide(TReal aTime, TReal aTotal, TReal aStart, TReal aEnd) const
-	{ 
+TInt CMobblerAlbumArtTransition::Slide(TInt aTime, TInt aTotal, TInt aStart, TInt aEnd) const
+	{
 	TReal output;
-	Math::Sin(output, ((Clamp(aTime, 0, aTotal) / aTotal) * KPi) - (KPi / 2));
+	Math::Sin(output, ((Clamp(aTime, 0, aTotal) / static_cast<TReal>(aTotal)) * KPi) - (KPi / 2));
 	return static_cast<TInt>(((output + 1) / 2) * (aEnd - aStart));
 	}
 

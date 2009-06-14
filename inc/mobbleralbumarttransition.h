@@ -57,8 +57,8 @@ private:
 	void DoDrawAlbumArtL(const CMobblerBitmap* aLeft, const CMobblerBitmap* aRight, TRect aAlbumArtRect, TInt aPosition);
 	
 	TInt SlideAmount(TInt aWidth) const;
-	TInt Clamp(TReal aValue, TReal aMin, TReal aMax) const;
-	TInt Slide(TReal aTime, TReal aTotal, TReal aStart, TReal aEnd) const;
+	TInt Clamp(TInt aValue, TInt aMin, TInt aMax) const;
+	TInt Slide(TInt aTime, TInt aTotal, TInt aStart, TInt aEnd) const;
 	
 private:
 	static TInt CallBack(TAny* aRef);
