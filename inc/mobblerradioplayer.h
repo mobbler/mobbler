@@ -113,6 +113,7 @@ private:
 	
 private:
 	void DialogDismissedL(TInt aButtonId);
+	void UpdateVolume();
 
 private:
 	void DataL(const TDesC8& aData, CMobblerLastFMConnection::TError aError);
