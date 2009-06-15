@@ -295,6 +295,8 @@ private:
 	TInt iBitRate;
 	
 	TLastFMMemberType iMemberType;
+	
+	TBool i64KbpsWarningShown;
 	};
 
 #endif // __MOBBLERLASTFMCONNECTION_H__

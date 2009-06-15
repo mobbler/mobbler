@@ -51,7 +51,7 @@ const TInt KMobblerSettingsViewUid = 0x2002655C;
 const TInt KMobblerStatusViewUid = 0x2002655B;
 const TInt KMobblerWebServicesViewUid = 0x2002656B;
 #else
-const TVersion KVersion(0, 6, 0);
+const TVersion KVersion(0, 6, 5124);
 const TInt KMobblerAppUid = 0xA0007648;
 const TInt KMobblerSettingsViewUid = 0xA0007CA9;
 const TInt KMobblerStatusViewUid = 0xA0007CA8;

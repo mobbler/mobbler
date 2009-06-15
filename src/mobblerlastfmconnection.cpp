@@ -21,6 +21,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
+#include <aknnotewrappers.h> 
 #include <centralrepository.h>
 #include <chttpformencoder.h>
 #include <coemain.h>
@@ -1229,9 +1230,18 @@ void CMobblerLastFMConnection::RequestPlaylistL(MMobblerFlatDataObserver* aObser
 		}
 	else if (iMemberType == EMember)
 		{
-		
 		if (iOldRadioSessionID)
 			{
+			if (iBitRate == 0 && !i64KbpsWarningShown)
+				{
+				// Show a warning (only the first time whilst Mobbler is running)
+				
+				CAknInformationNote* note(new (ELeave) CAknInformationNote(EFalse));
+				note->ExecuteLD(static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->ResourceReader().ResourceL(R_MOBBLER_64_KBPS_WARNING));
+				
+				i64KbpsWarningShown = ETrue;
+				}
+			
 			HBufC8* path(HBufC8::NewLC(255));
 			TPtr8 pathPtr(path->Des());
 			pathPtr.Copy(*iOldRadioBasePath);
