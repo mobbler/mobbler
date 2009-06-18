@@ -101,7 +101,7 @@ void CMobblerSettingItemListView::HandleCommandL(TInt aCommand)
 		{
 		// reset the details then switch back to the status view
 		iSettings->LoadSettingValuesL();
-
+		
 		// TODO or send custom message to remove sleep/alarm?
 		if (iSettingsToSet == ESleepTimer)
 			{
@@ -111,7 +111,7 @@ void CMobblerSettingItemListView::HandleCommandL(TInt aCommand)
 			{
 			static_cast<CMobblerAppUi*>(AppUi())->RemoveAlarmL();
 			}
-
+		
 		AppUi()->ActivateLocalViewL(TUid::Uid(KMobblerStatusViewUid));
 		}
 	else
@@ -123,7 +123,7 @@ void CMobblerSettingItemListView::HandleCommandL(TInt aCommand)
 void CMobblerSettingItemListView::DoActivateL(const TVwsViewId& /*aPrevViewId*/, TUid aCustomMessageId, const TDesC8& /*aCustomMessage*/)
 	{
 	iSettingsToSet = (TSettingsToSet)aCustomMessageId.iUid;
-
+	
 	if ((iSettingsToSet == ESleepTimer && 
 		static_cast<CMobblerAppUi*>(AppUi())->SleepTimerActive())
 			||
@@ -148,7 +148,7 @@ void CMobblerSettingItemListView::DoActivateL(const TVwsViewId& /*aPrevViewId*/,
 			Cba()->DrawNow();
 			}
 		}
-
+	
 	if (!iMobblerSettingItemList)
 		{
 		iMobblerSettingItemList = new (ELeave) CMobblerSettingItemList(*iSettings, this);
@@ -237,12 +237,12 @@ void CMobblerSettingItemListView::LoadListL()
 		CreateTextItemL(iSettings->Username(),
 						R_MOBBLER_USERNAME, 
 						R_MOBBLER_SETTING_PAGE_USERNAME);
-
+		
 		// Password setting item
 		CreatePasswordItemL(iSettings->Password(),
 							R_MOBBLER_PASSWORD,
 							R_MOBBLER_SETTING_PAGE_PASSWORD);
-
+		
 		// IAP enumerated text setting item
 		CreateIapItemL(iSettings->IapId(),
 					   R_MOBBLER_IAP,
@@ -254,14 +254,14 @@ void CMobblerSettingItemListView::LoadListL()
 						  R_MOBBLER_BINARY_SETTING_PAGE,
 						  R_MOBBLER_64_KBPS,
 						  R_MOBBLER_128_KBPS);
-
+		
 		// Buffer size slider setting item
 		CreateSliderItemL(iSettings->BufferSize(),
 						  R_MOBBLER_BUFFER_SIZE,
 						  R_MOBBLER_SLIDER_SETTING_PAGE_BUFFER_SIZE,
 						  R_MOBBLER_BUFFER_SIZE_SECOND,
 						  R_MOBBLER_BUFFER_SIZE_SECONDS);
-
+		
 		// Download album art enumerated setting item
 		RArray<TInt> downloadAlbumArtArray;
 		CleanupClosePushL(downloadAlbumArtArray);
@@ -280,7 +280,7 @@ void CMobblerSettingItemListView::LoadListL()
 						  R_MOBBLER_SLIDER_SETTING_PAGE_SCROBBLE_PERCENT,
 						  R_MOBBLER_PERCENT,
 						  R_MOBBLER_PERCENT);
-
+		
 		// Check for updates binary popup setting item
 		CreateBinaryItemL(iSettings->CheckForUpdates(),
 						  R_MOBBLER_CHECK_FOR_UPDATES_ONCE_A_WEEK,
@@ -317,21 +317,21 @@ void CMobblerSettingItemListView::LoadListL()
 						  R_MOBBLER_SLIDER_SETTING_PAGE_SLEEP_MINUTES,
 						  R_MOBBLER_SLEEP_TIMER_MINUTE,
 						  R_MOBBLER_SLEEP_TIMER_MINUTES);
-
+		
 		// Sleep timer action enumerated setting item
 		RArray<TInt> array;
 		CleanupClosePushL(array);
 		array.AppendL(R_MOBBLER_SLEEP_TIMER_ACTION_STOP);
 		array.AppendL(R_MOBBLER_SLEEP_TIMER_ACTION_OFFLINE);
 		array.AppendL(R_MOBBLER_SLEEP_TIMER_ACTION_EXIT);
-
+		
 		CreateEnumItemL(iSettings->SleepTimerAction(),
 						R_MOBBLER_SLEEP_TIMER_SETTING_ACTION,
 						R_MOBBLER_SETTING_PAGE_ENUM,
 						array);
-
+		
 		CleanupStack::PopAndDestroy(&array);
-
+		
 /*		// TODO needs more testing, so don't show yet
 		// Sleep immediacy binary setting item
 		CreateBinaryItemL(iSettings->SleepTimerImmediacy(),
@@ -346,7 +346,7 @@ void CMobblerSettingItemListView::LoadListL()
 		CreateTimeItemL(iSettings->AlarmTime(),
 						R_MOBBLER_ALARM_PROMPT,
 						R_MOBBLER_TIME_SETTING_PAGE);
-
+		
 		// Alarm IAP enumerated text setting item
 		CreateIapItemL(iSettings->AlarmIapId(),
 					   R_MOBBLER_IAP,
@@ -357,6 +357,27 @@ void CMobblerSettingItemListView::LoadListL()
 		CreateVolumeItemL(iSettings->AlarmVolume(),
 						  R_MOBBLER_VOLUME,
 						  R_MOBBLER_VOLUME_SETTING_PAGE);
+		
+		// Alarm station enumerated setting item
+		RArray<TInt> alarmStationArray;
+		CleanupClosePushL(alarmStationArray);
+		alarmStationArray.AppendL(R_MOBBLER_RADIO_ARTIST);
+		alarmStationArray.AppendL(R_MOBBLER_RADIO_TAG);
+		alarmStationArray.AppendL(R_MOBBLER_RADIO_USER);
+		alarmStationArray.AppendL(R_MOBBLER_RADIO_RECOMMENDATIONS);
+		alarmStationArray.AppendL(R_MOBBLER_RADIO_PERSONAL);
+		alarmStationArray.AppendL(R_MOBBLER_RADIO_LOVED);
+		alarmStationArray.AppendL(R_MOBBLER_RADIO_NEIGHBOURHOOD);
+		CreateEnumItemL(iSettings->AlarmStation(),
+						R_MOBBLER_STATION,
+						R_MOBBLER_SETTING_PAGE_ENUM,
+						alarmStationArray);
+		CleanupStack::PopAndDestroy(&alarmStationArray);
+		
+		// Alarm option text setting item
+		CreateTextItemL(iSettings->AlarmOption(),
+						R_MOBBLER_STATION_TEXT,
+						R_MOBBLER_SETTING_PAGE_TEXT);
 		}
 	
 	// Required when there is only one setting item
@@ -371,12 +392,12 @@ void CMobblerSettingItemListView::CreateTextItemL(TDes& aText,
 	{
 	CAknTextSettingItem* item(new (ELeave) CAknTextSettingItem(iOrdinal, aText));
 	CleanupStack::PushL(item);
-
+	
 	const TDesC& text(static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->ResourceReader().ResourceL(aTitleResource));
 	item->SetEmptyItemTextL(text);
 	item->ConstructL(iIsNumberedStyle, iOrdinal, text, iIcons, aPageResource, -1);
 	item->SetSettingPageFlags(CAknTextSettingPage::EPredictiveTextEntryPermitted);
-
+	
 	iMobblerSettingItemList->SettingItemArray()->AppendL(item);
 	CleanupStack::Pop(item);
 	++iOrdinal;
@@ -389,12 +410,12 @@ void CMobblerSettingItemListView::CreatePasswordItemL(TDes& aPassword,
 	CAknPasswordSettingItem* item(new (ELeave) CAknPasswordSettingItem(
 						iOrdinal, CAknPasswordSettingItem::EAlpha, aPassword));
 	CleanupStack::PushL(item);
-
+	
 	const TDesC& title(static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->ResourceReader().ResourceL(aTitleResource));
 	
 	item->SetEmptyItemTextL(title);
 	item->ConstructL(iIsNumberedStyle, iOrdinal, title, iIcons, aPageResource, -1);
-
+	
 	iMobblerSettingItemList->SettingItemArray()->AppendL(item);
 	CleanupStack::Pop(item);
 	++iOrdinal;
@@ -408,20 +429,20 @@ void CMobblerSettingItemListView::CreateIapItemL(TInt& aIapId,
 	// To avoid "Setting Item Lis 6" panic
 	TInt tempIapId(aIapId);
 	aIapId = 0;
-
+	
 	CMobblerAccessPointSettingItem* item(new (ELeave) 
 			CMobblerAccessPointSettingItem(iOrdinal, aIapId));
 	CleanupStack::PushL(item);
-
+	
 	// The same resource ID can be used for multiple enumerated text setting pages
 	const TDesC& text(static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->ResourceReader().ResourceL(aTitleResource));
 	item->ConstructL(iIsNumberedStyle, iOrdinal, text, iIcons, 
 				aPageResource, -1, 0, R_MOBBLER_POPUP_SETTING_TEXTS_ENUM);
-
+	
 	CArrayPtr<CAknEnumeratedText>* texts(item->EnumeratedTextArray());
 	texts->ResetAndDestroy();
 	CAknEnumeratedText* enumText;
-
+	
 	if (aAlwaysAsk)
 		{
 		// "Always ask" text
@@ -431,23 +452,24 @@ void CMobblerSettingItemListView::CreateIapItemL(TInt& aIapId,
 		texts->AppendL(enumText);
 		CleanupStack::Pop(enumText);
 		}
-
+	
 	// Load list of IAPs
 	TInt firstIapId(item->LoadIapListL());
-
+	
 	// Set the real value for the item
-	if (!aAlwaysAsk && firstIapId != KErrNotFound)
+/*	if (!aAlwaysAsk && firstIapId != KErrNotFound)
 		{
 		aIapId = firstIapId;
 		}
 	else
 		{
 		aIapId = tempIapId;
-		}	
-
+		}*/
+	aIapId = tempIapId;
+	
 	// Load list of IAPs
 	item->LoadL();
-
+	
 	iMobblerSettingItemList->SettingItemArray()->AppendL(item);
 	CleanupStack::Pop(item);
 	++iOrdinal;
@@ -462,10 +484,10 @@ void CMobblerSettingItemListView::CreateSliderItemL(TInt& aSliderValue,
 	CMobblerSliderSettingItem* item(new (ELeave) CMobblerSliderSettingItem(
 				iOrdinal, aSliderValue, aResourceSingular, aResourcePlural));
 	CleanupStack::PushL(item);
-
+	
 	const TDesC& text(static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->ResourceReader().ResourceL(aTitleResource));
 	item->ConstructL(iIsNumberedStyle, iOrdinal, text, iIcons, aPageResource, -1);
-
+	
 	iMobblerSettingItemList->SettingItemArray()->AppendL(item);
 	CleanupStack::Pop(item);
 	++iOrdinal;
@@ -480,12 +502,12 @@ void CMobblerSettingItemListView::CreateBinaryItemL(TBool& aBinaryValue,
 	CAknBinaryPopupSettingItem* item(new (ELeave) 
 				CAknBinaryPopupSettingItem(iOrdinal, aBinaryValue));
 	CleanupStack::PushL(item);
-
+	
 	const TDesC& title(static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->ResourceReader().ResourceL(aTitleResource));
 	// The same resource ID can be used for multiple binary setting pages
 	item->ConstructL(iIsNumberedStyle, iOrdinal, title, iIcons, 
 				aPageResource, -1, 0, R_MOBBLER_POPUP_SETTING_BINARY_TEXTS);
-
+	
 	// Load text dynamically
 	CArrayPtr<CAknEnumeratedText>* texts(item->EnumeratedTextArray());
 	texts->ResetAndDestroy();
@@ -503,10 +525,10 @@ void CMobblerSettingItemListView::CreateBinaryItemL(TBool& aBinaryValue,
 	CleanupStack::PushL(enumText);
 	texts->AppendL(enumText);
 	CleanupStack::Pop(enumText);
-
+	
 	// Set the correct text visible
 	item->LoadL();
-
+	
 	iMobblerSettingItemList->SettingItemArray()->AppendL(item);
 	CleanupStack::Pop(item);
 	++iOrdinal;
@@ -517,21 +539,20 @@ void CMobblerSettingItemListView::CreateEnumItemL(TInt& aEnumId,
 												 const TInt aPageResource,
 												 RArray<TInt>& aEnumResources)
 	{
-
 	// To avoid "Setting Item Lis 6" panic. If it occurs, double check settings
 	// are loaded from file in the same order they're saved.
 	TInt tempEnumId(aEnumId);
 	aEnumId = 0;
-
+	
 	CAknEnumeratedTextPopupSettingItem* item(new (ELeave) 
 						CAknEnumeratedTextPopupSettingItem(iOrdinal, aEnumId));
 	CleanupStack::PushL(item);
-
+	
 	// The same resource ID can be used for multiple enumerated text setting pages
 	const TDesC& title(static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->ResourceReader().ResourceL(aTitleResource));
 	item->ConstructL(iIsNumberedStyle, iOrdinal, title, iIcons, aPageResource, 
 									-1, 0, R_MOBBLER_POPUP_SETTING_TEXTS_ENUM);
-
+	
 	CArrayPtr<CAknEnumeratedText>* texts(item->EnumeratedTextArray());
 	texts->ResetAndDestroy();
 	CAknEnumeratedText* enumText;
@@ -545,12 +566,12 @@ void CMobblerSettingItemListView::CreateEnumItemL(TInt& aEnumId,
 		texts->AppendL(enumText);
 		CleanupStack::Pop(enumText);
 		}
-
+	
 	// Set the real value for the item
 	aEnumId = tempEnumId;
 	// Tell the control to load in the value
 	item->LoadL();
-
+	
 	iMobblerSettingItemList->SettingItemArray()->AppendL(item);
 	CleanupStack::Pop(item);
 	++iOrdinal;
@@ -563,7 +584,7 @@ void CMobblerSettingItemListView::CreateTimeItemL(TTime& aValue,
 	CAknTimeOrDateSettingItem* item(new (ELeave) 
 				CAknTimeOrDateSettingItem(iOrdinal, CAknTimeOrDateSettingItem::ETime, aValue));
 	CleanupStack::PushL(item);
-
+	
 	const TDesC& title(static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->ResourceReader().ResourceL(aTitleResource));
 	
 	item->SetEmptyItemTextL(title);
@@ -585,12 +606,12 @@ void CMobblerSettingItemListView::CreateVolumeItemL(TInt& aValue,
 	
 	CAknVolumeSettingItem* item(new (ELeave) CAknVolumeSettingItem(iOrdinal, aValue));
 	CleanupStack::PushL(item);
-
+	
 	const TDesC& title(static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->ResourceReader().ResourceL(aTitleResource));
 	
 	item->SetEmptyItemTextL(title);
 	item->ConstructL(iIsNumberedStyle, iOrdinal, title, iIcons, aPageResource, -1);
-
+	
 	iMobblerSettingItemList->SettingItemArray()->AppendL(item);
 	CleanupStack::Pop(item);
 	++iOrdinal;

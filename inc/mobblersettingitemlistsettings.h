@@ -120,6 +120,12 @@ public:
 	
 	TInt& AlarmVolume() { return iAlarmVolume; }
 	void SetAlarmVolume(TInt aAlarmVolume) { iAlarmVolume = aAlarmVolume; }
+	
+	TInt& AlarmStation() { return iAlarmStation; }
+	void SetAlarmStation(TInt aAlarmStation) { iAlarmStation = aAlarmStation; }
+	
+	TDes& AlarmOption() { return iAlarmOption; }
+	void SetAlarmOption(const TDesC& aAlarmOption) { iAlarmOption.Copy(aAlarmOption); }
 
 protected:
 	TBuf<30> iUsername;
@@ -143,6 +149,8 @@ protected:
 	TInt iAlarmIapId;
 	TInt iBitRate;
 	TInt iAlarmVolume;
+	TInt iAlarmStation;
+	TBuf<255> iAlarmOption;
 	};
 
 #endif // __MOBBLERSETTINGITEMLISTSETTINGS_H__

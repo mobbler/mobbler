@@ -26,8 +26,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <e32base.h>
 
-const TInt KMaxWebservicesQueryFieldLength(255);
-
 class TMobblerWebServicesQueryField
 	{
 public:

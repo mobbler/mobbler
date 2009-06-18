@@ -294,11 +294,21 @@ RESOURCE STRING r_mobbler_format_search			{ text = STR_mobbler_format_search; }
 ///////////////////////////////////////////////////////////////////////////////
 
 // Mobbler 0.5.0 - 0.5.2 resources above,
-// Mobbler 0.x.y resources below
+// Mobbler 0.6.5124 resources below
 
 ///////////////////////////////////////////////////////////////////////////////
 
 RESOURCE STRING r_mobbler_volume				{ text = STR_mobbler_volume; }
 RESOURCE STRING r_mobbler_64_kbps_warning		{ text = STR_mobbler_64_kbps_warning; }
+
+///////////////////////////////////////////////////////////////////////////////
+
+// Mobbler 0.6.5124 resources above,
+// Mobbler 0.6.x resources below
+
+///////////////////////////////////////////////////////////////////////////////
+
+RESOURCE STRING r_mobbler_station				{ text = STR_mobbler_station; }
+RESOURCE STRING r_mobbler_station_text			{ text = STR_mobbler_station_text; }
 
 // End of file

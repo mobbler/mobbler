@@ -70,6 +70,8 @@ public:
 	TUint32 AlarmIapId()			{ return iSettings->AlarmIapId(); }
 	TInt BitRate()					{ return iSettings->BitRate(); }
 	TInt AlarmVolume()				{ return iSettings->AlarmVolume(); }
+	TInt AlarmStation()				{ return iSettings->AlarmStation(); }
+	const TDesC& AlarmOption() const	{ return iSettings->AlarmOption(); }
 	
 	void SetEqualizerIndexL(TInt aIndex);
 	void SetVolumeL(TInt aVolume);

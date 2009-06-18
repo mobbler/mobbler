@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <s32file.h>
 
+#include "mobbler.hrh"
 #include "mobbler.rsg.h"
 #include "mobbler_strings.rsg.h"
 #include "mobblerappui.h"
@@ -92,6 +93,7 @@ void CMobblerSettingItemListSettings::LoadSettingValuesL()
 	TUint8 bitRate(1);
 	TUint32 destinationId(0);
 	TInt alarmVolume(KDefaultVolume);
+	TInt alarmStation(EMobblerCommandRadioPersonal - EMobblerCommandRadioArtist);
 	
 	if (openError == KErrNone)
 		{
@@ -100,6 +102,7 @@ void CMobblerSettingItemListSettings::LoadSettingValuesL()
 		
 		TBuf<255> username;
 		TBuf<255> password;
+		TBuf<255> alarmOption;
 
 		 // Ignore KErrEof if these settings are not yet saved in the file
 		TRAP_IGNORE(readStream >> username);
@@ -154,7 +157,11 @@ void CMobblerSettingItemListSettings::LoadSettingValuesL()
 		TRAP_IGNORE(alarmIapId = readStream.ReadUint32L());
 		TRAP_IGNORE(bitRate = readStream.ReadUint8L());
 		TRAP_IGNORE(destinationId = readStream.ReadUint32L());
+		alarmVolume = Max(1, volume);
 		TRAP_IGNORE(alarmVolume = readStream.ReadInt16L());
+		TRAP_IGNORE(alarmStation = readStream.ReadInt32L());
+		TRAP_IGNORE(readStream >> alarmOption);
+		SetAlarmOption(alarmOption);
 		
 		SetUsername(username);
 		SetPassword(password);
@@ -194,7 +201,8 @@ void CMobblerSettingItemListSettings::LoadSettingValuesL()
 	SetAlarmIapId(alarmIapId);
 	SetBitRate(bitRate);
 	SetAlarmVolume(alarmVolume);
-
+	SetAlarmStation(alarmStation);
+	
 	CleanupStack::PopAndDestroy(&file);
 	}
 
@@ -214,7 +222,7 @@ void CMobblerSettingItemListSettings::SaveSettingValuesL()
 		writeStream << Password();
 		writeStream.WriteInt8L(Backlight());
 		writeStream.WriteInt8L(CheckForUpdates());
-		writeStream.WriteUint32L(IapId()); // this is for ?TODO? without destinations
+		writeStream.WriteUint32L(IapId()); // this is for phones without destinations
 		writeStream.WriteUint8L(BufferSize());
 		writeStream.WriteInt16L(EqualizerIndex());
 		writeStream.WriteInt16L(ScrobblePercent());
@@ -232,8 +240,10 @@ void CMobblerSettingItemListSettings::SaveSettingValuesL()
 		writeStream.WriteInt32L(I64LOW(AlarmTime().Int64()));
 		writeStream.WriteUint32L(AlarmIapId());
 		writeStream.WriteUint8L(BitRate());
-		writeStream.WriteUint32L(IapId()); // this is for ?TODO? with destinations
+		writeStream.WriteUint32L(IapId()); // this is for phones with destinations
 		writeStream.WriteInt16L(AlarmVolume());
+		writeStream.WriteInt32L(AlarmStation());
+		writeStream << AlarmOption();
 		
 		CleanupStack::PopAndDestroy(&writeStream);
 		}

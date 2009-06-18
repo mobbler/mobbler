@@ -1336,13 +1336,13 @@ void CMobblerAppUi::LoadRadioStationsL()
 	RFile file;
 	CleanupClosePushL(file);
 	TInt openError(file.Open(CCoeEnv::Static()->FsSession(), KRadioFile, EFileRead));
-
+	
 	if (openError == KErrNone)
 		{
 		RFileReadStream readStream(file);
 		CleanupClosePushL(readStream);
-
-		iPreviousRadioStation = (CMobblerLastFMConnection::TRadioStation)readStream.ReadInt32L();
+		
+		iPreviousRadioStation = readStream.ReadInt32L();
 		if (iPreviousRadioStation <= EMobblerCommandRadioEnumFirst ||
 			iPreviousRadioStation >= EMobblerCommandRadioEnumLast)
 			{
@@ -1383,25 +1383,25 @@ void CMobblerAppUi::LoadRadioStationsL()
 		{
 		iPreviousRadioStation = EMobblerCommandRadioUnknown;
 		}
-
+	
 	CleanupStack::PopAndDestroy(&file);
 	}
 
 void CMobblerAppUi::SaveRadioStationsL()
 	{
 	CCoeEnv::Static()->FsSession().MkDirAll(KRadioFile);
-
+	
 	RFile file;
 	CleanupClosePushL(file);
 	TInt replaceError(file.Replace(CCoeEnv::Static()->FsSession(), KRadioFile, EFileWrite));
-
+	
 	if (replaceError == KErrNone)
 		{
 		RFileWriteStream writeStream(file);
 		CleanupClosePushL(writeStream);
-
+		
 		writeStream.WriteInt32L(iPreviousRadioStation);
-
+		
 		if (iPreviousRadioArtist)
 			{
 			writeStream.WriteInt8L(ETrue);
@@ -1411,7 +1411,7 @@ void CMobblerAppUi::SaveRadioStationsL()
 			{
 			writeStream.WriteInt8L(EFalse);
 			}
-
+		
 		if (iPreviousRadioTag)
 			{
 			writeStream.WriteInt8L(ETrue);
@@ -1431,7 +1431,7 @@ void CMobblerAppUi::SaveRadioStationsL()
 			{
 			writeStream.WriteInt8L(EFalse);
 			}
-
+		
 		if (iPreviousRadioPlaylistId)
 			{
 			writeStream.WriteInt8L(ETrue);
@@ -1441,7 +1441,7 @@ void CMobblerAppUi::SaveRadioStationsL()
 			{
 			writeStream.WriteInt8L(EFalse);
 			}
-
+		
 		CleanupStack::PopAndDestroy(&writeStream);
 		}
 
@@ -1593,7 +1593,27 @@ void CMobblerAppUi::TimerExpiredL(TAny* aTimer, TInt aError)
 		note->ExecuteLD(iResourceReader->ResourceL(R_MOBBLER_ALARM_EXPIRED));
 		
 		iRadioPlayer->SetVolume(iSettingView->AlarmVolume());
-		HandleCommandL(EMobblerCommandResumeRadio);
+
+		TInt station(iSettingView->AlarmStation() + EMobblerCommandRadioArtist);
+
+		switch (station)
+			{
+			case EMobblerCommandRadioArtist:			// intentional fall-through
+			case EMobblerCommandRadioTag:				// intentional fall-through
+			case EMobblerCommandRadioUser:				// intentional fall-through
+				CMobblerString* option(CMobblerString::NewL(iSettingView->AlarmOption()));
+				CleanupStack::PushL(option);
+				RadioStartL(station, option);
+				CleanupStack::PopAndDestroy(option);
+				break;
+			case EMobblerCommandRadioRecommendations:	// intentional fall-through
+			case EMobblerCommandRadioPersonal:			// intentional fall-through
+			case EMobblerCommandRadioLoved:				// intentional fall-through
+			case EMobblerCommandRadioNeighbourhood:		// intentional fall-through
+			default:
+				RadioStartL(station, NULL);
+				break;
+			}
 		}
 	else if (aTimer == iAlarmTimer && aError == KErrAbort)
 		{

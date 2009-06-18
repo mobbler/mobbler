@@ -517,7 +517,7 @@ RESOURCE AVKON_SETTING_PAGE r_mobbler_setting_page_username
 	type = EEikCtEdwin;
 	editor_resource_id = r_mobbler_setting_page_resource_id_username;
 	}
-	
+
 RESOURCE EDWIN r_mobbler_setting_page_resource_id_username
 	{
 	maxlength = 30;
@@ -527,7 +527,7 @@ RESOURCE EDWIN r_mobbler_setting_page_resource_id_username
 	default_input_mode = EAknEditorTextInputMode;
 	allowed_input_modes = EAknEditorTextInputMode | EAknEditorNumericInputMode | EAknEditorSecretAlphaInputMode | EAknEditorKatakanaInputMode | EAknEditorFullWidthTextInputMode | EAknEditorFullWidthNumericInputMode | EAknEditorFullWidthKatakanaInputMode | EAknEditorHiraganaKanjiInputMode | EAknEditorHalfWidthTextInputMode;
 	}
-	
+
 RESOURCE AVKON_SETTING_PAGE r_mobbler_setting_page_password
 	{
 	label = "";
@@ -688,6 +688,22 @@ RESOURCE VOLUME r_mobbler_volume_control
 	{
 	flags = ESettingsVolumeControl;
 	value = 10;
+	}
+
+RESOURCE AVKON_SETTING_PAGE r_mobbler_setting_page_text
+	{
+	type = EEikCtEdwin;
+	editor_resource_id = r_mobbler_setting_page_text_edwin;
+	}
+
+RESOURCE EDWIN r_mobbler_setting_page_text_edwin
+	{
+	maxlength = 255;
+	default_case = EAknEditorTextCase;
+	allowed_case_modes = EAknEditorAllCaseModes;
+	numeric_keymap = EAknEditorStandardNumberModeKeymap;
+	default_input_mode = EAknEditorTextInputMode;
+	allowed_input_modes = EAknEditorTextInputMode | EAknEditorNumericInputMode | EAknEditorSecretAlphaInputMode | EAknEditorKatakanaInputMode | EAknEditorFullWidthTextInputMode | EAknEditorFullWidthNumericInputMode | EAknEditorFullWidthKatakanaInputMode | EAknEditorHiraganaKanjiInputMode | EAknEditorHalfWidthTextInputMode;
 	}
 
 RESOURCE DIALOG r_mobbler_downloading_dialog
