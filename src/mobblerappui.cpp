@@ -780,7 +780,18 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 				CDesCArrayFlat* items = new(ELeave) CDesCArrayFlat(11);
 				CleanupStack::PushL(items);
 				
-				items->AppendL(iResourceReader->ResourceL(R_MOBBLER_VISIT_LASTFM_MENU));
+				// Add the first menu item and append the shortcut key 
+				HBufC* menuText(iResourceReader->ResourceL(R_MOBBLER_VISIT_LASTFM_MENU).AllocLC());
+				const TInt KTextLimit(CEikMenuPaneItem::SData::ENominalTextLength);
+				_LIT(KShortcut0, " (0)");
+				TBuf<KTextLimit> newText(menuText->Left(KTextLimit - KShortcut0().Length()));
+				newText.Append(KShortcut0);
+				CleanupStack::PopAndDestroy(menuText);
+				menuText = newText.AllocLC();
+				items->AppendL(*menuText);
+				CleanupStack::PopAndDestroy(menuText);
+				
+				// Add the other menu items
 				items->AppendL(iResourceReader->ResourceL(R_MOBBLER_SHARE_TRACK));
 				items->AppendL(iResourceReader->ResourceL(R_MOBBLER_SHARE_ARTIST));
 				items->AppendL(iResourceReader->ResourceL(R_MOBBLER_PLAYLIST_ADD_TRACK));
