@@ -168,22 +168,44 @@ void CMobblerWebServicesView::DynInitMenuPaneL(TInt aResourceId, CEikMenuPane* a
 		}
 	else if (aResourceId == R_MOBBLER_SHOUT_SUBMENU_PANE)
 		{
+		TBool shoutsExist(ETrue);
+		if (iWebServicesControl->TopControl()->Count() == 0)
+			{
+			shoutsExist = EFalse;
+			}
+		
 		// This must be a shoutbox
 		CMobblerShoutbox* shoutbox(static_cast<CMobblerShoutbox*>(iWebServicesControl->TopControl()));
 		
-		HBufC* shoutTextUser(shoutbox->ShoutAtTextUserLC());
+		HBufC* shoutTextUser(NULL);
+		if (shoutsExist)
+			{
+			shoutTextUser = shoutbox->ShoutAtTextUserLC();
+			}
 		HBufC* shoutTextOwner(shoutbox->ShoutAtTextOwnerLC());
 
-		aMenuPane->SetItemDimmed(EMobblerCommandShoutUser, EFalse);
+		aMenuPane->SetItemDimmed(EMobblerCommandShoutUser, !shoutsExist);
 		aMenuPane->SetItemDimmed(EMobblerCommandShoutOwner, EFalse);
 		aMenuPane->SetItemTextL(EMobblerCommandShoutOwner, *shoutTextOwner);
 
-		shoutTextUser->Compare(*shoutTextOwner) == 0 ?
-			aMenuPane->SetItemDimmed(EMobblerCommandShoutUser, ETrue) :
-			aMenuPane->SetItemTextL(EMobblerCommandShoutUser, *shoutTextUser);
-
+		if (shoutsExist)
+			{
+			if (shoutTextUser->CompareF(*shoutTextOwner) == 0)
+				{
+				aMenuPane->SetItemTextL(EMobblerCommandShoutOwner, *shoutTextUser);
+				aMenuPane->SetItemDimmed(EMobblerCommandShoutUser, ETrue);
+				}
+			else
+				{
+				aMenuPane->SetItemTextL(EMobblerCommandShoutUser, *shoutTextUser);
+				}
+			}
+		
 		CleanupStack::PopAndDestroy(shoutTextOwner);
-		CleanupStack::PopAndDestroy(shoutTextUser);
+		if (shoutsExist)
+			{
+			CleanupStack::PopAndDestroy(shoutTextUser);
+			}
 		}
 	}
 
