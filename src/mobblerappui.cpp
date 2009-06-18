@@ -777,9 +777,10 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 				list->CreateScrollBarFrameL(ETrue);
 				list->ScrollBarFrame()->SetScrollBarVisibilityL(CEikScrollBarFrame::EOff, CEikScrollBarFrame::EAuto);
 				
-				CDesCArrayFlat* items = new(ELeave) CDesCArrayFlat(10);
+				CDesCArrayFlat* items = new(ELeave) CDesCArrayFlat(11);
 				CleanupStack::PushL(items);
 				
+				items->AppendL(iResourceReader->ResourceL(R_MOBBLER_VISIT_LASTFM_MENU));
 				items->AppendL(iResourceReader->ResourceL(R_MOBBLER_SHARE_TRACK));
 				items->AppendL(iResourceReader->ResourceL(R_MOBBLER_SHARE_ARTIST));
 				items->AppendL(iResourceReader->ResourceL(R_MOBBLER_PLAYLIST_ADD_TRACK));
@@ -790,7 +791,6 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 				items->AppendL(iResourceReader->ResourceL(R_MOBBLER_TOP_ALBUMS));
 				items->AppendL(iResourceReader->ResourceL(R_MOBBLER_TOP_TRACKS));
 				items->AppendL(iResourceReader->ResourceL(R_MOBBLER_TOP_TAGS));
-
 
 				CleanupStack::Pop(items);
 				
@@ -811,8 +811,11 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 						switch (list->CurrentItemIndex())
 							{
 							case 0:
+								HandleCommandL(EMobblerCommandVisitWebPage);
+								break;
 							case 1:
 							case 2:
+							case 3:
 								{
 								if (CurrentTrack())
 									{
@@ -831,26 +834,26 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 									}
 								}
 								break;
-							case 3:
+							case 4:
 								ActivateLocalViewL(iWebServicesView->Id(), TUid::Uid(EMobblerCommandSimilarArtists), currentTrack->Artist().String8());
 								break;
-							case 4:
+							case 5:
 								ActivateLocalViewL(iWebServicesView->Id(), TUid::Uid(EMobblerCommandSimilarTracks), currentTrack->MbTrackId().String8());
 								break;
-							case 5:
+							case 6:
 								ActivateLocalViewL(iWebServicesView->Id(), TUid::Uid(EMobblerCommandArtistEvents), currentTrack->Artist().String8());
 								break;
-							case 6:
+							case 7:
 								ActivateLocalViewL(iWebServicesView->Id(), TUid::Uid(EMobblerCommandArtistShoutbox), currentTrack->Artist().String8());
 								break;
-							case 7:
+							case 8:
 								ActivateLocalViewL(iWebServicesView->Id(), TUid::Uid(EMobblerCommandArtistTopAlbums), currentTrack->Artist().String8());
 								break;
-							case 8:
+							case 9:
 								ActivateLocalViewL(iWebServicesView->Id(), TUid::Uid(EMobblerCommandArtistTopTracks), currentTrack->Artist().String8());
 								break;
-							case 9:
-								ActivateLocalViewL(iWebServicesView->Id(), TUid::Uid(EMobblerCommandArtistTopTags), currentTrack->Artist().String8()); 	
+							case 10:
+								ActivateLocalViewL(iWebServicesView->Id(), TUid::Uid(EMobblerCommandArtistTopTags), currentTrack->Artist().String8());
 								break;
 							default:
 								break;

@@ -310,5 +310,6 @@ RESOURCE STRING r_mobbler_64_kbps_warning		{ text = STR_mobbler_64_kbps_warning;
 
 RESOURCE STRING r_mobbler_station				{ text = STR_mobbler_station; }
 RESOURCE STRING r_mobbler_station_text			{ text = STR_mobbler_station_text; }
+RESOURCE STRING r_mobbler_visit_lastfm_menu		{ text = STR_mobbler_visit_lastfm_menu; }
 
 // End of file
