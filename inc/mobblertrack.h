@@ -102,6 +102,7 @@ public:
 	void SetTrackPlaying(TBool aTrackPlaying);
 	TBool TrackPlaying() const;
 	TBool IsMusicPlayerTrack() const;
+	void DownloadAlbumArtL();
 	
 private:
 	CMobblerTrack();

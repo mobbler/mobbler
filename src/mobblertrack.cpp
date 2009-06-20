@@ -310,33 +310,7 @@ void CMobblerTrack::SetAlbumL(const TDesC& aAlbum)
 		}
 	
 	// Check if there's something better online
-	if ((!iAlbumArt || iUsingArtistImage)
-				&& iState == ENone)
-		{
-		if (iAlbum->String().Length() != 0)
-			{
-			// There is an album name!
-
-			// Try to fetch the album info. Once this is fetched
-			// we will try to fetch the album art in the callback.
-			LOG(_L8("2 FetchAlbumInfoL()"));
-			FetchAlbumInfoL();
-			}
-		else if (iImage->Length() != 0)
-			{
-			// We don't know the album name, but there was album art in the playlist
-			LOG(_L8("3 FetchImageL(album)"));
-			FetchImageL(EFetchingAlbumArt, *iImage);
-			}
-		else if (!iUsingArtistImage)
-			{
-			 // No album art, let's try the artist image instead.
-			// Try to fetch the artist info. Once this is fetched
-			// we will try to fetch the album art in the callback.
-			LOG(_L8("4 FetchArtistInfoL()"));
-			FetchArtistInfoL();
-			}
-		}
+	DownloadAlbumArtL();
 	}
 
 /*const CMobblerString& CMobblerTrack::MbAlbumId() const
@@ -801,6 +775,37 @@ void CMobblerTrack::SaveAlbumArtL(const TDesC8& aData)
 	
 	iAlbumArt = CMobblerBitmap::NewL(*this, aData);
 	iState = ENone;
+	}
+
+void CMobblerTrack::DownloadAlbumArtL()
+	{
+	if ((!iAlbumArt || iUsingArtistImage)
+				&& iState == ENone)
+		{
+		if (iAlbum->String().Length() != 0)
+			{
+			// There is an album name!
+
+			// Try to fetch the album info. Once this is fetched
+			// we will try to fetch the album art in the callback.
+			LOG(_L8("2 FetchAlbumInfoL()"));
+			FetchAlbumInfoL();
+			}
+		else if (iImage->Length() != 0)
+			{
+			// We don't know the album name, but there was album art in the playlist
+			LOG(_L8("3 FetchImageL(album)"));
+			FetchImageL(EFetchingAlbumArt, *iImage);
+			}
+		else if (!iUsingArtistImage)
+			{
+			 // No album art, let's try the artist image instead.
+			// Try to fetch the artist info. Once this is fetched
+			// we will try to fetch the album art in the callback.
+			LOG(_L8("4 FetchArtistInfoL()"));
+			FetchArtistInfoL();
+			}
+		}
 	}
 
 // End of file

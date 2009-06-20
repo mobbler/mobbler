@@ -1214,9 +1214,15 @@ void CMobblerAppUi::HandleConnectCompleteL(TInt aError)
 				iLastFMConnection->CheckForUpdateL(*iCheckForUpdatesObserver);
 				}
 			}
+
+		// See if there's better album art online
+		if (CurrentTrack())
+			{
+			CurrentTrack()->DownloadAlbumArtL();
+			}
 		}
 	}
-	
+
 void CMobblerAppUi::HandleLastFMErrorL(CMobblerLastFMError& aError)
 	{
 	// iStatusView->DrawDeferred();
