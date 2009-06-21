@@ -1880,7 +1880,7 @@ void CMobblerLastFMConnection::TransactionFailedL(CMobblerTransaction* aTransact
 	{
 #ifdef _DEBUG
 	// Transaction log file 
-	_LIT(KTransactionLogFile, "c:\\data\\others\\mobbler\\transaction.log");
+	_LIT(KTransactionLogFile, "C:\\Mobbler\\transaction.log");
 	
 	RFile file;
 	CleanupClosePushL(file);
