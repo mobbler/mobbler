@@ -109,6 +109,9 @@ CMobblerListControl* CMobblerFriendList::HandleListCommandL(TInt aCommand)
 		case EMobblerCommandPlaylists:				// intentional fall-through
 		case EMobblerCommandRecentTracks:			// intentional fall-through
 		case EMobblerCommandUserShoutbox:			// intentional fall-through
+		case EMobblerCommandUserTopArtists:			// intentional fall-through
+		case EMobblerCommandUserTopTracks:			// intentional fall-through
+		case EMobblerCommandUserTopAlbums:			// intentional fall-through
 			list = CMobblerListControl::CreateListL(iAppUi, iWebServicesControl, aCommand, iList[iListBox->CurrentItemIndex()]->Title()->String8(), KNullDesC8);
 			break;
 		default:
@@ -126,6 +129,9 @@ void CMobblerFriendList::SupportedCommandsL(RArray<TInt>& aCommands)
 	aCommands.AppendL(EMobblerCommandPlaylists);
 	aCommands.AppendL(EMobblerCommandRecentTracks);
 	aCommands.AppendL(EMobblerCommandUserShoutbox);
+	aCommands.AppendL(EMobblerCommandUserTopArtists);
+	aCommands.AppendL(EMobblerCommandUserTopTracks);
+	aCommands.AppendL(EMobblerCommandUserTopAlbums);
 	
 	aCommands.AppendL(EMobblerCommandShare);
 	aCommands.AppendL(EMobblerCommandTrackShare);

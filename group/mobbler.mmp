@@ -176,6 +176,7 @@ LIBRARY		http.lib
 LIBRARY		imageconversion.lib
 LIBRARY		inetprotutil.lib
 LIBRARY		mediaclientaudiostream.lib
+LIBRARY 	MetaDataUtility.lib 
 LIBRARY		RemConCoreApi.lib
 LIBRARY		RemConInterfaceBase.lib
 LIBRARY		senxml.lib
