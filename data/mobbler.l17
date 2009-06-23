@@ -231,7 +231,7 @@ rls_string STR_mobbler_alarm_hour_minute "Az ébresztésig még %U óra és %U p
 rls_string STR_mobbler_alarm_hour_minutes "Az ébresztésig még %U óra és %U perc van hátra"
 rls_string STR_mobbler_alarm_hours_minute "Az ébresztésig még %U óra és %U perc van hátra"
 rls_string STR_mobbler_alarm_hours_minutes "Az ébresztésig még %U óra és %U perc van hátra"
-rls_string STR_mobbler_alarm_disclaimer "Az ébresztőt mindenki a saját felelősségére használja! Bármiféle okozott késésért a Mobbler alkotói nem vállalják a felelősséget." // TOO LONG -- TEXT TRUNCATED
+rls_string STR_mobbler_alarm_disclaimer "Az ébresztő csak saját felelősségre! Ha elkésel a Mobbler alkotói nem vállalják érte a felelősséget."
 rls_string STR_mobbler_search "Keresés"
 rls_string STR_mobbler_search_tracks "Dal"
 rls_string STR_mobbler_search_albums "Album"
