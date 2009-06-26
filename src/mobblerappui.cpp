@@ -32,15 +32,15 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <browserlauncher.h>
 #endif
 
+#include <EscapeUtils.h>
 #include <DocumentHandler.h>
+#include <s32file.h>
 
 #ifdef __SYMBIAN_SIGNED__
 // SW Installer Launcher API
 #include <SWInstApi.h>
 #include <SWInstDefs.h>
 #endif
-
-#include <s32file.h>
 
 #include "mobbler.hrh"
 #include "mobbler.rsg.h"
@@ -1838,7 +1838,7 @@ void CMobblerAppUi::GoToLastFmL(TInt aCommand)
 				break;
 			}
 		
-		// replace space with '+' in the artist name for the URL
+		// Replace space with '+' in the artist name for the URL
 		TInt position(url.Find(_L(" ")));
 		while (position != KErrNotFound)
 			{
@@ -1846,9 +1846,18 @@ void CMobblerAppUi::GoToLastFmL(TInt aCommand)
 			position = url.Find(_L(" "));
 			}
 		
+		// Convert to UTF-8
+		HBufC8* utf8(EscapeUtils::ConvertFromUnicodeToUtf8L(url));
+		url.Copy(*utf8);
+		
+		// Escape encode things like Ä and ö
+		HBufC16* encode(EscapeUtils::EscapeEncodeL(url, EscapeUtils::EEscapeNormal));
+		CleanupStack::PushL(encode);
+
 #ifndef __WINS__
-		iBrowserLauncher->LaunchBrowserEmbeddedL(url);
+		iBrowserLauncher->LaunchBrowserEmbeddedL(*encode);
 #endif
+		CleanupStack::PopAndDestroy(encode);
 		}
 	}
 // End of File
