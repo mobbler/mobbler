@@ -21,6 +21,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
+#include <aknnotewrappers.h>
 #include <sendomfragment.h>
 #include <sennamespace.h> 
 #include <senxmlutils.h> 
@@ -392,10 +393,21 @@ CMobblerString* CMobblerParser::ParseRadioTuneL(const TDesC8& aXml)
 	const TDesC8* statusText(domFragment->AsElement().AttrValue(KElementStatus));
 	
 	CMobblerString* station;
-	(statusText && (statusText->CompareF(_L8("ok")) == 0)) ?
-		station = CMobblerString::NewL(domFragment->AsElement().Element(_L8("station"))->Element(_L8("name"))->Content()) :
-		station = CMobblerString::NewL(domFragment->AsElement().Element(_L8("error"))->Content());
-
+	if (statusText && (statusText->CompareF(_L8("ok")) == 0))
+		{
+		station = CMobblerString::NewL(domFragment->AsElement().Element(_L8("station"))->Element(_L8("name"))->Content());
+		}
+	else
+		{
+		CAknInformationNote* note(new (ELeave) CAknInformationNote(EFalse));
+		CMobblerString* string(CMobblerString::NewL(domFragment->AsElement().Element(_L8("error"))->Content()));
+		CleanupStack::PushL(string);
+		note->ExecuteLD(string->String());
+		CleanupStack::Pop(string);
+		
+		station = CMobblerString::NewL(KNullDesC);
+		}
+	
 	CleanupStack::PopAndDestroy(2, xmlReader);
 	
 	return station;
