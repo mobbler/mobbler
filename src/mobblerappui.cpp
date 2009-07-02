@@ -834,9 +834,9 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 									iWebServicesHelper = CMobblerWebServicesHelper::NewL(*this);
 									switch (list->CurrentItemIndex())
 										{
-										case 0: iWebServicesHelper->TrackShareL(*CurrentTrack()); break;
-										case 1: iWebServicesHelper->ArtistShareL(*CurrentTrack()); break;
-										case 2: iWebServicesHelper->PlaylistAddL(*CurrentTrack()); break;
+										case 1: iWebServicesHelper->TrackShareL(*CurrentTrack()); break;
+										case 2: iWebServicesHelper->ArtistShareL(*CurrentTrack()); break;
+										case 3: iWebServicesHelper->PlaylistAddL(*CurrentTrack()); break;
 										}
 									}
 								else
