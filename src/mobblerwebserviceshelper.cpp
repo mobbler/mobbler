@@ -176,7 +176,7 @@ void CMobblerWebServicesHelper::DataL(CMobblerFlatDataObserverHelper* aObserver,
 			CAknSinglePopupMenuStyleListBox* list(new(ELeave) CAknSinglePopupMenuStyleListBox);
 			CleanupStack::PushL(list);
 			
-			CAknPopupList* popup = CAknPopupList::NewL(list, R_AVKON_SOFTKEYS_OK_CANCEL, AknPopupLayouts::EMenuWindow);
+			CAknPopupList* popup(CAknPopupList::NewL(list, R_AVKON_SOFTKEYS_OK_CANCEL, AknPopupLayouts::EMenuWindow));
 			CleanupStack::PushL(popup);
 			
 			list->ConstructL(popup, CEikListBox::ELeftDownInViewRect);
@@ -186,13 +186,12 @@ void CMobblerWebServicesHelper::DataL(CMobblerFlatDataObserverHelper* aObserver,
 			list->CreateScrollBarFrameL(ETrue);
 			list->ScrollBarFrame()->SetScrollBarVisibilityL(CEikScrollBarFrame::EOff, CEikScrollBarFrame::EAuto);
 			
-			CDesCArrayFlat* items = new(ELeave) CDesCArrayFlat(1);
+			CDesCArrayFlat* items(new(ELeave) CDesCArrayFlat(1));
 			CleanupStack::PushL(items);
 			
 			RPointerArray<CSenElement>& users(domFragment->AsElement().Element(_L8("friends"))->ElementsL());
 			
-			const TInt KUserCount(users.Count());
-			for (TInt i(0) ; i < KUserCount; ++i)
+			for (TInt i(0); i < users.Count(); ++i)
 				{
 				CMobblerString* user(CMobblerString::NewL(users[i]->Element(_L8("name"))->Content()));
 				CleanupStack::PushL(user);
@@ -257,7 +256,7 @@ void CMobblerWebServicesHelper::DataL(CMobblerFlatDataObserverHelper* aObserver,
 			CAknSinglePopupMenuStyleListBox* list(new(ELeave) CAknSinglePopupMenuStyleListBox);
 			CleanupStack::PushL(list);
 			
-			CAknPopupList* popup = CAknPopupList::NewL(list, R_AVKON_SOFTKEYS_OK_CANCEL, AknPopupLayouts::EMenuWindow);
+			CAknPopupList* popup(CAknPopupList::NewL(list, R_AVKON_SOFTKEYS_OK_CANCEL, AknPopupLayouts::EMenuWindow));
 			CleanupStack::PushL(popup);
 			
 			list->ConstructL(popup, CEikListBox::ELeftDownInViewRect);
@@ -267,13 +266,12 @@ void CMobblerWebServicesHelper::DataL(CMobblerFlatDataObserverHelper* aObserver,
 			list->CreateScrollBarFrameL(ETrue);
 			list->ScrollBarFrame()->SetScrollBarVisibilityL(CEikScrollBarFrame::EOff, CEikScrollBarFrame::EAuto);
 			
-			CDesCArrayFlat* items = new(ELeave) CDesCArrayFlat(1);
+			CDesCArrayFlat* items(new(ELeave) CDesCArrayFlat(1));
 			CleanupStack::PushL(items);
 			
 			RPointerArray<CSenElement>& playlists(domFragment->AsElement().Element(_L8("playlists"))->ElementsL());
 			
-			const TInt KPlaylistCount(playlists.Count());
-			for (TInt i(0) ; i < KPlaylistCount; ++i)
+			for (TInt i(0); i < playlists.Count(); ++i)
 				{
 				CMobblerString* playlist(CMobblerString::NewL(playlists[i]->Element(_L8("title"))->Content()));
 				CleanupStack::PushL(playlist);
@@ -290,9 +288,12 @@ void CMobblerWebServicesHelper::DataL(CMobblerFlatDataObserverHelper* aObserver,
 			
 			if (popup->ExecuteLD())
 				{
-				delete iPlaylistAddObserverHelper;
-				iPlaylistAddObserverHelper = CMobblerFlatDataObserverHelper::NewL(iAppUi.LastFMConnection(), *this, ETrue);
-				iAppUi.LastFMConnection().PlaylistAddTrackL(playlists[list->CurrentItemIndex()]->Element(_L8("id"))->Content(), iTrack->Artist().String8(), iTrack->Title().String8(), *iPlaylistAddObserverHelper);
+				if (list->CurrentItemIndex() >= 0)
+					{
+					delete iPlaylistAddObserverHelper;
+					iPlaylistAddObserverHelper = CMobblerFlatDataObserverHelper::NewL(iAppUi.LastFMConnection(), *this, ETrue);
+					iAppUi.LastFMConnection().PlaylistAddTrackL(playlists[list->CurrentItemIndex()]->Element(_L8("id"))->Content(), iTrack->Artist().String8(), iTrack->Title().String8(), *iPlaylistAddObserverHelper);
+					}
 				}
 			
 			CleanupStack::PopAndDestroy(list); //list
