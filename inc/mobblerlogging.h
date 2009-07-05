@@ -26,6 +26,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <e32base.h>
 
+class CMobblerString;
+
 class CMobblerLogging : public CBase
 	{
 public:
@@ -41,6 +43,7 @@ public:
 	static void LogL(const TInt aNumber);
 	static void LogL(const TDesC& aText);
 	static void LogL(const TDesC8& aText, const TInt aNumber);
+	static void LogL(const CMobblerString* aMobblerString);
 	static void LogL(const TDesC8& aText);
 
 #else // _DEBUG

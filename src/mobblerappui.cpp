@@ -359,9 +359,9 @@ void CMobblerAppUi::SetDetailsL(const TDesC& aUsername, const TDesC& aPassword)
 	iLastFMConnection->SetDetailsL(aUsername, aPassword);
 	}
 
-void CMobblerAppUi::SetIapIDL(TUint32 aIapID)
+void CMobblerAppUi::SetIapIDL(TUint32 aIapId)
 	{
-	iLastFMConnection->SetIapIDL(aIapID);
+	iLastFMConnection->SetIapIdL(aIapId);
 	}
 
 void CMobblerAppUi::SetBufferSize(TTimeIntervalSeconds aBufferSize)
@@ -1172,10 +1172,10 @@ void CMobblerAppUi::DataL(CMobblerFlatDataObserverHelper* aObserver, const TDesC
 					{
 					CAknQueryDialog* dlg(CAknQueryDialog::NewL());
 					TBool yes( dlg->ExecuteLD(R_MOBBLER_YES_NO_QUERY_DIALOG, iResourceReader->ResourceL(R_MOBBLER_UPDATE)));
-									
+					
 					if (yes)
 						{
-						iMobblerDownload->DownloadL(location, iLastFMConnection->IapID());
+						iMobblerDownload->DownloadL(location, iLastFMConnection->IapId());
 						}
 					}
 				else
@@ -1597,7 +1597,7 @@ void CMobblerAppUi::TimerExpiredL(TAny* aTimer, TInt aError)
 		iSettingView->SetAlarmL(EFalse);
 		User::ResetInactivityTime();
 
-		if (iLastFMConnection->IapID() != iSettingView->AlarmIapId())
+		if (iLastFMConnection->IapId() != iSettingView->AlarmIapId())
 			{
 			HandleCommandL(EMobblerCommandOffline);
 			SetIapIDL(iSettingView->AlarmIapId());

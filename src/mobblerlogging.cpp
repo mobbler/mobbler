@@ -29,6 +29,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <f32file.h>
 
 #include "mobblerlogging.h"
+#include "mobblerstring.h"
 
 #ifdef __WINS__
 _LIT(KLogPath, "C:");
@@ -81,6 +82,20 @@ void CMobblerLogging::LogL(const TDesC8& aText, const TInt aNumber)
 	text8.Append(aText);
 	text8.Append(_L8(", "));
 	text8.AppendNum(aNumber);
+	LogL(text8);
+	}
+
+void CMobblerLogging::LogL(const CMobblerString* aMobblerString)
+	{
+	TBuf8<255> text8;
+	if (aMobblerString)
+		{
+		text8.Append(aMobblerString->String8());
+		}
+	else
+		{
+		text8.Append(_L8("NULL"));
+		}
 	LogL(text8);
 	}
 

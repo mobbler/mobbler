@@ -98,7 +98,7 @@ public:
 	static CMobblerLastFMConnection* NewL(MMobblerLastFMConnectionObserver& aObserver, 
 											const TDesC& aUsername, 
 											const TDesC& aPassword,
-											TUint32 aIapID, 
+											TUint32 aIapId, 
 											TInt aBitRate);
 	~CMobblerLastFMConnection();
 	
@@ -107,8 +107,8 @@ public:
 	TMode Mode() const;
 	TState State() const;
 	
-	void SetIapIDL(TUint32 aIadID);
-	TUint32 IapID() const;
+	void SetIapIdL(TUint32 aIadId);
+	TUint32 IapId() const;
 	
 	void SetBitRateL(TInt aBitRate);
 	
@@ -211,7 +211,7 @@ private:
 	
 private:
 	void ConstructL(const TDesC& aUsername, const TDesC& aPassword);
-	CMobblerLastFMConnection(MMobblerLastFMConnectionObserver& aObserver, TUint32 aIapID, TInt aBitRate);
+	CMobblerLastFMConnection(MMobblerLastFMConnectionObserver& aObserver, TUint32 aIapId, TInt aBitRate);
 	
 private:  // utilities
 	void CreateAuthTokenL(TDes8& aHash, TTimeIntervalSeconds aUnixTimeStamp);
@@ -220,7 +220,7 @@ private:  // utilities
 	// track queue methods
 	void LoadTrackQueueL();
 	void SaveTrackQueueL();
-
+	
 	void ConnectL();
 	void Disconnect();
 	
@@ -237,8 +237,8 @@ private:
 	RSocketServ iSocketServ;
 	RConnection iConnection;
 	
-	TUint32 iIapID;
-	TUint32 iCurrentIapID;
+	TUint32 iIapId;
+	TUint32 iCurrentIapId;
 	
 	// authentication transactions
 	CMobblerTransaction* iHandshakeTransaction;
@@ -250,8 +250,8 @@ private:
 #endif
 	
 	// Old radio things
-	HBufC8* iOldRadioSessionID;
-	HBufC8* iOldRadioBaseURL;
+	HBufC8* iOldRadioSessionId;
+	HBufC8* iOldRadioBaseUrl;
 	HBufC8* iOldRadioBasePath;
 	
 	// scrobble transactions
@@ -266,17 +266,17 @@ private:
 	RPointerArray<CMobblerTransaction> iTransactions;
 	
 	TBool iSubscriber;
-
+	
 	CMobblerString* iUsername;
 	CMobblerString* iPassword;
 	
-	HBufC8* iScrobbleSessionID;
+	HBufC8* iScrobbleSessionId;
 	
 	HBufC8* iWebServicesSessionKey;
 	
-	HBufC8* iNowPlayingURL;
-	HBufC8* iSubmitURL;
-
+	HBufC8* iNowPlayingUrl;
+	HBufC8* iSubmitUrl;
+	
 	MMobblerLastFMConnectionObserver& iObserver;
 	
 	CMobblerTrack* iCurrentTrack;
@@ -291,7 +291,7 @@ private:
 	TBool iCurrentTrackSaved;
 	
 	RPointerArray<MMobblerConnectionStateObserver> iStateChangeObservers;
-
+	
 	TInt iBitRate;
 	
 	TLastFMMemberType iMemberType;
