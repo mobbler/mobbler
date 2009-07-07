@@ -37,8 +37,14 @@ CMobblerContacts::CMobblerContacts()
 
 CMobblerContacts::~CMobblerContacts()
 	{
-	iFilteredView->Close(*this);
-	iRemoteView->Close(*this);
+	if(iFilteredView)
+		{
+		iFilteredView->Close(*this);
+		}
+	if(iRemoteView)
+		{
+		iRemoteView->Close(*this);
+		}
 	delete iNameList;
 	delete iEmailList;
 	delete iDb;
