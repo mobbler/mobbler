@@ -60,6 +60,7 @@ private:
 	CDesCArray* iNameList;
 	CDesCArray* iEmailList;
 	TInt iNumViews;
+	TBool iListsBuilt;
 	};
 
 #endif  // __CMOBBLERCONTACTS_H__
