@@ -37,14 +37,6 @@ CMobblerContacts::CMobblerContacts()
 
 CMobblerContacts::~CMobblerContacts()
 	{
-	if(iFilteredView)
-		{
-		iFilteredView->Close(*this);
-		}
-	if(iRemoteView)
-		{
-		iRemoteView->Close(*this);
-		}
 	delete iNameList;
 	delete iEmailList;
 	delete iDb;
@@ -126,6 +118,8 @@ void CMobblerContacts::BuildListsL()
 		CleanupStack::PopAndDestroy(nameBuf);
 		iEmailList->AppendL(contact.Field(EEmail));
 		}
+	iFilteredView->Close(*this);
+	iRemoteView->Close(*this);
 	}
 
 void CMobblerContacts::HandleContactViewEvent(const CContactViewBase& aView, const TContactViewEvent& aEvent)
