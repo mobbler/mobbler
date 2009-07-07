@@ -101,6 +101,7 @@ SOURCE		mobbleraudiocontrol.cpp
 SOURCE		mobbleraudiothread.cpp
 SOURCE		mobblerbitmap.cpp
 SOURCE		mobblerbitmapcollection.cpp
+SOURCE		mobblercontacts.cpp
 SOURCE		mobblerdataobserver.cpp
 SOURCE		mobblerdocument.cpp
 SOURCE		mobblerdownload.cpp
@@ -153,6 +154,8 @@ LIBRARY		bitgdi.lib
 LIBRARY		bitmaptransforms.lib
 LIBRARY		centralrepository.lib
 LIBRARY		charconv.lib
+LIBRARY		cntmodel.lib
+LIBRARY		cntview.lib
 LIBRARY		commdb.lib
 LIBRARY		commonengine.lib
 LIBRARY		commonui.lib	// CDocumentHandler
