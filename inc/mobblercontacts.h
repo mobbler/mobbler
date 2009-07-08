@@ -40,7 +40,7 @@ public:
 	TInt Count() const;
 	TPtrC GetNameAt(TInt aIndex) const; 
 	CDesCArray* GetEmailsAtLC(TInt aIndex) const;
-	HBufC8* GetPhotoAtLC(TInt aIndex) const;
+	HBufC8* GetPhotoAtL(TInt aIndex) const;
 	~CMobblerContacts();
 	
 private:
