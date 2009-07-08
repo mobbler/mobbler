@@ -46,7 +46,6 @@ CMobblerContacts::~CMobblerContacts()
 		iRemoteView->Close(*this);
 		}
 	delete iNameList;
-	delete iEmailList;
 	delete iDb;
 	}
 
@@ -58,7 +57,6 @@ void CMobblerContacts::ConstructL()
 	sortOrder.AppendL(KUidContactFieldGivenName);
 	sortOrder.AppendL(KUidContactFieldFamilyName);
 	sortOrder.AppendL(KUidContactFieldCompanyName);
-	sortOrder.AppendL(KUidContactFieldEMail);
 
 	iRemoteView = CContactNamedRemoteView::NewL(*this, _L("Mobbler"), *iDb, sortOrder, EContactsOnly);
 	iFilteredView = CContactFilteredView::NewL(*this, *iDb, *iRemoteView, CContactDatabase::EMailable);
@@ -77,16 +75,35 @@ TPtrC CMobblerContacts::GetNameAt(TInt aIndex) const
 	return (*iNameList)[aIndex];
 	}
 
-TPtrC CMobblerContacts::GetEmailAt(TInt aIndex) const
+CDesCArray* CMobblerContacts::GetEmailsAtLC(TInt aIndex) const
 	{
-	return (*iEmailList)[aIndex];
+	const TInt KArrayGranularity(5);
+	CDesCArray* emailList = new(ELeave) CDesCArrayFlat(KArrayGranularity);
+	CleanupStack::PushL(emailList);
+	
+	const CViewContact& viewContact = iFilteredView->ContactAtL(aIndex);
+	CContactItem* contact = iDb->ReadContactLC(viewContact.Id());
+
+	CContactItemFieldSet& fieldSet = contact->CardFields();
+	
+	const TInt KFieldCount = fieldSet.Count();
+	for (TInt i = 0; i < KFieldCount; ++i)
+		{
+		CContactItemField& field = fieldSet[i];
+		if(field.ContentType().ContainsFieldType(KUidContactFieldEMail))
+			{
+			emailList->AppendL(field.TextStorage()->Text());
+			}
+		}
+	CleanupStack::PopAndDestroy(contact);
+	
+	return emailList;
 	}
 
-void CMobblerContacts::BuildListsL()
+void CMobblerContacts::BuildListL()
 	{
 	const TInt KNumContacts(iFilteredView->CountL());
 	iNameList = new(ELeave) CDesCArrayFlat(KNumContacts);
-	iEmailList = new(ELeave) CDesCArrayFlat(KNumContacts);
 	
 	for (TInt i = 0; i < KNumContacts; ++i)
 		{
@@ -124,7 +141,6 @@ void CMobblerContacts::BuildListsL()
 			}
 
 		CleanupStack::PopAndDestroy(nameBuf);
-		iEmailList->AppendL(contact.Field(EEmail));
 		}
 	}
 
@@ -141,10 +157,11 @@ void CMobblerContacts::HandleContactViewEvent(const CContactViewBase& aView, con
 		}		
 	
 	// wait until both the views are ready and then build the lists 
-	if (iNumViews == 2 && !iListsBuilt)
+	if (iNumViews == 2 && !iListBuilt)
 		{
-		BuildListsL();
+		BuildListL();
 		CActiveScheduler::Stop();
-		iListsBuilt = ETrue;
+		iListBuilt = ETrue;
 		}		
 	}
+

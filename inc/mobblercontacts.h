@@ -24,10 +24,14 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #ifndef __MOBBLERCONTACTS_H__
 #define __MOBBLERCONTACTS_H__
 
-#include <e32base.h>
+#include <badesca.h>
 #include <cntdb.h>
+#include <cntfield.h>
+#include <cntfldst.h>
+#include <cntitem.h>
 #include <cntview.h>
 #include <cntviewbase.h>
+#include <e32base.h>
 
 class CMobblerContacts : public CBase, public MContactViewObserver
 	{
@@ -35,14 +39,14 @@ public:
 	static CMobblerContacts* NewLC();
 	TInt Count() const;
 	TPtrC GetNameAt(TInt aIndex) const; 
-	TPtrC GetEmailAt(TInt aIndex) const;
+	CDesCArray* GetEmailsAtLC(TInt aIndex) const;
 	~CMobblerContacts();
 	
 private:
 	CMobblerContacts();
 	void ConstructL(); 
 	virtual void HandleContactViewEvent(const CContactViewBase& aView, const TContactViewEvent& aEvent);
-	void BuildListsL();
+	void BuildListL();
 	
 private:
 	enum
@@ -58,9 +62,9 @@ private:
 	CContactNamedRemoteView* iRemoteView;
 	CContactFilteredView* iFilteredView;
 	CDesCArray* iNameList;
-	CDesCArray* iEmailList;
 	TInt iNumViews;
-	TBool iListsBuilt;
+	TBool iListBuilt;
 	};
 
 #endif  // __CMOBBLERCONTACTS_H__
+
