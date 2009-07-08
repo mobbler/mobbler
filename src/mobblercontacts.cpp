@@ -100,6 +100,27 @@ CDesCArray* CMobblerContacts::GetEmailsAtLC(TInt aIndex) const
 	return emailList;
 	}
 
+HBufC8* CMobblerContacts::GetPhotoAtLC(TInt aIndex) const
+	{
+	const CViewContact& viewContact = iFilteredView->ContactAtL(aIndex);
+	CContactItem* contact = iDb->ReadContactLC(viewContact.Id());
+
+	HBufC8* imageBuf = NULL;
+	
+	CContactItemFieldSet& fieldSet = contact->CardFields();
+	TInt fieldIndex = fieldSet.Find(KUidContactFieldPicture);
+	if (fieldIndex != KErrNotFound)
+		{
+		CContactItemField& field = fieldSet[fieldIndex];
+		if (field.StorageType() == KStorageTypeStore)
+			{
+			imageBuf = field.StoreStorage()->Thing()->AllocLC();
+			}
+		}
+	CleanupStack::PopAndDestroy(contact);
+	return imageBuf;
+	}
+
 void CMobblerContacts::BuildListL()
 	{
 	const TInt KNumContacts(iFilteredView->CountL());
