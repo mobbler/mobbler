@@ -2,7 +2,7 @@
 mobblercontacts.cpp
 
 Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
-Copyright (C) 2008  Michael Coffey
+Copyright (C) 2009  Michael Coffey
 
 http://code.google.com/p/mobbler
 
@@ -21,11 +21,15 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
+#include <cntfldst.h>
+#include <cntitem.h>
+#include <cntview.h>
+
 #include "mobblercontacts.h"
 
 CMobblerContacts* CMobblerContacts::NewLC()
 	{
-	CMobblerContacts* self = new(ELeave) CMobblerContacts();
+	CMobblerContacts* self(new(ELeave) CMobblerContacts());
 	CleanupStack::PushL(self);
 	self->ConstructL();
 	return self;
@@ -57,10 +61,10 @@ void CMobblerContacts::ConstructL()
 	sortOrder.AppendL(KUidContactFieldGivenName);
 	sortOrder.AppendL(KUidContactFieldFamilyName);
 	sortOrder.AppendL(KUidContactFieldCompanyName);
-
+	
 	iRemoteView = CContactNamedRemoteView::NewL(*this, _L("Mobbler"), *iDb, sortOrder, EContactsOnly);
 	iFilteredView = CContactFilteredView::NewL(*this, *iDb, *iRemoteView, CContactDatabase::EMailable);
-
+	
 	CleanupStack::PopAndDestroy(&sortOrder);
 	CActiveScheduler::Start();
 	}
@@ -78,19 +82,18 @@ TPtrC CMobblerContacts::GetNameAt(TInt aIndex) const
 CDesCArray* CMobblerContacts::GetEmailsAtLC(TInt aIndex) const
 	{
 	const TInt KArrayGranularity(5);
-	CDesCArray* emailList = new(ELeave) CDesCArrayFlat(KArrayGranularity);
+	CDesCArray* emailList(new(ELeave) CDesCArrayFlat(KArrayGranularity));
 	CleanupStack::PushL(emailList);
 	
-	const CViewContact& viewContact = iFilteredView->ContactAtL(aIndex);
-	CContactItem* contact = iDb->ReadContactLC(viewContact.Id());
-
-	CContactItemFieldSet& fieldSet = contact->CardFields();
+	const CViewContact& viewContact(iFilteredView->ContactAtL(aIndex));
+	CContactItem* contact(iDb->ReadContactLC(viewContact.Id()));
 	
-	const TInt KFieldCount = fieldSet.Count();
-	for (TInt i = 0; i < KFieldCount; ++i)
+	CContactItemFieldSet& fieldSet(contact->CardFields());
+	
+	for (TInt i(0); i < fieldSet.Count(); ++i)
 		{
-		CContactItemField& field = fieldSet[i];
-		if(field.ContentType().ContainsFieldType(KUidContactFieldEMail))
+		CContactItemField& field(fieldSet[i]);
+		if (field.ContentType().ContainsFieldType(KUidContactFieldEMail))
 			{
 			emailList->AppendL(field.TextStorage()->Text());
 			}
@@ -102,16 +105,16 @@ CDesCArray* CMobblerContacts::GetEmailsAtLC(TInt aIndex) const
 
 HBufC8* CMobblerContacts::GetPhotoAtL(TInt aIndex) const
 	{
-	const CViewContact& viewContact = iFilteredView->ContactAtL(aIndex);
-	CContactItem* contact = iDb->ReadContactLC(viewContact.Id());
-
-	HBufC8* imageBuf = NULL;
+	const CViewContact& viewContact(iFilteredView->ContactAtL(aIndex));
+	CContactItem* contact(iDb->ReadContactLC(viewContact.Id()));
 	
-	CContactItemFieldSet& fieldSet = contact->CardFields();
-	TInt fieldIndex = fieldSet.Find(KUidContactFieldPicture);
+	HBufC8* imageBuf(NULL);
+	
+	CContactItemFieldSet& fieldSet(contact->CardFields());
+	TInt fieldIndex(fieldSet.Find(KUidContactFieldPicture));
 	if (fieldIndex != KErrNotFound)
 		{
-		CContactItemField& field = fieldSet[fieldIndex];
+		CContactItemField& field(fieldSet[fieldIndex]);
 		if (field.StorageType() == KStorageTypeStore)
 			{
 			imageBuf = field.StoreStorage()->Thing()->AllocL();
@@ -126,28 +129,28 @@ void CMobblerContacts::BuildListL()
 	const TInt KNumContacts(iFilteredView->CountL());
 	iNameList = new(ELeave) CDesCArrayFlat(KNumContacts);
 	
-	for (TInt i = 0; i < KNumContacts; ++i)
+	for (TInt i(0); i < KNumContacts; ++i)
 		{
-		const CViewContact& contact = iFilteredView->ContactAtL(i);
-		HBufC* nameBuf = HBufC::NewLC(contact.Field(EFirstName).Length()
-				+ contact.Field(ELastName).Length() + 1); // +1 for a space char separator 
-		TPtr namePtr = nameBuf->Des();
+		const CViewContact& contact(iFilteredView->ContactAtL(i));
+		HBufC* nameBuf(HBufC::NewLC(contact.Field(EFirstName).Length()
+				+ contact.Field(ELastName).Length() + 1)); // +1 for a space char separator 
+		TPtr namePtr(nameBuf->Des());
 		_LIT(KFormatStr, "%S %S");
 		TPtrC fnamePtr(contact.Field(EFirstName));
 		TPtrC lnamePtr(contact.Field(ELastName));
 		namePtr.AppendFormat(KFormatStr, &fnamePtr, &lnamePtr);
 		namePtr.TrimAll();
-	
+		
 		if(namePtr.Length())
 			{
 			iNameList->AppendL(namePtr);
 			}
 		else
 			{
-			HBufC* companyBuf = HBufC::NewLC(contact.Field(ECompanyName).Length());
-			TPtr companyPtr = companyBuf->Des();
+			HBufC* companyBuf(HBufC::NewLC(contact.Field(ECompanyName).Length()));
+			TPtr companyPtr(companyBuf->Des());
 			companyPtr.TrimAll();
-
+			
 			if (companyPtr.Length())
 				{
 				iNameList->AppendL(companyPtr);
@@ -157,10 +160,10 @@ void CMobblerContacts::BuildListL()
 				_LIT(KHyphen, "-");
 				iNameList->AppendL(KHyphen);
 				}
-
+			
 			CleanupStack::PopAndDestroy(companyBuf);
 			}
-
+		
 		CleanupStack::PopAndDestroy(nameBuf);
 		}
 	}
@@ -170,12 +173,12 @@ void CMobblerContacts::HandleContactViewEvent(const CContactViewBase& aView, con
 	if (&aView == iRemoteView && aEvent.iEventType == TContactViewEvent::EReady)
 		{
 		++iNumViews;
-		}		
+		}
 
 	else if (&aView == iFilteredView && aEvent.iEventType == TContactViewEvent::EReady)
 		{
 		++iNumViews;
-		}		
+		}
 	
 	// wait until both the views are ready and then build the lists 
 	if (iNumViews == 2 && !iListBuilt)
@@ -183,6 +186,7 @@ void CMobblerContacts::HandleContactViewEvent(const CContactViewBase& aView, con
 		BuildListL();
 		CActiveScheduler::Stop();
 		iListBuilt = ETrue;
-		}		
+		}
 	}
 
+// End of file

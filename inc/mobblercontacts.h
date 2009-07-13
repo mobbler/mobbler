@@ -2,7 +2,7 @@
 mobblercontacts.h
 
 Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
-Copyright (C) 2008  Michael Coffey
+Copyright (C) 2009  Michael Coffey
 
 http://code.google.com/p/mobbler
 
@@ -23,15 +23,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #ifndef __MOBBLERCONTACTS_H__
 #define __MOBBLERCONTACTS_H__
-
-#include <badesca.h>
-#include <cntdb.h>
-#include <cntfield.h>
-#include <cntfldst.h>
-#include <cntitem.h>
-#include <cntview.h>
-#include <cntviewbase.h>
-#include <e32base.h>
 
 class CMobblerContacts : public CBase, public MContactViewObserver
 	{
@@ -67,5 +58,6 @@ private:
 	TBool iListBuilt;
 	};
 
-#endif  // __CMOBBLERCONTACTS_H__
+#endif  // __MOBBLERCONTACTS_H__
 
+// End of file
