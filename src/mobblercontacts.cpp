@@ -90,7 +90,8 @@ CDesCArray* CMobblerContacts::GetEmailsAtLC(TInt aIndex) const
 	
 	CContactItemFieldSet& fieldSet(contact->CardFields());
 	
-	for (TInt i(0); i < fieldSet.Count(); ++i)
+	const TInt KFieldCount(fieldSet.Count());
+	for (TInt i(0); i < KFieldCount; ++i)
 		{
 		CContactItemField& field(fieldSet[i]);
 		if (field.ContentType().ContainsFieldType(KUidContactFieldEMail))
