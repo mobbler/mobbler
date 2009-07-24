@@ -320,7 +320,8 @@ CMobblerLastFMError* CMobblerParser::ParseOldRadioPlaylistL(const TDesC8& aXml, 
 	
 	RPointerArray<CSenElement>& tracks = domFragment->AsElement().Element(KElementTrackList)->ElementsL();
 	
-	for (TInt i(0); i < tracks.Count(); ++i)
+	const TInt KTrackCount(tracks.Count());
+	for (TInt i(0); i < KTrackCount; ++i)
 		{
 		// get the duration as a number
 		TLex8 lex(tracks[i]->Element(KElementDuration)->Content());
@@ -451,7 +452,8 @@ CMobblerLastFMError* CMobblerParser::ParseRadioPlaylistL(const TDesC8& aXml, CMo
 	
 	if (tracks)
 		{
-		for (TInt i(0); i < tracks->Count(); ++i)
+		const TInt KTrackCount(tracks->Count());
+		for (TInt i(0); i < KTrackCount; ++i)
 			{
 			// get the duration as a number
 			TLex8 lex((*tracks)[i]->Element(KElementDuration)->Content());
@@ -569,7 +571,8 @@ CMobblerLastFMError* CMobblerParser::ParseBetaTestersHandshakeL(const TDesC8& aH
 	
 	aIsBetaTester = EFalse;
 	
-	for (TInt i(0); i < testers.Count; ++i)
+	const TInt KTesterCount(testers.Count());
+	for (TInt i(0); i < KTesterCount; ++i)
 		{
 		if (testers[i]->Content().CompareF(aUsername) == 0)
 			{
@@ -606,7 +609,8 @@ void CMobblerParser::ParseSearchTrackL(const TDesC8& aXml, CMobblerTrackList& aO
 	
 	RPointerArray<CSenElement>& items(domFragment->AsElement().Element(_L8("results"))->Element(_L8("trackmatches"))->ElementsL());
 	
-	for (TInt i(0); i < items.Count(); ++i)
+    const TInt KCount(items.Count());
+    for (TInt i(0); i < KCount; ++i)
 		{
 		HBufC8* image((items[i]->Element(KElementImage) == NULL) ?
 						KNullDesC8().AllocLC() :
@@ -644,7 +648,8 @@ void CMobblerParser::ParseSearchAlbumL(const TDesC8& aXml, CMobblerAlbumList& aO
 	
 	RPointerArray<CSenElement>& items(domFragment->AsElement().Element(_L8("results"))->Element(_L8("albummatches"))->ElementsL());
 	
-	for (TInt i(0); i < items.Count(); ++i)
+    const TInt KCount(items.Count());
+    for (TInt i(0); i < KCount; ++i)
 		{
 		HBufC8* image((items[i]->Element(KElementImage) == NULL) ?
 						KNullDesC8().AllocLC() :
@@ -685,7 +690,8 @@ void CMobblerParser::ParseSearchArtistL(const TDesC8& aXml, CMobblerArtistList& 
 	
 	RPointerArray<CSenElement>& items(domFragment->AsElement().Element(_L8("results"))->Element(_L8("artistmatches"))->ElementsL());
 	
-	for (TInt i(0); i < items.Count(); ++i)
+    const TInt KCount(items.Count());
+    for (TInt i(0); i < KCount; ++i)
 		{
 		HBufC8* image((items[i]->Element(KElementImage) == NULL) ?
 						KNullDesC8().AllocLC() :
@@ -725,7 +731,8 @@ void CMobblerParser::ParseSearchTagL(const TDesC8& aXml, CMobblerTagList& aObser
 	
 	RPointerArray<CSenElement>& items(domFragment->AsElement().Element(_L8("results"))->Element(_L8("tagmatches"))->ElementsL());
 	
-	for (TInt i(0); i < items.Count(); ++i)
+    const TInt KCount(items.Count());
+    for (TInt i(0); i < KCount; ++i)
 		{
 		HBufC8* image((items[i]->Element(KElementImage) == NULL) ?
 						KNullDesC8().AllocLC() :
@@ -763,7 +770,8 @@ void CMobblerParser::ParseFriendListL(const TDesC8& aXml, CMobblerFriendList& aO
 	
 	RPointerArray<CSenElement>& items(domFragment->AsElement().Element(_L8("friends"))->ElementsL());
 	
-	for (TInt i(0); i < items.Count(); ++i)
+	const TInt KCount(items.Count());
+	for (TInt i(0); i < KCount; ++i)
 		{
 		HBufC8* image((items[i]->Element(KElementImage) == NULL) ?
 						KNullDesC8().AllocLC() :
@@ -801,7 +809,8 @@ void CMobblerParser::ParseTopArtistsL(const TDesC8& aXml, CMobblerArtistList& aO
 	
 	RPointerArray<CSenElement>& items(domFragment->AsElement().Element(_L8("topartists"))->ElementsL());
 	
-	for (TInt i(0); i < items.Count(); ++i)
+	const TInt KCount(items.Count());
+	for (TInt i(0); i < KCount; ++i)
 		{
 		HBufC8* image((items[i]->Element(KElementImage) == NULL) ?
 						KNullDesC8().AllocLC() :
@@ -839,7 +848,8 @@ void CMobblerParser::ParseRecommendedArtistsL(const TDesC8& aXml, CMobblerArtist
 	
 	RPointerArray<CSenElement>& items(domFragment->AsElement().Element(_L8("recommendations"))->ElementsL());
 	
-	for (TInt i(0); i < items.Count(); ++i)
+	const TInt KCount(items.Count());
+	for (TInt i(0); i < KCount; ++i)
 		{
 		HBufC8* image((items[i]->Element(KElementImage) == NULL) ?
 						KNullDesC8().AllocLC() :
@@ -876,7 +886,8 @@ void CMobblerParser::ParseSimilarArtistsL(const TDesC8& aXml, CMobblerArtistList
 	
 	RPointerArray<CSenElement>& items(domFragment->AsElement().Element(_L8("similarartists"))->ElementsL());
 	
-	for (TInt i(0); i < items.Count(); ++i)
+	const TInt KCount(items.Count());
+	for (TInt i(0); i < KCount; ++i)
 		{
 		HBufC8* image((items[i]->Element(KElementImage) == NULL) ?
 						KNullDesC8().AllocLC() :
@@ -952,7 +963,8 @@ void CMobblerParser::ParseTopAlbumsL(const TDesC8& aXml, CMobblerAlbumList& aObs
 	
 	RPointerArray<CSenElement>& items(domFragment->AsElement().Element(_L8("topalbums"))->ElementsL());
 	
-	for (TInt i(0); i < items.Count(); ++i)
+	const TInt KCount(items.Count());
+	for (TInt i(0); i < KCount; ++i)
 		{
 		HBufC8* image((items[i]->Element(KElementImage) == NULL) ?
 				KNullDesC8().AllocLC() :
@@ -994,7 +1006,8 @@ void CMobblerParser::ParseArtistTopTracksL(const TDesC8& aXml, CMobblerTrackList
 	
 	RPointerArray<CSenElement>& items(domFragment->AsElement().Element(_L8("toptracks"))->ElementsL());
 	
-	for (TInt i(0); i < items.Count(); ++i)
+	const TInt KCount(items.Count());
+	for (TInt i(0); i < KCount; ++i)
 		{
 		HBufC8* image((items[i]->Element(_L8("image")) == NULL) ?
 				KNullDesC8().AllocLC() :
@@ -1031,7 +1044,8 @@ void CMobblerParser::ParseUserTopTracksL(const TDesC8& aXml, CMobblerTrackList& 
 	
 	RPointerArray<CSenElement>& items(domFragment->AsElement().Element(_L8("toptracks"))->ElementsL());
 	
-	for (TInt i(0); i < items.Count(); ++i)
+	const TInt KCount(items.Count());
+	for (TInt i(0); i < KCount; ++i)
 		{
 		HBufC8* image((items[i]->Element(KElementImage) == NULL) ?
 						KNullDesC8().AllocLC() :
@@ -1068,7 +1082,8 @@ void CMobblerParser::ParsePlaylistL(const TDesC8& aXml, CMobblerTrackList& aObse
 	
 	RPointerArray<CSenElement>& items(domFragment->AsElement().Child(0)->Element(_L8("trackList"))->ElementsL());
 	
-	for (TInt i(0); i < items.Count(); ++i)
+	const TInt KCount(items.Count());
+	for (TInt i(0); i < KCount; ++i)
 		{
 		HBufC8* image((items[i]->Element(KElementImage) == NULL) ?
 				KNullDesC8().AllocLC() :
@@ -1106,7 +1121,8 @@ void CMobblerParser::ParseSimilarTracksL(const TDesC8& aXml, CMobblerTrackList& 
 	
 	RPointerArray<CSenElement>& items(domFragment->AsElement().Element(_L8("similartracks"))->ElementsL());
 	
-	for (TInt i(0); i < items.Count(); ++i)
+	const TInt KCount(items.Count());
+	for (TInt i(0); i < KCount; ++i)
 		{
 		HBufC8* artistName((items[i]->Element(_L8("artist")) == NULL) ?
 				KNullDesC8().AllocLC() :
@@ -1147,7 +1163,8 @@ void CMobblerParser::ParseRecentTracksL(const TDesC8& aXml, CMobblerTrackList& a
 	
 	RPointerArray<CSenElement>& items(domFragment->AsElement().Element(_L8("recenttracks"))->ElementsL());
 	
-	for (TInt i(0); i < items.Count(); ++i)
+	const TInt KCount(items.Count());
+	for (TInt i(0); i < KCount; ++i)
 		{
 		HBufC8* image((items[i]->Element(_L8("image")) == NULL) ?
 				KNullDesC8().AllocLC():
@@ -1196,7 +1213,8 @@ void CMobblerParser::ParsePlaylistsL(const TDesC8& aXml, CMobblerPlaylistList& a
 	
 	RPointerArray<CSenElement>& items(domFragment->AsElement().Element(_L8("playlists"))->ElementsL());
 	
-	for (TInt i(0); i < items.Count(); ++i)
+	const TInt KCount(items.Count());
+	for (TInt i(0); i < KCount; ++i)
 		{
 		HBufC8* image((items[i]->Element(KElementImage) == NULL) ?
 						KNullDesC8().AllocLC() :
@@ -1235,7 +1253,8 @@ void CMobblerParser::ParseShoutboxL(const TDesC8& aXml, CMobblerShoutbox& aObser
 	
 	RPointerArray<CSenElement>& items(domFragment->AsElement().Element(_L8("shouts"))->ElementsL());
 	
-	for (TInt i(0); i < Min(items.Count(), 25); ++i)
+	const TInt KCount(items.Count());
+	for (TInt i(0); i < Min(KCount, 25); ++i)
 		{
 		CMobblerListItem* item(CMobblerListItem::NewL(aObserver,
 														*SenXmlUtils::DecodeHttpCharactersLC(items[i]->Element(_L8("author"))->Content()),
@@ -1268,7 +1287,8 @@ void CMobblerParser::ParseTopTagsL(const TDesC8& aXml, CMobblerTagList& aObserve
 	
 	RPointerArray<CSenElement>& items(domFragment->AsElement().Element(_L8("toptags"))->ElementsL());
 	
-	for (TInt i(0); i < items.Count(); ++i)
+	const TInt KCount(items.Count());
+	for (TInt i(0); i < KCount; ++i)
 		{
 		CMobblerListItem* item(CMobblerListItem::NewL(aObserver,
 														*SenXmlUtils::DecodeHttpCharactersLC(items[i]->Element(_L8("name"))->Content()),

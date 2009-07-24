@@ -304,12 +304,13 @@ RESOURCE STRING r_mobbler_64_kbps_warning		{ text = STR_mobbler_64_kbps_warning;
 ///////////////////////////////////////////////////////////////////////////////
 
 // Mobbler 0.6.5124 resources above,
-// Mobbler 0.6.x resources below
+// Mobbler 0.7.x resources below
 
 ///////////////////////////////////////////////////////////////////////////////
 
 RESOURCE STRING r_mobbler_station				{ text = STR_mobbler_station; }
 RESOURCE STRING r_mobbler_station_text			{ text = STR_mobbler_station_text; }
 RESOURCE STRING r_mobbler_visit_lastfm_menu		{ text = STR_mobbler_visit_lastfm_menu; }
+RESOURCE STRING r_mobbler_album_unknown			{ text = STR_mobbler_album_unknown; }
 
 // End of file

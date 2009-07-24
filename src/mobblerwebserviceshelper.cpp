@@ -191,7 +191,8 @@ void CMobblerWebServicesHelper::DataL(CMobblerFlatDataObserverHelper* aObserver,
 			
 			RPointerArray<CSenElement>& users(domFragment->AsElement().Element(_L8("friends"))->ElementsL());
 			
-			for (TInt i(0); i < users.Count(); ++i)
+			const TInt KUserCount(users.Count());
+			for (TInt i(0); i < KUserCount; ++i)
 				{
 				CMobblerString* user(CMobblerString::NewL(users[i]->Element(_L8("name"))->Content()));
 				CleanupStack::PushL(user);
@@ -271,7 +272,8 @@ void CMobblerWebServicesHelper::DataL(CMobblerFlatDataObserverHelper* aObserver,
 			
 			RPointerArray<CSenElement>& playlists(domFragment->AsElement().Element(_L8("playlists"))->ElementsL());
 			
-			for (TInt i(0); i < playlists.Count(); ++i)
+			const TInt KPlaylistCount(playlists.Count());
+			for (TInt i(0); i < KPlaylistCount; ++i)
 				{
 				CMobblerString* playlist(CMobblerString::NewL(playlists[i]->Element(_L8("title"))->Content()));
 				CleanupStack::PushL(playlist);

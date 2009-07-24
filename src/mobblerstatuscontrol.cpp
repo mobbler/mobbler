@@ -672,7 +672,7 @@ void CMobblerStatusControl::Draw(const TRect& /*aRect*/) const
 		
 		iAppUi.CurrentTrack()->Album().String().Length() > 0 ?
 				iAlbumText.Copy(iAppUi.CurrentTrack()->Album().String()):
-				iAlbumText.Copy(iAppUi.ResourceReader().ResourceL(R_MOBBLER_ALBUM));
+				iAlbumText.Copy(iAppUi.ResourceReader().ResourceL(R_MOBBLER_ALBUM_UNKNOWN));
 		
 		iAppUi.CurrentTrack()->Artist().String().Length() > 0 ?
 				iArtistText.Copy(iAppUi.CurrentTrack()->Artist().String()):
