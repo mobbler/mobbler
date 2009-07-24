@@ -262,11 +262,11 @@ void CMobblerStatusControl::SetPositions()
 		{
 		// Portrait graphics positions
 		
-		if (iMobblerFeedback)
+		if (IsFifthEdition())
 			{
 			// 5th edition
 			TInt albumArtDimension(Rect().Width() - (3 * KTextRectHeight));
-								
+			
 			iRectAlbumArt = 			TRect(TPoint((3 * KTextRectHeight) / 2, 0), TSize(albumArtDimension, albumArtDimension));
 			
 			iControlSize = TSize(Rect().Width() / 6, Rect().Width() / 6);
@@ -330,7 +330,7 @@ void CMobblerStatusControl::SetPositions()
 		{
 		// Landscape graphics positions
 		
-		if (iMobblerFeedback)
+		if (IsFifthEdition())
 			{
 			// 5th edition
 			TInt albumArtDimension(Rect().Height() - (3 * KTextRectHeight));
@@ -382,7 +382,7 @@ void CMobblerStatusControl::SetPositions()
 			TInt infoY((3 * iControlSize.iHeight) + KTextRectHeight);
 			TInt infoHeight(albumArtDimension - (3 * iControlSize.iHeight));
 			TSize infoSize(Rect().Width() - textX - (KTextRectHeight / 2), KTextRectHeight);
-						
+			
 			iRectTitleText = 			TRect(TPoint(textX, infoY + ((0 * (infoHeight)) / 3) ), infoSize);
 			iRectArtistText = 			TRect(TPoint(textX, infoY + ((1 * (infoHeight)) / 3) ), infoSize);
 			iRectAlbumText = 			TRect(TPoint(textX, infoY + ((2 * (infoHeight)) / 3) ), infoSize);
@@ -471,16 +471,16 @@ void CMobblerStatusControl::CreateBackBufferL()
 	{
 	// Create back buffer bitmap
 	iBackBuffer = new(ELeave) CFbsBitmap;
-
+	
 	User::LeaveIfError(iBackBuffer->Create(Size(), iEikonEnv->DefaultDisplayMode()));
-
+	
 	// Create back buffer graphics context
 	iBackBufferDevice = CFbsBitmapDevice::NewL(iBackBuffer);
 	User::LeaveIfError(iBackBufferDevice->CreateContext(iBackBufferContext));
 	iBackBufferContext->SetPenStyle(CGraphicsContext::ESolidPen);
-
+	
 	iBackBufferSize = iBackBuffer->SizeInPixels();
-
+	
 	// Get and set the font to use
 	TFontSpec fontSpec(iEikonEnv->NormalFont()->FontSpecInTwips());
 	
@@ -504,17 +504,17 @@ void CMobblerStatusControl::ReleaseBackBuffer()
 		iBackBufferDevice->ReleaseFont(iMobblerFont);
 		iMobblerFont = NULL;
 		}
-
+	
 	// Release double buffering classes
 	delete iBackBufferContext;
 	iBackBufferContext = NULL;
-
+	
 	delete iBackBufferDevice;
 	iBackBufferDevice = NULL;
-
+	
 	delete iBackBuffer;
 	iBackBuffer = NULL;
-
+	
 	iBackBufferSize = TSize(0, 0);
 	}
 
@@ -579,7 +579,7 @@ void CMobblerStatusControl::FormatTime(TDes& aString, TTimeIntervalSeconds aSeco
 	TInt minutes(aSeconds.Int() / 60);
 	TInt seconds(aSeconds.Int() - (minutes * 60));
 	aString.Zero();
-
+	
 	if ((aTotalSeconds.Int()) >= 3600) // 3,600 seconds = 60 minutes
 		{
 		TInt hours(minutes / 60);
@@ -624,7 +624,7 @@ void CMobblerStatusControl::Draw(const TRect& /*aRect*/) const
 	if (iAppUi.CurrentTrack())
 		{
 		love = iAppUi.CurrentTrack()->Love();
-
+		
 		if (iAppUi.CurrentTrack()->AlbumArt() && 
 			iAppUi.CurrentTrack()->AlbumArt()->Bitmap())
 			{
@@ -677,7 +677,7 @@ void CMobblerStatusControl::Draw(const TRect& /*aRect*/) const
 		iAppUi.CurrentTrack()->Artist().String().Length() > 0 ?
 				iArtistText.Copy(iAppUi.CurrentTrack()->Artist().String()):
 				iArtistText.Copy(iAppUi.ResourceReader().ResourceL(R_MOBBLER_ARTIST));
-
+		
 		playbackTotal = iAppUi.CurrentTrack()->TrackLength().Int();
 		playbackPosition = Min(iAppUi.CurrentTrack()->PlaybackPosition().Int(), playbackTotal);
 		
@@ -1027,25 +1027,12 @@ TKeyResponse CMobblerStatusControl::OfferKeyEventL(const TKeyEvent& aKeyEvent, T
 			response = EKeyWasConsumed;
 			break;
 #endif
-#ifdef _DEBUG
-		case '7':
-			if (iAppUi.Backlight())
-				{
-				CEikonEnv::Static()->InfoMsg(_L("On when active"));
-				}
-			else
-				{
-				CEikonEnv::Static()->InfoMsg(_L("System default"));
-				}
-			response = EKeyWasConsumed;
-			break;
-#endif
 		case '8':
 			const_cast<CMobblerAppUi&>(iAppUi).HandleCommandL(EMobblerCommandEditSettings);
 			response = EKeyWasConsumed;
 			break;
 		case '9':
-			if (!iMobblerFeedback && // 3rd edition only
+			if (!IsFifthEdition() && // 3rd edition only
 				iAppUi.CurrentTrack() &&
 				iAppUi.CurrentTrack()->AlbumArt())
 				{

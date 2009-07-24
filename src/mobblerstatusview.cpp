@@ -177,7 +177,7 @@ void CMobblerStatusView::DynInitMenuPaneL(TInt aResourceId, CEikMenuPane* aMenuP
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_ALARM,					EMobblerCommandAlarm);
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_EXPORT_QUEUE_TO_LOG,		EMobblerCommandExportQueueToLogFile);
 		}
-
+	
 	// Now the menu text is set, dimming logic is next
 	if (aResourceId == R_MOBBLER_STATUS_MENU_PANE)
 		{
@@ -257,7 +257,9 @@ void CMobblerStatusView::DynInitMenuPaneL(TInt aResourceId, CEikMenuPane* aMenuP
 		aMenuPane->SetItemDimmed(EMobblerCommandArtistTopTracks, ETrue);
 		aMenuPane->SetItemDimmed(EMobblerCommandArtistTopTags, ETrue);
 		}
-	aMenuPane->EnableMarqueeL(ETrue);
+	
+	// Third edition only due to an S60 5th edition bug (issue 364)
+	aMenuPane->EnableMarqueeL(!iMobblerStatusControl->IsFifthEdition());
 	}
 
 TUid CMobblerStatusView::Id() const

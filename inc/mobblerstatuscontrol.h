@@ -56,6 +56,7 @@ public:
 	~CMobblerStatusControl();
 	
 	void VolumeChanged();
+	TBool IsFifthEdition() const { return (iMobblerFeedback != NULL); }
 	
 private:
 	void ConstructL(const TRect& aRect);
