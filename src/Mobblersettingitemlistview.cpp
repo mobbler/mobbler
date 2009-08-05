@@ -454,7 +454,8 @@ void CMobblerSettingItemListView::CreateIapItemL(TInt& aIapId,
 		}
 	
 	// Load list of IAPs
-	TInt firstIapId(item->LoadIapListL());
+	//TInt firstIapId(item->LoadIapListL());
+	item->LoadIapListL();
 	
 	// Set the real value for the item
 /*	if (!aAlwaysAsk && firstIapId != KErrNotFound)

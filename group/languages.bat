@@ -1,4 +1,4 @@
-languages.pl %1 %2
+languages.pl %1
 pushd languages
 mkdir unsigned
 for /f %%a IN ('dir /b unsigned\*.pkg') do call makesis unsigned\%%a
