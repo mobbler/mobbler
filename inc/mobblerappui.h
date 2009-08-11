@@ -189,8 +189,11 @@ private:
 private:
 	void DataL(CMobblerFlatDataObserverHelper* aObserver, const TDesC8& aData, CMobblerLastFMConnection::TError aError);
 	
-private: // from MAknServerAppExitObserver.
+private: // from MAknServerAppExitObserver
 	void HandleServerAppExit(TInt aReason);
+ 
+private: // from MAknWsEventObserver
+	void HandleWsEventL(const TWsEvent &aEvent, CCoeControl *aDestination);
  
 private:
 	// the view classes

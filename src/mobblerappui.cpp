@@ -1860,4 +1860,20 @@ void CMobblerAppUi::GoToLastFmL(TInt aCommand)
 		CleanupStack::PopAndDestroy(encode);
 		}
 	}
-// End of File
+
+void CMobblerAppUi::HandleWsEventL(const TWsEvent &aEvent, 
+								   CCoeControl *aDestination)
+	{
+	if (aEvent.Type() == KAknUidValueEndKeyCloseEvent)
+		{
+		// Do nothing for the red end key, 
+		// so Mobbler is minimised but still running
+		}
+	else
+		{
+		// This will allow pressing C in the task manager to EEikCmdExit
+		CAknViewAppUi::HandleWsEventL(aEvent, aDestination);
+		}
+	}
+
+// End of file
