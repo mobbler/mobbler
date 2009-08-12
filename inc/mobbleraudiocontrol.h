@@ -36,7 +36,7 @@ class MMobblerAudioControlObserver
 	{
 public:
 	virtual void HandleAudioPositionChangeL() = 0;
-	virtual void HandleAudioFinishedL(CMobblerAudioControl* aAudioControl, TInt aError) = 0;
+	virtual void HandleAudioFinishedL(CMobblerAudioControl* aAudioControl) = 0;
 	};
 
 class CMobblerAudioControl : public CActive, public MMobblerSegDataObserver
@@ -75,11 +75,13 @@ private: // from CActive
 	
 private: // from 
 	void DataPartL(const TDesC8& aData, TInt aTotalSize);
-	void DataCompleteL(CMobblerLastFMConnection::TError aError, TInt aHTTPStatusCode, const TDesC8& aStatusText);
+	void DataCompleteL(CMobblerLastFmConnection::TTransactionError aTransactionError, TInt aHTTPStatusCode, const TDesC8& aStatusText);
 	
 private:
 	TMobblerSharedData iShared;
 	RThread iAudioThread;
+	
+	TBool iDestroyCmdSent;
 	
 	CPeriodic* iTimer;
 	

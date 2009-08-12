@@ -60,7 +60,7 @@ public:
 	TInt Volume() const				{ return iSettings->Volume(); }
 	TInt SleepTimerMinutes() const 	{ return iSettings->SleepTimerMinutes(); }
 	TTime NextUpdateCheck()			{ return iSettings->NextUpdateCheck(); }
-	CMobblerLastFMConnection::TMode Mode() { return iSettings->Mode(); }
+	CMobblerLastFmConnection::TMode Mode() { return iSettings->Mode(); }
 	TInt DownloadAlbumArt() const	{ return iSettings->DownloadAlbumArt(); }
 	TBool AccelerometerGestures()	{ return iSettings->AccelerometerGestures(); }
 	TInt SleepTimerAction()			{ return iSettings->SleepTimerAction(); }
@@ -77,7 +77,7 @@ public:
 	void SetVolumeL(TInt aVolume);
 	void SetSleepTimerMinutesL(TInt aSleepTimerMinutes);
 	void SetNextUpdateCheckL(TTime aNextUpdateCheck);
-	void SetModeL(CMobblerLastFMConnection::TMode aMode);
+	void SetModeL(CMobblerLastFmConnection::TMode aMode);
 	void SetAlarmL(TBool aAlarmOn = ETrue);
 	void SetAlarmL(TTime aAlarmTime);
 	

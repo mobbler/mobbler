@@ -93,7 +93,7 @@ private: // from MMobblerBitmapObserver
 	void RequestImagesL() const;
 	
 private:
-	void DataL(const TDesC8& aData, CMobblerLastFMConnection::TError aError);
+	void DataL(const TDesC8& aData, CMobblerLastFmConnection::TTransactionError aTransactionError);
 	
 	void HandleScrollEventL(CEikScrollBar* aScrollBar, TEikScrollEvent aEventType);
 	void HandleListBoxEventL(CEikListBox* aListBox, TListBoxEvent aEventType);

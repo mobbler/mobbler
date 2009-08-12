@@ -73,7 +73,7 @@ class CMobblerWebServicesView;
 class CMobblerWebServicesHelper;
 
 class CMobblerAppUi : public CAknViewAppUi,
-						public MMobblerLastFMConnectionObserver,
+						public MMobblerLastFmConnectionObserver,
 						public MMobblerDownloadObserver,
 						public MMobblerSleepTimerNotify,
 						public MRemConCoreApiTargetObserver,
@@ -88,6 +88,23 @@ public:
 		EOnlyRadio,
 		EAlwaysWhenOnline
 		};
+	
+private:
+	enum TPlusOptions
+		{
+		EPlusOptionVisitLastFm,
+		EPlusOptionBuy,
+		EPlusOptionShareTrack,
+		EPlusOptionShareArtist,
+		EPlusOptionPlaylistAddTrack,
+		EPlusOptionSimilarArtists,
+		EPlusOptionSimilarTracks,
+		EPlusOptionEvents,
+		EPlusOptionArtistShoutbox,
+		EPlusOptionTopAlbums,
+		EPlusOptionTopTracks,
+		EPlusOptionTopTags
+		};
 
 public:
 	void ConstructL();
@@ -98,10 +115,11 @@ public:
 	CMobblerTrack* CurrentTrack();
 	
 	CMobblerRadioPlayer& RadioPlayer() const;
-	CMobblerLastFMConnection& LastFMConnection() const;
+	CMobblerLastFmConnection& LastFmConnection() const;
 	CMobblerMusicAppListener& MusicListener() const;
 	CMobblerBitmapCollection& BitmapCollection() const;
 	CMobblerDestinationsInterface* Destinations() const;
+	CBrowserLauncher* BrowserLauncher() const;
 	
 	CMobblerSettingItemListView& SettingView() const;
 	const TDesC& MusicAppNameL() const;
@@ -123,9 +141,10 @@ public:
 	TInt Queued() const;
 	
 	void StatusDrawDeferred();
+	void StatusDrawNow();
 	
-	CMobblerLastFMConnection::TMode Mode() const;
-	CMobblerLastFMConnection::TState State() const;
+	CMobblerLastFmConnection::TMode Mode() const;
+	CMobblerLastFmConnection::TState State() const;
 	TBool ScrobblingOn() const;
 
 	TBool RadioResumable() const;
@@ -153,7 +172,7 @@ private:
 	void HandleStatusPaneSizeChange();
 	
 	void HandleConnectCompleteL(TInt aError);
-	void HandleLastFMErrorL(CMobblerLastFMError& aError);
+	void HandleLastFmErrorL(CMobblerLastFmError& aError);
 	void HandleCommsErrorL(TInt aStatusCode, const TDesC8& aStatus);
 	void HandleTrackSubmittedL(const CMobblerTrack& aTrack);
 	void HandleTrackQueuedL(const CMobblerTrack& aTrack);
@@ -187,7 +206,7 @@ private:
 	void MrccatoCommand(TRemConCoreApiOperationId aOperationId, TRemConCoreApiButtonAction aButtonAct);
 	
 private:
-	void DataL(CMobblerFlatDataObserverHelper* aObserver, const TDesC8& aData, CMobblerLastFMConnection::TError aError);
+	void DataL(CMobblerFlatDataObserverHelper* aObserver, const TDesC8& aData, CMobblerLastFmConnection::TTransactionError aTransactionError);
 	
 private: // from MAknServerAppExitObserver
 	void HandleServerAppExit(TInt aReason);
@@ -202,7 +221,7 @@ private:
 	CMobblerWebServicesView* iWebServicesView;
 	
 	// The application engine classes
-	CMobblerLastFMConnection* iLastFMConnection;
+	CMobblerLastFmConnection* iLastFmConnection;
 	CMobblerRadioPlayer* iRadioPlayer;
 	CMobblerMusicAppListener* iMusicListener;
 

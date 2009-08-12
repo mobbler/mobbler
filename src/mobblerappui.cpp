@@ -74,8 +74,6 @@ const TUid KDestinationImplUid = {0xA000BEB6};
 const TUid KMobblerGesturePlugin5xUid = {0xA000B6C2};
 #endif
 
-//_LIT8(KAmazonSearchLink, "http://www.amazon.co.uk/gp/search?ie=UTF8&keywords=%S&tag=mobbler-21&index=music&linkCode=ur2&camp=1634&creative=6738");
-
 void CMobblerAppUi::ConstructL()
 	{
 #if defined(__SYMBIAN_SIGNED__) && !defined(__WINS__)
@@ -97,7 +95,6 @@ void CMobblerAppUi::ConstructL()
 #endif
 	
 	iResourceReader = CMobblerResourceReader::NewL();
-	
 	iBitmapCollection = CMobblerBitmapCollection::NewL();
 	
 	iVolumeUpCallBack = TCallBack(CMobblerAppUi::VolumeUpCallBackL, this);
@@ -121,9 +118,9 @@ void CMobblerAppUi::ConstructL()
 	iSettingView = CMobblerSettingItemListView::NewL();
 	iStatusView = CMobblerStatusView::NewL();
 	
-	iLastFMConnection = CMobblerLastFMConnection::NewL(*this, iSettingView->Username(), iSettingView->Password(), iSettingView->IapId(), iSettingView->BitRate());
-	iRadioPlayer = CMobblerRadioPlayer::NewL(*iLastFMConnection, iSettingView->BufferSize(), iSettingView->EqualizerIndex(), iSettingView->Volume(), iSettingView->BitRate());
-	iMusicListener = CMobblerMusicAppListener::NewL(*iLastFMConnection);
+	iLastFmConnection = CMobblerLastFmConnection::NewL(*this, iSettingView->Username(), iSettingView->Password(), iSettingView->IapId(), iSettingView->BitRate());
+	iRadioPlayer = CMobblerRadioPlayer::NewL(*iLastFmConnection, iSettingView->BufferSize(), iSettingView->EqualizerIndex(), iSettingView->Volume(), iSettingView->BitRate());
+	iMusicListener = CMobblerMusicAppListener::NewL(*iLastFmConnection);
 	
 	RProcess().SetPriority(EPriorityHigh);
 	
@@ -139,8 +136,8 @@ void CMobblerAppUi::ConstructL()
 
 	iWebServicesView = CMobblerWebServicesView::NewL();
 	
-	iLastFMConnection->SetModeL(iSettingView->Mode());
-	iLastFMConnection->LoadCurrentTrackL();
+	iLastFmConnection->SetModeL(iSettingView->Mode());
+	iLastFmConnection->LoadCurrentTrackL();
 
 	if (iSettingView->AlarmOn())
 		{
@@ -189,7 +186,7 @@ CMobblerAppUi::~CMobblerAppUi()
 	delete iPreviousRadioPlaylistId;
 	delete iMusicListener;
 	delete iRadioPlayer;
-	delete iLastFMConnection;
+	delete iLastFmConnection;
 	delete iMobblerDownload;
 	delete iInterfaceSelector;
 	delete iVolumeUpTimer;
@@ -356,12 +353,12 @@ void CMobblerAppUi::MrccatoCommand(TRemConCoreApiOperationId aOperationId, TRemC
 
 void CMobblerAppUi::SetDetailsL(const TDesC& aUsername, const TDesC& aPassword)
 	{
-	iLastFMConnection->SetDetailsL(aUsername, aPassword);
+	iLastFmConnection->SetDetailsL(aUsername, aPassword);
 	}
 
 void CMobblerAppUi::SetIapIDL(TUint32 aIapId)
 	{
-	iLastFMConnection->SetIapIdL(aIapId);
+	iLastFmConnection->SetIapIdL(aIapId);
 	}
 
 void CMobblerAppUi::SetBufferSize(TTimeIntervalSeconds aBufferSize)
@@ -371,7 +368,7 @@ void CMobblerAppUi::SetBufferSize(TTimeIntervalSeconds aBufferSize)
 
 void CMobblerAppUi::SetBitRateL(TInt aBitRate)
 	{
-	iLastFMConnection->SetBitRateL(aBitRate);
+	iLastFmConnection->SetBitRateL(aBitRate);
 	iRadioPlayer->SetBitRateL(aBitRate);
 	}
 
@@ -411,9 +408,9 @@ CMobblerTrack* CMobblerAppUi::CurrentTrack()
 	return track;
 	}
 
-CMobblerLastFMConnection& CMobblerAppUi::LastFMConnection() const
+CMobblerLastFmConnection& CMobblerAppUi::LastFmConnection() const
 	{
-	return *iLastFMConnection;
+	return *iLastFmConnection;
 	}
 
 CMobblerRadioPlayer& CMobblerAppUi::RadioPlayer() const
@@ -434,6 +431,15 @@ CMobblerSettingItemListView& CMobblerAppUi::SettingView() const
 CMobblerDestinationsInterface* CMobblerAppUi::Destinations() const
 	{
 	return iDestinations;
+	}
+
+CBrowserLauncher* CMobblerAppUi::BrowserLauncher() const
+	{
+#ifndef __WINS__
+	return iBrowserLauncher;
+#else
+	return NULL;
+#endif
 	}
 
 const TDesC& CMobblerAppUi::MusicAppNameL() const
@@ -482,7 +488,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 			task.SetWgId(CEikonEnv::Static()->RootWin().Identifier());
 			task.SendToBackground();
 			/// Check if scrobblable first and save queue
-			iLastFMConnection->TrackStoppedL();
+			iLastFmConnection->TrackStoppedL();
 			iRadioPlayer->Stop();
 			Exit();
 			break;
@@ -491,12 +497,12 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 			task.SendToBackground();
 			break;
 		case EMobblerCommandOnline:
-			iLastFMConnection->SetModeL(CMobblerLastFMConnection::EOnline);
-			iSettingView->SetModeL(CMobblerLastFMConnection::EOnline);
+			iLastFmConnection->SetModeL(CMobblerLastFmConnection::EOnline);
+			iSettingView->SetModeL(CMobblerLastFmConnection::EOnline);
 			break;
 		case EMobblerCommandOffline:
-			iLastFMConnection->SetModeL(CMobblerLastFMConnection::EOffline);
-			iSettingView->SetModeL(CMobblerLastFMConnection::EOffline);
+			iLastFmConnection->SetModeL(CMobblerLastFmConnection::EOffline);
+			iSettingView->SetModeL(CMobblerLastFmConnection::EOffline);
 			break;
 		case EMobblerCommandFriends:			// intentional fall-through
 		case EMobblerCommandUserTopArtists:		// intentional fall-through
@@ -510,12 +516,12 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 		case EMobblerCommandRecentTracks:		// intentional fall-through
 		case EMobblerCommandUserShoutbox:		// intentional fall-through
 		
-			if (iLastFMConnection->Mode() != CMobblerLastFMConnection::EOnline && GoOnlineL())
+			if (iLastFmConnection->Mode() != CMobblerLastFmConnection::EOnline && GoOnlineL())
 				{
-				iLastFMConnection->SetModeL(CMobblerLastFMConnection::EOnline);
+				iLastFmConnection->SetModeL(CMobblerLastFmConnection::EOnline);
 				}
 				
-			if (iLastFMConnection->Mode() == CMobblerLastFMConnection::EOnline)
+			if (iLastFmConnection->Mode() == CMobblerLastFmConnection::EOnline)
 				{
 				CMobblerString* username(CMobblerString::NewL(iSettingView->Username()));
 				CleanupStack::PushL(username);
@@ -566,8 +572,8 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 		case EMobblerCommandCheckForUpdates:
 			{
 			delete iCheckForUpdatesObserver;
-			iCheckForUpdatesObserver = CMobblerFlatDataObserverHelper::NewL(*iLastFMConnection, *this, EFalse);
-			iLastFMConnection->CheckForUpdateL(*iCheckForUpdatesObserver);
+			iCheckForUpdatesObserver = CMobblerFlatDataObserverHelper::NewL(*iLastFmConnection, *this, EFalse);
+			iLastFmConnection->CheckForUpdateL(*iCheckForUpdatesObserver);
 			}
 			break;
 		case EMobblerCommandEditSettings:
@@ -606,7 +612,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 				break;
 				}
 			if (iRadioPlayer->HasPlaylist() && 
-				iLastFMConnection->Mode() == CMobblerLastFMConnection::EOnline)
+				iLastFmConnection->Mode() == CMobblerLastFmConnection::EOnline)
 				{
 				iRadioPlayer->SkipTrackL();
 				}
@@ -737,7 +743,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 						{
 						// set love to true (if only it were this easy)
 						CurrentTrack()->SetLove(ETrue);
-						iLastFMConnection->TrackLoveL(currentTrack->Artist().String8(), currentTrack->Title().String8());
+						iLastFmConnection->TrackLoveL(currentTrack->Artist().String8(), currentTrack->Title().String8());
 						}
 					}
 				}
@@ -754,7 +760,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 				if (ban)
 					{
 					// send the web services API call
-					iLastFMConnection->TrackBanL(currentRadioTrack->Artist().String8(), currentRadioTrack->Title().String8());
+					iLastFmConnection->TrackBanL(currentRadioTrack->Artist().String8(), currentRadioTrack->Title().String8());
 					iRadioPlayer->SkipTrackL();
 					}
 				}
@@ -792,6 +798,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 				CleanupStack::PopAndDestroy(menuText);
 				
 				// Add the other menu items
+				items->AppendL(iResourceReader->ResourceL(R_MOBBLER_BUY));
 				items->AppendL(iResourceReader->ResourceL(R_MOBBLER_SHARE_TRACK));
 				items->AppendL(iResourceReader->ResourceL(R_MOBBLER_SHARE_ARTIST));
 				items->AppendL(iResourceReader->ResourceL(R_MOBBLER_PLAYLIST_ADD_TRACK));
@@ -812,21 +819,33 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 				
 				if (popup->ExecuteLD())
 					{
-					if (iLastFMConnection->Mode() != CMobblerLastFMConnection::EOnline && GoOnlineL())
+					if (iLastFmConnection->Mode() != CMobblerLastFmConnection::EOnline && GoOnlineL())
 						{
-						iLastFMConnection->SetModeL(CMobblerLastFMConnection::EOnline);
+						iLastFmConnection->SetModeL(CMobblerLastFmConnection::EOnline);
 						}
 					
-					if (iLastFMConnection->Mode() == CMobblerLastFMConnection::EOnline)
+					if (iLastFmConnection->Mode() == CMobblerLastFmConnection::EOnline)
 						{
 						switch (list->CurrentItemIndex())
 							{
-							case 0:
+							case EPlusOptionVisitLastFm:
 								HandleCommandL(EMobblerCommandVisitWebPage);
 								break;
-							case 1:
-							case 2:
-							case 3:
+							case EPlusOptionBuy:
+								{
+								if (CurrentTrack())
+									{
+									MobblerUtility::OpenAmazonL(CurrentTrack()->Artist().String8(), CurrentTrack()->Album().String8());
+									}
+								else
+									{
+									// TODO: display an error
+									}
+								}
+								break;
+							case EPlusOptionShareTrack:
+							case EPlusOptionShareArtist:
+							case EPlusOptionPlaylistAddTrack:
 								{
 								if (CurrentTrack())
 									{
@@ -834,9 +853,9 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 									iWebServicesHelper = CMobblerWebServicesHelper::NewL(*this);
 									switch (list->CurrentItemIndex())
 										{
-										case 1: iWebServicesHelper->TrackShareL(*CurrentTrack()); break;
-										case 2: iWebServicesHelper->ArtistShareL(*CurrentTrack()); break;
-										case 3: iWebServicesHelper->PlaylistAddL(*CurrentTrack()); break;
+										case EPlusOptionShareTrack: iWebServicesHelper->TrackShareL(*CurrentTrack()); break;
+										case EPlusOptionShareArtist: iWebServicesHelper->ArtistShareL(*CurrentTrack()); break;
+										case EPlusOptionPlaylistAddTrack: iWebServicesHelper->PlaylistAddL(*CurrentTrack()); break;
 										}
 									}
 								else
@@ -845,25 +864,25 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 									}
 								}
 								break;
-							case 4:
+							case EPlusOptionSimilarArtists:
 								ActivateLocalViewL(iWebServicesView->Id(), TUid::Uid(EMobblerCommandSimilarArtists), currentTrack->Artist().String8());
 								break;
-							case 5:
+							case EPlusOptionSimilarTracks:
 								ActivateLocalViewL(iWebServicesView->Id(), TUid::Uid(EMobblerCommandSimilarTracks), currentTrack->MbTrackId().String8());
 								break;
-							case 6:
+							case EPlusOptionEvents:
 								ActivateLocalViewL(iWebServicesView->Id(), TUid::Uid(EMobblerCommandArtistEvents), currentTrack->Artist().String8());
 								break;
-							case 7:
+							case EPlusOptionArtistShoutbox:
 								ActivateLocalViewL(iWebServicesView->Id(), TUid::Uid(EMobblerCommandArtistShoutbox), currentTrack->Artist().String8());
 								break;
-							case 8:
+							case EPlusOptionTopAlbums:
 								ActivateLocalViewL(iWebServicesView->Id(), TUid::Uid(EMobblerCommandArtistTopAlbums), currentTrack->Artist().String8());
 								break;
-							case 9:
+							case EPlusOptionTopTracks:
 								ActivateLocalViewL(iWebServicesView->Id(), TUid::Uid(EMobblerCommandArtistTopTracks), currentTrack->Artist().String8());
 								break;
-							case 10:
+							case EPlusOptionTopTags:
 								ActivateLocalViewL(iWebServicesView->Id(), TUid::Uid(EMobblerCommandArtistTopTags), currentTrack->Artist().String8());
 								break;
 							default:
@@ -954,7 +973,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 			}
 			break;
 		case EMobblerCommandToggleScrobbling:
-			iLastFMConnection->ToggleScrobblingL();
+			iLastFmConnection->ToggleScrobblingL();
 			iStatusView->DrawDeferred();
 			break;
 		case EMobblerCommandSleepTimer:
@@ -992,7 +1011,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 				if (okToReplaceLog)
 					{
 					TInt resourceId(R_MOBBLER_NOTE_QUEUE_EXPORTED);
-					if (!iLastFMConnection->ExportQueueToLogFileL())
+					if (!iLastFmConnection->ExportQueueToLogFileL())
 						{
 						BaflUtils::DeleteFile(CCoeEnv::Static()->FsSession(), KLogFile);
 						resourceId = R_MOBBLER_NOTE_QUEUE_NOT_EXPORTED;
@@ -1054,35 +1073,35 @@ void CMobblerAppUi::RadioStartL(TInt aRadioStation,
 		return;
 		}
 	
-	CMobblerLastFMConnection::TRadioStation station(CMobblerLastFMConnection::EPersonal);
+	CMobblerLastFmConnection::TRadioStation station(CMobblerLastFmConnection::EPersonal);
 	switch (aRadioStation)
 		{
 		case EMobblerCommandRadioArtist:
-			station = CMobblerLastFMConnection::EArtist;
+			station = CMobblerLastFmConnection::EArtist;
 			break;
 		case EMobblerCommandRadioTag:
-			station = CMobblerLastFMConnection::ETag;
+			station = CMobblerLastFmConnection::ETag;
 			break;
 		case EMobblerCommandRadioUser:
-			station = CMobblerLastFMConnection::EPersonal;
+			station = CMobblerLastFmConnection::EPersonal;
 			break;
 		case EMobblerCommandRadioRecommendations:
-			station = CMobblerLastFMConnection::ERecommendations;
+			station = CMobblerLastFmConnection::ERecommendations;
 			break;
 		case EMobblerCommandRadioPersonal:
-			station = CMobblerLastFMConnection::EPersonal;
+			station = CMobblerLastFmConnection::EPersonal;
 			break;
 		case EMobblerCommandRadioLoved:
-			station = CMobblerLastFMConnection::ELovedTracks;
+			station = CMobblerLastFmConnection::ELovedTracks;
 			break;
 		case EMobblerCommandRadioNeighbourhood:
-			station = CMobblerLastFMConnection::ENeighbourhood;
+			station = CMobblerLastFmConnection::ENeighbourhood;
 			break;
 		case EMobblerCommandRadioPlaylist:
-			station = CMobblerLastFMConnection::EPlaylist;
+			station = CMobblerLastFmConnection::EPlaylist;
 			break;
 		default:
-			station = CMobblerLastFMConnection::EPersonal;
+			station = CMobblerLastFmConnection::EPersonal;
 			break;
 		}
 	
@@ -1123,30 +1142,30 @@ TBool CMobblerAppUi::RadioResumable() const
 		}
 	}
 
-CMobblerLastFMConnection::TMode CMobblerAppUi::Mode() const
+CMobblerLastFmConnection::TMode CMobblerAppUi::Mode() const
 	{
-	return iLastFMConnection->Mode();
+	return iLastFmConnection->Mode();
 	}
 
-CMobblerLastFMConnection::TState CMobblerAppUi::State() const
+CMobblerLastFmConnection::TState CMobblerAppUi::State() const
 	{
-	return iLastFMConnection->State();
+	return iLastFmConnection->State();
 	}
 
 TBool CMobblerAppUi::ScrobblingOn() const
 	{
-	return iLastFMConnection->ScrobblingOn();
+	return iLastFmConnection->ScrobblingOn();
 	}
 
 void CMobblerAppUi::HandleStatusPaneSizeChange()
 	{
 	}
 
-void CMobblerAppUi::DataL(CMobblerFlatDataObserverHelper* aObserver, const TDesC8& aData, CMobblerLastFMConnection::TError aError)
+void CMobblerAppUi::DataL(CMobblerFlatDataObserverHelper* aObserver, const TDesC8& aData, CMobblerLastFmConnection::TTransactionError aTransactionError)
 	{
 	if (aObserver == iCheckForUpdatesObserver)
 		{
-		if (aError == CMobblerLastFMConnection::EErrorNone)
+		if (aTransactionError == CMobblerLastFmConnection::ETransactionErrorNone)
 			{
 			// we have just sucessfully checked for updates
 			// so don't do it again for another week
@@ -1175,7 +1194,7 @@ void CMobblerAppUi::DataL(CMobblerFlatDataObserverHelper* aObserver, const TDesC
 					
 					if (yes)
 						{
-						iMobblerDownload->DownloadL(location, iLastFMConnection->IapId());
+						iMobblerDownload->DownloadL(location, iLastFmConnection->IapId());
 						}
 					}
 				else
@@ -1210,8 +1229,8 @@ void CMobblerAppUi::HandleConnectCompleteL(TInt aError)
 				{
 				// do an update check
 				delete iCheckForUpdatesObserver;
-				iCheckForUpdatesObserver = CMobblerFlatDataObserverHelper::NewL(*iLastFMConnection, *this, EFalse);
-				iLastFMConnection->CheckForUpdateL(*iCheckForUpdatesObserver);
+				iCheckForUpdatesObserver = CMobblerFlatDataObserverHelper::NewL(*iLastFmConnection, *this, EFalse);
+				iLastFmConnection->CheckForUpdateL(*iCheckForUpdatesObserver);
 				}
 			}
 
@@ -1223,7 +1242,7 @@ void CMobblerAppUi::HandleConnectCompleteL(TInt aError)
 		}
 	}
 
-void CMobblerAppUi::HandleLastFMErrorL(CMobblerLastFMError& aError)
+void CMobblerAppUi::HandleLastFmErrorL(CMobblerLastFmError& aError)
 	{
 	// iStatusView->DrawDeferred();
 	
@@ -1300,7 +1319,7 @@ TBool CMobblerAppUi::GoOnlineL()
 	
 	if (goOnline)
 		{
-		iSettingView->SetModeL(CMobblerLastFMConnection::EOnline);
+		iSettingView->SetModeL(CMobblerLastFmConnection::EOnline);
 		}
 	
 	return goOnline;
@@ -1311,6 +1330,14 @@ void CMobblerAppUi::StatusDrawDeferred()
 	if (iStatusView)
 		{
 		iStatusView->DrawDeferred();
+		}
+	}
+
+void CMobblerAppUi::StatusDrawNow()
+	{
+	if (iStatusView)
+		{
+		iStatusView->DrawNow();
 		}
 	}
 
@@ -1597,7 +1624,7 @@ void CMobblerAppUi::TimerExpiredL(TAny* aTimer, TInt aError)
 		iSettingView->SetAlarmL(EFalse);
 		User::ResetInactivityTime();
 
-		if (iLastFMConnection->IapId() != iSettingView->AlarmIapId())
+		if (iLastFmConnection->IapId() != iSettingView->AlarmIapId())
 			{
 			HandleCommandL(EMobblerCommandOffline);
 			SetIapIDL(iSettingView->AlarmIapId());
@@ -1650,7 +1677,7 @@ void CMobblerAppUi::SleepL()
 	LOG(_L8("CMobblerAppUi::SleepL()"));
 	// Do this for all actions, it gives Mobbler a chance to scrobble
 	// the newly stopped song to Last.fm whilst displaying the dialog
-	iLastFMConnection->TrackStoppedL();
+	iLastFmConnection->TrackStoppedL();
 	iRadioPlayer->Stop();
 
 #ifdef _DEBUG

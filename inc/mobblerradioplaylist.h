@@ -37,6 +37,8 @@ public:
 	
 	void AppendTrackL(CMobblerTrack* aTrack);
 	void RemoveAndReleaseTrack(TInt aTrackIndex);
+	void Reset();
+	
 	TInt Count() const;
 	const CMobblerTrack* operator[](TInt aCount) const;
 	CMobblerTrack* operator[](TInt aCount);

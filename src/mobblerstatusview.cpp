@@ -177,13 +177,13 @@ void CMobblerStatusView::DynInitMenuPaneL(TInt aResourceId, CEikMenuPane* aMenuP
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_ALARM,					EMobblerCommandAlarm);
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_EXPORT_QUEUE_TO_LOG,		EMobblerCommandExportQueueToLogFile);
 		}
-	
+
 	// Now the menu text is set, dimming logic is next
 	if (aResourceId == R_MOBBLER_STATUS_MENU_PANE)
 		{
-		if (static_cast<CMobblerAppUi*>(AppUi())->Mode() == CMobblerLastFMConnection::EOnline ||
-				static_cast<CMobblerAppUi*>(AppUi())->State() == CMobblerLastFMConnection::EConnecting ||
-				static_cast<CMobblerAppUi*>(AppUi())->State() == CMobblerLastFMConnection::EHandshaking)
+		if (static_cast<CMobblerAppUi*>(AppUi())->Mode() == CMobblerLastFmConnection::EOnline ||
+				static_cast<CMobblerAppUi*>(AppUi())->State() == CMobblerLastFmConnection::EConnecting ||
+				static_cast<CMobblerAppUi*>(AppUi())->State() == CMobblerLastFmConnection::EHandshaking)
 			{
 			aMenuPane->SetItemDimmed(EMobblerCommandOnline, ETrue);
 			}
@@ -257,9 +257,7 @@ void CMobblerStatusView::DynInitMenuPaneL(TInt aResourceId, CEikMenuPane* aMenuP
 		aMenuPane->SetItemDimmed(EMobblerCommandArtistTopTracks, ETrue);
 		aMenuPane->SetItemDimmed(EMobblerCommandArtistTopTags, ETrue);
 		}
-	
-	// Third edition only due to an S60 5th edition bug (issue 364)
-	aMenuPane->EnableMarqueeL(!iMobblerStatusControl->IsFifthEdition());
+	aMenuPane->EnableMarqueeL(ETrue);
 	}
 
 TUid CMobblerStatusView::Id() const
@@ -336,6 +334,14 @@ void CMobblerStatusView::DrawDeferred() const
 	if (iMobblerStatusControl)
 		{
 		iMobblerStatusControl->DrawDeferred();
+		}
+	}
+
+void CMobblerStatusView::DrawNow() const
+	{
+	if (iMobblerStatusControl)
+		{
+		iMobblerStatusControl->DrawNow();
 		}
 	}
 

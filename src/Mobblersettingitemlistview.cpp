@@ -197,7 +197,7 @@ void CMobblerSettingItemListView::SetNextUpdateCheckL(TTime aNextUpdateCheck)
 	iSettings->SaveSettingValuesL();
 	}
 
-void CMobblerSettingItemListView::SetModeL(CMobblerLastFMConnection::TMode aMode)
+void CMobblerSettingItemListView::SetModeL(CMobblerLastFmConnection::TMode aMode)
 	{
 	iSettings->SetMode(aMode);
 	iSettings->SaveSettingValuesL();

@@ -107,7 +107,13 @@ CMobblerAudioControl::~CMobblerAudioControl()
 		// it and then wait for it to close
 		TRequestStatus threadStatus;
 		iAudioThread.Logon(threadStatus);
-		SendCmd(ECmdDestroyAudio);
+		
+		if (!iDestroyCmdSent)
+			{
+			iDestroyCmdSent = ETrue;
+			SendCmd(ECmdDestroyAudio);
+			}
+		
 		User::WaitForRequest(threadStatus);
 		}
 	
@@ -116,7 +122,7 @@ CMobblerAudioControl::~CMobblerAudioControl()
 
 void CMobblerAudioControl::RunL()
 	{
-	iObserver.HandleAudioFinishedL(this, iStatus.Int());
+	iObserver.HandleAudioFinishedL(this);
 	}
 
 void CMobblerAudioControl::DoCancel()
@@ -139,28 +145,48 @@ void CMobblerAudioControl::DataPartL(const TDesC8& aData, TInt aTotalDataSize)
 	static_cast<CMobblerAppUi*>(CEikonEnv::Static()->AppUi())->StatusDrawDeferred();
 	}
 
-void CMobblerAudioControl::DataCompleteL(CMobblerLastFMConnection::TError aError, TInt aHTTPStatusCode, const TDesC8& aStatusText)
+void CMobblerAudioControl::DataCompleteL(CMobblerLastFmConnection::TTransactionError aTransactionError, TInt aHTTPStatusCode, const TDesC8& aStatusText)
 	{
 	iShared.iDownloadComplete = ETrue;
 	
-	if (aError != CMobblerLastFMConnection::EErrorNone)
+	switch (aTransactionError)
 		{
-		iObserver.HandleAudioFinishedL(this, KErrCancel);
-		}
-	
-	if (aError == CMobblerLastFMConnection::EErrorFailed)
-		{
-		// Display an error
-		_LIT(KAudioErrorFormat, "%d %S");
-		TBuf<25> message;
-		CMobblerString* string(CMobblerString::NewL(aStatusText));
-		message.Format(KAudioErrorFormat, aHTTPStatusCode, &string->String());
-		delete string;
-		CAknInformationNote* note = new (ELeave) CAknInformationNote(EFalse);
-		note->ExecuteLD(message);
-		
- 		// Ask for the thread to close because there has been an error
-		SendCmd(ECmdDestroyAudio);
+		case CMobblerLastFmConnection::ETransactionErrorNone:
+			{
+			// Do nothing. This means that we have finished
+			// downloading the mp3 the sudio thread will close
+			// when the track completes so this RunL will get called
+			// to start the next track 
+			}
+			break;
+		case CMobblerLastFmConnection::ETransactionErrorFailed:
+			{
+			// Display an error with the HTTP status code of the failure
+			_LIT(KAudioErrorFormat, "%d %S");
+			TBuf<25> message;
+			CMobblerString* string(CMobblerString::NewL(aStatusText));
+			message.Format(KAudioErrorFormat, aHTTPStatusCode, &string->String());
+			delete string;
+			CAknInformationNote* note = new (ELeave) CAknInformationNote(EFalse);
+			note->ExecuteLD(message);
+			}
+			// Intentional follow through to the nest case statement
+		case CMobblerLastFmConnection::ETransactionErrorCancel:
+			{
+			// Ask for the audio thread to close because there has been an error
+			// or the transaction was cancelled (i.e. we are stopping the radio).
+			// We will tell the radio player that this track has finished in
+			// the logon callback
+			
+			if (!iDestroyCmdSent)
+				{
+				iDestroyCmdSent = ETrue;
+				SendCmd(ECmdDestroyAudio);
+				}
+			}
+			break;
+		default:
+			break;
 		}
 	}
 

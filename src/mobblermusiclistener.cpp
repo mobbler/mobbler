@@ -40,7 +40,7 @@ const TUid KMobblerMusicAppInterfaceUid = {0xA0007CAA};
 const TUid KContentListingImplUid = {0xA000BEB3};
 #endif
 
-CMobblerMusicAppListener* CMobblerMusicAppListener::NewL(CMobblerLastFMConnection& aSubmitter)
+CMobblerMusicAppListener* CMobblerMusicAppListener::NewL(CMobblerLastFmConnection& aSubmitter)
 	{
 	CMobblerMusicAppListener* self = new(ELeave) CMobblerMusicAppListener(aSubmitter);
 	CleanupStack::PushL(self);
@@ -49,8 +49,8 @@ CMobblerMusicAppListener* CMobblerMusicAppListener::NewL(CMobblerLastFMConnectio
 	return self;
 	}
 
-CMobblerMusicAppListener::CMobblerMusicAppListener(CMobblerLastFMConnection& aSubmitter)
-	:iLastFMConnection(aSubmitter)
+CMobblerMusicAppListener::CMobblerMusicAppListener(CMobblerLastFmConnection& aSubmitter)
+	:iLastFmConnection(aSubmitter)
 	{
 	}
 
@@ -162,7 +162,7 @@ void CMobblerMusicAppListener::HandleTrackChangeL(const TDesC& /*aTrack*/)
 		iCurrentTrack->Release();
 		iCurrentTrack = NULL;
 		}
-	iLastFMConnection.TrackStoppedL();
+	iLastFmConnection.TrackStoppedL();
 	ScheduleNowPlayingL();
 	
 	NotifyChangeL();
@@ -181,7 +181,7 @@ void CMobblerMusicAppListener::HandleMusicStateChangeL(TInt aState)
 			iCurrentTrack->Release();
 			iCurrentTrack = NULL;
 			}
-		iLastFMConnection.TrackStoppedL();
+		iLastFmConnection.TrackStoppedL();
 		}
 	
 	NotifyChangeL();
@@ -239,7 +239,7 @@ void CMobblerMusicAppListener::NowPlayingL()
 	if ( iCurrentTrack )
 		{
 		// We are currently listening to a track so just send the old one again
-		iLastFMConnection.TrackStartedL(iCurrentTrack);
+		iLastFmConnection.TrackStartedL(iCurrentTrack);
 		}
 	else
 		{
@@ -305,7 +305,7 @@ void CMobblerMusicAppListener::NowPlayingL()
 					}
 				CleanupStack::PopAndDestroy(2, artist); // artist, title
 				iCurrentTrack->SetStartTimeUTC(startTimeUTC);
-				iLastFMConnection.TrackStartedL(iCurrentTrack);
+				iLastFmConnection.TrackStartedL(iCurrentTrack);
 				}
 			}
 		}
@@ -384,7 +384,7 @@ void CMobblerMusicAppListener::PlayerStateChangedL(TMPlayerRemoteControlState aS
 			iCurrentTrack->Release();
 			iCurrentTrack = NULL;
 			}
-		iLastFMConnection.TrackStoppedL();
+		iLastFmConnection.TrackStoppedL();
 		}
 	
 	NotifyChangeL();
@@ -397,7 +397,7 @@ void CMobblerMusicAppListener::TrackInfoChangedL(const TDesC& /*aTitle*/, const 
 		iCurrentTrack->Release();
 		iCurrentTrack = NULL;
 		}
-	iLastFMConnection.TrackStoppedL();
+	iLastFmConnection.TrackStoppedL();
 	ScheduleNowPlayingL();
 	}
 
@@ -415,7 +415,7 @@ void CMobblerMusicAppListener::CommandReceivedL(TMPlayerRemoteControlCommands aC
 			iCurrentTrack->Release();
 			iCurrentTrack = NULL;
 			}
-		iLastFMConnection.TrackStoppedL();
+		iLastFmConnection.TrackStoppedL();
 		}
 	
 	NotifyChangeL();
@@ -429,7 +429,7 @@ void CMobblerMusicAppListener::PlayerPositionL(TTimeIntervalSeconds aPlayerPosit
 			{
 			iCurrentTrack->SetPlaybackPosition(aPlayerPosition);
 			static_cast<CMobblerAppUi*>(CEikonEnv::Static()->AppUi())->StatusDrawDeferred();
-			iLastFMConnection.SaveCurrentTrackL();
+			iLastFmConnection.SaveCurrentTrackL();
 			}
 		}
 	}

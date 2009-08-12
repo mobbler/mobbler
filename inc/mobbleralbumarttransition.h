@@ -63,14 +63,12 @@ private:
 private:
 	static TInt CallBack(TAny* aRef);
 	
+	static TRect ScaledRectL(TRect aDestRect, TRect aSourceRect);
+	
 private:
 	CMobblerStatusControl& iStatusControl;
 	
-	const CMobblerBitmap* iLastAlbumArt;
-	const CMobblerBitmap* iCurrentAlbumArt;
-	
-	CFbsBitmap* iDoubleBitmap;
-	CFbsBitmap* iDoubleMask;
+	RPointerArray<CMobblerBitmap> iAlbumArt;
 	
 	CPeriodic* iTimer;
 	TUint iStartTickCount;

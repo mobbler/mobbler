@@ -49,6 +49,10 @@ void CMobblerLogging::DumpDataL(const TDesC8& aData, const TDesC& aLogFile)
 	CCoeEnv::Static()->FsSession().MkDirAll(logFile);
 	User::LeaveIfError(file.Replace(CCoeEnv::Static()->FsSession(), logFile, EFileWrite));
 	User::LeaveIfError(file.Write(aData));
+	
+	TInt fileSize(0);
+	file.Size(fileSize);
+	
 	CleanupStack::PopAndDestroy(&file);
 	}
 
@@ -120,6 +124,10 @@ void CMobblerLogging::LogL(const TDesC8& aText)
 		CCoeEnv::Static()->FsSession().MkDirAll(logFile);
 		User::LeaveIfError(file.Create(CCoeEnv::Static()->FsSession(), logFile, EFileWrite));
 		}
+	
+	TInt fileSize(0);
+	file.Size(fileSize);
+	
 	TInt position(0);
 	file.Seek(ESeekEnd, position);
 	User::LeaveIfError(file.Write(aText));

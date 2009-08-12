@@ -156,12 +156,12 @@ void CMobblerListControl::MakeListBoxL()
 
 CMobblerListControl::~CMobblerListControl()
 	{
-	iAppUi.LastFMConnection().CancelTransaction(this);
+	iAppUi.LastFmConnection().CancelTransaction(this);
 	
 	const TInt KListCount(iList.Count());
 	for (TInt i(0); i < KListCount; ++i)
 		{
-		iAppUi.LastFMConnection().CancelTransaction(iList[i]);
+		iAppUi.LastFmConnection().CancelTransaction(iList[i]);
 		}
 	
 	iList.ResetAndDestroy();
@@ -295,9 +295,9 @@ void CMobblerListControl::UpdateIconArrayL()
 		}
 	}
 
-void CMobblerListControl::DataL(const TDesC8& aXml, CMobblerLastFMConnection::TError aError)
+void CMobblerListControl::DataL(const TDesC8& aXml, CMobblerLastFmConnection::TTransactionError aTransactionError)
 	{
-	if (aError == CMobblerLastFMConnection::EErrorNone)
+	if (aTransactionError == CMobblerLastFmConnection::ETransactionErrorNone)
 		{
 		iState = ENormal;
 		
@@ -496,7 +496,7 @@ void CMobblerListControl::RequestImagesL() const
 			if (!iList[i]->ImageRequested())
 				{
 				// Ihe item has not had an image requested so ask for it now
-				iAppUi.LastFMConnection().RequestImageL(iList[i], iList[i]->ImageLocation());
+				iAppUi.LastFmConnection().RequestImageL(iList[i], iList[i]->ImageLocation());
 				iList[i]->SetImageRequested(ETrue);
 				}
 			}

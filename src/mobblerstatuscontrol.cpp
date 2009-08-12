@@ -48,7 +48,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 _LIT(KMusicAppNameAndConnectionSeperator, " - ");
 
-const TRgb KRgbLastFMRed(0xD5, 0x10, 0x07, 0xFF);
+const TRgb KRgbLastFmRed(0xD5, 0x10, 0x07, 0xFF);
 
 const TRgb KRgbProgressBarBack(0xE7, 0xED, 0xEF, 0xFF);
 const TRgb KRgbProgressBarBuffer(0xAF, 0xBE, 0xCC, 0xFF);
@@ -112,7 +112,7 @@ void CMobblerStatusControl::ConstructL(const TRect& aRect)
 	iArtistMarquee = CMobblerMarquee::NewL(*this);
 	
 	iAppUi.RadioPlayer().AddObserverL(this);
-	iAppUi.LastFMConnection().AddStateChangeObserverL(this);
+	iAppUi.LastFmConnection().AddStateChangeObserverL(this);
 	iAppUi.MusicListener().AddObserverL(this);
 	}
 
@@ -158,7 +158,7 @@ void CMobblerStatusControl::DoChangePaneTextL()
 			stateText.Copy(iAppUi.MusicAppNameL());
 			stateText.Append(KMusicAppNameAndConnectionSeperator);
 			
-			if (iAppUi.Mode() == CMobblerLastFMConnection::EOnline)
+			if (iAppUi.Mode() == CMobblerLastFmConnection::EOnline)
 				{
 				stateText.Append(iAppUi.ResourceReader().ResourceL(R_MOBBLER_STATE_ONLINE));
 				}
@@ -175,17 +175,18 @@ void CMobblerStatusControl::DoChangePaneTextL()
 		// Decide on the state text to display
 		switch (iAppUi.State())
 			{
-			case CMobblerLastFMConnection::ENone:
+			case CMobblerLastFmConnection::ENone:
 				{
 				switch (iAppUi.RadioPlayer().State())
 					{
 					case CMobblerRadioPlayer::EIdle:
+					case CMobblerRadioPlayer::EStarting:
 						{
 						switch (iAppUi.RadioPlayer().TransactionState())
 							{
 							case CMobblerRadioPlayer::ENone:
 								{
-								if (iAppUi.Mode() == CMobblerLastFMConnection::EOnline)
+								if (iAppUi.Mode() == CMobblerLastFmConnection::EOnline)
 									{
 									stateText.Copy(iAppUi.ResourceReader().ResourceL(R_MOBBLER_STATE_ONLINE));
 									}
@@ -202,20 +203,22 @@ void CMobblerStatusControl::DoChangePaneTextL()
 								stateText.Copy(iAppUi.ResourceReader().ResourceL(R_MOBBLER_STATE_FETCHING_PLAYLIST));
 								break;
 							}
+						}
 						break;
 					case CMobblerRadioPlayer::EPlaying:
+						{
 						stateText.Copy(iAppUi.RadioPlayer().Station().String());
+						}
 						break;
 					default:
 						break;
-						}
 					}
 				}
 				break;
-			case CMobblerLastFMConnection::EConnecting:
+			case CMobblerLastFmConnection::EConnecting:
 				stateText.Copy(iAppUi.ResourceReader().ResourceL(R_MOBBLER_STATE_CONNECTING));
 				break;
-			case CMobblerLastFMConnection::EHandshaking:
+			case CMobblerLastFmConnection::EHandshaking:
 				stateText.Copy(iAppUi.ResourceReader().ResourceL(R_MOBBLER_STATE_HANDSHAKING));
 				break;
 			default:
@@ -533,7 +536,7 @@ void CMobblerStatusControl::BitmapResizedL(const CMobblerBitmap* /*aMobblerBitma
 CMobblerStatusControl::~CMobblerStatusControl()
 	{
 	iAppUi.RadioPlayer().RemoveObserver(this);
-	iAppUi.LastFMConnection().RemoveStateChangeObserver(this);
+	iAppUi.LastFmConnection().RemoveStateChangeObserver(this);
 	iAppUi.MusicListener().RemoveObserver(this);
 	
 	delete iBgContext;
@@ -719,7 +722,7 @@ void CMobblerStatusControl::Draw(const TRect& /*aRect*/) const
 	if (love)
 		{
 		BitBltMobblerBitmap(iMobblerBitmapLove, 
-				TPoint(rectAlbumArt.iBr.iX - iMobblerBitmapLove->SizeInPixels().iWidth - 4, rectAlbumArt.iBr.iX - iMobblerBitmapLove->SizeInPixels().iHeight - 4),
+				TPoint(rectAlbumArt.iBr.iX - iMobblerBitmapLove->SizeInPixels().iWidth - 4, rectAlbumArt.iBr.iY - iMobblerBitmapLove->SizeInPixels().iHeight - 4),
 				TRect(TPoint(0, 0), iMobblerBitmapLove->SizeInPixels()));
 		}
 	
@@ -776,7 +779,7 @@ void CMobblerStatusControl::Draw(const TRect& /*aRect*/) const
 		// Draw the volume level progresses
 		TRect rectBufferProgress(iRectProgressBar);
 		rectBufferProgress.SetWidth((iAppUi.RadioPlayer().Volume() * iRectProgressBar.Width()) / iAppUi.RadioPlayer().MaxVolume());
-		DrawRect(rectBufferProgress, KRgbTransparent, KRgbLastFMRed);
+		DrawRect(rectBufferProgress, KRgbTransparent, KRgbLastFmRed);
 		
 		TInt volumePercent((iAppUi.RadioPlayer().Volume() * 100) / iAppUi.RadioPlayer().MaxVolume());
 #ifdef __WINS__
@@ -835,15 +838,15 @@ void CMobblerStatusControl::Draw(const TRect& /*aRect*/) const
 	BitBltMobblerBitmap(iMobblerBitmapBan, iPointBan, TRect(TPoint(0, 0), iMobblerBitmapBan->SizeInPixels()), banDisabled);
 	BitBltMobblerBitmap(iMobblerBitmapNext, iPointSkip, TRect(TPoint(0, 0), iMobblerBitmapNext->SizeInPixels()), skipDisabled);
 	
-	// Draw either play or stop depending on if there is a track playing
-	if (!iAppUi.CurrentTrack())
+	// Draw either play or stop depending on if the radio playing
+	if (iAppUi.RadioPlayer().State() == CMobblerRadioPlayer::EIdle)
 		{
-		// There is no current track so display the play button
+		// The radio is idle so display the play button
 		BitBltMobblerBitmap(iMobblerBitmapPlay, iPointPlayStop, TRect(TPoint(0, 0), iMobblerBitmapPlay->SizeInPixels()), playStopDisabled);
 		}
 	else
 		{
-		// There is a track playing
+		// The radio is either starting or playing
 		BitBltMobblerBitmap(iMobblerBitmapStop, iPointPlayStop, TRect(TPoint(0, 0), iMobblerBitmapStop->SizeInPixels()), playStopDisabled);
 		}
 	
@@ -885,34 +888,36 @@ void CMobblerStatusControl::Draw(const TRect& /*aRect*/) const
 	SystemGc().BitBlt(TPoint(0, 0), iBackBuffer);
 	}
 
-void CMobblerStatusControl::DrawMobblerBitmap(const CMobblerBitmap* aMobblerBitmap, const TRect& aRect, const TRect& aSourceRect, TBool aGray) const
+void CMobblerStatusControl::DrawMobblerBitmap(const CMobblerBitmap* aMobblerBitmap, const TRect& aDestRect, const TRect& aSourceRect, TBool aGray) const
 	{
 	if (aMobblerBitmap)
 		{
 		if (aMobblerBitmap->Bitmap())
 			{
-			CFbsBitmap* bitmap(aGray ? aMobblerBitmap->BitmapGrayL() : aMobblerBitmap->Bitmap());
-			
-			TRect rect(aRect);
-			TInt width(bitmap->SizeInPixels().iWidth);
-			TInt height(bitmap->SizeInPixels().iHeight);
+			TRect destRect(aDestRect);
+			TInt width(aMobblerBitmap->Bitmap()->SizeInPixels().iWidth);
+			TInt height(aMobblerBitmap->Bitmap()->SizeInPixels().iHeight);
 			
 			if (width > height)
 				{
-				rect.SetHeight(aRect.Height() * height/width);
+				destRect.SetHeight( (aDestRect.Height() * height) / width);
 				}
 			else if (height > width)
 				{
-				rect.SetWidth(aRect.Width() * width/height);
+				destRect.SetWidth( (aDestRect.Width() * width) / height);
 				}
+			
+			CFbsBitmap* bitmap(aGray ? aMobblerBitmap->BitmapGrayL() : aMobblerBitmap->Bitmap());
 			
 			if (aMobblerBitmap->Mask())
 				{
-				iBackBufferContext->DrawBitmapMasked(rect, bitmap, aSourceRect, aMobblerBitmap->Mask(), EFalse);
+				iBackBufferContext->DrawBitmapMasked(aDestRect, bitmap, aSourceRect, aMobblerBitmap->Mask(), EFalse);
 				}
 			else
 				{
-				iBackBufferContext->DrawBitmap(rect, bitmap, aSourceRect);
+				TSize bitmapSize(aMobblerBitmap->Bitmap()->SizeInPixels());
+				
+				iBackBufferContext->DrawBitmap(aDestRect, bitmap, aSourceRect);
 				}
 			}
 		}
@@ -992,7 +997,7 @@ TKeyResponse CMobblerStatusControl::OfferKeyEventL(const TKeyEvent& aKeyEvent, T
 			//UpdateVolume();
 			break;
 		case EKeyDevice3: // play or stop
-			if (iAppUi.RadioPlayer().CurrentTrack())
+			if (iAppUi.RadioPlayer().State() != CMobblerRadioPlayer::EIdle)
 				{
 				iAppUi.RadioPlayer().Stop();
 				}
@@ -1091,9 +1096,12 @@ void CMobblerStatusControl::HandlePointerEventL(const TPointerEvent& aPointerEve
 				event.iCode = EKeyRightArrow;
 			else if (iRectAlbumArt.Contains(aPointerEvent.iPosition))
 				{
-				// Record the location that they put their finger down
-				iFingerDownPosition = aPointerEvent.iPosition;
-				iFingerNowPosition = aPointerEvent.iPosition;
+				if (iAppUi.RadioPlayer().CurrentTrack())
+					{
+					// Record the location that they put their finger down
+					iFingerDownPosition = aPointerEvent.iPosition;
+					iFingerNowPosition = aPointerEvent.iPosition;
+					}
 				}
 				
 			
@@ -1110,8 +1118,11 @@ void CMobblerStatusControl::HandlePointerEventL(const TPointerEvent& aPointerEve
 			break;
 		case TPointerEvent::EDrag:
 			{
-			iFingerNowPosition = aPointerEvent.iPosition;
-			DrawDeferred();
+			if (iAppUi.RadioPlayer().CurrentTrack())
+				{
+				iFingerNowPosition = aPointerEvent.iPosition;
+				DrawNow();
+				}
 			}
 			break;
 		case TPointerEvent::EButton1Up:
@@ -1127,25 +1138,30 @@ void CMobblerStatusControl::HandlePointerEventL(const TPointerEvent& aPointerEve
 			else if (skipRect.Contains(aPointerEvent.iPosition) && skipRect.Contains(iLastPointerEvent.iPosition))
 				event.iCode = EKeyRightArrow;
 			
-			if (iRectAlbumArt.Contains(iFingerDownPosition) &&
-					((2 * (iFingerDownPosition.iX - aPointerEvent.iPosition.iX)) > iRectAlbumArt.Size().iWidth) )
+			if (iAppUi.RadioPlayer().CurrentTrack())
 				{
-				// Their finger went down on the album art and it has
-				// been dragged to the left more than half its size 
+				// There is a current radio track so process whether we want to skip track or not
 				
-				if (iAppUi.RadioPlayer().CurrentTrack())
+				if (iRectAlbumArt.Contains(iFingerDownPosition) &&
+						((2 * (iFingerDownPosition.iX - aPointerEvent.iPosition.iX)) > iRectAlbumArt.Size().iWidth) )
 					{
-					iAlbumArtTransition->FingerUpL(iFingerDownPosition.iX - aPointerEvent.iPosition.iX, CMobblerAlbumArtTransition::ESlideLeft);
-					iAppUi.RadioPlayer().SkipTrackL();
+					// Their finger went down on the album art and it has
+					// been dragged to the left more than half its size 
+					
+					if (iAppUi.RadioPlayer().CurrentTrack())
+						{
+						iAlbumArtTransition->FingerUpL(iFingerDownPosition.iX - aPointerEvent.iPosition.iX, CMobblerAlbumArtTransition::ESlideLeft);
+						iAppUi.RadioPlayer().SkipTrackL();
+						}
+					else
+						{
+						iAlbumArtTransition->FingerUpL(iFingerDownPosition.iX - aPointerEvent.iPosition.iX, CMobblerAlbumArtTransition::ESlideRight);
+						}
 					}
-				else
+				else if (iRectAlbumArt.Contains(iFingerDownPosition))
 					{
 					iAlbumArtTransition->FingerUpL(iFingerDownPosition.iX - aPointerEvent.iPosition.iX, CMobblerAlbumArtTransition::ESlideRight);
 					}
-				}
-			else if (iRectAlbumArt.Contains(iFingerDownPosition))
-				{
-				iAlbumArtTransition->FingerUpL(iFingerDownPosition.iX - aPointerEvent.iPosition.iX, CMobblerAlbumArtTransition::ESlideRight);
 				}
 			
 			

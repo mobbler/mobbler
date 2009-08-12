@@ -40,21 +40,21 @@ class CMobblerTrackList;
 class CMobblerParser : public CBase
 	{
 public:
-	static CMobblerLastFMError* ParseHandshakeL(const TDesC8& aHandshakeResponse, HBufC8*& aSessionId, HBufC8*& aNowPlayingUrl, HBufC8*& aSubmitUrl);
-	static CMobblerLastFMError* ParseWebServicesHandshakeL(const TDesC8& aWebServicesHandshakeResponse, HBufC8*& aWebServicesSessionKey, CMobblerLastFMConnection::TLastFMMemberType& aMemberType);
-	static CMobblerLastFMError* ParseOldRadioHandshakeL(const TDesC8& aRadioHandshakeResponse, HBufC8*& aRadioSessionID, HBufC8*& aRadioBaseUrl, HBufC8*& aRadioBasePath);
+	static CMobblerLastFmError* ParseHandshakeL(const TDesC8& aHandshakeResponse, HBufC8*& aSessionId, HBufC8*& aNowPlayingUrl, HBufC8*& aSubmitUrl);
+	static CMobblerLastFmError* ParseWebServicesHandshakeL(const TDesC8& aWebServicesHandshakeResponse, HBufC8*& aWebServicesSessionKey, CMobblerLastFmConnection::TLastFmMemberType& aMemberType);
+	static CMobblerLastFmError* ParseOldRadioHandshakeL(const TDesC8& aRadioHandshakeResponse, HBufC8*& aRadioSessionID, HBufC8*& aRadioBaseUrl, HBufC8*& aRadioBasePath);
 
 #ifdef BETA_BUILD
-	static CMobblerLastFMError* ParseBetaTestersHandshakeL(const TDesC8& aHandshakeResponse, const TDesC8& aUsername, TBool& aIsBetaTester);
+	static CMobblerLastFmError* ParseBetaTestersHandshakeL(const TDesC8& aHandshakeResponse, const TDesC8& aUsername, TBool& aIsBetaTester);
 #endif
-	static CMobblerLastFMError* ParseScrobbleResponseL(const TDesC8& aScrobbleResponse);
+	static CMobblerLastFmError* ParseScrobbleResponseL(const TDesC8& aScrobbleResponse);
 	
 	
-	static CMobblerLastFMError* ParseOldRadioTuneL(const TDesC8& aXml);
-	static CMobblerLastFMError* ParseOldRadioPlaylistL(const TDesC8& aXml, CMobblerRadioPlaylist*& aPlaylist);
+	static CMobblerLastFmError* ParseOldRadioTuneL(const TDesC8& aXml);
+	static CMobblerLastFmError* ParseOldRadioPlaylistL(const TDesC8& aXml, CMobblerRadioPlaylist& aPlaylist);
 	
-	static CMobblerString* ParseRadioTuneL(const TDesC8& aXml);
-	static CMobblerLastFMError* ParseRadioPlaylistL(const TDesC8& aXml, CMobblerRadioPlaylist*& aPlaylist);
+	static CMobblerLastFmError* ParseRadioTuneL(const TDesC8& aXml, CMobblerString*& aStationName);
+	static CMobblerLastFmError* ParseRadioPlaylistL(const TDesC8& aXml, CMobblerRadioPlaylist& aPlaylist);
 
 	static TInt ParseUpdateResponseL(const TDesC8& aXml, TVersion& aVersion, TDes8& location);
 	
