@@ -700,7 +700,7 @@ TBool CMobblerTrack::FetchImageL(const TDesC8& aData)
 	{
 	TBool found(EFalse);
 
-	// create the XML reader and DOM fragement and associate them with each other
+	// create the XML reader and DOM fragment and associate them with each other
 	CSenXmlReader* xmlReader(CSenXmlReader::NewL());
 	CleanupStack::PushL(xmlReader);
 	CSenDomFragment* domFragment(CSenDomFragment::NewL());

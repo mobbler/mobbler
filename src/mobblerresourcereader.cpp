@@ -166,7 +166,7 @@ const TDesC& CMobblerResourceReader::ResourceL(TInt aResourceId)
 					CAknQueryDialog* dlg(CAknQueryDialog::NewL());
 					dlg->ExecuteLD(R_MOBBLER_GET_LATEST_LANGUAGE_DIALOG, 
 								   ResourceL(R_MOBBLER_GET_LATEST_LANGUAGE));
-			
+					
 					iErrorDialogShown = ETrue;
 					}
 				

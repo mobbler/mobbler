@@ -90,7 +90,7 @@ TInt CMobblerAlbumArtTransition::SlideAmount(TInt aWidth) const
 CMobblerAlbumArtTransition::~CMobblerAlbumArtTransition()
 	{
 	const TInt KAlbumArtCount(iAlbumArt.Count());
-	for (TInt i(0) ; i < KAlbumArtCount ; ++i)
+	for (TInt i(0); i < KAlbumArtCount; ++i)
 		{
 		iAlbumArt[i]->Close();
 		}
@@ -200,11 +200,11 @@ TRect CMobblerAlbumArtTransition::ScaledRectL(TRect aDestRect, TRect aSourceRect
 	
 	if (width > height)
 		{
-		destRect.SetHeight( (aDestRect.Height() * height) / width);
+		destRect.SetHeight((aDestRect.Height() * height) / width);
 		}
 	else if (height > width)
 		{
-		destRect.SetWidth( (aDestRect.Width() * width) / height);
+		destRect.SetWidth((aDestRect.Width() * width) / height);
 		}
 	
 	return destRect;

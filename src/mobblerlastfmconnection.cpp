@@ -119,7 +119,8 @@ CMobblerLastFmConnection::~CMobblerLastFmConnection()
 		iCurrentTrack->Release();
 		}
 	
-	for (TInt i(0); i < iTrackQueue.Count(); ++i)
+	const TInt KTrackQueueCount(iTrackQueue.Count());
+	for (TInt i(0); i < KTrackQueueCount; ++i)
 		{
 		iTrackQueue[i]->Release();
 		}
@@ -161,7 +162,8 @@ void CMobblerLastFmConnection::DoSetModeL(TMode aMode)
 	iMode = aMode;
 	
 	// notify the state change observers when we change mode too
-	for (TInt i(0); i < iStateChangeObservers.Count(); ++i)
+	const TInt KObserverCount(iStateChangeObservers.Count());
+	for (TInt i(0); i < KObserverCount; ++i)
 		{
 		iStateChangeObservers[i]->HandleConnectionStateChangedL();
 		}
@@ -322,7 +324,8 @@ void CMobblerLastFmConnection::NewCarrierActive()
 	
 	
 	// Submit any request that do not require authentication
-	for (TInt i(0); i < iTransactions.Count(); ++i)
+	TInt KTransactionCount(iTransactions.Count());
+	for (TInt i(0); i < KTransactionCount; ++i)
 		{
 		if (!iTransactions[i]->RequiresAuthentication())
 			{
@@ -365,7 +368,8 @@ void CMobblerLastFmConnection::RunL()
 		connInfo.SetPropertyL(strP.StringF(HTTP::EHttpSocketConnection, RHTTPSession::GetTable()), THTTPHdrVal(connPtr));
 		
 		// Submit any request that does not require authentication
-		for (TInt i(0); i < iTransactions.Count(); ++i)
+		TInt KTransactionCount(iTransactions.Count());
+		for (TInt i(0); i < KTransactionCount; ++i)
 			{
 			if (!iTransactions[i]->RequiresAuthentication())
 				{
@@ -1658,7 +1662,8 @@ void CMobblerLastFmConnection::HandleHandshakeErrorL(CMobblerLastFmError* aError
 				
 				DoSubmitL();
 				
-				for (TInt i(0); i < iTransactions.Count(); ++i)
+				const TInt KTransactionCount(iTransactions.Count());
+				for (TInt i(0); i < KTransactionCount; ++i)
 					{
 					iTransactions[i]->SubmitL();
 					}
@@ -1870,7 +1875,8 @@ void CMobblerLastFmConnection::TransactionResponseL(CMobblerTransaction* aTransa
 		}
 	else
 		{
-		for (TInt i(0); i < iTransactions.Count(); ++i)
+		const TInt KTransactionCount(iTransactions.Count());
+		for (TInt i(0); i < KTransactionCount; ++i)
 			{
 			if (aTransaction == iTransactions[i])
 				{
@@ -1984,8 +1990,8 @@ void CMobblerLastFmConnection::TransactionFailedL(CMobblerTransaction* aTransact
 		}
 	else
 		{
-		// if it was one of the handshake transactions then
-		// complain to the app ui so an error is displayed
+		// If it was one of the handshake transactions then
+		// complain to the app UI so an error is displayed
 		if (aTransaction ==	iHandshakeTransaction
 				|| aTransaction == iWebServicesHandshakeTransaction
 				|| aTransaction == iOldRadioHandshakeTransaction
@@ -2127,7 +2133,8 @@ void CMobblerLastFmConnection::ScrobbleHandshakeL()
 
 void CMobblerLastFmConnection::LoadTrackQueueL()
 	{
-	for (TInt i(0); i < iTrackQueue.Count(); ++i)
+	const TInt KTrackQueueCount(iTrackQueue.Count());
+	for (TInt i(0); i < KTrackQueueCount; ++i)
 		{
 		iTrackQueue[i]->Release();
 		}
@@ -2155,7 +2162,8 @@ void CMobblerLastFmConnection::LoadTrackQueueL()
 		
 		CleanupStack::PopAndDestroy(&readStream);
 		
-		for (TInt i(iTrackQueue.Count() - 1); i >= 0; --i)
+		const TInt KTrackQueueCount(iTrackQueue.Count());
+		for (TInt i(KTrackQueueCount - 1); i >= 0 ; --i)
 			{
 			iObserver.HandleTrackQueuedL(*iTrackQueue[i]);
 			}

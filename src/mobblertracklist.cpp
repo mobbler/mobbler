@@ -158,7 +158,7 @@ void CMobblerTrackList::DataL(CMobblerFlatDataObserverHelper* aObserver, const T
 		{
 		if (aObserver == iAlbumInfoObserver)
 			{
-			// Create the XML reader and DOM fragement and associate them with each other
+			// Create the XML reader and DOM fragment and associate them with each other
 			CSenXmlReader* xmlReader(CSenXmlReader::NewL());
 			CleanupStack::PushL(xmlReader);
 			CSenDomFragment* domFragment(CSenDomFragment::NewL());
