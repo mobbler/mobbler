@@ -257,7 +257,9 @@ void CMobblerStatusView::DynInitMenuPaneL(TInt aResourceId, CEikMenuPane* aMenuP
 		aMenuPane->SetItemDimmed(EMobblerCommandArtistTopTracks, ETrue);
 		aMenuPane->SetItemDimmed(EMobblerCommandArtistTopTags, ETrue);
 		}
-	aMenuPane->EnableMarqueeL(ETrue);
+	
+	// Third edition only due to an S60 5th edition bug (issue 364)
+	aMenuPane->EnableMarqueeL(!iMobblerStatusControl->IsFifthEdition());
 	}
 
 TUid CMobblerStatusView::Id() const

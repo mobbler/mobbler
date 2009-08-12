@@ -129,7 +129,7 @@ void CMobblerPlaylistList::DataL(CMobblerFlatDataObserverHelper* aObserver, cons
 	if (aObserver == iPlaylistCreateObserver)
 		{
 		// refresh the playlist list
-		// Create the XML reader and DOM fragement and associate them with each other
+		// Create the XML reader and DOM fragment and associate them with each other
 		CSenXmlReader* xmlReader(CSenXmlReader::NewL());
 		CleanupStack::PushL(xmlReader);
 		CSenDomFragment* domFragment(CSenDomFragment::NewL());

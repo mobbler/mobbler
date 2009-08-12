@@ -22,8 +22,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
 #include <sendomfragment.h>
-#include <sennamespace.h> 
-#include <senxmlutils.h> 
 
 #include "mobblerappui.h"
 #include "mobblerbitmapcollection.h"
@@ -118,7 +116,7 @@ void CMobblerEventList::SupportedCommandsL(RArray<TInt>& aCommands)
 	aCommands.AppendL(EMobblerCommandAttendanceNo);
 	}
 
-void CMobblerEventList::DataL(CMobblerFlatDataObserverHelper* aObserver, const TDesC8& aData, CMobblerLastFmConnection::TTransactionError aTransactionError)
+void CMobblerEventList::DataL(CMobblerFlatDataObserverHelper* aObserver, const TDesC8& aData, CMobblerLastFmConnection::TTransactionError /*aTransactionError*/)
 	{
 	if (aObserver == iAttendanceHelperNo &&
 			iType == EMobblerCommandUserEvents)
@@ -126,7 +124,7 @@ void CMobblerEventList::DataL(CMobblerFlatDataObserverHelper* aObserver, const T
 		// We have removed an event from the
 		// user's list so remove it
 
-		// Create the XML reader and DOM fragement and associate them with each other
+		// Create the XML reader and DOM fragment and associate them with each other
 		CSenXmlReader* xmlReader(CSenXmlReader::NewL());
 		CleanupStack::PushL(xmlReader);
 		CSenDomFragment* domFragment(CSenDomFragment::NewL());
@@ -147,10 +145,8 @@ void CMobblerEventList::DataL(CMobblerFlatDataObserverHelper* aObserver, const T
 			}
 		else
 			{
-			// There was an error!
+			// TODO: There was an error!
 			}
-		
-		
 		
 		CleanupStack::PopAndDestroy(2);
 		}
