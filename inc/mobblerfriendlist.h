@@ -41,7 +41,7 @@ public:
 	void ParseL(const TDesC8& aXml);
 	
 private:
-	void DataL(CMobblerFlatDataObserverHelper* aObserver, const TDesC8& aData, CMobblerLastFMConnection::TError aError);
+	void DataL(CMobblerFlatDataObserverHelper* aObserver, const TDesC8& aData, CMobblerLastFmConnection::TTransactionError aTransactionError);
 	
 private:
 	CMobblerFlatDataObserverHelper* iShareObserver;

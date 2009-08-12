@@ -312,5 +312,10 @@ RESOURCE STRING r_mobbler_station				{ text = STR_mobbler_station; }
 RESOURCE STRING r_mobbler_station_text			{ text = STR_mobbler_station_text; }
 RESOURCE STRING r_mobbler_visit_lastfm_menu		{ text = STR_mobbler_visit_lastfm_menu; }
 RESOURCE STRING r_mobbler_album_unknown			{ text = STR_mobbler_album_unknown; }
+RESOURCE STRING r_mobbler_buy					{ text = STR_mobbler_buy; }
+RESOURCE STRING r_mobbler_attendance			{ text = STR_mobbler_attendance; }
+RESOURCE STRING r_mobbler_attendance_yes		{ text = STR_mobbler_attendance_yes; }
+RESOURCE STRING r_mobbler_attendance_maybe		{ text = STR_mobbler_attendance_maybe; }
+RESOURCE STRING r_mobbler_attendance_no			{ text = STR_mobbler_attendance_no; }
 
 // End of file

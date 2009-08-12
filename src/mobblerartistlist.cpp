@@ -40,23 +40,23 @@ CMobblerArtistList::CMobblerArtistList(CMobblerAppUi& aAppUi, CMobblerWebService
 void CMobblerArtistList::ConstructL()
 	{
     iDefaultImage = iAppUi.BitmapCollection().BitmapL(*this, CMobblerBitmapCollection::EBitmapDefaultArtistImage);
-	
+    
 	switch (iType)
 		{
 		case EMobblerCommandUserTopArtists:
-			iAppUi.LastFMConnection().WebServicesCallL(_L8("user"), _L8("gettopartists"), iText1->String8(), *this);
+			iAppUi.LastFmConnection().WebServicesCallL(_L8("user"), _L8("gettopartists"), iText1->String8(), *this);
 			break;
 		case EMobblerCommandRecommendedArtists:
-			iAppUi.LastFMConnection().RecommendedArtistsL(*this);
+			iAppUi.LastFmConnection().RecommendedArtistsL(*this);
 			break;
 		case EMobblerCommandSimilarArtists:
-			iAppUi.LastFMConnection().SimilarArtistsL(iText1->String8(), *this);
+			iAppUi.LastFmConnection().SimilarArtistsL(iText1->String8(), *this);
 			break;
 		case EMobblerCommandTagTopArtists:
-			iAppUi.LastFMConnection().WebServicesCallL(_L8("tag"), _L8("gettopartists"), iText1->String8(), *this);
+			iAppUi.LastFmConnection().WebServicesCallL(_L8("tag"), _L8("gettopartists"), iText1->String8(), *this);
 			break;
 		case EMobblerCommandSearchArtist:
-			iAppUi.LastFMConnection().WebServicesCallL(_L8("artist"), _L8("search"), iText1->String8(), *this);
+			iAppUi.LastFmConnection().WebServicesCallL(_L8("artist"), _L8("search"), iText1->String8(), *this);
 			break;
 		default:
 			break;
@@ -115,7 +115,7 @@ void CMobblerArtistList::SupportedCommandsL(RArray<TInt>& aCommands)
 	aCommands.AppendL(EMobblerCommandArtistShare);
 	}
 
-void CMobblerArtistList::DataL(CMobblerFlatDataObserverHelper* /*aObserver*/, const TDesC8& /*aData*/, CMobblerLastFMConnection::TError /*aError*/)
+void CMobblerArtistList::DataL(CMobblerFlatDataObserverHelper* /*aObserver*/, const TDesC8& /*aData*/, CMobblerLastFmConnection::TTransactionError /*aError*/)
 	{
 	}
 

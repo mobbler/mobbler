@@ -29,6 +29,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "mobblerlastfmconnection.h"
 #include "mobblerlistitem.h"
 #include "mobblerstring.h"
+#include "mobblerutility.h"
 
 CMobblerAlbumList::CMobblerAlbumList(CMobblerAppUi& aAppUi, CMobblerWebServicesControl& aWebServicesControl)
 	:CMobblerListControl(aAppUi, aWebServicesControl)
@@ -42,13 +43,13 @@ void CMobblerAlbumList::ConstructL()
     switch (iType)
     	{
     	case EMobblerCommandUserTopAlbums:
-    		iAppUi.LastFMConnection().WebServicesCallL(_L8("user"), _L8("gettopalbums"), iText1->String8(), *this);
+    		iAppUi.LastFmConnection().WebServicesCallL(_L8("user"), _L8("gettopalbums"), iText1->String8(), *this);
     		break;
     	case EMobblerCommandArtistTopAlbums:
-    		iAppUi.LastFMConnection().WebServicesCallL(_L8("artist"), _L8("gettopalbums"), iText1->String8(), *this);
+    		iAppUi.LastFmConnection().WebServicesCallL(_L8("artist"), _L8("gettopalbums"), iText1->String8(), *this);
     		break;
         case EMobblerCommandSearchAlbum:
-            iAppUi.LastFMConnection().WebServicesCallL(_L8("album"), _L8("search"), iText1->String8(), *this);
+            iAppUi.LastFmConnection().WebServicesCallL(_L8("album"), _L8("search"), iText1->String8(), *this);
             break;
     	default:
     		break;
@@ -68,6 +69,9 @@ CMobblerListControl* CMobblerAlbumList::HandleListCommandL(TInt aCommand)
 		case EMobblerCommandOpen:
 			list = CMobblerListControl::CreateListL(iAppUi, iWebServicesControl, EMobblerCommandPlaylistFetchAlbum, iList[iListBox->CurrentItemIndex()]->Title()->String8(), iList[iListBox->CurrentItemIndex()]->Id());
 			break;
+		case EMobblerCommandBuy:
+			MobblerUtility::OpenAmazonL(iList[iListBox->CurrentItemIndex()]->Title()->String8(), iList[iListBox->CurrentItemIndex()]->Description()->String8());
+			break;
 		default:
 			break;	
 		}
@@ -78,6 +82,7 @@ CMobblerListControl* CMobblerAlbumList::HandleListCommandL(TInt aCommand)
 void CMobblerAlbumList::SupportedCommandsL(RArray<TInt>& aCommands)
 	{
 	aCommands.AppendL(EMobblerCommandOpen);
+	aCommands.AppendL(EMobblerCommandBuy);
 	}
 
 void CMobblerAlbumList::ParseL(const TDesC8& aXML)

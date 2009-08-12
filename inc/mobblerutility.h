@@ -34,6 +34,7 @@ public:
 	static HBufC8* URLEncodeLC(const TDesC& aString);
 	
 	static TBuf8<2> LanguageL();
+	static void OpenAmazonL(const TDesC8& aArtist, const TDesC8& aAlbum);
 	static TBuf<30> LocalLastFmDomainL();
 	};
 

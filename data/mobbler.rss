@@ -114,6 +114,10 @@ RESOURCE MENU_PANE r_mobbler_webservices_menu_pane
 			},
 		MENU_ITEM
 			{
+			command = EMobblerCommandBuy;
+			},
+		MENU_ITEM
+			{
 			command = EMobblerCommandTrackLove;
 			},
 		MENU_ITEM
@@ -123,6 +127,11 @@ RESOURCE MENU_PANE r_mobbler_webservices_menu_pane
 		MENU_ITEM
 			{
 			command = EMobblerCommandPlaylistAddTrack;
+			},
+		MENU_ITEM
+			{
+			command = EMobblerCommandAttendance;
+			cascade = r_mobbler_attendance_submenu_pane;
 			},
 		MENU_ITEM
 			{
@@ -176,6 +185,25 @@ RESOURCE MENU_PANE r_mobbler_webservices_radio_submenu_pane
 		MENU_ITEM
 			{
 			command = EMobblerCommandRadioLoved;
+			}
+		};
+	}	
+	
+RESOURCE MENU_PANE r_mobbler_attendance_submenu_pane
+	{
+	items =
+		{
+		MENU_ITEM
+			{
+			command = EMobblerCommandAttendanceYes;
+			},
+		MENU_ITEM
+			{
+			command = EMobblerCommandAttendanceMaybe;
+			},
+		MENU_ITEM
+			{
+			command = EMobblerCommandAttendanceNo;
 			}
 		};
 	}	

@@ -65,6 +65,8 @@ enum TMobblerSettingItemListViewCommands
 
 	EMobblerCommandOnline = 0x8000,
 	
+	EMobblerCommandBuy,
+	
 	EMobblerCommandRadio,
 	EMobblerCommandOpen,
 	EMobblerCommandView,
@@ -100,6 +102,11 @@ enum TMobblerSettingItemListViewCommands
 	EMobblerCommandPlaylistCreate,
 	EMobblerCommandPlaylistFetchUser,
 	EMobblerCommandPlaylistFetchAlbum,
+	
+	EMobblerCommandAttendance,
+	EMobblerCommandAttendanceYes,
+	EMobblerCommandAttendanceMaybe,
+	EMobblerCommandAttendanceNo,
 	
 	EMobblerCommandShout,
 	EMobblerCommandShoutOwner,

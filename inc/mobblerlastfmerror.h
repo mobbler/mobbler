@@ -1,5 +1,5 @@
 /*
-mobblerlastfmerror.h
+mobblerLastFmerror.h
 
 mobbler, a last.fm mobile scrobbler for Symbian smartphones.
 Copyright (C) 2008  Michael Coffey
@@ -26,37 +26,41 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <e32base.h>
 
-class CMobblerLastFMError : public CBase
+/** This represents a last.fm error code
+
+Last.fm error codes can be found in their API documentation here http://www.last.fm/api
+
+*/
+class CMobblerLastFmError : public CBase
 	{
 public:
-	enum TErrorCode
+	enum TSubmissionError
 		{
-		EWebServices,
+		EOK,
 		EBanned,
 		EBadAuth,
-		EBadTime,
 		EBadSession,
-		EBadStation,
-		ENoTracks,
-		EOther
+		EBadTime,
+		EFailed
 		};
+	
 public:
-	static CMobblerLastFMError* NewL(const TDesC8& aText, TErrorCode aErrorCode);
-	static CMobblerLastFMError* NewL(const TDesC& aText, TErrorCode aErrorCode);
-	~CMobblerLastFMError();
+	static CMobblerLastFmError* NewL(const TDesC8& aText, TInt aLastFmErrorCode);
+	static CMobblerLastFmError* NewL(const TDesC& aText, TInt aLastFmErrorCode);
+	~CMobblerLastFmError();
 	
 	const TDesC& Text() const;
-	TErrorCode ErrorCode() const;
+	
+	TInt LastFmErrorCode() const;
 	
 private:
-	CMobblerLastFMError(TErrorCode aErrorCode);
+	CMobblerLastFmError(TInt aLastFmErrorCode);
 	void ConstructL(const TDesC8& aText);
 	void ConstructL(const TDesC& aText);
 	
 private:
-
 	HBufC* iText;
-	TErrorCode iErrorCode;
+	TInt iLastFmErrorCode;
 	};
 
 #endif // __MOBBLERLASTFMERROR_H__

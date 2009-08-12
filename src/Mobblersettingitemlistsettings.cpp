@@ -78,7 +78,7 @@ void CMobblerSettingItemListSettings::LoadSettingValuesL()
 	TTime nextUpdateCheck;
 	nextUpdateCheck.UniversalTime();
 	nextUpdateCheck += TTimeIntervalDays(KUpdateIntervalDays); // the default update check should be 7 days after install
-	CMobblerLastFMConnection::TMode mode(CMobblerLastFMConnection::EOffline);
+	CMobblerLastFmConnection::TMode mode(CMobblerLastFmConnection::EOffline);
 	TInt downloadAlbumArt(KDefaultDownloadAlbumArt);
 #ifdef _DEBUG
 	TBool accelerometerGestures(ETrue);
@@ -139,7 +139,7 @@ void CMobblerSettingItemListSettings::LoadSettingValuesL()
 			}
 #endif
 		
-		TRAP_IGNORE(mode = static_cast<CMobblerLastFMConnection::TMode>(readStream.ReadInt8L()));
+		TRAP_IGNORE(mode = static_cast<CMobblerLastFmConnection::TMode>(readStream.ReadInt8L()));
 		TRAP_IGNORE(downloadAlbumArt = readStream.ReadInt16L());
 		
 		TRAP_IGNORE(accelerometerGestures = readStream.ReadInt8L());

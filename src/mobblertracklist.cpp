@@ -47,36 +47,36 @@ void CMobblerTrackList::ConstructL()
     switch (iType)
     	{
     	case EMobblerCommandArtistTopTracks:
-    		iAppUi.LastFMConnection().WebServicesCallL(_L8("artist"), _L8("gettoptracks"), iText1->String8(), *this);
+    		iAppUi.LastFmConnection().WebServicesCallL(_L8("artist"), _L8("gettoptracks"), iText1->String8(), *this);
     		break;
     	case EMobblerCommandUserTopTracks:
-    		iAppUi.LastFMConnection().WebServicesCallL(_L8("user"), _L8("gettoptracks"), iText1->String8(), *this);
+    		iAppUi.LastFmConnection().WebServicesCallL(_L8("user"), _L8("gettoptracks"), iText1->String8(), *this);
     		break;
     	case EMobblerCommandRecentTracks:
-    		iAppUi.LastFMConnection().RecentTracksL(iText1->String8(), *this);
+    		iAppUi.LastFmConnection().RecentTracksL(iText1->String8(), *this);
     		break;
     	case EMobblerCommandSimilarTracks:
-    		iAppUi.LastFMConnection().SimilarTracksL(iText1->String8(), iText2->String8(), *this);
+    		iAppUi.LastFmConnection().SimilarTracksL(iText1->String8(), iText2->String8(), *this);
     		break;
     	case EMobblerCommandPlaylistFetchUser:
-    		iAppUi.LastFMConnection().PlaylistFetchUserL(iText2->String8(), *this);
+    		iAppUi.LastFmConnection().PlaylistFetchUserL(iText2->String8(), *this);
     		break;
     	case EMobblerCommandPlaylistFetchAlbum:
     		if (iText2->String8().Length() > 10)
     			{
     			// This is a MusicBrainz ID so fetch the Last.fm ID before getting the playlist
 				delete iAlbumInfoObserver;
-				iAlbumInfoObserver = CMobblerFlatDataObserverHelper::NewL(iAppUi.LastFMConnection(), *this, EFalse);
-				iAppUi.LastFMConnection().AlbumGetInfoL(iText2->String8(), *iAlbumInfoObserver);
+				iAlbumInfoObserver = CMobblerFlatDataObserverHelper::NewL(iAppUi.LastFmConnection(), *this, EFalse);
+				iAppUi.LastFmConnection().AlbumGetInfoL(iText2->String8(), *iAlbumInfoObserver);
     			}
     		else
     			{
     			// This is the Last.fm ID so just fetch the playlist using it
-    			iAppUi.LastFMConnection().PlaylistFetchAlbumL(iText2->String8(), *this);
+    			iAppUi.LastFmConnection().PlaylistFetchAlbumL(iText2->String8(), *this);
     			}
     		break;
         case EMobblerCommandSearchTrack:
-            iAppUi.LastFMConnection().WebServicesCallL(_L8("track"), _L8("search"), iText1->String8(), *this);
+            iAppUi.LastFmConnection().WebServicesCallL(_L8("track"), _L8("search"), iText1->String8(), *this);
             break;
     	default:
     		break;
@@ -113,7 +113,7 @@ CMobblerListControl* CMobblerTrackList::HandleListCommandL(TInt aCommand)
 	switch(aCommand)
 		{	
 		case EMobblerCommandTrackLove:
-			iAppUi.LastFMConnection().TrackLoveL(artist, title);
+			iAppUi.LastFmConnection().TrackLoveL(artist, title);
 			break;
 		case EMobblerCommandTrackShare:
 		case EMobblerCommandArtistShare:
@@ -152,9 +152,9 @@ void CMobblerTrackList::SupportedCommandsL(RArray<TInt>& aCommands)
 	aCommands.AppendL(EMobblerCommandPlaylistAddTrack);
 	}
 
-void CMobblerTrackList::DataL(CMobblerFlatDataObserverHelper* aObserver, const TDesC8& aData, CMobblerLastFMConnection::TError aError)
+void CMobblerTrackList::DataL(CMobblerFlatDataObserverHelper* aObserver, const TDesC8& aData, CMobblerLastFmConnection::TTransactionError aTransactionError)
 	{
-	if (aError == CMobblerLastFMConnection::EErrorNone)
+	if (aTransactionError == CMobblerLastFmConnection::ETransactionErrorNone)
 		{
 		if (aObserver == iAlbumInfoObserver)
 			{
@@ -169,7 +169,7 @@ void CMobblerTrackList::DataL(CMobblerFlatDataObserverHelper* aObserver, const T
 			// Parse the XML into the DOM fragment
 			xmlReader->ParseL(aData);
 			
-			iAppUi.LastFMConnection().PlaylistFetchAlbumL(domFragment->AsElement().Element(_L8("album"))->Element(_L8("id"))->Content(), *this);
+			iAppUi.LastFmConnection().PlaylistFetchAlbumL(domFragment->AsElement().Element(_L8("album"))->Element(_L8("id"))->Content(), *this);
 			
 			CleanupStack::PopAndDestroy(2);
 			}

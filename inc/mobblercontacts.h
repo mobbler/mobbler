@@ -24,6 +24,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #ifndef __MOBBLERCONTACTS_H__
 #define __MOBBLERCONTACTS_H__
 
+#include <cntviewbase.h>
+
+class CContactFilteredView;
+
 class CMobblerContacts : public CBase, public MContactViewObserver
 	{
 public:

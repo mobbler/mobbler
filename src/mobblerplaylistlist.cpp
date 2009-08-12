@@ -50,7 +50,7 @@ void CMobblerPlaylistList::ConstructL()
 	{
 	iDefaultImage = iAppUi.BitmapCollection().BitmapL(*this, CMobblerBitmapCollection::EBitmapDefaultPlaylistImage);
 	
-	iAppUi.LastFMConnection().WebServicesCallL(_L8("user"), _L8("getplaylists"), iText1->String8(), *this);
+	iAppUi.LastFmConnection().WebServicesCallL(_L8("user"), _L8("getplaylists"), iText1->String8(), *this);
 	}
 
 CMobblerPlaylistList::~CMobblerPlaylistList()
@@ -80,8 +80,8 @@ CMobblerListControl* CMobblerPlaylistList::HandleListCommandL(TInt aCommand)
 			if (iAppUi.CurrentTrack())
 				{
 				delete iPlaylistAddObserver;
-				iPlaylistAddObserver = CMobblerFlatDataObserverHelper::NewL(iAppUi.LastFMConnection(), *this, ETrue);
-				iAppUi.LastFMConnection().PlaylistAddTrackL(iList[iListBox->CurrentItemIndex()]->Id(),
+				iPlaylistAddObserver = CMobblerFlatDataObserverHelper::NewL(iAppUi.LastFmConnection(), *this, ETrue);
+				iAppUi.LastFmConnection().PlaylistAddTrackL(iList[iListBox->CurrentItemIndex()]->Id(),
 																iAppUi.CurrentTrack()->Artist().String8(),
 																iAppUi.CurrentTrack()->Title().String8(),
 																*iPlaylistAddObserver);
@@ -108,9 +108,9 @@ CMobblerListControl* CMobblerPlaylistList::HandleListCommandL(TInt aCommand)
 				if (descriptionDialog->RunLD())
 					{
 					delete iPlaylistCreateObserver;
-					iPlaylistCreateObserver = CMobblerFlatDataObserverHelper::NewL(iAppUi.LastFMConnection(), *this, ETrue);
+					iPlaylistCreateObserver = CMobblerFlatDataObserverHelper::NewL(iAppUi.LastFmConnection(), *this, ETrue);
 					
-					iAppUi.LastFMConnection().PlaylistCreateL(title, description, *iPlaylistCreateObserver);
+					iAppUi.LastFmConnection().PlaylistCreateL(title, description, *iPlaylistCreateObserver);
 					
 					// Add this playlist to the list
 					}
@@ -124,7 +124,7 @@ CMobblerListControl* CMobblerPlaylistList::HandleListCommandL(TInt aCommand)
 	return list;
 	}
 
-void CMobblerPlaylistList::DataL(CMobblerFlatDataObserverHelper* aObserver, const TDesC8& aData, CMobblerLastFMConnection::TError /*aError*/)
+void CMobblerPlaylistList::DataL(CMobblerFlatDataObserverHelper* aObserver, const TDesC8& aData, CMobblerLastFmConnection::TTransactionError /*aError*/)
 	{
 	if (aObserver == iPlaylistCreateObserver)
 		{

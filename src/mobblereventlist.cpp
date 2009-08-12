@@ -21,6 +21,9 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
+#include <sendomfragment.h>
+#include <sennamespace.h> 
+#include <senxmlutils.h> 
 
 #include "mobblerappui.h"
 #include "mobblerbitmapcollection.h"
@@ -41,17 +44,17 @@ CMobblerEventList::CMobblerEventList(CMobblerAppUi& aAppUi, CMobblerWebServicesC
 void CMobblerEventList::ConstructL()
 	{
 	iDefaultImage = iAppUi.BitmapCollection().BitmapL(*this, CMobblerBitmapCollection::EBitmapDefaultEventImage);
-    
+	
     switch (iType)
     	{
     	case EMobblerCommandUserEvents:
-    		iAppUi.LastFMConnection().WebServicesCallL(_L8("user"), _L8("getevents"), iText1->String8(), *this);
+    		iAppUi.LastFmConnection().WebServicesCallL(_L8("user"), _L8("getevents"), iText1->String8(), *this);
     		break;
     	case EMobblerCommandArtistEvents:
-    		iAppUi.LastFMConnection().WebServicesCallL(_L8("artist"), _L8("getevents"), iText1->String8(), *this);
+    		iAppUi.LastFmConnection().WebServicesCallL(_L8("artist"), _L8("getevents"), iText1->String8(), *this);
     		break;
     	case EMobblerCommandRecommendedEvents:
-    		iAppUi.LastFMConnection().RecommendedEventsL(*this);
+    		iAppUi.LastFmConnection().RecommendedEventsL(*this);
     		break;
     	default:
     		break;
@@ -60,6 +63,8 @@ void CMobblerEventList::ConstructL()
 
 CMobblerEventList::~CMobblerEventList()
 	{
+	delete iAttendanceHelper;
+	delete iAttendanceHelperNo;
 	delete iWebServicesHelper;
 	}
 
@@ -76,6 +81,22 @@ CMobblerListControl* CMobblerEventList::HandleListCommandL(TInt aCommand)
     		delete iWebServicesHelper;
     		iWebServicesHelper = CMobblerWebServicesHelper::NewL(iAppUi);
     		iWebServicesHelper->EventShareL(iList[iListBox->CurrentItemIndex()]->Id());
+    		break;
+    	case EMobblerCommandAttendanceYes:
+    		delete iAttendanceHelper;
+    		iAttendanceHelper = CMobblerFlatDataObserverHelper::NewL(iAppUi.LastFmConnection(), *this, ETrue);
+    		iAppUi.LastFmConnection().EventAttendL(iList[iListBox->CurrentItemIndex()]->Id(), CMobblerLastFmConnection::EAttending, *iAttendanceHelper);
+    		break;
+    	case EMobblerCommandAttendanceMaybe:
+    		delete iAttendanceHelper;
+    		iAttendanceHelper = CMobblerFlatDataObserverHelper::NewL(iAppUi.LastFmConnection(), *this, ETrue);
+    		iAppUi.LastFmConnection().EventAttendL(iList[iListBox->CurrentItemIndex()]->Id(), CMobblerLastFmConnection::EMaybe, *iAttendanceHelper);
+    		break;
+    	case EMobblerCommandAttendanceNo:
+    		delete iAttendanceHelperNo;
+    		iAttendanceHelperNo = CMobblerFlatDataObserverHelper::NewL(iAppUi.LastFmConnection(), *this, ETrue);
+    		iAppUi.LastFmConnection().EventAttendL(iList[iListBox->CurrentItemIndex()]->Id(), CMobblerLastFmConnection::ENotAttending, *iAttendanceHelperNo);
+    		break;
 		default:
 			break;	
 		}
@@ -90,10 +111,49 @@ void CMobblerEventList::SupportedCommandsL(RArray<TInt>& aCommands)
 
 	aCommands.AppendL(EMobblerCommandShare);
 	aCommands.AppendL(EMobblerCommandEventShare);
+	
+	aCommands.AppendL(EMobblerCommandAttendance);
+	aCommands.AppendL(EMobblerCommandAttendanceYes);
+	aCommands.AppendL(EMobblerCommandAttendanceMaybe);
+	aCommands.AppendL(EMobblerCommandAttendanceNo);
 	}
 
-void CMobblerEventList::DataL(CMobblerFlatDataObserverHelper* /*aObserver*/, const TDesC8& /*aData*/, CMobblerLastFMConnection::TError /*aError*/)
+void CMobblerEventList::DataL(CMobblerFlatDataObserverHelper* aObserver, const TDesC8& aData, CMobblerLastFmConnection::TTransactionError aTransactionError)
 	{
+	if (aObserver == iAttendanceHelperNo &&
+			iType == EMobblerCommandUserEvents)
+		{
+		// We have removed an event from the
+		// user's list so remove it
+
+		// Create the XML reader and DOM fragement and associate them with each other
+		CSenXmlReader* xmlReader(CSenXmlReader::NewL());
+		CleanupStack::PushL(xmlReader);
+		CSenDomFragment* domFragment(CSenDomFragment::NewL());
+		CleanupStack::PushL(domFragment);
+		xmlReader->SetContentHandler(*domFragment);
+		domFragment->SetReader(*xmlReader);
+		
+		xmlReader->ParseL(aData);
+		
+		const TDesC8* statusText(domFragment->AsElement().AttrValue(_L8("status")));
+		
+		if (statusText && (statusText->CompareF(_L8("ok")) == 0))
+			{
+			iListBoxItems->Delete(iListBox->CurrentItemIndex());
+			delete iList[iListBox->CurrentItemIndex()];
+			iList.Remove(iListBox->CurrentItemIndex());
+			iListBox->HandleItemRemovalL();
+			}
+		else
+			{
+			// There was an error!
+			}
+		
+		
+		
+		CleanupStack::PopAndDestroy(2);
+		}
 	}
 
 void CMobblerEventList::ParseL(const TDesC8& aXML)

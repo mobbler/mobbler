@@ -91,8 +91,8 @@ public:
 	TTime& NextUpdateCheck() { return iNextUpdateCheck; }
 	void SetNextUpdateCheck(TTime aNextUpdateCheck) { iNextUpdateCheck = aNextUpdateCheck; }
 	
-	CMobblerLastFMConnection::TMode Mode() { return iMode; }
-	void SetMode(CMobblerLastFMConnection::TMode aMode) { iMode = aMode; }
+	CMobblerLastFmConnection::TMode Mode() { return iMode; }
+	void SetMode(CMobblerLastFmConnection::TMode aMode) { iMode = aMode; }
 
 	TInt& DownloadAlbumArt() { return iDownloadAlbumArt; }
 	void SetDownloadAlbumArt(TInt aDownloadAlbumArt) { iDownloadAlbumArt = aDownloadAlbumArt; }
@@ -139,7 +139,7 @@ protected:
 	TInt iVolume;
 	TInt iSleepTimerMinutes;
 	TTime iNextUpdateCheck;
-	CMobblerLastFMConnection::TMode iMode;
+	CMobblerLastFmConnection::TMode iMode;
 	TInt iDownloadAlbumArt;
 	TBool iAccelerometerGestures;
 	TInt iSleepTimerAction;

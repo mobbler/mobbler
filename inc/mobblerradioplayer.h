@@ -47,6 +47,7 @@ public:
 	enum TState
 		{
 		EIdle,
+		EStarting,
 		EPlaying
 		};
 	
@@ -58,7 +59,7 @@ public:
 		};
 	
 public:
-	static CMobblerRadioPlayer* NewL(CMobblerLastFMConnection& aLastFMConnection,
+	static CMobblerRadioPlayer* NewL(CMobblerLastFmConnection& aLastFmConnection,
 										TTimeIntervalSeconds aPreBufferSize, 
 										TInt aEqualizerIndex, 
 										TInt aVolume,
@@ -68,7 +69,7 @@ public:
 	void AddObserverL(MMobblerRadioStateChangeObserver* aObserver);
 	void RemoveObserver(MMobblerRadioStateChangeObserver* aObserver);
 	
-	void StartL(CMobblerLastFMConnection::TRadioStation aRadioStation, const CMobblerString* aRadioText);
+	void StartL(CMobblerLastFmConnection::TRadioStation aRadioStation, const CMobblerString* aRadioText);
 	
 	CMobblerTrack* CurrentTrack();
 	CMobblerTrack* NextTrack();
@@ -94,10 +95,10 @@ public:
 	
 private: // from MMobblerAudioControlObserver
 	void HandleAudioPositionChangeL();
-	void HandleAudioFinishedL(CMobblerAudioControl* aAudioControl, TInt aError);
+	void HandleAudioFinishedL(CMobblerAudioControl* aAudioControl);
 	
 private:
-	CMobblerRadioPlayer(CMobblerLastFMConnection& aSubmitter, 
+	CMobblerRadioPlayer(CMobblerLastFmConnection& aSubmitter, 
 							TTimeIntervalSeconds aPreBufferSize, 
 							TInt aEqualizerIndex, 
 							TInt aVolume,
@@ -106,7 +107,7 @@ private:
 	
 	void SubmitCurrentTrackL();
 	
-	void DoStop(TBool aDeleteNextTrack);
+	void DoStop(TBool aFullStop);
 	
 	void DoChangeStateL(TState aState);
 	void DoChangeTransactionStateL(TTransactionState aState);
@@ -116,7 +117,7 @@ private:
 	void UpdateVolume();
 
 private:
-	void DataL(const TDesC8& aData, CMobblerLastFMConnection::TError aError);
+	void DataL(const TDesC8& aData, CMobblerLastFmConnection::TTransactionError aTransactionError);
 	
 private:
 	void HandleIncomingCallL(TPSTelephonyCallState aPSTelephonyCallState);
@@ -126,11 +127,9 @@ private:
 	void DoCancel();
 
 private:
-	TInt iCurrentTrackIndex;
-	CMobblerRadioPlaylist* iCurrentPlaylist;
-	CMobblerRadioPlaylist* iNextPlaylist;
+	CMobblerRadioPlaylist* iPlaylist;
 	
-	CMobblerLastFMConnection& iLastFMConnection;
+	CMobblerLastFmConnection& iLastFmConnection;
 	
 	CMobblerIncomingCallMonitor* iIncomingCallMonitor;
 	
