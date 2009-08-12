@@ -128,6 +128,9 @@ void MobblerUtility::OpenAmazonL(const TDesC8& aArtist, const TDesC8& aAlbum)
 		
 		switch (downgradePath[i])
 			{
+			case ELangAustrian:
+				localAmazonDomain = _L8("amazon.at").AllocL();
+				break;
 			case ELangEnglish:
 				localAmazonDomain = _L8("amazon.co.uk").AllocL();
 				break;
@@ -138,6 +141,7 @@ void MobblerUtility::OpenAmazonL(const TDesC8& aArtist, const TDesC8& aAlbum)
 				localAmazonDomain = _L8("amazon.de").AllocL();
 				break;
 			case ELangCanadianEnglish:
+			case ELangCanadianFrench:
 				localAmazonDomain = _L8("amazon.ca").AllocL();
 				break;
 			case ELangPrcChinese: 
@@ -145,6 +149,9 @@ void MobblerUtility::OpenAmazonL(const TDesC8& aArtist, const TDesC8& aAlbum)
 				break;
 			case ELangJapanese: 
 				localAmazonDomain = _L8("amazon.co.jp").AllocL();
+				break;
+			case ELangAmerican:
+				localAmazonDomain = _L8("amazon.com").AllocL();
 				break;
 			default:
 				// carry on iterating through the downgrade path
@@ -166,7 +173,10 @@ void MobblerUtility::OpenAmazonL(const TDesC8& aArtist, const TDesC8& aAlbum)
 	HBufC8* urlArtist(MobblerUtility::URLEncodeLC(aArtist));
 	HBufC8* urlAlbum(MobblerUtility::URLEncodeLC(aAlbum));
 	HBufC8* url(HBufC8::NewLC(KAmazonSearchLink().Length() + urlArtist->Length() + urlAlbum->Length() + localAmazonDomain->Length()));
-	url->Des().Format(KAmazonSearchLink, &localAmazonDomain->Des(), &urlArtist->Des(), &urlAlbum->Des());
+	TPtrC8 domain(localAmazonDomain->Des());
+	TPtrC8 artist(urlArtist->Des());
+	TPtrC8 album(urlAlbum->Des());
+	url->Des().Format(KAmazonSearchLink, &domain, &artist, &album);
 	CMobblerString* urlString(CMobblerString::NewL(*url));
 	CleanupStack::PushL(urlString);
 	

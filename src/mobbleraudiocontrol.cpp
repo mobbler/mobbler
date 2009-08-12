@@ -154,9 +154,9 @@ void CMobblerAudioControl::DataCompleteL(CMobblerLastFmConnection::TTransactionE
 		case CMobblerLastFmConnection::ETransactionErrorNone:
 			{
 			// Do nothing. This means that we have finished
-			// downloading the mp3 the sudio thread will close
+			// downloading the mp3. The audio thread will close
 			// when the track completes so this RunL will get called
-			// to start the next track 
+			// to start the next track.
 			}
 			break;
 		case CMobblerLastFmConnection::ETransactionErrorFailed:
@@ -170,7 +170,7 @@ void CMobblerAudioControl::DataCompleteL(CMobblerLastFmConnection::TTransactionE
 			CAknInformationNote* note = new (ELeave) CAknInformationNote(EFalse);
 			note->ExecuteLD(message);
 			}
-			// Intentional follow through to the nest case statement
+			// Intentional follow through to the next case statement
 		case CMobblerLastFmConnection::ETransactionErrorCancel:
 			{
 			// Ask for the audio thread to close because there has been an error

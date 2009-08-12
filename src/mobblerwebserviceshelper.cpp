@@ -154,7 +154,7 @@ HBufC* CMobblerWebServicesHelper::DisplayEmailListL(const CDesCArray& aEmails)
 	CleanupStack::PushL(items);
 	
 	const TInt KEmailCount(aEmails.Count());
-	for (TInt i(0) ; i < KEmailCount ; ++i)
+	for (TInt i(0); i < KEmailCount; ++i)
 		{
 		items->AppendL(aEmails[i]);
 		}
@@ -173,24 +173,24 @@ HBufC* CMobblerWebServicesHelper::DisplayEmailListL(const CDesCArray& aEmails)
 		email = aEmails[list->CurrentItemIndex()].AllocL();
 		}
 	
-	CleanupStack::PopAndDestroy(list); //list
+	CleanupStack::PopAndDestroy(list);
 	
 	return email;
 	}
 
-void CMobblerWebServicesHelper::BitmapLoadedL(const CMobblerBitmap* aMobblerBitmap)
+void CMobblerWebServicesHelper::BitmapLoadedL(const CMobblerBitmap* /*aMobblerBitmap*/)
 	{
 	CActiveScheduler::Stop();
 	}
 
-void CMobblerWebServicesHelper::BitmapResizedL(const CMobblerBitmap* aMobblerBitmap)
+void CMobblerWebServicesHelper::BitmapResizedL(const CMobblerBitmap* /*aMobblerBitmap*/)
 	{
 	
 	}
 
 HBufC* CMobblerWebServicesHelper::DisplayContactListL()
 	{
-	CMobblerContacts* contacts = CMobblerContacts::NewLC();
+	CMobblerContacts* contacts(CMobblerContacts::NewLC());
 	
 	CAknDoubleLargeGraphicPopupMenuStyleListBox* list(new(ELeave) CAknDoubleLargeGraphicPopupMenuStyleListBox);
 	CleanupStack::PushL(list);
@@ -212,7 +212,7 @@ HBufC* CMobblerWebServicesHelper::DisplayContactListL()
 	
 	list->ItemDrawer()->ColumnData()->SetIconArray(new(ELeave) CArrayPtrFlat<CGulIcon>(KContactCount));
 	
-	CMobblerBitmap* defaultUser = iAppUi.BitmapCollection().BitmapL(*this, CMobblerBitmapCollection::EBitmapDefaultUserImage);
+	CMobblerBitmap* defaultUser(iAppUi.BitmapCollection().BitmapL(*this, CMobblerBitmapCollection::EBitmapDefaultUserImage));
 	CActiveScheduler::Start();
 	CGulIcon* defaultUserIcon = CGulIcon::NewL(defaultUser->Bitmap(), defaultUser->Mask());
 	defaultUserIcon->SetBitmapsOwnedExternally(ETrue);
@@ -220,29 +220,30 @@ HBufC* CMobblerWebServicesHelper::DisplayContactListL()
 	
 	TInt photoNumber(1);
 	
-	for (TInt i(0) ; i < KContactCount ; ++i)
+	for (TInt i(0); i < KContactCount; ++i)
 		{
-		HBufC8* photo = contacts->GetPhotoAtL(i);
+		HBufC8* photo(contacts->GetPhotoAtL(i));
+		TPtrC name(contacts->GetNameAt(i));
 		
 		if (photo)
 			{
 			CleanupStack::PushL(photo);
-			CMobblerBitmap* bitmap = CMobblerBitmap::NewL(*this, *photo);
+			CMobblerBitmap* bitmap(CMobblerBitmap::NewL(*this, *photo));
 			CActiveScheduler::Start();
-			CGulIcon* icon = CGulIcon::NewL(bitmap->Bitmap(), bitmap->Mask());
+			CGulIcon* icon(CGulIcon::NewL(bitmap->Bitmap(), bitmap->Mask()));
 			icon->SetBitmapsOwnedExternally(ETrue);
 			list->ItemDrawer()->ColumnData()->IconArray()->AppendL(icon);
 			//bitmap->Close();
 			CleanupStack::PopAndDestroy(photo);
 			
 			TBuf<1024> formatted;
-			formatted.Format(_L("%d\t%S\tyeah"), photoNumber++, &contacts->GetNameAt(i));
+			formatted.Format(_L("%d\t%S\tyeah"), photoNumber++, &name); // TODO: "yeah" should be email address
 			items->AppendL(formatted);
 			}
 		else
 			{
 			TBuf<1024> formatted;
-			formatted.Format(_L("%d\t%S\tyeah"), 0, &contacts->GetNameAt(i));
+			formatted.Format(_L("%d\t%S\tyeah"), 0, &name); // TODO: TODO: "yeah" should be email address
 			items->AppendL(formatted);
 			}
 		}
@@ -273,7 +274,7 @@ HBufC* CMobblerWebServicesHelper::DisplayContactListL()
 		CleanupStack::PopAndDestroy(emails);
 		}
 	
-	CleanupStack::PopAndDestroy(list); //list
+	CleanupStack::PopAndDestroy(list);
 	CleanupStack::PopAndDestroy(contacts);
 	
 	return email;
@@ -284,7 +285,7 @@ void CMobblerWebServicesHelper::DataL(CMobblerFlatDataObserverHelper* aObserver,
 	{
 	if (aTransactionError == CMobblerLastFmConnection::ETransactionErrorNone)
 		{
-		// create the XML reader and DOM fragement and associate them with each other 
+		// create the XML reader and DOM fragment and associate them with each other 
 		CSenXmlReader* xmlReader(CSenXmlReader::NewL());
 		CleanupStack::PushL(xmlReader);
 		CSenDomFragment* domFragment(CSenDomFragment::NewL());
@@ -296,7 +297,7 @@ void CMobblerWebServicesHelper::DataL(CMobblerFlatDataObserverHelper* aObserver,
 		xmlReader->ParseL(aData);
 		
 		if (aObserver == iShareObserverHelper ||
-				aObserver == iPlaylistAddObserverHelper )
+				aObserver == iPlaylistAddObserverHelper)
 			{
 			if (domFragment->AsElement().AttrValue(_L8("status"))->Compare(_L8("ok")) == 0)
 				{
@@ -336,11 +337,12 @@ void CMobblerWebServicesHelper::DataL(CMobblerFlatDataObserverHelper* aObserver,
 			CDesCArrayFlat* items(new(ELeave) CDesCArrayFlat(1));
 			CleanupStack::PushL(items);
 			
-			items->AppendL(_L("From contacts..."));
+			items->AppendL(_L("From contacts...")); // TODO: REMOVE HARDCODED, LOCALISE IT
 			
 			RPointerArray<CSenElement>& users(domFragment->AsElement().Element(_L8("friends"))->ElementsL());
 			
-			for (TInt i(0); i < users.Count(); ++i)
+			const TInt KUserCount(users.Count());
+			for (TInt i(0); i < KUserCount; ++i)
 				{
 				CMobblerString* user(CMobblerString::NewL(users[i]->Element(_L8("name"))->Content()));
 				CleanupStack::PushL(user);
@@ -428,7 +430,7 @@ void CMobblerWebServicesHelper::DataL(CMobblerFlatDataObserverHelper* aObserver,
 		else if (aObserver == iPlaylistFetchObserverHelper)
 			{
 			// parse and bring up an add to playlist popup menu
-			// create the XML reader and DOM fragement and associate them with each other 
+			// create the XML reader and DOM fragment and associate them with each other 
 			CAknSinglePopupMenuStyleListBox* list(new(ELeave) CAknSinglePopupMenuStyleListBox);
 			CleanupStack::PushL(list);
 			
@@ -447,7 +449,8 @@ void CMobblerWebServicesHelper::DataL(CMobblerFlatDataObserverHelper* aObserver,
 			
 			RPointerArray<CSenElement>& playlists(domFragment->AsElement().Element(_L8("playlists"))->ElementsL());
 			
-			for (TInt i(0); i < playlists.Count(); ++i)
+			const TInt KPlaylistCount(playlists.Count());
+			for (TInt i(0); i < KPlaylistCount; ++i)
 				{
 				CMobblerString* playlist(CMobblerString::NewL(playlists[i]->Element(_L8("title"))->Content()));
 				CleanupStack::PushL(playlist);

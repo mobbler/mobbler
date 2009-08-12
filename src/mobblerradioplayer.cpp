@@ -30,7 +30,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "mobbleraudiothread.h"
 #include "mobblerincomingcallmonitor.h"
 #include "mobblerlastfmconnection.h"
-#include "mobblerlogging.h"
 #include "mobblerparser.h"
 #include "mobblerradioplayer.h"
 #include "mobblerradioplaylist.h"
@@ -41,7 +40,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "mobblerstring.h"
 
 const TInt KDefaultMaxVolume(10);
-const TInt KMaxFecthPlaylistRetries(3);
 
 // The radio should timeout and delete its playlists after 5 minutes
 // so that we do not get tracks that can't be downloaded when restarting
@@ -374,8 +372,8 @@ void CMobblerRadioPlayer::DataL(const TDesC8& aData, CMobblerLastFmConnection::T
 					{
 					if (iState == EStarting)
 						{
-						// This will play the first song in the playlist
-						// if we are not starting then the playlist was
+						// This will play the first song in the playlist.
+						// If we are not starting then the playlist was
 						// being fetched in the background so we do nothing
 						SkipTrackL();
 						}
