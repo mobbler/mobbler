@@ -44,7 +44,7 @@ class CMobblerMusicAppListener : public CBase, public MMobblerMusicAppObserver,
 								 public MMobblerContentListingObserver
 	{
 public:
-	static CMobblerMusicAppListener* NewL(CMobblerLastFMConnection& aSubmitter);
+	static CMobblerMusicAppListener* NewL(CMobblerLastFmConnection& aSubmitter);
 	~CMobblerMusicAppListener();
 	
 	void AddObserverL(MMobblerMusicAppListenerObserver* aObserver);
@@ -56,7 +56,7 @@ public:
 	TBool IsPlaying() const;
 	
 private:
-	CMobblerMusicAppListener(CMobblerLastFMConnection& aSubmitter);
+	CMobblerMusicAppListener(CMobblerLastFmConnection& aSubmitter);
 	void ConstructL();
 	
 	void NotifyChangeL();
@@ -83,7 +83,7 @@ private:
 	RPointerArray<CMobblerMusicApp> iMobblerMusicApps;
 	RArray<TUid> iDtorIdKeys;
 
-	CMobblerLastFMConnection& iLastFMConnection;
+	CMobblerLastFmConnection& iLastFmConnection;
 	
 	CMobblerNowPlayingCallback* iNowPlayingCallback;
 	

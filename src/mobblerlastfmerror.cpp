@@ -23,50 +23,51 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "mobblerlastfmerror.h"
 
-CMobblerLastFMError* CMobblerLastFMError::NewL(const TDesC8& aText, TErrorCode aErrorCode)
+CMobblerLastFmError* CMobblerLastFmError::NewL(const TDesC8& aText, TInt aLastFmErrorCode)
 	{
-	CMobblerLastFMError* self = new(ELeave) CMobblerLastFMError(aErrorCode);
+	CMobblerLastFmError* self = new(ELeave) CMobblerLastFmError(aLastFmErrorCode);
 	CleanupStack::PushL(self);
 	self->ConstructL(aText);
 	CleanupStack::Pop(self);
 	return self;
 	}
 
-CMobblerLastFMError* CMobblerLastFMError::NewL(const TDesC& aText, TErrorCode aErrorCode)
+CMobblerLastFmError* CMobblerLastFmError::NewL(const TDesC& aText, TInt aLastFmErrorCode)
 	{
-	CMobblerLastFMError* self = new(ELeave) CMobblerLastFMError(aErrorCode);
+	CMobblerLastFmError* self = new(ELeave) CMobblerLastFmError(aLastFmErrorCode);
 	CleanupStack::PushL(self);
 	self->ConstructL(aText);
 	CleanupStack::Pop(self);
 	return self;
 	}
 
-CMobblerLastFMError::CMobblerLastFMError(TErrorCode aErrorCode)
-	:iErrorCode(aErrorCode)
+CMobblerLastFmError::CMobblerLastFmError(TInt aLastFmErrorCode)
+	:iLastFmErrorCode(aLastFmErrorCode)
 	{
 	}
 
-void CMobblerLastFMError::ConstructL(const TDesC8& aText)
+void CMobblerLastFmError::ConstructL(const TDesC8& aText)
 	{
 	iText = HBufC::NewL(aText.Length());
 	iText->Des().Copy(aText);
 	}
 
-void CMobblerLastFMError::ConstructL(const TDesC& aText)
+void CMobblerLastFmError::ConstructL(const TDesC& aText)
 	{
 	iText = aText.AllocL();
 	}
 
-CMobblerLastFMError::~CMobblerLastFMError()
+CMobblerLastFmError::~CMobblerLastFmError()
 	{
 	delete iText;
 	}
 	
-const TDesC& CMobblerLastFMError::Text() const
+const TDesC& CMobblerLastFmError::Text() const
 	{
 	return *iText;
 	}
-CMobblerLastFMError::TErrorCode CMobblerLastFMError::ErrorCode() const
+
+TInt CMobblerLastFmError::LastFmErrorCode() const
 	{
-	return iErrorCode;
+	return iLastFmErrorCode;
 	}

@@ -205,7 +205,7 @@ void CMobblerBitmap::ConstructL(const TDesC& aFileName, const TUid aFileUid)
 		fileName.Copy(aFileName);
 		}
 
-	iImageDecoder = CImageDecoder::FileNewL(CCoeEnv::Static()->FsSession(), fileName, CImageDecoder::EOptionAlwaysThread, aFileUid, TUid::Null(), TUid::Null());
+	iImageDecoder = CImageDecoder::FileNewL(CCoeEnv::Static()->FsSession(), fileName, CImageDecoder::EOptionNone, aFileUid, TUid::Null(), TUid::Null());
 	const TFrameInfo& info(iImageDecoder->FrameInfo());
 	iBitmap = new(ELeave) CFbsBitmap();
 

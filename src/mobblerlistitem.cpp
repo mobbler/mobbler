@@ -118,9 +118,9 @@ TBool CMobblerListItem::ImageRequested() const
 	return iImageRequested;
 	}
 
-void CMobblerListItem::DataL(const TDesC8& aData, CMobblerLastFMConnection::TError aError)
+void CMobblerListItem::DataL(const TDesC8& aData, CMobblerLastFmConnection::TTransactionError aTransactionError)
 	{
-	if (aError == CMobblerLastFMConnection::EErrorNone)
+	if (aTransactionError == CMobblerLastFmConnection::ETransactionErrorNone)
 		{
 		iImage = CMobblerBitmap::NewL(*this, aData);
 		}

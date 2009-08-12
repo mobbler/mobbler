@@ -35,37 +35,37 @@ class MMobblerSegDataObserver
 	{
 public:
 	virtual void DataPartL(const TDesC8& aData, TInt aTotalSize) = 0;
-	virtual void DataCompleteL(CMobblerLastFMConnection::TError aError, TInt aHTTPStatusCode, const TDesC8& aStatusText) = 0;
+	virtual void DataCompleteL(CMobblerLastFmConnection::TTransactionError aTransactionError, TInt aHTTPStatusCode, const TDesC8& aStatusText) = 0;
 	};
 
 class MMobblerFlatDataObserver
 	{
 public:
-	virtual void DataL(const TDesC8& aData, CMobblerLastFMConnection::TError aError) = 0;
+	virtual void DataL(const TDesC8& aData, CMobblerLastFmConnection::TTransactionError aTransactionError) = 0;
 	};
 
 class MMobblerFlatDataObserverHelper
 	{
 public:
-	virtual void DataL(CMobblerFlatDataObserverHelper* aObserver, const TDesC8& aData, CMobblerLastFMConnection::TError aError) = 0;
+	virtual void DataL(CMobblerFlatDataObserverHelper* aObserver, const TDesC8& aData, CMobblerLastFmConnection::TTransactionError aTransactionError) = 0;
 	};
 
 class CMobblerFlatDataObserverHelper : public CBase, public MMobblerFlatDataObserver, public MProgressDialogCallback
 	{
 public:
-	static CMobblerFlatDataObserverHelper* NewL(CMobblerLastFMConnection& aConnection, MMobblerFlatDataObserverHelper& aObserver, TBool aShowWaitDialog);
+	static CMobblerFlatDataObserverHelper* NewL(CMobblerLastFmConnection& aConnection, MMobblerFlatDataObserverHelper& aObserver, TBool aShowWaitDialog);
 	~CMobblerFlatDataObserverHelper();
 	
 private:
-	CMobblerFlatDataObserverHelper(CMobblerLastFMConnection& aConnection, MMobblerFlatDataObserverHelper& aObserver);
+	CMobblerFlatDataObserverHelper(CMobblerLastFmConnection& aConnection, MMobblerFlatDataObserverHelper& aObserver);
 	void ConstructL(TBool aShowWaitDialog);
 	
-	void DataL(const TDesC8& aData, CMobblerLastFMConnection::TError aError);
+	void DataL(const TDesC8& aData, CMobblerLastFmConnection::TTransactionError aTransactionError);
 	
 	void DialogDismissedL(TInt aButtonId);
 	
 private:
-	CMobblerLastFMConnection& iConnection;
+	CMobblerLastFmConnection& iConnection;
 	MMobblerFlatDataObserverHelper& iObserver;
 	
 	CAknWaitDialog* iWaitDialog;

@@ -91,26 +91,26 @@ const TInt KMaxSubmitTracks(50);
 
 const TInt KOfflineProfileId(5);
 
-CMobblerLastFMConnection* CMobblerLastFMConnection::NewL(MMobblerLastFMConnectionObserver& aObserver, 
-															const TDesC& aUsername, 
+CMobblerLastFmConnection* CMobblerLastFmConnection::NewL(MMobblerLastFmConnectionObserver& aObserver, 
+															const TDesC& aRecipient, 
 															const TDesC& aPassword, 
 															TUint32 aIapId, 
 															TInt aBitRate)
 	{
-	CMobblerLastFMConnection* self(new(ELeave) CMobblerLastFMConnection(aObserver, aIapId, aBitRate));
+	CMobblerLastFmConnection* self(new(ELeave) CMobblerLastFmConnection(aObserver, aIapId, aBitRate));
 	CleanupStack::PushL(self);
-	self->ConstructL(aUsername, aPassword);
+	self->ConstructL(aRecipient, aPassword);
 	CleanupStack::Pop(self);
 	return self;
 	}
 
-CMobblerLastFMConnection::CMobblerLastFMConnection(MMobblerLastFMConnectionObserver& aObserver, TUint32 aIapId, TInt aBitRate)
+CMobblerLastFmConnection::CMobblerLastFmConnection(MMobblerLastFmConnectionObserver& aObserver, TUint32 aIapId, TInt aBitRate)
 	:CActive(CActive::EPriorityStandard), iIapId(aIapId), iObserver(aObserver), iBitRate(aBitRate)
 	{
 	CActiveScheduler::Add(this);
 	}
 
-CMobblerLastFMConnection::~CMobblerLastFMConnection()
+CMobblerLastFmConnection::~CMobblerLastFmConnection()
 	{
 	Cancel();
 	
@@ -119,8 +119,7 @@ CMobblerLastFMConnection::~CMobblerLastFMConnection()
 		iCurrentTrack->Release();
 		}
 	
-	const TInt KTrackQueueCount(iTrackQueue.Count());
-	for (TInt i(0); i < KTrackQueueCount; ++i)
+	for (TInt i(0); i < iTrackQueue.Count(); ++i)
 		{
 		iTrackQueue[i]->Release();
 		}
@@ -147,9 +146,9 @@ CMobblerLastFMConnection::~CMobblerLastFMConnection()
 	iSocketServ.Close();
 	}
 
-void CMobblerLastFMConnection::ConstructL(const TDesC& aUsername, const TDesC& aPassword)
+void CMobblerLastFmConnection::ConstructL(const TDesC& aRecipient, const TDesC& aPassword)
 	{
-	SetDetailsL(aUsername, aPassword);
+	SetDetailsL(aRecipient, aPassword);
 	LoadTrackQueueL();
 	
 	User::LeaveIfError(iSocketServ.Connect());
@@ -157,19 +156,18 @@ void CMobblerLastFMConnection::ConstructL(const TDesC& aUsername, const TDesC& a
 	iScrobblingOn = ETrue;
 	}
 
-void CMobblerLastFMConnection::DoSetModeL(TMode aMode)
+void CMobblerLastFmConnection::DoSetModeL(TMode aMode)
 	{
 	iMode = aMode;
 	
 	// notify the state change observers when we change mode too
-	const TInt KObserverCount(iStateChangeObservers.Count());
-	for (TInt i(0); i < KObserverCount; ++i)
+	for (TInt i(0); i < iStateChangeObservers.Count(); ++i)
 		{
 		iStateChangeObservers[i]->HandleConnectionStateChangedL();
 		}
 	}
 
-void CMobblerLastFMConnection::SetIapIdL(TUint32 iIapId)
+void CMobblerLastFmConnection::SetIapIdL(TUint32 iIapId)
 	{
 	if (iIapId != iIapId)
 		{
@@ -186,28 +184,28 @@ void CMobblerLastFMConnection::SetIapIdL(TUint32 iIapId)
 		}
 	}
 
-void CMobblerLastFMConnection::SetBitRateL(TInt aBitRate)
+void CMobblerLastFmConnection::SetBitRateL(TInt aBitRate)
 	{
 	iBitRate = aBitRate;
 	}
 
-TUint32 CMobblerLastFMConnection::IapId() const
+TUint32 CMobblerLastFmConnection::IapId() const
 	{
 	return iIapId;
 	}
 
-void CMobblerLastFMConnection::SetDetailsL(const TDesC& aUsername, const TDesC& aPassword)
+void CMobblerLastFmConnection::SetDetailsL(const TDesC& aRecipient, const TDesC& aPassword)
 	{
 	if (!iUsername
-			|| iUsername && iUsername->String().CompareF(aUsername) != 0
+			|| iUsername && iUsername->String().CompareF(aRecipient) != 0
 			|| !iPassword
 			|| iPassword && iPassword->String().Compare(aPassword) != 0)
 		{
 		// There is either no username or password set
 		// or there is a new user or password
 		
-		HBufC* usernameLower(HBufC::NewLC(aUsername.Length()));
-		usernameLower->Des().Copy(aUsername);
+		HBufC* usernameLower(HBufC::NewLC(aRecipient.Length()));
+		usernameLower->Des().Copy(aRecipient);
 		usernameLower->Des().LowerCase();
 		CMobblerString* tempUsername(CMobblerString::NewL(*usernameLower));
 		CleanupStack::PushL(tempUsername);
@@ -242,7 +240,7 @@ void CMobblerLastFMConnection::SetDetailsL(const TDesC& aUsername, const TDesC& 
 		}
 	}
 
-void CMobblerLastFMConnection::SetModeL(TMode aMode)
+void CMobblerLastFmConnection::SetModeL(TMode aMode)
 	{
 	if (aMode == EOnline)
 		{
@@ -265,17 +263,17 @@ void CMobblerLastFMConnection::SetModeL(TMode aMode)
 	DoSetModeL(aMode);
 	}
 
-CMobblerLastFMConnection::TMode CMobblerLastFMConnection::Mode() const
+CMobblerLastFmConnection::TMode CMobblerLastFmConnection::Mode() const
 	{
 	return iMode;
 	}
 
-CMobblerLastFMConnection::TState CMobblerLastFMConnection::State() const
+CMobblerLastFmConnection::TState CMobblerLastFmConnection::State() const
 	{
 	return iState;
 	}
 
-void CMobblerLastFMConnection::ChangeStateL(TState aState)
+void CMobblerLastFmConnection::ChangeStateL(TState aState)
 	{
 	if (iState != aState)
 		{
@@ -283,20 +281,19 @@ void CMobblerLastFMConnection::ChangeStateL(TState aState)
 		static_cast<CMobblerAppUi*>(CEikonEnv::Static()->AppUi())->StatusDrawDeferred();
 		
 		// Notify the observers
-		const TInt KObserverCount(iStateChangeObservers.Count());
-		for (TInt i(0); i < KObserverCount; ++i)
+		for (TInt i(0); i < iStateChangeObservers.Count(); ++i)
 			{
 			iStateChangeObservers[i]->HandleConnectionStateChangedL();
 			}
 		}
 	}
 
-void CMobblerLastFMConnection::AddStateChangeObserverL(MMobblerConnectionStateObserver* aObserver)
+void CMobblerLastFmConnection::AddStateChangeObserverL(MMobblerConnectionStateObserver* aObserver)
 	{
 	iStateChangeObservers.InsertInAddressOrderL(aObserver);
 	}
 
-void CMobblerLastFMConnection::RemoveStateChangeObserver(MMobblerConnectionStateObserver* aObserver)
+void CMobblerLastFmConnection::RemoveStateChangeObserver(MMobblerConnectionStateObserver* aObserver)
 	{
 	TInt pos(iStateChangeObservers.FindInAddressOrder(aObserver));
 	if (pos != KErrNotFound)
@@ -305,13 +302,13 @@ void CMobblerLastFMConnection::RemoveStateChangeObserver(MMobblerConnectionState
 		}
 	}
 
-void CMobblerLastFMConnection::PreferredCarrierAvailable()
+void CMobblerLastFmConnection::PreferredCarrierAvailable()
 	{
 	CloseTransactionsL(EFalse);
 	iHTTPSession.Close();
 	}
 
-void CMobblerLastFMConnection::NewCarrierActive()
+void CMobblerLastFmConnection::NewCarrierActive()
 	{
 	User::LeaveIfError(iConnection.GetIntSetting(_L("IAP\\Id"), iCurrentIapId));
 	
@@ -325,8 +322,7 @@ void CMobblerLastFMConnection::NewCarrierActive()
 	
 	
 	// Submit any request that do not require authentication
-	TInt KTransactionCount(iTransactions.Count());
-	for (TInt i(0) ; i < KTransactionCount ; ++i)
+	for (TInt i(0); i < iTransactions.Count(); ++i)
 		{
 		if (!iTransactions[i]->RequiresAuthentication())
 			{
@@ -342,7 +338,7 @@ void CMobblerLastFMConnection::NewCarrierActive()
 		}
 	}
 	
-void CMobblerLastFMConnection::RunL()
+void CMobblerLastFmConnection::RunL()
 	{
 	if (iStatus.Int() == KErrNone)
 		{
@@ -369,8 +365,7 @@ void CMobblerLastFMConnection::RunL()
 		connInfo.SetPropertyL(strP.StringF(HTTP::EHttpSocketConnection, RHTTPSession::GetTable()), THTTPHdrVal(connPtr));
 		
 		// Submit any request that does not require authentication
-		TInt KTransactionCount(iTransactions.Count());
-		for (TInt i(0) ; i < KTransactionCount ; ++i)
+		for (TInt i(0); i < iTransactions.Count(); ++i)
 			{
 			if (!iTransactions[i]->RequiresAuthentication())
 				{
@@ -402,17 +397,17 @@ void CMobblerLastFMConnection::RunL()
 	iMp3Location = NULL;
 	}
 
-CMobblerLastFMConnection::TLastFMMemberType CMobblerLastFMConnection::MemberType() const
+CMobblerLastFmConnection::TLastFmMemberType CMobblerLastFmConnection::MemberType() const
 	{
 	return iMemberType;
 	}
 
-void CMobblerLastFMConnection::DoCancel()
+void CMobblerLastFmConnection::DoCancel()
 	{
 	iConnection.Close();
 	}
 
-TBool CMobblerLastFMConnection::Connected()
+TBool CMobblerLastFmConnection::Connected()
 	{
 	TBool connected(EFalse);
 	
@@ -426,7 +421,7 @@ TBool CMobblerLastFMConnection::Connected()
 	return connected;
 	}
 
-void CMobblerLastFMConnection::ConnectL()
+void CMobblerLastFmConnection::ConnectL()
 	{
 	Cancel();
 	Disconnect();
@@ -478,7 +473,7 @@ void CMobblerLastFMConnection::ConnectL()
 	SetActive();
 	}
 
-void CMobblerLastFMConnection::AuthenticateL()
+void CMobblerLastFmConnection::AuthenticateL()
 	{
 	iAuthenticated = EFalse;
 	
@@ -491,7 +486,7 @@ void CMobblerLastFMConnection::AuthenticateL()
 #endif
 	}
 
-void CMobblerLastFMConnection::OldRadioHandshakeL()
+void CMobblerLastFmConnection::OldRadioHandshakeL()
 	{
 	// start the radio handshake transaction
 	
@@ -527,7 +522,7 @@ void CMobblerLastFMConnection::OldRadioHandshakeL()
 	CleanupStack::PopAndDestroy(2, passwordHash);
 	}
 
-void CMobblerLastFMConnection::WebServicesHandshakeL()
+void CMobblerLastFmConnection::WebServicesHandshakeL()
 	{
 	// start the web services authentications
 	iMemberType = EMemberTypeUnknown;
@@ -562,7 +557,7 @@ void CMobblerLastFMConnection::WebServicesHandshakeL()
 	}
 
 #ifdef BETA_BUILD
-void CMobblerLastFMConnection::BetaHandshakeL()
+void CMobblerLastFmConnection::BetaHandshakeL()
 	{
 	// Start the web services authentications
 	TUriParser8 uriParser;
@@ -576,7 +571,7 @@ void CMobblerLastFMConnection::BetaHandshakeL()
 	}
 #endif
 
-void CMobblerLastFMConnection::CheckForUpdateL(MMobblerFlatDataObserver& aObserver)
+void CMobblerLastFmConnection::CheckForUpdateL(MMobblerFlatDataObserver& aObserver)
 	{
 	TUriParser8 uriParser;
 	uriParser.Parse(KLatesverFileLocation);
@@ -587,7 +582,7 @@ void CMobblerLastFMConnection::CheckForUpdateL(MMobblerFlatDataObserver& aObserv
 	AppendAndSubmitTransactionL(transaction);
 	}
 
-void CMobblerLastFMConnection::TrackLoveL(const TDesC8& aArtist, const TDesC8& aTrack)
+void CMobblerLastFmConnection::TrackLoveL(const TDesC8& aArtist, const TDesC8& aTrack)
 	{
 	CUri8* uri(CUri8::NewLC());
 	
@@ -607,7 +602,7 @@ void CMobblerLastFMConnection::TrackLoveL(const TDesC8& aArtist, const TDesC8& a
 	AppendAndSubmitTransactionL(transaction);
 	}
 
-void CMobblerLastFMConnection::PlaylistCreateL(const TDesC& aTitle, const TDesC& aDescription, MMobblerFlatDataObserver& aObserver)
+void CMobblerLastFmConnection::PlaylistCreateL(const TDesC& aTitle, const TDesC& aDescription, MMobblerFlatDataObserver& aObserver)
 	{
 	CUri8* uri(CUri8::NewLC());
 	
@@ -636,7 +631,7 @@ void CMobblerLastFMConnection::PlaylistCreateL(const TDesC& aTitle, const TDesC&
 	AppendAndSubmitTransactionL(transaction);
 	}
 
-void CMobblerLastFMConnection::PlaylistFetchUserL(const TDesC8& aPlaylistId, MMobblerFlatDataObserver& aObserver)
+void CMobblerLastFmConnection::PlaylistFetchUserL(const TDesC8& aPlaylistId, MMobblerFlatDataObserver& aObserver)
 	{
 	_LIT8(KUserPlaylistFormat, "lastfm://playlist/%S");
 	
@@ -666,7 +661,7 @@ void CMobblerLastFMConnection::PlaylistFetchUserL(const TDesC8& aPlaylistId, MMo
 	AppendAndSubmitTransactionL(transaction);
 	}
 
-void CMobblerLastFMConnection::PlaylistFetchAlbumL(const TDesC8& aAlbumId, MMobblerFlatDataObserver& aObserver)
+void CMobblerLastFmConnection::PlaylistFetchAlbumL(const TDesC8& aAlbumId, MMobblerFlatDataObserver& aObserver)
 	{
 	_LIT8(KUserPlaylistFormat, "lastfm://playlist/album/%S");
 	
@@ -696,7 +691,7 @@ void CMobblerLastFMConnection::PlaylistFetchAlbumL(const TDesC8& aAlbumId, MMobb
 	AppendAndSubmitTransactionL(transaction);
 	}
 
-void CMobblerLastFMConnection::PlaylistAddTrackL(const TDesC8& aPlaylistId, const TDesC8& aArtist, const TDesC8& aTrack, MMobblerFlatDataObserver& aObserver)
+void CMobblerLastFmConnection::PlaylistAddTrackL(const TDesC8& aPlaylistId, const TDesC8& aArtist, const TDesC8& aTrack, MMobblerFlatDataObserver& aObserver)
 	{
 	CUri8* uri(CUri8::NewLC());
 	
@@ -718,7 +713,7 @@ void CMobblerLastFMConnection::PlaylistAddTrackL(const TDesC8& aPlaylistId, cons
 	AppendAndSubmitTransactionL(transaction);
 	}
 
-void CMobblerLastFMConnection::ShoutL(const TDesC8& aClass, const TDesC8& aArgument, const TDesC8& aMessage)
+void CMobblerLastFmConnection::ShoutL(const TDesC8& aClass, const TDesC8& aArgument, const TDesC8& aMessage)
 	{
 	CUri8* uri(CUri8::NewLC());
 	
@@ -741,7 +736,7 @@ void CMobblerLastFMConnection::ShoutL(const TDesC8& aClass, const TDesC8& aArgum
 	AppendAndSubmitTransactionL(transaction);
 	}
 
-void CMobblerLastFMConnection::RecommendedArtistsL(MMobblerFlatDataObserver& aObserver)
+void CMobblerLastFmConnection::RecommendedArtistsL(MMobblerFlatDataObserver& aObserver)
 	{
 	CUri8* uri(CUri8::NewLC());
 	
@@ -760,7 +755,7 @@ void CMobblerLastFMConnection::RecommendedArtistsL(MMobblerFlatDataObserver& aOb
 	AppendAndSubmitTransactionL(transaction);
 	}
 
-void CMobblerLastFMConnection::RecommendedEventsL(MMobblerFlatDataObserver& aObserver)
+void CMobblerLastFmConnection::RecommendedEventsL(MMobblerFlatDataObserver& aObserver)
 	{
 	CUri8* uri(CUri8::NewLC());
 	
@@ -779,7 +774,7 @@ void CMobblerLastFMConnection::RecommendedEventsL(MMobblerFlatDataObserver& aObs
 	AppendAndSubmitTransactionL(transaction);
 	}
 
-void  CMobblerLastFMConnection::TrackBanL(const TDesC8& aArtist, const TDesC8& aTrack)
+void  CMobblerLastFmConnection::TrackBanL(const TDesC8& aArtist, const TDesC8& aTrack)
 	{
 	CUri8* uri(CUri8::NewLC());
 	
@@ -799,7 +794,7 @@ void  CMobblerLastFMConnection::TrackBanL(const TDesC8& aArtist, const TDesC8& a
 	AppendAndSubmitTransactionL(transaction);
 	}
 
-void CMobblerLastFMConnection::SimilarArtistsL(const TDesC8& aArtist, MMobblerFlatDataObserver& aObserver)
+void CMobblerLastFmConnection::SimilarArtistsL(const TDesC8& aArtist, MMobblerFlatDataObserver& aObserver)
 	{
 	CUri8* uri(CUri8::NewL());
 	CleanupStack::PushL(uri);
@@ -824,7 +819,7 @@ void CMobblerLastFMConnection::SimilarArtistsL(const TDesC8& aArtist, MMobblerFl
 	AppendAndSubmitTransactionL(transaction);
 	}
 
-void CMobblerLastFMConnection::SimilarTracksL(const TDesC8& aArtist, const TDesC8& aTrack, MMobblerFlatDataObserver& aObserver)
+void CMobblerLastFmConnection::SimilarTracksL(const TDesC8& aArtist, const TDesC8& aTrack, MMobblerFlatDataObserver& aObserver)
 	{
 	CUri8* uri(CUri8::NewL());
 	CleanupStack::PushL(uri);
@@ -850,7 +845,7 @@ void CMobblerLastFMConnection::SimilarTracksL(const TDesC8& aArtist, const TDesC
 	AppendAndSubmitTransactionL(transaction);
 	}
 
-void CMobblerLastFMConnection::RecentTracksL(const TDesC8& aUser, MMobblerFlatDataObserver& aObserver)
+void CMobblerLastFmConnection::RecentTracksL(const TDesC8& aUser, MMobblerFlatDataObserver& aObserver)
 	{
 	CUri8* uri(CUri8::NewL());
 	CleanupStack::PushL(uri);
@@ -875,7 +870,7 @@ void CMobblerLastFMConnection::RecentTracksL(const TDesC8& aUser, MMobblerFlatDa
 	AppendAndSubmitTransactionL(transaction);
 	}
 
-void CMobblerLastFMConnection::ArtistGetImageL(const TDesC& aArtist, MMobblerFlatDataObserver& aObserver)
+void CMobblerLastFmConnection::ArtistGetImageL(const TDesC& aArtist, MMobblerFlatDataObserver& aObserver)
 	{
 	CUri8* uri(CUri8::NewL());
 	CleanupStack::PushL(uri);
@@ -901,7 +896,7 @@ void CMobblerLastFMConnection::ArtistGetImageL(const TDesC& aArtist, MMobblerFla
 	AppendAndSubmitTransactionL(transaction);
 	}
 
-void CMobblerLastFMConnection::ArtistGetTagsL(const TDesC& aArtist, MMobblerFlatDataObserver& aObserver)
+void CMobblerLastFmConnection::ArtistGetTagsL(const TDesC& aArtist, MMobblerFlatDataObserver& aObserver)
 	{
 	CUri8* uri(CUri8::NewL());
 	CleanupStack::PushL(uri);
@@ -926,7 +921,7 @@ void CMobblerLastFMConnection::ArtistGetTagsL(const TDesC& aArtist, MMobblerFlat
 	AppendAndSubmitTransactionL(transaction);
 	}
 
-void CMobblerLastFMConnection::AlbumGetInfoL(const TDesC& aAlbum, const TDesC& aArtist, MMobblerFlatDataObserver& aObserver)
+void CMobblerLastFmConnection::AlbumGetInfoL(const TDesC& aAlbum, const TDesC& aArtist, MMobblerFlatDataObserver& aObserver)
 	{
 	CUri8* uri(CUri8::NewL());
 	CleanupStack::PushL(uri);
@@ -955,7 +950,7 @@ void CMobblerLastFMConnection::AlbumGetInfoL(const TDesC& aAlbum, const TDesC& a
 	AppendAndSubmitTransactionL(transaction);
 	}
 
-void CMobblerLastFMConnection::AlbumGetInfoL(const TDesC8& aMbId, MMobblerFlatDataObserver& aObserver)
+void CMobblerLastFmConnection::AlbumGetInfoL(const TDesC8& aMbId, MMobblerFlatDataObserver& aObserver)
 	{
 	CUri8* uri(CUri8::NewL());
 	CleanupStack::PushL(uri);
@@ -979,7 +974,7 @@ void CMobblerLastFMConnection::AlbumGetInfoL(const TDesC8& aMbId, MMobblerFlatDa
 	AppendAndSubmitTransactionL(transaction);
 	}
 
-void CMobblerLastFMConnection::WebServicesCallL(const TDesC8& aClass, const TDesC8& aMethod, const TDesC8& aText, MMobblerFlatDataObserver& aObserver)
+void CMobblerLastFmConnection::WebServicesCallL(const TDesC8& aClass, const TDesC8& aMethod, const TDesC8& aText, MMobblerFlatDataObserver& aObserver)
 	{
 	CUri8* uri(CUri8::NewLC());
 	uri->SetComponentL(KScheme, EUriScheme);
@@ -1021,7 +1016,7 @@ void CMobblerLastFMConnection::WebServicesCallL(const TDesC8& aClass, const TDes
 	AppendAndSubmitTransactionL(transaction);
 	}
 
-void CMobblerLastFMConnection::TrackShareL(const TDesC8& aUserName, const TDesC8& aArtist, const TDesC8& aTrack, const TDesC8& aMessage, MMobblerFlatDataObserver& aObserver)
+void CMobblerLastFmConnection::TrackShareL(const TDesC8& aRecipient, const TDesC8& aArtist, const TDesC8& aTrack, const TDesC8& aMessage, MMobblerFlatDataObserver& aObserver)
 	{
 	CUri8* uri(CUri8::NewLC());
 	uri->SetComponentL(KScheme, EUriScheme);
@@ -1031,7 +1026,7 @@ void CMobblerLastFMConnection::TrackShareL(const TDesC8& aUserName, const TDesC8
 	CMobblerWebServicesQuery* query(CMobblerWebServicesQuery::NewLC(_L8("track.share")));
 	query->AddFieldL(_L8("artist"), aArtist);
 	query->AddFieldL(_L8("track"), aTrack);
-	query->AddFieldL(_L8("recipient"), aUserName);
+	query->AddFieldL(_L8("recipient"), aRecipient);
 	
 	const TDesC& tagline(static_cast<CMobblerAppUi*>(CEikonEnv::Static()->AppUi())->ResourceReader().ResourceL(R_MOBBLER_SHARE_TAGLINE));
 	HBufC8* message(HBufC8::NewLC(aMessage.Length() + tagline.Length()));
@@ -1049,7 +1044,7 @@ void CMobblerLastFMConnection::TrackShareL(const TDesC8& aUserName, const TDesC8
 	AppendAndSubmitTransactionL(transaction);
 	}
 
-void CMobblerLastFMConnection::ArtistShareL(const TDesC8& aUserName, const TDesC8& aArtist, const TDesC8& aMessage, MMobblerFlatDataObserver& aObserver)
+void CMobblerLastFmConnection::ArtistShareL(const TDesC8& aRecipient, const TDesC8& aArtist, const TDesC8& aMessage, MMobblerFlatDataObserver& aObserver)
 	{
 	CUri8* uri(CUri8::NewLC());
 	uri->SetComponentL(KScheme, EUriScheme);
@@ -1058,7 +1053,7 @@ void CMobblerLastFMConnection::ArtistShareL(const TDesC8& aUserName, const TDesC
 	
 	CMobblerWebServicesQuery* query(CMobblerWebServicesQuery::NewLC(_L8("artist.share")));
 	query->AddFieldL(_L8("artist"), aArtist);
-	query->AddFieldL(_L8("recipient"), aUserName);
+	query->AddFieldL(_L8("recipient"), aRecipient);
 	
 	const TDesC& tagline(static_cast<CMobblerAppUi*>(CEikonEnv::Static()->AppUi())->ResourceReader().ResourceL(R_MOBBLER_SHARE_TAGLINE));
 	HBufC8* message(HBufC8::NewLC(aMessage.Length() + tagline.Length()));
@@ -1076,7 +1071,7 @@ void CMobblerLastFMConnection::ArtistShareL(const TDesC8& aUserName, const TDesC
 	AppendAndSubmitTransactionL(transaction);
 	}
 
-void CMobblerLastFMConnection::EventShareL(const TDesC8& aUserName, const TDesC8& aEventId, const TDesC8& aMessage, MMobblerFlatDataObserver& aObserver)
+void CMobblerLastFmConnection::EventShareL(const TDesC8& aRecipient, const TDesC8& aEventId, const TDesC8& aMessage, MMobblerFlatDataObserver& aObserver)
 	{
 	CUri8* uri(CUri8::NewLC());
 	uri->SetComponentL(KScheme, EUriScheme);
@@ -1085,7 +1080,7 @@ void CMobblerLastFMConnection::EventShareL(const TDesC8& aUserName, const TDesC8
 	
 	CMobblerWebServicesQuery* query(CMobblerWebServicesQuery::NewLC(_L8("event.share")));
 	query->AddFieldL(_L8("event"), aEventId);
-	query->AddFieldL(_L8("recipient"), aUserName);
+	query->AddFieldL(_L8("recipient"), aRecipient);
 	query->AddFieldL(_L8("message"), aMessage);
 	
 	CMobblerTransaction* transaction(CMobblerTransaction::NewL(*this, ETrue, uri, query));
@@ -1097,17 +1092,50 @@ void CMobblerLastFMConnection::EventShareL(const TDesC8& aUserName, const TDesC8
 	AppendAndSubmitTransactionL(transaction);
 	}
 
-void CMobblerLastFMConnection::RadioStop()
+void CMobblerLastFmConnection::EventAttendL(const TDesC8& aEventId, TEventStatus aEventStatus, MMobblerFlatDataObserver& aObserver)
+	{
+	CUri8* uri(CUri8::NewLC());
+	uri->SetComponentL(KScheme, EUriScheme);
+	uri->SetComponentL(KWebServicesHost, EUriHost);
+	uri->SetComponentL(_L8("/2.0/"), EUriPath);
+	
+	CMobblerWebServicesQuery* query(CMobblerWebServicesQuery::NewLC(_L8("event.attend")));
+	query->AddFieldL(_L8("event"), aEventId);
+	
+	switch (aEventStatus)
+		{
+		case EAttending:
+			query->AddFieldL(_L8("status"), _L8("0"));
+			break;
+		case EMaybe:
+			query->AddFieldL(_L8("status"), _L8("1"));
+			break;
+		case ENotAttending:
+			query->AddFieldL(_L8("status"), _L8("2"));
+			break;
+		}
+	
+	CMobblerTransaction* transaction(CMobblerTransaction::NewL(*this, ETrue, uri, query));
+	transaction->SetFlatDataObserver(&aObserver);
+	
+	CleanupStack::Pop(query);
+	CleanupStack::Pop(uri);
+	
+	AppendAndSubmitTransactionL(transaction);
+	}
+
+void CMobblerLastFmConnection::RadioStop()
 	{
 	if (iTrackDownloadObserver)
 		{
-		TRAP_IGNORE(iTrackDownloadObserver->DataCompleteL(CMobblerLastFMConnection::EErrorStop, KErrNone, KNullDesC8));
+		TRAP_IGNORE(iTrackDownloadObserver->DataCompleteL(CMobblerLastFmConnection::ETransactionErrorCancel, KErrNone, KNullDesC8));
 		iTrackDownloadObserver = NULL;
 		}
+	
 	iRadioAudioTransaction.Close();
 	}
 
-void CMobblerLastFMConnection::SelectStationL(MMobblerFlatDataObserver* aObserver, TRadioStation aRadioStation, const TDesC8& aRadioText)
+void CMobblerLastFmConnection::SelectStationL(MMobblerFlatDataObserver* aObserver, TRadioStation aRadioStation, const TDesC8& aRadioText)
 	{
 	// Set up the Last.fm formatted station URI
 	HBufC8* radioUrl(HBufC8::NewLC(255));
@@ -1202,7 +1230,7 @@ void CMobblerLastFMConnection::SelectStationL(MMobblerFlatDataObserver* aObserve
 	AppendAndSubmitTransactionL(transaction);
 	}
 
-void CMobblerLastFMConnection::RequestPlaylistL(MMobblerFlatDataObserver* aObserver)
+void CMobblerLastFmConnection::RequestPlaylistL(MMobblerFlatDataObserver* aObserver)
 	{
 	CMobblerTransaction* transaction(NULL);
 	
@@ -1283,7 +1311,7 @@ void CMobblerLastFMConnection::RequestPlaylistL(MMobblerFlatDataObserver* aObser
 	AppendAndSubmitTransactionL(transaction);
 	}
 
-void CMobblerLastFMConnection::RequestMp3L(MMobblerSegDataObserver& aObserver, const TDesC8& aMp3Location)
+void CMobblerLastFmConnection::RequestMp3L(MMobblerSegDataObserver& aObserver, const TDesC8& aMp3Location)
 	{
 	if (iMode == EOnline)
 		{
@@ -1312,7 +1340,7 @@ void CMobblerLastFMConnection::RequestMp3L(MMobblerSegDataObserver& aObserver, c
 		}
 	}
 
-void CMobblerLastFMConnection::RequestImageL(MMobblerFlatDataObserver* aObserver, const TDesC8& aImageLocation)
+void CMobblerLastFmConnection::RequestImageL(MMobblerFlatDataObserver* aObserver, const TDesC8& aImageLocation)
 	{
 	if (aImageLocation.Compare(KNullDesC8) != 0 && Connected())
 		{
@@ -1327,7 +1355,7 @@ void CMobblerLastFMConnection::RequestImageL(MMobblerFlatDataObserver* aObserver
 		}
 	}
 
-void CMobblerLastFMConnection::CancelTransaction(MMobblerFlatDataObserver* aObserver)
+void CMobblerLastFmConnection::CancelTransaction(MMobblerFlatDataObserver* aObserver)
 	{
 	// cancel all image downloads associated the observer
 	for (TInt i(iTransactions.Count() - 1) ; i >= 0 ; --i)
@@ -1340,7 +1368,7 @@ void CMobblerLastFMConnection::CancelTransaction(MMobblerFlatDataObserver* aObse
 		}
 	}
 
-void CMobblerLastFMConnection::Disconnect()
+void CMobblerLastFmConnection::Disconnect()
 	{
 	Cancel();
 	
@@ -1362,7 +1390,7 @@ void CMobblerLastFMConnection::Disconnect()
 	iConnection.Close();
 	}
 
-void CMobblerLastFMConnection::DoNowPlayingL()
+void CMobblerLastFmConnection::DoNowPlayingL()
 	{
 	if (iCurrentTrack)
 		{
@@ -1409,7 +1437,7 @@ void CMobblerLastFMConnection::DoNowPlayingL()
 		}
 	}
 
-void CMobblerLastFMConnection::TrackStartedL(CMobblerTrack* aTrack)
+void CMobblerLastFmConnection::TrackStartedL(CMobblerTrack* aTrack)
 	{
 	if (iCurrentTrack)
 		{
@@ -1423,7 +1451,7 @@ void CMobblerLastFMConnection::TrackStartedL(CMobblerTrack* aTrack)
 	DoNowPlayingL();
 	}
 	
-void CMobblerLastFMConnection::TrackStoppedL()
+void CMobblerLastFmConnection::TrackStoppedL()
 	{
 	// Make sure that we haven't already tried to scrobble this track
 	if (iCurrentTrack && !iCurrentTrack->Scrobbled())
@@ -1484,7 +1512,7 @@ void CMobblerLastFMConnection::TrackStoppedL()
 	static_cast<CMobblerAppUi*>(CEikonEnv::Static()->AppUi())->TrackStoppedL();
 	}
 
-TBool CMobblerLastFMConnection::DoSubmitL()
+TBool CMobblerLastFmConnection::DoSubmitL()
 	{
 	TBool submitting(EFalse);
 	
@@ -1494,6 +1522,7 @@ TBool CMobblerLastFMConnection::DoSubmitL()
 		// so try to submit the tracks in the queue
 		
 		const TInt KSubmitTracksCount(iTrackQueue.Count());
+		
 		if (KSubmitTracksCount > 0)
 			{
 			CHTTPFormEncoder* submitForm(CHTTPFormEncoder::NewL());
@@ -1601,7 +1630,7 @@ TBool CMobblerLastFMConnection::DoSubmitL()
 	return submitting;
 	}
 
-void CMobblerLastFMConnection::HandleHandshakeErrorL(CMobblerLastFMError* aError)
+void CMobblerLastFmConnection::HandleHandshakeErrorL(CMobblerLastFmError* aError)
 	{
 	if (!aError)
 		{
@@ -1629,8 +1658,7 @@ void CMobblerLastFMConnection::HandleHandshakeErrorL(CMobblerLastFMError* aError
 				
 				DoSubmitL();
 				
-				const TInt KTransactionCount(iTransactions.Count());
-				for (TInt i(0); i < KTransactionCount; ++i)
+				for (TInt i(0); i < iTransactions.Count(); ++i)
 					{
 					iTransactions[i]->SubmitL();
 					}
@@ -1639,7 +1667,7 @@ void CMobblerLastFMConnection::HandleHandshakeErrorL(CMobblerLastFMError* aError
 					{
 					// There is a track observer so this must be because
 					// we failed to start downloading a track, but have now reconnected
-					iTrackDownloadObserver->DataCompleteL(EErrorHandshake, KErrNone, KNullDesC8);
+					iTrackDownloadObserver->DataCompleteL(ETransactionErrorHandshake, KErrNone, KNullDesC8);
 					iTrackDownloadObserver = NULL;
 					}
 				}
@@ -1648,7 +1676,7 @@ void CMobblerLastFMConnection::HandleHandshakeErrorL(CMobblerLastFMError* aError
 	else
 		{
 		// There was an error with one of the handshakes
-		iObserver.HandleLastFMErrorL(*aError);
+		iObserver.HandleLastFmErrorL(*aError);
 		ChangeStateL(ENone);
 		iWebServicesHandshakeTransaction->Cancel();
 		iHandshakeTransaction->Cancel();
@@ -1666,7 +1694,7 @@ void CMobblerLastFMConnection::HandleHandshakeErrorL(CMobblerLastFMError* aError
 		}
 	}
 
-void CMobblerLastFMConnection::AppendAndSubmitTransactionL(CMobblerTransaction* aTransaction)
+void CMobblerLastFmConnection::AppendAndSubmitTransactionL(CMobblerTransaction* aTransaction)
 	{
 	if (aTransaction)
 		{
@@ -1709,7 +1737,7 @@ void CMobblerLastFMConnection::AppendAndSubmitTransactionL(CMobblerTransaction* 
 		}
 	}
 
-void CMobblerLastFMConnection::CloseTransactionsL(TBool aCloseTransactionArray)
+void CMobblerLastFmConnection::CloseTransactionsL(TBool aCloseTransactionArray)
 	{
 	// close any ongoing transactions
 	delete iHandshakeTransaction;
@@ -1729,7 +1757,7 @@ void CMobblerLastFMConnection::CloseTransactionsL(TBool aCloseTransactionArray)
 	
 	if (iTrackDownloadObserver)
 		{
-		iTrackDownloadObserver->DataCompleteL(EErrorCancel, KErrNone, KNullDesC8);
+		iTrackDownloadObserver->DataCompleteL(ETransactionErrorCancel, KErrNone, KNullDesC8);
 		iTrackDownloadObserver = NULL;
 		}
 	
@@ -1740,7 +1768,7 @@ void CMobblerLastFMConnection::CloseTransactionsL(TBool aCloseTransactionArray)
 			{
 			if (iTransactions[i]->FlatDataObserver())
 				{
-				iTransactions[i]->FlatDataObserver()->DataL(KNullDesC8, EErrorCancel);
+				iTransactions[i]->FlatDataObserver()->DataL(KNullDesC8, ETransactionErrorCancel);
 				}
 			
 			delete iTransactions[i];
@@ -1751,25 +1779,25 @@ void CMobblerLastFMConnection::CloseTransactionsL(TBool aCloseTransactionArray)
 		}
 	}
 
-void CMobblerLastFMConnection::TransactionResponseL(CMobblerTransaction* aTransaction, const TDesC8& aResponse)
+void CMobblerLastFmConnection::TransactionResponseL(CMobblerTransaction* aTransaction, const TDesC8& aResponse)
 	{
 	if (aTransaction == iHandshakeTransaction)
 		{
-		CMobblerLastFMError* error(CMobblerParser::ParseHandshakeL(aResponse, iScrobbleSessionId, iNowPlayingUrl, iSubmitUrl));
+		CMobblerLastFmError* error(CMobblerParser::ParseHandshakeL(aResponse, iScrobbleSessionId, iNowPlayingUrl, iSubmitUrl));
 		CleanupStack::PushL(error);
 		HandleHandshakeErrorL(error);
 		CleanupStack::PopAndDestroy(error);
 		}
 	else if (aTransaction == iWebServicesHandshakeTransaction)
 		{
-		CMobblerLastFMError* error(CMobblerParser::ParseWebServicesHandshakeL(aResponse, iWebServicesSessionKey, iMemberType));
+		CMobblerLastFmError* error(CMobblerParser::ParseWebServicesHandshakeL(aResponse, iWebServicesSessionKey, iMemberType));
 		CleanupStack::PushL(error);
 		HandleHandshakeErrorL(error);
 		CleanupStack::PopAndDestroy(error);
 		}
 	else if (aTransaction == iOldRadioHandshakeTransaction)
 		{
-		CMobblerLastFMError* error(CMobblerParser::ParseOldRadioHandshakeL(aResponse, iOldRadioSessionId, iOldRadioBaseUrl, iOldRadioBasePath));
+		CMobblerLastFmError* error(CMobblerParser::ParseOldRadioHandshakeL(aResponse, iOldRadioSessionId, iOldRadioBaseUrl, iOldRadioBasePath));
 		CleanupStack::PushL(error);
 		HandleHandshakeErrorL(error);
 		CleanupStack::PopAndDestroy(error);
@@ -1777,7 +1805,7 @@ void CMobblerLastFMConnection::TransactionResponseL(CMobblerTransaction* aTransa
 #ifdef BETA_BUILD
 	else if (aTransaction == iBetaTestersTransaction)
 		{
-		CMobblerLastFMError* error(CMobblerParser::ParseBetaTestersHandshakeL(aResponse, iUsername->String8(), iIsBetaTester));
+		CMobblerLastFmError* error(CMobblerParser::ParseBetaTestersHandshakeL(aResponse, iUsername->String8(), iIsBetaTester));
 		CleanupStack::PushL(error);
 		HandleHandshakeErrorL(error);
 		CleanupStack::PopAndDestroy(error);
@@ -1785,7 +1813,7 @@ void CMobblerLastFMConnection::TransactionResponseL(CMobblerTransaction* aTransa
 #endif
 	else if (aTransaction == iSubmitTransaction)
 		{
-		CMobblerLastFMError* error(CMobblerParser::ParseScrobbleResponseL(aResponse));
+		CMobblerLastFmError* error(CMobblerParser::ParseScrobbleResponseL(aResponse));
 		
 		if (!error)
 			{
@@ -1804,33 +1832,33 @@ void CMobblerLastFMConnection::TransactionResponseL(CMobblerTransaction* aTransa
 		else
 			{
 			CleanupStack::PushL(error);
-			if (error->ErrorCode() == CMobblerLastFMError::EBadSession)
+			if (error->Text() == _L("BADSESSION"))
 				{
 				// The session has become invalid so handshake again
 				AuthenticateL();
 				}
 			else
 				{
-				iObserver.HandleLastFMErrorL(*error);
+				iObserver.HandleLastFmErrorL(*error);
 				}
 			CleanupStack::PopAndDestroy(error);
 			}
 		}
 	else if (aTransaction == iNowPlayingTransaction)
 		{
-		CMobblerLastFMError* error(CMobblerParser::ParseScrobbleResponseL(aResponse));
+		CMobblerLastFmError* error(CMobblerParser::ParseScrobbleResponseL(aResponse));
 		
 		if (error)
 			{
 			CleanupStack::PushL(error);
-			if (error->ErrorCode() == CMobblerLastFMError::EBadSession)
+			if (error->LastFmErrorCode() == CMobblerLastFmError::EBadSession)
 				{
 				// The session has become invalid so handshake again
 				AuthenticateL();
 				}
 			else
 				{
-				iObserver.HandleLastFMErrorL(*error);
+				iObserver.HandleLastFmErrorL(*error);
 				}
 			CleanupStack::PopAndDestroy(error);
 			}
@@ -1842,14 +1870,13 @@ void CMobblerLastFMConnection::TransactionResponseL(CMobblerTransaction* aTransa
 		}
 	else
 		{
-		const TInt KTransactionCount(iTransactions.Count());
-		for (TInt i(0); i < KTransactionCount; ++i)
+		for (TInt i(0); i < iTransactions.Count(); ++i)
 			{
 			if (aTransaction == iTransactions[i])
 				{
 				if (iTransactions[i]->FlatDataObserver())
 					{
-					iTransactions[i]->FlatDataObserver()->DataL(aResponse, EErrorNone);
+					iTransactions[i]->FlatDataObserver()->DataL(aResponse, ETransactionErrorNone);
 					}
 				break;
 				}
@@ -1857,7 +1884,7 @@ void CMobblerLastFMConnection::TransactionResponseL(CMobblerTransaction* aTransa
 		}
 	}
 
-void CMobblerLastFMConnection::TransactionCompleteL(CMobblerTransaction* aTransaction)
+void CMobblerLastFmConnection::TransactionCompleteL(CMobblerTransaction* aTransaction)
 	{
 	if (aTransaction == iSubmitTransaction)
 		{
@@ -1887,7 +1914,7 @@ void CMobblerLastFMConnection::TransactionCompleteL(CMobblerTransaction* aTransa
 		}
 	}
 
-void CMobblerLastFMConnection::TransactionFailedL(CMobblerTransaction* aTransaction, const TDesC8& aStatus, TInt aStatusCode)
+void CMobblerLastFmConnection::TransactionFailedL(CMobblerTransaction* aTransaction, const TDesC8& aStatus, TInt aStatusCode)
 	{
 #ifdef _DEBUG
 	// Transaction log file 
@@ -1957,21 +1984,33 @@ void CMobblerLastFMConnection::TransactionFailedL(CMobblerTransaction* aTransact
 		}
 	else
 		{
+		// if it was one of the handshake transactions then
+		// complain to the app ui so an error is displayed
 		if (aTransaction ==	iHandshakeTransaction
-				|| aTransaction == iWebServicesHandshakeTransaction)
+				|| aTransaction == iWebServicesHandshakeTransaction
+				|| aTransaction == iOldRadioHandshakeTransaction
+#ifdef BETA_BUILD
+				|| aTransaction == iBetaTestersTransaction
+#endif
+				)
 			{
 			iObserver.HandleCommsErrorL(aStatusCode, aStatus);
 			ChangeStateL(ENone);
+			
+			// Because the handshaking failed we should fail and close all transactions 
+			CloseTransactionsL(ETrue);
 			}
 		else
 			{
+			// find the transaction that failed
+			// tell the observer that it failed and then remove the transaction
 			for (TInt i(iTransactions.Count() - 1) ; i >= 0 ; --i)
 				{
 				if (aTransaction == iTransactions[i])
 					{
 					if (aTransaction->FlatDataObserver())
 						{
-						aTransaction->FlatDataObserver()->DataL(KNullDesC8, EErrorFailed);
+						aTransaction->FlatDataObserver()->DataL(KNullDesC8, ETransactionErrorFailed);
 						}
 					
 					delete aTransaction;
@@ -1983,7 +2022,7 @@ void CMobblerLastFMConnection::TransactionFailedL(CMobblerTransaction* aTransact
 		}
 	}
 
-void CMobblerLastFMConnection::MHFRunL(RHTTPTransaction aTransaction, const THTTPEvent& aEvent)
+void CMobblerLastFmConnection::MHFRunL(RHTTPTransaction aTransaction, const THTTPEvent& aEvent)
 	{
 	// it must be a transaction event
 	TPtrC8 nextDataPartPtr;
@@ -2002,9 +2041,9 @@ void CMobblerLastFMConnection::MHFRunL(RHTTPTransaction aTransaction, const THTT
 			}
 			break;
 		case THTTPEvent::EFailed:
-			if (iTrackDownloadObserver && aTransaction.Response().StatusCode() != 302)
+			if (iTrackDownloadObserver)
 				{
-				iTrackDownloadObserver->DataCompleteL(EErrorFailed, aTransaction.Response().StatusCode(), aTransaction.Response().StatusText().DesC());
+				iTrackDownloadObserver->DataCompleteL(ETransactionErrorFailed, aTransaction.Response().StatusCode(), aTransaction.Response().StatusText().DesC());
 				iTrackDownloadObserver = NULL;
 				}
 			iTrackDownloadObserver = NULL;
@@ -2012,17 +2051,17 @@ void CMobblerLastFMConnection::MHFRunL(RHTTPTransaction aTransaction, const THTT
 		case THTTPEvent::ECancel:
 		case THTTPEvent::EClosed:
 			// tell the radio player that the track has finished downloading
-			if (iTrackDownloadObserver && aTransaction.Response().StatusCode() != 302)
+			if (iTrackDownloadObserver)
 				{
-				iTrackDownloadObserver->DataCompleteL(EErrorCancel, aTransaction.Response().StatusCode(), aTransaction.Response().StatusText().DesC());
+				iTrackDownloadObserver->DataCompleteL(ETransactionErrorCancel, aTransaction.Response().StatusCode(), aTransaction.Response().StatusText().DesC());
 				iTrackDownloadObserver = NULL;
 				}
 			break;
 		case THTTPEvent::ESucceeded:
 			// tell the radio player that the track has finished downloading
-			if (iTrackDownloadObserver && aTransaction.Response().StatusCode() != 302)
+			if (iTrackDownloadObserver)
 				{
-				iTrackDownloadObserver->DataCompleteL(EErrorNone, aTransaction.Response().StatusCode(), aTransaction.Response().StatusText().DesC());
+				iTrackDownloadObserver->DataCompleteL(ETransactionErrorNone, aTransaction.Response().StatusCode(), aTransaction.Response().StatusText().DesC());
 				iTrackDownloadObserver = NULL;
 				}
 			iTrackDownloadObserver = NULL;
@@ -2032,13 +2071,13 @@ void CMobblerLastFMConnection::MHFRunL(RHTTPTransaction aTransaction, const THTT
 		}
 	}
 
-TInt CMobblerLastFMConnection::MHFRunError(TInt /*aError*/, RHTTPTransaction /*aTransaction*/, const THTTPEvent& /*aEvent*/)
+TInt CMobblerLastFmConnection::MHFRunError(TInt /*aError*/, RHTTPTransaction /*aTransaction*/, const THTTPEvent& /*aEvent*/)
 	{
 	// send KErrNone back so that it doesn't panic
 	return KErrNone;
 	}
 
-void CMobblerLastFMConnection::CreateAuthTokenL(TDes8& aHash, TTimeIntervalSeconds aUnixTimeStamp)
+void CMobblerLastFmConnection::CreateAuthTokenL(TDes8& aHash, TTimeIntervalSeconds aUnixTimeStamp)
 	{
 	HBufC8* passwordHash(MobblerUtility::MD5LC(iPassword->String8()));
 	HBufC8* passwordHashAndTimeStamp(HBufC8::NewLC(passwordHash->Length() + 20));
@@ -2049,7 +2088,7 @@ void CMobblerLastFMConnection::CreateAuthTokenL(TDes8& aHash, TTimeIntervalSecon
 	CleanupStack::PopAndDestroy(3, passwordHash);
 	}
 
-void CMobblerLastFMConnection::ScrobbleHandshakeL()
+void CMobblerLastFmConnection::ScrobbleHandshakeL()
 	{
 	delete iSubmitUrl;
 	iSubmitUrl = NULL;
@@ -2086,10 +2125,9 @@ void CMobblerLastFMConnection::ScrobbleHandshakeL()
 	CleanupStack::PopAndDestroy(2, authToken);
 	}
 
-void CMobblerLastFMConnection::LoadTrackQueueL()
+void CMobblerLastFmConnection::LoadTrackQueueL()
 	{
-	const TInt KTrackQueueCount(iTrackQueue.Count());
-	for (TInt i(0); i < KTrackQueueCount; ++i)
+	for (TInt i(0); i < iTrackQueue.Count(); ++i)
 		{
 		iTrackQueue[i]->Release();
 		}
@@ -2117,8 +2155,7 @@ void CMobblerLastFMConnection::LoadTrackQueueL()
 		
 		CleanupStack::PopAndDestroy(&readStream);
 		
-		const TInt KTrackQueueCount(iTrackQueue.Count());
-		for (TInt i(KTrackQueueCount - 1); i >= 0 ; --i)
+		for (TInt i(iTrackQueue.Count() - 1); i >= 0; --i)
 			{
 			iObserver.HandleTrackQueuedL(*iTrackQueue[i]);
 			}
@@ -2127,7 +2164,7 @@ void CMobblerLastFMConnection::LoadTrackQueueL()
 	CleanupStack::PopAndDestroy(&file);
 	}
 
-void CMobblerLastFMConnection::SaveTrackQueueL()
+void CMobblerLastFmConnection::SaveTrackQueueL()
 	{
 	CCoeEnv::Static()->FsSession().MkDirAll(KTracksFile);
 	
@@ -2155,10 +2192,10 @@ void CMobblerLastFMConnection::SaveTrackQueueL()
 	CleanupStack::PopAndDestroy(&file);
 	}
 
-TBool CMobblerLastFMConnection::ExportQueueToLogFileL()
+TBool CMobblerLastFmConnection::ExportQueueToLogFileL()
 	{
 	// Format described here: http://www.audioscrobbler.net/wiki/Portable_Player_Logging
-	// Uploaders can be found here: http://www.rockbox.org/twiki/bin/view/Main/LastFMLog
+	// Uploaders can be found here: http://www.rockbox.org/twiki/bin/view/Main/LastFmLog
 	
 	const TInt KTracksCount(iTrackQueue.Count());
 	if (KTracksCount == 0)
@@ -2265,7 +2302,7 @@ TBool CMobblerLastFMConnection::ExportQueueToLogFileL()
 	return ETrue;
 	}
 
-void CMobblerLastFMConnection::StripOutTabs(TDes8& aString)
+void CMobblerLastFmConnection::StripOutTabs(TDes8& aString)
 	{
 	TInt position(aString.Find(KLogFileFieldSeperator));
 	 while (position != KErrNotFound)
@@ -2275,7 +2312,7 @@ void CMobblerLastFMConnection::StripOutTabs(TDes8& aString)
 		}
 	}
 
-void CMobblerLastFMConnection::ToggleScrobblingL()
+void CMobblerLastFmConnection::ToggleScrobblingL()
 	{
 	iScrobblingOn = !iScrobblingOn;
 	
@@ -2284,7 +2321,7 @@ void CMobblerLastFMConnection::ToggleScrobblingL()
 		DeleteCurrentTrackFile();
 	}
 
-void CMobblerLastFMConnection::LoadCurrentTrackL()
+void CMobblerLastFmConnection::LoadCurrentTrackL()
 	{
 	RFile file;
 	CleanupClosePushL(file);
@@ -2311,7 +2348,7 @@ void CMobblerLastFMConnection::LoadCurrentTrackL()
 	CleanupStack::PopAndDestroy(&file);
 	}
 
-void CMobblerLastFMConnection::SaveCurrentTrackL()
+void CMobblerLastFmConnection::SaveCurrentTrackL()
 	{
 	if (!iCurrentTrackSaved &&
 		iScrobblingOn && 
@@ -2349,7 +2386,7 @@ void CMobblerLastFMConnection::SaveCurrentTrackL()
 		}
 	}
 
-void CMobblerLastFMConnection::DeleteCurrentTrackFile()
+void CMobblerLastFmConnection::DeleteCurrentTrackFile()
 	{
 	CCoeEnv::Static()->FsSession().Delete(KCurrentTrackFile);
 	iCurrentTrackSaved = EFalse;

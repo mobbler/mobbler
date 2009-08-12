@@ -44,13 +44,13 @@ void CMobblerTagList::ConstructL()
 	switch (iType)
 		{
 		case EMobblerCommandUserTopTags:
-			iAppUi.LastFMConnection().WebServicesCallL(_L8("user"), _L8("gettoptags"), iText1->String8(), *this);
+			iAppUi.LastFmConnection().WebServicesCallL(_L8("user"), _L8("gettoptags"), iText1->String8(), *this);
 			break;
 		case EMobblerCommandArtistTopTags:
-			iAppUi.LastFMConnection().WebServicesCallL(_L8("artist"), _L8("gettoptags"), iText1->String8(), *this);
+			iAppUi.LastFmConnection().WebServicesCallL(_L8("artist"), _L8("gettoptags"), iText1->String8(), *this);
 			break;
 		case EMobblerCommandSearchTag:
-			iAppUi.LastFMConnection().WebServicesCallL(_L8("tag"), _L8("search"), iText1->String8(), *this);
+			iAppUi.LastFmConnection().WebServicesCallL(_L8("tag"), _L8("search"), iText1->String8(), *this);
 			break;
 		default:
 			break;

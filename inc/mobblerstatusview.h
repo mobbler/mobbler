@@ -44,6 +44,7 @@ public:
 	void HandleCommandL(TInt aCommand);
 	
 	void DrawDeferred() const;
+	void DrawNow() const;
 	
 	CMobblerStatusControl* StatusControl();
 	

@@ -29,7 +29,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "mobblerdataobserver.h"
 #include "mobblerresourcereader.h"
 
-CMobblerFlatDataObserverHelper* CMobblerFlatDataObserverHelper::NewL(CMobblerLastFMConnection& aConnection, MMobblerFlatDataObserverHelper& aObserver, TBool aShowWaitDialog)
+CMobblerFlatDataObserverHelper* CMobblerFlatDataObserverHelper::NewL(CMobblerLastFmConnection& aConnection, MMobblerFlatDataObserverHelper& aObserver, TBool aShowWaitDialog)
 	{
 	CMobblerFlatDataObserverHelper* self = new(ELeave) CMobblerFlatDataObserverHelper(aConnection, aObserver);
 	CleanupStack::PushL(self);
@@ -38,7 +38,7 @@ CMobblerFlatDataObserverHelper* CMobblerFlatDataObserverHelper::NewL(CMobblerLas
 	return self;
 	}
 
-CMobblerFlatDataObserverHelper::CMobblerFlatDataObserverHelper(CMobblerLastFMConnection& aConnection, MMobblerFlatDataObserverHelper& aObserver)
+CMobblerFlatDataObserverHelper::CMobblerFlatDataObserverHelper(CMobblerLastFmConnection& aConnection, MMobblerFlatDataObserverHelper& aObserver)
 	:iConnection(aConnection), iObserver(aObserver)
 	{
 	}
@@ -72,7 +72,7 @@ void CMobblerFlatDataObserverHelper::DialogDismissedL(TInt aButtonId)
 		}
 	}
 
-void CMobblerFlatDataObserverHelper::DataL(const TDesC8& aData, CMobblerLastFMConnection::TError aError)
+void CMobblerFlatDataObserverHelper::DataL(const TDesC8& aData, CMobblerLastFmConnection::TTransactionError aTransactionError)
 	{
 	if (iWaitDialog)
 		{
@@ -80,7 +80,7 @@ void CMobblerFlatDataObserverHelper::DataL(const TDesC8& aData, CMobblerLastFMCo
 		iWaitDialog = NULL;
 		}
 	
-	iObserver.DataL(this, aData, aError);
+	iObserver.DataL(this, aData, aTransactionError);
 	}
 
 // End of file

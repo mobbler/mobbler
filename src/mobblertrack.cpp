@@ -128,7 +128,7 @@ CMobblerTrack::~CMobblerTrack()
 	delete iPath;
 	delete iImage;
 
-	static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->LastFMConnection().CancelTransaction(this);
+	static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->LastFmConnection().CancelTransaction(this);
 	}
 
 void CMobblerTrack::Open()
@@ -355,10 +355,13 @@ void CMobblerTrack::SetPathL(const TDesC& aPath)
 	TBool found(EFalse);
 
 	iPath = parse.DriveAndPath().AllocL();
+	
+	HBufC8* albumArtFromId3(NULL);
 
+#ifndef __WINS__
 	// First try reading album art from the ID3 tag
 	LOG(_L8("Searching for ID3"));
-	HBufC8* albumArtFromId3(NULL);
+	
 	CMetaDataUtility* metaDataUtility(CMetaDataUtility::NewL());
 	CleanupStack::PushL(metaDataUtility);
 
@@ -382,6 +385,7 @@ void CMobblerTrack::SetPathL(const TDesC& aPath)
 		}
 
 	CleanupStack::PopAndDestroy(2, metaDataUtility);
+#endif
 
 	// First check for %album%.jpg/gif/png
 	if (iAlbum->String().Length() > 0 && !found)
@@ -545,7 +549,7 @@ TBool CMobblerTrack::TrackPlaying() const
 	return iTrackPlaying;
 	}
 
-void CMobblerTrack::DataL(const TDesC8& aData, CMobblerLastFMConnection::TError aError)
+void CMobblerTrack::DataL(const TDesC8& aData, CMobblerLastFmConnection::TTransactionError aTransactionError)
 	{
 	switch (iState)
 		{
@@ -555,7 +559,7 @@ void CMobblerTrack::DataL(const TDesC8& aData, CMobblerLastFMConnection::TError 
 			DUMPDATA(aData, _L("albumgetinfo.xml"));
 
 			TBool found(EFalse);
-			if (aError == CMobblerLastFMConnection::EErrorNone)
+			if (aTransactionError == CMobblerLastFmConnection::ETransactionErrorNone)
 				{
 				LOG(_L8("6 FetchImageL(album)"));
 				found = FetchImageL(aData);
@@ -584,7 +588,7 @@ void CMobblerTrack::DataL(const TDesC8& aData, CMobblerLastFMConnection::TError 
 		case EFetchingAlbumArt:
 			{
 			LOG(_L8("9 DataL album art fetched"));
-			if (aError == CMobblerLastFMConnection::EErrorNone)
+			if (aTransactionError == CMobblerLastFmConnection::ETransactionErrorNone)
 				{
 				SaveAlbumArtL(aData);
 				}
@@ -613,7 +617,7 @@ void CMobblerTrack::DataL(const TDesC8& aData, CMobblerLastFMConnection::TError 
 				LOG(_L8("12 FetchAlbumInfoL()"));
 				FetchAlbumInfoL();
 				}
-			else if (aError == CMobblerLastFMConnection::EErrorNone)
+			else if (aTransactionError == CMobblerLastFmConnection::ETransactionErrorNone)
 				{
 				FetchImageL(aData);
 				}
@@ -627,7 +631,7 @@ void CMobblerTrack::DataL(const TDesC8& aData, CMobblerLastFMConnection::TError 
 				{
 				iState = ENone;
 				}
-			else if (aError == CMobblerLastFMConnection::EErrorNone)
+			else if (aTransactionError == CMobblerLastFmConnection::ETransactionErrorNone)
 				{
 				SaveAlbumArtL(aData);
 
@@ -662,14 +666,14 @@ TBool CMobblerTrack::OkToDownloadAlbumArt() const
 								|| (downloadAlbumArt == CMobblerAppUi::EAlwaysWhenOnline));
 
 	return (okToDownloadAlbumArt &&
-		static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->LastFMConnection().Mode() == CMobblerLastFMConnection::EOnline);
+		static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->LastFmConnection().Mode() == CMobblerLastFmConnection::EOnline);
 	}
 
 void CMobblerTrack::FetchAlbumInfoL()
 	{
 	if (OkToDownloadAlbumArt())
 		{
-		static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->LastFMConnection().AlbumGetInfoL(iAlbum->String(), iArtist->String(), *this);
+		static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->LastFmConnection().AlbumGetInfoL(iAlbum->String(), iArtist->String(), *this);
 		iState = EFetchingAlbumInfo;
 		}
 	}
@@ -678,7 +682,7 @@ void CMobblerTrack::FetchArtistInfoL()
 	{
 	if (OkToDownloadAlbumArt())
 		{
-		static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->LastFMConnection().ArtistGetImageL(iArtist->String(), *this);
+		static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->LastFmConnection().ArtistGetImageL(iArtist->String(), *this);
 		iState = EFetchingArtistInfo;
 		}
 	}
@@ -687,7 +691,7 @@ void CMobblerTrack::FetchImageL(TState aState, const TDesC8& aImageLocation)
 	{
 	if (OkToDownloadAlbumArt())
 		{
-		static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->LastFMConnection().RequestImageL(this, aImageLocation);
+		static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->LastFmConnection().RequestImageL(this, aImageLocation);
 		iState = aState;
 		}
 	}

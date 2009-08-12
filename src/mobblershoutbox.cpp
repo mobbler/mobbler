@@ -53,13 +53,13 @@ void CMobblerShoutbox::ConstructL()
 	switch (iType)
 		{
 		case EMobblerCommandUserShoutbox:
-			iAppUi.LastFMConnection().WebServicesCallL(_L8("user"), _L8("getshouts"), iText1->String8(), *this);
+			iAppUi.LastFmConnection().WebServicesCallL(_L8("user"), _L8("getshouts"), iText1->String8(), *this);
 			break;
 		case EMobblerCommandEventShoutbox:
-			iAppUi.LastFMConnection().WebServicesCallL(_L8("event"), _L8("getshouts"), iText2->String8(), *this);
+			iAppUi.LastFmConnection().WebServicesCallL(_L8("event"), _L8("getshouts"), iText2->String8(), *this);
 			break;
 		case EMobblerCommandArtistShoutbox:
-			iAppUi.LastFMConnection().WebServicesCallL(_L8("artist"), _L8("getshouts"), iText1->String8(), *this);
+			iAppUi.LastFmConnection().WebServicesCallL(_L8("artist"), _L8("getshouts"), iText1->String8(), *this);
 			break;
 		default:
 			break;
@@ -156,23 +156,23 @@ CMobblerListControl* CMobblerShoutbox::HandleListCommandL(TInt aCommand)
 					case EMobblerCommandUserShoutbox:
 						if (aCommand == EMobblerCommandShoutUser)
 							{
-							iAppUi.LastFMConnection().ShoutL(_L8("user"), iList[iListBox->CurrentItemIndex()]->Title()->String8(), shout->String8());
+							iAppUi.LastFmConnection().ShoutL(_L8("user"), iList[iListBox->CurrentItemIndex()]->Title()->String8(), shout->String8());
 							}
 						else if (iText1->String().Length() == 0)
 							{
 							CMobblerString* name(CMobblerString::NewL(iAppUi.SettingView().Username()));
-							iAppUi.LastFMConnection().ShoutL(_L8("user"), name->String8(), shout->String8());
+							iAppUi.LastFmConnection().ShoutL(_L8("user"), name->String8(), shout->String8());
 							}
 						else
 							{
-							iAppUi.LastFMConnection().ShoutL(_L8("user"), iText1->String8(), shout->String8());
+							iAppUi.LastFmConnection().ShoutL(_L8("user"), iText1->String8(), shout->String8());
 							}
 						break;
 					case EMobblerCommandEventShoutbox:
-						iAppUi.LastFMConnection().ShoutL(_L8("event"), iText2->String8(), shout->String8());
+						iAppUi.LastFmConnection().ShoutL(_L8("event"), iText2->String8(), shout->String8());
 						break;
 					case EMobblerCommandArtistShoutbox:
-						iAppUi.LastFMConnection().ShoutL(_L8("artist"), iList[iListBox->CurrentItemIndex()]->Title()->String8(), shout->String8());
+						iAppUi.LastFmConnection().ShoutL(_L8("artist"), iList[iListBox->CurrentItemIndex()]->Title()->String8(), shout->String8());
 						break;
 					default:
 						break;

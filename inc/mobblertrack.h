@@ -130,7 +130,7 @@ private:
 	void BitmapResizedL(const CMobblerBitmap* aMobblerBitmap);
 	
 private:
-	void DataL(const TDesC8& aData, CMobblerLastFMConnection::TError aError);
+	void DataL(const TDesC8& aData, CMobblerLastFmConnection::TTransactionError aTransactionError);
 	
 private:
 	// track details

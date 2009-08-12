@@ -22,6 +22,12 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
 #include "mobblerutility.h"
+#include "mobblerstring.h"
+#include "mobblerappui.h"
+
+#ifndef __WINS__
+#include <browserlauncher.h>
+#endif
 
 #include <bautils.h>
 #include <coemain.h>
@@ -52,6 +58,8 @@ _LIT(KRussianUrl,		"http://m.lastfm.ru/");
 _LIT(KSpanishUrl,		"http://m.lastfm.es/");
 _LIT(KSwedishUrl,		"http://m.lastfm.se/");
 _LIT(KTurkishUrl,		"http://m.lastfm.com.tr/");
+
+_LIT8(KAmazonSearchLink, "http://www.%S/gp/search?ie=UTF8&keywords=%S%%20%S&tag=mobbler-21&index=music&linkCode=ur2&camp=1634&creative=6738");
 
 HBufC8* MobblerUtility::MD5LC(const TDesC8& aSource)
 	{
@@ -96,6 +104,78 @@ HBufC8* MobblerUtility::URLEncodeLC(const TDesC& aString)
 		}
 	
 	return urlEncoded;
+	}
+
+void MobblerUtility::OpenAmazonL(const TDesC8& aArtist, const TDesC8& aAlbum)
+	{
+#ifndef __WINS__
+	HBufC8* localAmazonDomain(NULL);
+	
+	RArray<TLanguage> downgradePath;
+	CleanupClosePushL(downgradePath);
+	BaflUtils::GetDowngradePathL(CCoeEnv::Static()->FsSession(), User::Language(), downgradePath);
+	
+	TBool languageFound(EFalse);
+	
+	const TInt KLanguageCount(downgradePath.Count());
+	for (TInt i(0); i < KLanguageCount && !languageFound; ++i)
+		{
+		languageFound = ETrue;
+		
+		switch (downgradePath[i])
+			{
+			case ELangEnglish:
+				localAmazonDomain = _L8("amazon.co.uk").AllocL();
+				break;
+			case ELangFrench:
+				localAmazonDomain = _L8("amazon.fr").AllocL();
+				break;
+			case ELangGerman: 
+				localAmazonDomain = _L8("amazon.de").AllocL();
+				break;
+			case ELangCanadianEnglish:
+				localAmazonDomain = _L8("amazon.ca").AllocL();
+				break;
+			case ELangPrcChinese: 
+				localAmazonDomain = _L8("joyo.com").AllocL();
+				break;
+			case ELangJapanese: 
+				localAmazonDomain = _L8("amazon.co.jp").AllocL();
+				break;
+			default:
+				// carry on iterating through the downgrade path
+				languageFound = EFalse;
+				break;
+			};
+		}
+	
+	CleanupStack::PopAndDestroy(&downgradePath);
+	
+	if (!localAmazonDomain)
+		{
+		// default to .com
+		localAmazonDomain = _L8(".com").AllocL();
+		}
+	
+	CleanupStack::PushL(localAmazonDomain);	
+	
+	HBufC8* urlArtist = MobblerUtility::URLEncodeLC(aArtist);
+	HBufC8* urlAlbum = MobblerUtility::URLEncodeLC(aAlbum);
+	HBufC8* url = HBufC8::NewLC(KAmazonSearchLink().Length() + urlArtist->Length() + urlAlbum->Length() + localAmazonDomain->Length());
+	url->Des().Format(KAmazonSearchLink, &localAmazonDomain->Des(), &urlArtist->Des(), &urlAlbum->Des());
+	CMobblerString* urlString = CMobblerString::NewL(*url);
+	CleanupStack::PushL(urlString);
+	
+	
+	CBrowserLauncher* browserLauncher(static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->BrowserLauncher());
+	
+	if (browserLauncher)
+		{
+		browserLauncher->LaunchBrowserEmbeddedL(urlString->String());
+		}
+	
+	CleanupStack::PopAndDestroy(4);
+#endif
 	}
 
 TBuf8<2> MobblerUtility::LanguageL()

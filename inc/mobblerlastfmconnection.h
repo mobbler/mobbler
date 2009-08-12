@@ -39,7 +39,7 @@ class CMobblerString;
 class CMobblerTrack;
 class CMobblerTransaction;
 class MMobblerFlatDataObserver;
-class MMobblerLastFMConnectionObserver;
+class MMobblerLastFmConnectionObserver;
 class MMobblerSegDataObserver;
 
 class MMobblerConnectionStateObserver
@@ -48,25 +48,24 @@ public:
 	virtual void HandleConnectionStateChangedL() = 0;
 	};
 
-class CMobblerLastFMConnection : public CActive, public MHTTPTransactionCallback, public MMobblerDestinationsInterfaceObserver
+class CMobblerLastFmConnection : public CActive, public MHTTPTransactionCallback, public MMobblerDestinationsInterfaceObserver
 	{
 public:
 	friend class CMobblerTransaction;
 public:
-	enum TLastFMMemberType
+	enum TLastFmMemberType
 		{
 		EMemberTypeUnknown,
 		EMember,
 		ESubscriber
 		};
 	
-	enum TError
+	enum TTransactionError
 		{
-		EErrorNone,
-		EErrorCancel,
-		EErrorStop,
-		EErrorHandshake,
-		EErrorFailed
+		ETransactionErrorNone,
+		ETransactionErrorHandshake,
+		ETransactionErrorFailed,
+		ETransactionErrorCancel
 		};
 	
 	enum TRadioStation
@@ -94,13 +93,20 @@ public:
 		EHandshaking
 		};
 	
+	enum TEventStatus
+		{
+		EAttending,
+		EMaybe,
+		ENotAttending
+		};
+	
 public:
-	static CMobblerLastFMConnection* NewL(MMobblerLastFMConnectionObserver& aObserver, 
+	static CMobblerLastFmConnection* NewL(MMobblerLastFmConnectionObserver& aObserver, 
 											const TDesC& aUsername, 
 											const TDesC& aPassword,
 											TUint32 aIapId, 
 											TInt aBitRate);
-	~CMobblerLastFMConnection();
+	~CMobblerLastFmConnection();
 	
 	void SetDetailsL(const TDesC& aUsername, const TDesC& aPassword);
 	void SetModeL(TMode aMode);
@@ -112,7 +118,7 @@ public:
 	
 	void SetBitRateL(TInt aBitRate);
 	
-	TLastFMMemberType MemberType() const;
+	TLastFmMemberType MemberType() const;
 	
 	// state observers
 	void AddStateChangeObserverL(MMobblerConnectionStateObserver* aObserver);
@@ -143,9 +149,11 @@ public:
 	void TrackLoveL(const TDesC8& aArtist, const TDesC8& aTrack);
 	void TrackBanL(const TDesC8& aArtist, const TDesC8& aTrack);
 	
-	void TrackShareL(const TDesC8& aUser, const TDesC8& aArtist, const TDesC8& aTrack, const TDesC8& aMessage, MMobblerFlatDataObserver& aObserver);
-	void ArtistShareL(const TDesC8& aUser, const TDesC8& aArtist, const TDesC8& aMessage, MMobblerFlatDataObserver& aObserver);
-	void EventShareL(const TDesC8& aUser, const TDesC8& aEventId, const TDesC8& aMessage, MMobblerFlatDataObserver& aObserver);
+	void TrackShareL(const TDesC8& aRecipient, const TDesC8& aArtist, const TDesC8& aTrack, const TDesC8& aMessage, MMobblerFlatDataObserver& aObserver);
+	void ArtistShareL(const TDesC8& aRecipient, const TDesC8& aArtist, const TDesC8& aMessage, MMobblerFlatDataObserver& aObserver);
+	void EventShareL(const TDesC8& aRecipient, const TDesC8& aEventId, const TDesC8& aMessage, MMobblerFlatDataObserver& aObserver);
+	
+	void EventAttendL(const TDesC8& aEventId, TEventStatus aEventStatus, MMobblerFlatDataObserver& aObserver);
 	
 	void RecommendedArtistsL(MMobblerFlatDataObserver& aObserver);
 	void RecommendedEventsL(MMobblerFlatDataObserver& aObserver);
@@ -207,11 +215,11 @@ private:
 	void BetaHandshakeL();
 #endif
 	
-	void HandleHandshakeErrorL(CMobblerLastFMError* aError);
+	void HandleHandshakeErrorL(CMobblerLastFmError* aError);
 	
 private:
 	void ConstructL(const TDesC& aUsername, const TDesC& aPassword);
-	CMobblerLastFMConnection(MMobblerLastFMConnectionObserver& aObserver, TUint32 aIapId, TInt aBitRate);
+	CMobblerLastFmConnection(MMobblerLastFmConnectionObserver& aObserver, TUint32 aIapId, TInt aBitRate);
 	
 private:  // utilities
 	void CreateAuthTokenL(TDes8& aHash, TTimeIntervalSeconds aUnixTimeStamp);
@@ -277,7 +285,7 @@ private:
 	HBufC8* iNowPlayingUrl;
 	HBufC8* iSubmitUrl;
 	
-	MMobblerLastFMConnectionObserver& iObserver;
+	MMobblerLastFmConnectionObserver& iObserver;
 	
 	CMobblerTrack* iCurrentTrack;
 	
@@ -294,7 +302,7 @@ private:
 	
 	TInt iBitRate;
 	
-	TLastFMMemberType iMemberType;
+	TLastFmMemberType iMemberType;
 	
 	TBool i64KbpsWarningShown;
 	};

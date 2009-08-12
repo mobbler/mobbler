@@ -30,17 +30,17 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "mobblerdataobserver.h"
 
 class CHTTPFormEncoder;
-class CMobblerLastFMConnection;
+class CMobblerLastFmConnection;
 class CMobblerWebServicesQuery;
 
 class CMobblerTransaction : public CBase, public MHTTPTransactionCallback
 	{
 public:
-	static CMobblerTransaction* NewL(CMobblerLastFMConnection& aConnection, CUri8* aURI);
-	static CMobblerTransaction* NewL(CMobblerLastFMConnection& aConnection, TBool aRequiresAuthentication, CUri8* aURI, CHTTPFormEncoder* aForm);
-	static CMobblerTransaction* NewL(CMobblerLastFMConnection& aConnection, TBool aRequiresAuthentication, CUri8* aURI, CMobblerWebServicesQuery* aQuery);
+	static CMobblerTransaction* NewL(CMobblerLastFmConnection& aConnection, CUri8* aURI);
+	static CMobblerTransaction* NewL(CMobblerLastFmConnection& aConnection, TBool aRequiresAuthentication, CUri8* aURI, CHTTPFormEncoder* aForm);
+	static CMobblerTransaction* NewL(CMobblerLastFmConnection& aConnection, TBool aRequiresAuthentication, CUri8* aURI, CMobblerWebServicesQuery* aQuery);
 	
-	static CMobblerTransaction* NewL(CMobblerLastFMConnection& aConnection, TBool aRequiresAuthentication);
+	static CMobblerTransaction* NewL(CMobblerLastFmConnection& aConnection, TBool aRequiresAuthentication);
 	
 	~CMobblerTransaction();
 	
@@ -59,13 +59,13 @@ private: // from MHTTPTransactionCallback
 	TInt MHFRunError(TInt aError, RHTTPTransaction aTransaction, const THTTPEvent &aEvent);
 	
 private:
-	CMobblerTransaction(CMobblerLastFMConnection& aConnection, TBool aRequiresAuthentication);
+	CMobblerTransaction(CMobblerLastFmConnection& aConnection, TBool aRequiresAuthentication);
 	void ConstructL(CUri8* aURI);
 	void ConstructL(CUri8* aURI, CHTTPFormEncoder* aForm);
 	void ConstructL(CUri8* aURI, CMobblerWebServicesQuery* aQuery);
 	
 private:
-	CMobblerLastFMConnection& iConnection;
+	CMobblerLastFmConnection& iConnection;
 	MMobblerFlatDataObserver* iFlatDataObserver;
 	
 	CMobblerWebServicesQuery* iQuery;

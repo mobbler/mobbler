@@ -80,14 +80,14 @@ void CMobblerWebServicesControl::ConstructL(const TRect& aRect, TUid aCustomMess
 	iNaviLabelDecorator = iNaviContainer->CreateNavigationLabelL();
 	iNaviContainer->PushL(*iNaviLabelDecorator);
 	
-	iAppUi.LastFMConnection().AddStateChangeObserverL(this);
+	iAppUi.LastFmConnection().AddStateChangeObserverL(this);
 	
 	ChangePaneTextL();
 	}
 
 CMobblerWebServicesControl::~CMobblerWebServicesControl()
 	{
-	iAppUi.LastFMConnection().RemoveStateChangeObserver(this);
+	iAppUi.LastFmConnection().RemoveStateChangeObserver(this);
 	
 	// remove the top control from the stack
 	iAppUi.RemoveFromStack(iControls[iControls.Count() - 1]);
@@ -144,15 +144,15 @@ void CMobblerWebServicesControl::ChangePaneTextL()
 	switch (state)
 		{
 		case CMobblerListControl::ELoading:
-			switch (iAppUi.LastFMConnection().State())
+			switch (iAppUi.LastFmConnection().State())
 				{
-				case CMobblerLastFMConnection::EConnecting:
+				case CMobblerLastFmConnection::EConnecting:
 					text.Append(iAppUi.ResourceReader().ResourceL(R_MOBBLER_STATE_CONNECTING));
 					break;
-				case CMobblerLastFMConnection::EHandshaking:
+				case CMobblerLastFmConnection::EHandshaking:
 					text.Append(iAppUi.ResourceReader().ResourceL(R_MOBBLER_STATE_HANDSHAKING));
 					break;
-				case CMobblerLastFMConnection::ENone:
+				case CMobblerLastFmConnection::ENone:
 					text.Append(iAppUi.ResourceReader().ResourceL(R_MOBBLER_LOADING));
 					break;
 				}

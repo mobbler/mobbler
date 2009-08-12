@@ -60,7 +60,20 @@ Protected - Unprotected - Purpose
 0x20026623 - 0xA000BEB8 - unused
 0x20026624 - 0xA000BEB9 - unused
 0x20026625 - 0xA000BEBA - unused
-0x20026626
+0x20026626 - 0x???????? - unused
+0x20027114 - 0xA000D9F4 - mpx music app observer dll
+0x20027115 - 0xA000D9F5 - mpx music app observer implementation
+0x20027116 - 0xA000D9F6 - unused
+0x20027117 - 0xA000D9F7 - unused
+0x20027118 - 0xA000D9F8 - unused
+0x20027119 - 0xA000D9F9 - unused
+0x2002711A - 0xA000D9FA - unused
+0x2002711B - 0xA000D9FB - unused
+0x2002711C - 0xA000D9FC - unused
+0x2002711D - 0xA000D9FD - unused
+
+
+
 */
 
 #ifdef SYMBIAN_SIGNED
@@ -179,7 +192,9 @@ LIBRARY		http.lib
 LIBRARY		imageconversion.lib
 LIBRARY		inetprotutil.lib
 LIBRARY		mediaclientaudiostream.lib
+#ifndef WINS
 LIBRARY 	MetaDataUtility.lib 
+#endif
 LIBRARY		RemConCoreApi.lib
 LIBRARY		RemConInterfaceBase.lib
 LIBRARY		senxml.lib

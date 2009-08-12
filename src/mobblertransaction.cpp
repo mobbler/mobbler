@@ -32,7 +32,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 // The granurarity of the buffer that responses from last.fm are read into
 const TInt KBufferGranularity(256);
 
-CMobblerTransaction* CMobblerTransaction::NewL(CMobblerLastFMConnection& aConnection, CUri8* aURI)
+CMobblerTransaction* CMobblerTransaction::NewL(CMobblerLastFmConnection& aConnection, CUri8* aURI)
 	{
 	CMobblerTransaction* self = new(ELeave) CMobblerTransaction(aConnection, EFalse);
 	CleanupStack::PushL(self);
@@ -41,7 +41,7 @@ CMobblerTransaction* CMobblerTransaction::NewL(CMobblerLastFMConnection& aConnec
 	return self;
 	}
 
-CMobblerTransaction* CMobblerTransaction::NewL(CMobblerLastFMConnection& aConnection, TBool aRequiresAuthentication, CUri8* aURI, CHTTPFormEncoder* aForm)
+CMobblerTransaction* CMobblerTransaction::NewL(CMobblerLastFmConnection& aConnection, TBool aRequiresAuthentication, CUri8* aURI, CHTTPFormEncoder* aForm)
 	{
 	CMobblerTransaction* self = new(ELeave) CMobblerTransaction(aConnection, aRequiresAuthentication);
 	CleanupStack::PushL(self);
@@ -50,7 +50,7 @@ CMobblerTransaction* CMobblerTransaction::NewL(CMobblerLastFMConnection& aConnec
 	return self;
 	}
 
-CMobblerTransaction* CMobblerTransaction::NewL(CMobblerLastFMConnection& aConnection, TBool aRequiresAuthentication, CUri8* aURI, CMobblerWebServicesQuery* aQuery)
+CMobblerTransaction* CMobblerTransaction::NewL(CMobblerLastFmConnection& aConnection, TBool aRequiresAuthentication, CUri8* aURI, CMobblerWebServicesQuery* aQuery)
 	{
 	CMobblerTransaction* self = new(ELeave) CMobblerTransaction(aConnection, aRequiresAuthentication);
 	CleanupStack::PushL(self);
@@ -59,7 +59,7 @@ CMobblerTransaction* CMobblerTransaction::NewL(CMobblerLastFMConnection& aConnec
 	return self;
 	}
 
-CMobblerTransaction* CMobblerTransaction::NewL(CMobblerLastFMConnection& aConnection, TBool aRequiresAuthentication)
+CMobblerTransaction* CMobblerTransaction::NewL(CMobblerLastFmConnection& aConnection, TBool aRequiresAuthentication)
 	{
 	CMobblerTransaction* self = new(ELeave) CMobblerTransaction(aConnection, aRequiresAuthentication);
 	//CleanupStack::PushL(self);
@@ -68,7 +68,7 @@ CMobblerTransaction* CMobblerTransaction::NewL(CMobblerLastFMConnection& aConnec
 	return self;
 	}
 
-CMobblerTransaction::CMobblerTransaction(CMobblerLastFMConnection& aConnection, TBool aRequiresAuthentication)
+CMobblerTransaction::CMobblerTransaction(CMobblerLastFmConnection& aConnection, TBool aRequiresAuthentication)
 	:iConnection(aConnection), iRequiresAuthentication(aRequiresAuthentication)
 	{
 	}

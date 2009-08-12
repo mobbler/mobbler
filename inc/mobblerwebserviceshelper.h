@@ -29,10 +29,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "mobblerdataobserver.h"
 
 class CMobblerAppUi;
-class CMobblerLastFMConnection;
+class CMobblerLastFmConnection;
 class CMobblerTrack;
 
-class CMobblerWebServicesHelper : public CBase,	public MMobblerFlatDataObserverHelper
+class CMobblerWebServicesHelper : public CBase,	public MMobblerFlatDataObserverHelper, public MMobblerBitmapObserver
 	{
 public:
 	static CMobblerWebServicesHelper* NewL(CMobblerAppUi& aAppUi);
@@ -45,11 +45,18 @@ public:
 	void EventShareL(const TDesC8& aEventId);
 	
 private:
+	void BitmapLoadedL(const CMobblerBitmap* aMobblerBitmap);
+	void BitmapResizedL(const CMobblerBitmap* aMobblerBitmap);
+	
+private:
 	void ConstructL();
 	CMobblerWebServicesHelper(CMobblerAppUi& aAppUi);
+	
+	HBufC* DisplayContactListL();
+	HBufC* DisplayEmailListL(const CDesCArray& aEmails);
 
 private:
-	void DataL(CMobblerFlatDataObserverHelper* aObserver, const TDesC8& aData, CMobblerLastFMConnection::TError aError);
+	void DataL(CMobblerFlatDataObserverHelper* aObserver, const TDesC8& aData, CMobblerLastFmConnection::TTransactionError aTransactionError);
 	
 private:
 	CMobblerAppUi& iAppUi;

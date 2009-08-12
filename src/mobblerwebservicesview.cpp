@@ -86,7 +86,9 @@ void CMobblerWebServicesView::DynInitMenuPaneL(TInt aResourceId, CEikMenuPane* a
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_OPEN,					EMobblerCommandOpen);
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_RADIO,				EMobblerCommandRadioStart);
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_RADIO_START,			EMobblerCommandRadio);
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_BUY,					EMobblerCommandBuy);
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_SHARE,				EMobblerCommandShare);
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_ATTENDANCE,			EMobblerCommandAttendance);
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_VIEW,					EMobblerCommandView);
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_SHOUT,				EMobblerCommandShout);
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_EXIT,					EAknSoftkeyExit);
@@ -99,6 +101,12 @@ void CMobblerWebServicesView::DynInitMenuPaneL(TInt aResourceId, CEikMenuPane* a
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_RADIO_PERSONAL,		EMobblerCommandRadioPersonal);
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_RADIO_NEIGHBOURHOOD,	EMobblerCommandRadioNeighbourhood);
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_RADIO_LOVED,			EMobblerCommandRadioLoved);
+		}
+	else if (aResourceId == R_MOBBLER_ATTENDANCE_SUBMENU_PANE)
+		{
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_ATTENDANCE_YES,		EMobblerCommandAttendanceYes);
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_ATTENDANCE_MAYBE,		EMobblerCommandAttendanceMaybe);
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_ATTENDANCE_NO,		EMobblerCommandAttendanceNo);
 		}
 	else if (aResourceId == R_MOBBLER_SHARE_SUBMENU_PANE)
 		{

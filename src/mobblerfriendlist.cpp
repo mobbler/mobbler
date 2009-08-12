@@ -48,7 +48,7 @@ void CMobblerFriendList::ConstructL()
 	{
 	iDefaultImage = iAppUi.BitmapCollection().BitmapL(*this, CMobblerBitmapCollection::EBitmapDefaultUserImage);
 	
-	iAppUi.LastFMConnection().WebServicesCallL(_L8("user"), _L8("getfriends"), iText1->String8(), *this);
+	iAppUi.LastFmConnection().WebServicesCallL(_L8("user"), _L8("getfriends"), iText1->String8(), *this);
 	}
 
 CMobblerFriendList::~CMobblerFriendList()
@@ -85,14 +85,14 @@ CMobblerListControl* CMobblerFriendList::HandleListCommandL(TInt aCommand)
 					if (aCommand == EMobblerCommandTrackShare)
 						{
 						delete iShareObserver;
-						iShareObserver = CMobblerFlatDataObserverHelper::NewL(iAppUi.LastFMConnection(), *this, ETrue);
-						iAppUi.LastFMConnection().TrackShareL(iList[iListBox->CurrentItemIndex()]->Title()->String8(), iAppUi.CurrentTrack()->Artist().String8(), iAppUi.CurrentTrack()->Title().String8(), messageString->String8(), *iShareObserver);
+						iShareObserver = CMobblerFlatDataObserverHelper::NewL(iAppUi.LastFmConnection(), *this, ETrue);
+						iAppUi.LastFmConnection().TrackShareL(iList[iListBox->CurrentItemIndex()]->Title()->String8(), iAppUi.CurrentTrack()->Artist().String8(), iAppUi.CurrentTrack()->Title().String8(), messageString->String8(), *iShareObserver);
 						}
 					else
 						{
 						delete iShareObserver;
-						iShareObserver = CMobblerFlatDataObserverHelper::NewL(iAppUi.LastFMConnection(), *this, ETrue);
-						iAppUi.LastFMConnection().ArtistShareL(iList[iListBox->CurrentItemIndex()]->Title()->String8(), iAppUi.CurrentTrack()->Artist().String8(), messageString->String8(), *iShareObserver);
+						iShareObserver = CMobblerFlatDataObserverHelper::NewL(iAppUi.LastFmConnection(), *this, ETrue);
+						iAppUi.LastFmConnection().ArtistShareL(iList[iListBox->CurrentItemIndex()]->Title()->String8(), iAppUi.CurrentTrack()->Artist().String8(), messageString->String8(), *iShareObserver);
 						}
 					}
 				
@@ -143,7 +143,7 @@ void CMobblerFriendList::SupportedCommandsL(RArray<TInt>& aCommands)
 	aCommands.AppendL(EMobblerCommandRadioLoved);
 	}
 
-void CMobblerFriendList::DataL(CMobblerFlatDataObserverHelper* /*aObserver*/, const TDesC8& /*aData*/, CMobblerLastFMConnection::TError /*aError*/)
+void CMobblerFriendList::DataL(CMobblerFlatDataObserverHelper* /*aObserver*/, const TDesC8& /*aData*/, CMobblerLastFmConnection::TTransactionError /*aError*/)
 	{
 	
 	}

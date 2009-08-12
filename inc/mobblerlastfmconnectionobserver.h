@@ -29,11 +29,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 class CMobblerTrack;
 
-class MMobblerLastFMConnectionObserver
+class MMobblerLastFmConnectionObserver
 	{
 public:
 	virtual void HandleConnectCompleteL(TInt aError) = 0;
-	virtual void HandleLastFMErrorL(CMobblerLastFMError& aError) = 0;
+	virtual void HandleLastFmErrorL(CMobblerLastFmError& aError) = 0;
 	virtual void HandleCommsErrorL(TInt aStatusCode, const TDesC8& aStatus) = 0;
 	
 	virtual void HandleTrackNowPlayingL(const CMobblerTrack& aTrack) = 0;
