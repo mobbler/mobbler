@@ -22,10 +22,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
 #include "mobblerutility.h"
-#include "mobblerstring.h"
-#include "mobblerappui.h"
 
 #ifndef __WINS__
+#include "mobblerappui.h"
+#include "mobblerstring.h"
+
 #include <browserlauncher.h>
 #endif
 
@@ -106,9 +107,12 @@ HBufC8* MobblerUtility::URLEncodeLC(const TDesC& aString)
 	return urlEncoded;
 	}
 
+#ifdef __WINS__
+void MobblerUtility::OpenAmazonL(const TDesC8& /*aArtist*/, const TDesC8& /*aAlbum*/)
+	{
+#else
 void MobblerUtility::OpenAmazonL(const TDesC8& aArtist, const TDesC8& aAlbum)
 	{
-#ifndef __WINS__
 	HBufC8* localAmazonDomain(NULL);
 	
 	RArray<TLanguage> downgradePath;
@@ -154,18 +158,17 @@ void MobblerUtility::OpenAmazonL(const TDesC8& aArtist, const TDesC8& aAlbum)
 	if (!localAmazonDomain)
 		{
 		// default to .com
-		localAmazonDomain = _L8(".com").AllocL();
+		localAmazonDomain = _L8("amazon.com").AllocL();
 		}
 	
-	CleanupStack::PushL(localAmazonDomain);	
+	CleanupStack::PushL(localAmazonDomain);
 	
-	HBufC8* urlArtist = MobblerUtility::URLEncodeLC(aArtist);
-	HBufC8* urlAlbum = MobblerUtility::URLEncodeLC(aAlbum);
-	HBufC8* url = HBufC8::NewLC(KAmazonSearchLink().Length() + urlArtist->Length() + urlAlbum->Length() + localAmazonDomain->Length());
+	HBufC8* urlArtist(MobblerUtility::URLEncodeLC(aArtist));
+	HBufC8* urlAlbum(MobblerUtility::URLEncodeLC(aAlbum));
+	HBufC8* url(HBufC8::NewLC(KAmazonSearchLink().Length() + urlArtist->Length() + urlAlbum->Length() + localAmazonDomain->Length()));
 	url->Des().Format(KAmazonSearchLink, &localAmazonDomain->Des(), &urlArtist->Des(), &urlAlbum->Des());
-	CMobblerString* urlString = CMobblerString::NewL(*url);
+	CMobblerString* urlString(CMobblerString::NewL(*url));
 	CleanupStack::PushL(urlString);
-	
 	
 	CBrowserLauncher* browserLauncher(static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->BrowserLauncher());
 	
@@ -174,7 +177,7 @@ void MobblerUtility::OpenAmazonL(const TDesC8& aArtist, const TDesC8& aAlbum)
 		browserLauncher->LaunchBrowserEmbeddedL(urlString->String());
 		}
 	
-	CleanupStack::PopAndDestroy(4);
+	CleanupStack::PopAndDestroy(5);
 #endif
 	}
 
