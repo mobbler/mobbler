@@ -64,6 +64,7 @@ private:
 	RTimer iTimer;
 	
 	RResourceFile iResourceFile;
+	RResourceFile iResourceFileDefault;
 	
 	mutable TBool iErrorDialogShown;
 	mutable RPointerArray<CMobblerResource> iResources;

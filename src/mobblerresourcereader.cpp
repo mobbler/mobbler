@@ -116,6 +116,7 @@ CMobblerResourceReader::~CMobblerResourceReader()
 	iTimer.Close();
 	
 	iResourceFile.Close();
+	iResourceFileDefault.Close();
 	
 	delete iStringNotFoundInResouce;
 	iResources.ResetAndDestroy();
@@ -126,6 +127,7 @@ void CMobblerResourceReader::RunL()
 	if (iStatus.Int() == KErrNone)
 		{
 		iResourceFile.Close();
+		iResourceFileDefault.Close();
 		}
 	}
 
@@ -212,8 +214,28 @@ const TDesC& CMobblerResourceReader::ResourceL(TInt aResourceId)
 							   ResourceL(R_MOBBLER_GET_LATEST_LANGUAGE));
 				
 				iErrorDialogShown = ETrue;
-				
-				return *iStringNotFoundInResouce;
+				}
+			
+			// If the resource ID wasn't found, iResourceFile must be an old 
+			// installed file. So look in the main resource file instead.
+			iResourceFileDefault.OpenL(CCoeEnv::Static()->FsSession(), iLanguageRscFile);
+			TRAPD(error, iResourceFileDefault.ConfirmSignatureL(KLanguageRscVersion));
+			if (error == KErrNone)
+				{
+				if (iResourceFileDefault.OwnsResourceId(aResourceId))
+					{
+					HBufC8* resource8(iResourceFileDefault.AllocReadLC(aResourceId));
+					TResourceReader reader;
+					reader.SetBuffer(resource8);
+					HBufC* text(reader.ReadTPtrC().AllocLC());
+					CMobblerResource* resource(new(ELeave) CMobblerResource(aResourceId, text));
+					CleanupStack::Pop(text);
+					CleanupStack::PopAndDestroy(resource8);
+					CleanupStack::PushL(resource);
+					iResources.InsertInOrderL(resource, iLinearOrder);
+					CleanupStack::Pop(resource);
+					return resource->String();
+					}
 				}
 			}
 		}
