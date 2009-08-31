@@ -43,6 +43,8 @@ public:
 	static void LogL(const TInt aNumber);
 	static void LogL(const TDesC& aText);
 	static void LogL(const TDesC8& aText, const TInt aNumber);
+	static void LogL(const TDesC8& aFirstText, const TDesC8& aSecondText);
+	static void LogL(const TDesC8& aFirstText, const TDesC& aSecondText);
 	static void LogL(const CMobblerString* aMobblerString);
 	static void LogL(const TDesC8& aText);
 

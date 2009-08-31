@@ -85,6 +85,24 @@ void CMobblerLogging::LogL(const TDesC8& aText, const TInt aNumber)
 	LogL(text8);
 	}
 
+void CMobblerLogging::LogL(const TDesC8& aFirstText, const TDesC8& aSecondText)
+	{
+	TBuf8<255> text8;
+	text8.Append(aFirstText);
+	text8.Append(_L8(", "));
+	text8.Append(aSecondText);
+	LogL(text8);
+	}
+
+void CMobblerLogging::LogL(const TDesC8& aFirstText, const TDesC& aSecondText)
+	{
+	TBuf8<255> text8;
+	text8.Append(aFirstText);
+	text8.Append(_L8(", "));
+	text8.Append(aSecondText);
+	LogL(text8);
+	}
+
 void CMobblerLogging::LogL(const CMobblerString* aMobblerString)
 	{
 	TBuf8<255> text8;

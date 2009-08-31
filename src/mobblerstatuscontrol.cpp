@@ -63,7 +63,7 @@ const TUid KTouchFeedbackImplUID = {0xA000B6CD};
 
 CMobblerStatusControl* CMobblerStatusControl::NewL(const TRect& aRect, const CMobblerAppUi& aAppUi)
 	{
-	CMobblerStatusControl* self = new(ELeave) CMobblerStatusControl(aAppUi);
+	CMobblerStatusControl* self(new(ELeave) CMobblerStatusControl(aAppUi));
 	CleanupStack::PushL(self);
 	self->ConstructL(aRect);
 	CleanupStack::Pop(self);
@@ -98,12 +98,12 @@ void CMobblerStatusControl::ConstructL(const TRect& aRect)
 	iNaviContainer->PushL(*iNaviLabelDecorator);
 	
 	DoChangePaneTextL();
-
+	
 	LoadGraphicsL();
-
+	
 	ReleaseBackBuffer();
 	CreateBackBufferL();
-
+	
 	iMobblerVolumeTimeout = CMobblerTimeout::NewL(2000000);
 	iAlbumArtTransition = CMobblerAlbumArtTransition::NewL(*this);
 	
@@ -171,7 +171,7 @@ void CMobblerStatusControl::DoChangePaneTextL()
 	else
 		{
 		// There is no current track
-	
+		
 		// Decide on the state text to display
 		switch (iAppUi.State())
 			{
@@ -259,7 +259,7 @@ void CMobblerStatusControl::SetPositions()
 	{
 	// The height of the text bars
 	const TInt KTextRectHeight(iMobblerFont->HeightInPixels() + iMobblerFont->DescentInPixels() + 2);
-		
+	
 	// Check if the device is in portrait or landscape mode
 	if (Size().iWidth <= (Size().iHeight * 11) / 10)
 		{
@@ -355,7 +355,7 @@ void CMobblerStatusControl::SetPositions()
 			TInt textX(albumArtDimension + (KTextRectHeight / 2) + iMobblerBitmapTrackIcon->SizeInPixels().iWidth);
 			
 			TInt infoHeight(Rect().Height() - iControlSize.iHeight - ((3 * KTextRectHeight) / 2) - iPointLastFm.iY - iMobblerBitmapLastFm->SizeInPixels().iHeight);
-						
+			
 			iRectTitleText = 				TRect(TPoint(textX, iPointLastFm.iY + iMobblerBitmapLastFm->SizeInPixels().iHeight + (KTextRectHeight / 2) + ((0 * (infoHeight)) / 5) ), infoSize);
 			iRectArtistText = 				TRect(TPoint(textX, iPointLastFm.iY + iMobblerBitmapLastFm->SizeInPixels().iHeight + (KTextRectHeight / 2) + ((1 * (infoHeight)) / 5) ), infoSize);
 			iRectAlbumText = 				TRect(TPoint(textX, iPointLastFm.iY + iMobblerBitmapLastFm->SizeInPixels().iHeight + (KTextRectHeight / 2) + ((2 * (infoHeight)) / 5) ), infoSize);
@@ -452,7 +452,7 @@ void CMobblerStatusControl::SizeChanged()
 		{
 		iArtistMarquee->Reset();
 		}
-		
+	
 	if (iBgContext)
 		{
 		iBgContext->SetRect(Rect());
@@ -520,7 +520,6 @@ void CMobblerStatusControl::ReleaseBackBuffer()
 	
 	iBackBufferSize = TSize(0, 0);
 	}
-
 
 void CMobblerStatusControl::BitmapLoadedL(const CMobblerBitmap* /*aMobblerBitmap*/)
 	{
@@ -645,7 +644,7 @@ void CMobblerStatusControl::Draw(const TRect& /*aRect*/) const
 				}
 			const_cast<CMobblerBitmap*>(albumArt)->ScaleL(rectAlbumArt.Size());
 			}
-
+		
 		if (iAppUi.CurrentTrack()->IsMusicPlayerTrack())
 			{
 			// This is a music player track
@@ -900,24 +899,22 @@ void CMobblerStatusControl::DrawMobblerBitmap(const CMobblerBitmap* aMobblerBitm
 			
 			if (width > height)
 				{
-				destRect.SetHeight( (aDestRect.Height() * height) / width);
+				destRect.SetHeight((aDestRect.Height() * height) / width);
 				}
 			else if (height > width)
 				{
-				destRect.SetWidth( (aDestRect.Width() * width) / height);
+				destRect.SetWidth((aDestRect.Width() * width) / height);
 				}
 			
 			CFbsBitmap* bitmap(aGray ? aMobblerBitmap->BitmapGrayL() : aMobblerBitmap->Bitmap());
 			
 			if (aMobblerBitmap->Mask())
 				{
-				iBackBufferContext->DrawBitmapMasked(aDestRect, bitmap, aSourceRect, aMobblerBitmap->Mask(), EFalse);
+				iBackBufferContext->DrawBitmapMasked(destRect, bitmap, aSourceRect, aMobblerBitmap->Mask(), EFalse);
 				}
 			else
 				{
-				TSize bitmapSize(aMobblerBitmap->Bitmap()->SizeInPixels());
-				
-				iBackBufferContext->DrawBitmap(aDestRect, bitmap, aSourceRect);
+				iBackBufferContext->DrawBitmap(destRect, bitmap, aSourceRect);
 				}
 			}
 		}
@@ -1103,7 +1100,6 @@ void CMobblerStatusControl::HandlePointerEventL(const TPointerEvent& aPointerEve
 					iFingerNowPosition = aPointerEvent.iPosition;
 					}
 				}
-				
 			
 			if (event.iCode != EKeyNull)
 				{
