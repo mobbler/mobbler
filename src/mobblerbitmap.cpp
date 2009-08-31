@@ -29,7 +29,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 CMobblerBitmap* CMobblerBitmap::NewL(MMobblerBitmapObserver& aObserver, const TDesC& aMifFileName, TInt aBitmapIndex, TInt iMaskIndex)
 	{
-	CMobblerBitmap* self = new(ELeave) CMobblerBitmap(&aObserver);
+	CMobblerBitmap* self(new(ELeave) CMobblerBitmap(&aObserver));
 	CleanupStack::PushL(self);
 	self->ConstructL(aMifFileName, aBitmapIndex, iMaskIndex);
 	CleanupStack::Pop(self);
@@ -38,7 +38,7 @@ CMobblerBitmap* CMobblerBitmap::NewL(MMobblerBitmapObserver& aObserver, const TD
 
 CMobblerBitmap* CMobblerBitmap::NewL(MMobblerBitmapObserver& aObserver, TUid aAppUid)
 	{
-	CMobblerBitmap* self = new(ELeave) CMobblerBitmap(&aObserver);
+	CMobblerBitmap* self(new(ELeave) CMobblerBitmap(&aObserver));
 	CleanupStack::PushL(self);
 	self->ConstructL(aAppUid);
 	CleanupStack::Pop(self);
@@ -47,7 +47,7 @@ CMobblerBitmap* CMobblerBitmap::NewL(MMobblerBitmapObserver& aObserver, TUid aAp
 
 CMobblerBitmap* CMobblerBitmap::NewL(MMobblerBitmapObserver& aObserver, const TDesC& aFileName, const TUid aFileUid)
 	{
-	CMobblerBitmap* self = new(ELeave) CMobblerBitmap(&aObserver);
+	CMobblerBitmap* self(new(ELeave) CMobblerBitmap(&aObserver));
 	CleanupStack::PushL(self);
 	self->ConstructL(aFileName, aFileUid);
 	CleanupStack::Pop(self);
@@ -56,7 +56,7 @@ CMobblerBitmap* CMobblerBitmap::NewL(MMobblerBitmapObserver& aObserver, const TD
 
 CMobblerBitmap* CMobblerBitmap::NewL(MMobblerBitmapObserver& aObserver, const TDesC8& aData, const TUid aFileUid)
 	{
-	CMobblerBitmap* self = new(ELeave) CMobblerBitmap(&aObserver);
+	CMobblerBitmap* self(new(ELeave) CMobblerBitmap(&aObserver));
 	CleanupStack::PushL(self);
 	self->ConstructL(aData, aFileUid);
 	CleanupStack::Pop(self);
