@@ -258,4 +258,4 @@ rls_string STR_mobbler_album_unknown "(Neznámé album)"
 rls_string STR_mobbler_attendance "Účast"
 rls_string STR_mobbler_attendance_yes "Jdu na to"
 rls_string STR_mobbler_attendance_maybe "Možná jdu"
-rls_string STR_mobbler_attendance_no "Nejdu
+rls_string STR_mobbler_attendance_no "Nejdu"
