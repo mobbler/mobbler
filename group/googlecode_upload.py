@@ -293,9 +293,11 @@ def main():
 
   options, args = parser.parse_args()
 
-  if not options.summary:
-    parser.error('File summary is missing.')
-  elif not options.project:
+  # HvK check summary below
+#  if not options.summary:
+#    parser.error('File summary is missing.')
+#  elif not options.project:
+  if not options.project:
     parser.error('Project name is missing.')
   elif len(args) < 1:
     parser.error('File to upload not provided.')
@@ -309,6 +311,20 @@ def main():
   else:
     labels = None
 
+  # HvK added:
+  # extract the language name from the file_path and append to the labels
+  # e.g. "languages\mobbler_0_6_1_UK_English.SISX"   ->   "UK_English"
+  import re
+  p = re.search('mobbler_[0-9]+_[0-9]+_[0-9]+_([a-zA-Z_]+).SISX', file_path)
+  print file_path
+  print p.group(1)
+  labels.append(p.group(1))
+
+  if not options.summary:
+    options.summary = p.group(1) + " language file"
+  print options.summary
+
+  
   status, reason, url = upload_find_auth(file_path, options.project,
                                          options.summary, labels,
                                          options.config_dir, options.user,
