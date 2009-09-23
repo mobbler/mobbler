@@ -1,8 +1,8 @@
 /*
-musicappobserver.mmp
+musicappobservermpx.mmp
 
-mobbler, a last.fm mobile scrobbler for Symbian smartphones.
-Copyright (C) 2008  Michael Coffey
+Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
+Copyright (C) 2009  Michael Coffey
 
 http://code.google.com/p/mobbler
 
@@ -47,14 +47,15 @@ TARGET musicappobservermpx
 #endif
 END
 
-LIBRARY		apgrfx.lib
 LIBRARY		apparc.lib
-LIBRARY		euser.lib
+LIBRARY		apgrfx.lib
 LIBRARY		efsrv.lib
+LIBRARY		euser.lib
 
 #ifndef WINS
-LIBRARY             mpxcommon.lib
-LIBRARY             mpxplaybackutility.lib
+LIBRARY		mpxcommon.lib
+LIBRARY		mpxplaybackutility.lib
 #endif
 
+// End of file
 
