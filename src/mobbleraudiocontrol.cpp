@@ -174,11 +174,7 @@ void CMobblerAudioControl::DataCompleteL(CMobblerLastFmConnection::TTransactionE
 			// We will tell the radio player that this track has finished in
 			// the logon callback
 			
-			if (!iDestroyCmdSent)
-				{
-				iDestroyCmdSent = ETrue;
-				SendCmd(ECmdDestroyAudio);
-				}
+			SendCmd(ECmdDestroyAudio);
 			}
 			break;
 		default:

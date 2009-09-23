@@ -40,7 +40,8 @@ public:
 class CMobblerRadioPlayer : public CActive,
 							public MMobblerIncomingCallMonitorObserver,
 							public MMobblerAudioControlObserver,
-							public MMobblerFlatDataObserver
+							public MMobblerFlatDataObserver,
+							public MMobblerConnectionStateObserver 
 
 	{
 public:
@@ -96,6 +97,10 @@ public:
 private: // from MMobblerAudioControlObserver
 	void HandleAudioPositionChangeL();
 	void HandleAudioFinishedL(CMobblerAudioControl* aAudioControl);
+	void HandleAudioTryAgainL(CMobblerAudioControl* aAudioControl);
+
+private: // from MMobblerConnectionStateObserver
+	void HandleConnectionStateChangedL();
 	
 private:
 	CMobblerRadioPlayer(CMobblerLastFmConnection& aSubmitter, 
@@ -154,6 +159,8 @@ private:
 	RTimer iTimer;
 	
 	TBool iRestartRadioOnCallDisconnect;
+	
+	TBool iRestart;
 	};
 
 #endif // __MOBBLERRADIOPLAYER_H__
