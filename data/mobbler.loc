@@ -1,7 +1,7 @@
 /*
 mobbler.loc
 
-mobbler, a last.fm mobile scrobbler for Symbian smartphones.
+Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
 Copyright (C) 2008  Michael Coffey
 
 http://code.google.com/p/mobbler
@@ -121,11 +121,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "mobbler.l42"
 #endif
 
-// Pirate English (masquerading as International English)
-#ifdef LANGUAGE_47
-#include "mobbler.l47"
-#endif
-
 // Greek
 #ifdef LANGUAGE_54
 #include "mobbler.l54"
@@ -160,3 +155,15 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #ifdef LANGUAGE_78
 #include "mobbler.l78"
 #endif
+
+// Klingon
+#ifdef LANGUAGE_333
+#include "mobbler.l333"
+#endif
+
+// Pirate English
+#ifdef LANGUAGE_888
+#include "mobbler.l888"
+#endif
+
+// End of file
