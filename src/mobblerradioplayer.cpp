@@ -327,9 +327,7 @@ void CMobblerRadioPlayer::DataL(const TDesC8& aData, CMobblerLastFmConnection::T
 				if (!radioError)
 					{
 					// There were no errors selecting the station
-	
-					DoChangeTransactionStateL(EFetchingPlaylist);
-					iLastFmConnection.RequestPlaylistL(this);
+					RequestPlaylistL(EFalse);
 					}
 				else
 					{
@@ -425,8 +423,7 @@ void CMobblerRadioPlayer::SkipTrackL()
 			// This is the last track in the playlist so
 			// fetch the next playlist
 			
-			DoChangeTransactionStateL(EFetchingPlaylist);
-			iLastFmConnection.RequestPlaylistL(this);
+			RequestPlaylistL(EFalse);
 			}
 		
 		if (iPlaylist->Count() > 0)
@@ -569,9 +566,31 @@ void CMobblerRadioPlayer::SetBitRateL(TInt aBitRate)
 		// fetch a new playlist for the next song.
 		
 		iBitRate = aBitRate;
-		iPlaylist->Reset();
 		
-		// The next track will have the correct new sample rate.
+		// Remove all future tracks, but not this one
+		for (TInt i(iPlaylist->Count() - 1) ; i >= 1 ; --i)
+			{
+			iPlaylist->RemoveAndReleaseTrack(i);
+			}
+		
+		if (iState == EPlaying)
+			{
+			// The next track will have the correct new bit rate.
+			RequestPlaylistL(ETrue);
+			}
+		}
+	}
+
+void CMobblerRadioPlayer::RequestPlaylistL(TBool aCancelPrevious)
+	{
+	if (aCancelPrevious && iTransactionState == EFetchingPlaylist)
+		{
+		// Cancel the previous fetch playlist transaction
+		iLastFmConnection.CancelTransaction(this);
+		}
+	
+	if (aCancelPrevious || iTransactionState != EFetchingPlaylist)
+		{
 		DoChangeTransactionStateL(EFetchingPlaylist);
 		iLastFmConnection.RequestPlaylistL(this);
 		}

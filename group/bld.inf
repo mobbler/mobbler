@@ -28,6 +28,7 @@ gnumakefile icons.mk
 // projects
 mobbler.mmp
 ..\musicappobserver\group\musicappobserver.mmp
+..\musicappobservermpx\group\musicappobservermpx.mmp
 ..\touchfeedback\group\mobblertouchfeedback.mmp
 ..\contentlisting\group\mobblercontentlisting.mmp
 ..\gestureobserver\group\gestureobserver3x.mmp

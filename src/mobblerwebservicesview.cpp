@@ -86,7 +86,6 @@ void CMobblerWebServicesView::DynInitMenuPaneL(TInt aResourceId, CEikMenuPane* a
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_OPEN,					EMobblerCommandOpen);
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_RADIO,				EMobblerCommandRadioStart);
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_RADIO_START,			EMobblerCommandRadio);
-		SetMenuItemTextL(aMenuPane, R_MOBBLER_BUY,					EMobblerCommandBuy);
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_SHARE,				EMobblerCommandShare);
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_ATTENDANCE,			EMobblerCommandAttendance);
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_VIEW,					EMobblerCommandView);

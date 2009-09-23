@@ -29,11 +29,7 @@ endif
 
 TARGETDIR=$(ZDIR)\resource\apps
 
-#ifdef __SYMBIAN_SIGNED__
-ICONTARGETFILENAME=$(TARGETDIR)\mobbler_0x2002655A.mif
-#else
 ICONTARGETFILENAME=$(TARGETDIR)\mobbler.mif
-#endif
 
 ICONDIR=..\gfx
 

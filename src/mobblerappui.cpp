@@ -798,7 +798,6 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 				CleanupStack::PopAndDestroy(menuText);
 				
 				// Add the other menu items
-				items->AppendL(iResourceReader->ResourceL(R_MOBBLER_BUY));
 				items->AppendL(iResourceReader->ResourceL(R_MOBBLER_SHARE_TRACK));
 				items->AppendL(iResourceReader->ResourceL(R_MOBBLER_SHARE_ARTIST));
 				items->AppendL(iResourceReader->ResourceL(R_MOBBLER_PLAYLIST_ADD_TRACK));
@@ -830,18 +829,6 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 							{
 							case EPlusOptionVisitLastFm:
 								HandleCommandL(EMobblerCommandVisitWebPage);
-								break;
-							case EPlusOptionBuy:
-								{
-								if (CurrentTrack())
-									{
-									MobblerUtility::OpenAmazonL(CurrentTrack()->Artist().String8(), CurrentTrack()->Album().String8());
-									}
-								else
-									{
-									// TODO: display an error
-									}
-								}
 								break;
 							case EPlusOptionShareTrack:
 							case EPlusOptionShareArtist:

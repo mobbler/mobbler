@@ -65,8 +65,6 @@ enum TMobblerSettingItemListViewCommands
 
 	EMobblerCommandOnline = 0x8000,
 	
-	EMobblerCommandBuy,
-	
 	EMobblerCommandRadio,
 	EMobblerCommandOpen,
 	EMobblerCommandView,

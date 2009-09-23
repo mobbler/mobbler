@@ -1,7 +1,7 @@
 /*
-gestureevent.h
+musicappobserver.rss
 
-Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
+mobbler, a last.fm mobile scrobbler for Symbian smartphones.
 Copyright (C) 2008  Michael Coffey
 
 http://code.google.com/p/mobbler
@@ -21,32 +21,40 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
+#include <ecom/registryinfo.rh>
 
-#ifndef GESTUREEVENT_H_
-#define GESTUREEVENT_H_
-
-#include <e32base.h>
-
-class TMobblerGestureEvent
+RESOURCE REGISTRY_INFO theInfo
 	{
-public:
-	inline TMobblerGestureEvent();
-	inline TMobblerGestureEvent(TInt aSensorId, TInt aData1, TInt aData2, TInt aData3);
-public:
-	TInt iSensorId;
-	TInt iData1;
-	TInt iData2;
-	TInt iData3;
-	};
-
-inline TMobblerGestureEvent::TMobblerGestureEvent() {}
-
-inline TMobblerGestureEvent::TMobblerGestureEvent(TInt aSensorId, TInt aData1,
-												  TInt aData2, TInt aData3)
-: iSensorId(aSensorId), iData1(aData1), iData2(aData2), iData3(aData3)
-	{
+#ifdef __SYMBIAN_SIGNED__
+	dll_uid = 0x20027114;
+#else
+	dll_uid = 0xA000D9F4;
+#endif
+	
+	interfaces = 
+		{
+		INTERFACE_INFO
+			{
+#ifdef __SYMBIAN_SIGNED__
+			interface_uid = 0x2002655D;
+#else
+			interface_uid = 0xA0007CAA;
+#endif
+			implementations = 
+				{
+				IMPLEMENTATION_INFO
+					{
+#ifdef __SYMBIAN_SIGNED__
+					implementation_uid = 0x20027115;
+#else
+					implementation_uid = 0xA000D9F5;
+#endif
+					version_no = 2;
+					display_name = "Mobbler Music App Observer";
+					default_data = "";
+					opaque_data = "";
+					}
+				};
+			}
+		};
 	}
-
-#endif /*GESTUREEVENT_H_*/
-
-// End of file

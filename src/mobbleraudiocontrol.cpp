@@ -108,11 +108,7 @@ CMobblerAudioControl::~CMobblerAudioControl()
 		TRequestStatus threadStatus;
 		iAudioThread.Logon(threadStatus);
 		
-		if (!iDestroyCmdSent)
-			{
-			iDestroyCmdSent = ETrue;
-			SendCmd(ECmdDestroyAudio);
-			}
+		SendCmd(ECmdDestroyAudio);
 		
 		User::WaitForRequest(threadStatus);
 		}
@@ -217,10 +213,18 @@ void CMobblerAudioControl::SendCmd(TMobblerAudioCmd aCmd)
 	{	    
 	// send the command and wait for the audio thread to respond to it
 
-	TRequestStatus status;
-	iAudioThread.Rendezvous(status);
-	iAudioThread.RequestComplete(iShared.iCmdStatus, aCmd);
-	User::WaitForRequest(status);
+	if (!iDestroyCmdSent)
+		{
+		if (aCmd == ECmdDestroyAudio)
+			{
+			iDestroyCmdSent = ETrue;
+			}
+		
+		TRequestStatus status;
+		iAudioThread.Rendezvous(status);
+		iAudioThread.RequestComplete(iShared.iCmdStatus, aCmd);
+		User::WaitForRequest(status);
+		}
 	}
 
 TTimeIntervalSeconds CMobblerAudioControl::PreBufferSize() const

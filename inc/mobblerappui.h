@@ -44,14 +44,16 @@ const TInt KUpdateIntervalDays(1);
 const TInt KUpdateIntervalDays(7);
 #endif
 
+const TInt KBuildNumber(6182);
+
 #ifdef __SYMBIAN_SIGNED__
-const TVersion KVersion(1, 0, 0);
+const TVersion KVersion(1, 0, KBuildNumber);
 const TInt KMobblerAppUid = 0x2002655A;
 const TInt KMobblerSettingsViewUid = 0x2002655C;
 const TInt KMobblerStatusViewUid = 0x2002655B;
 const TInt KMobblerWebServicesViewUid = 0x2002656B;
 #else
-const TVersion KVersion(0, 6, 5124);
+const TVersion KVersion(0, 6, KBuildNumber);
 const TInt KMobblerAppUid = 0xA0007648;
 const TInt KMobblerSettingsViewUid = 0xA0007CA9;
 const TInt KMobblerStatusViewUid = 0xA0007CA8;
@@ -93,7 +95,6 @@ private:
 	enum TPlusOptions
 		{
 		EPlusOptionVisitLastFm,
-		EPlusOptionBuy,
 		EPlusOptionShareTrack,
 		EPlusOptionShareArtist,
 		EPlusOptionPlaylistAddTrack,

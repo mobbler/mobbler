@@ -46,6 +46,10 @@
 "$(EPOCROOT)epoc32\release\$(PLATFORM)\$(TARGET)\musicappobserver.dll"-"!:\sys\bin\musicappobserver.dll"
 "$(EPOCROOT)epoc32\data\z\resource\plugins\musicappobserver.rsc"-"!:\resource\plugins\musicappobserver.rsc"
 
+; The Mobbler mpx music app observer
+"$(EPOCROOT)epoc32\release\$(PLATFORM)\$(TARGET)\musicappobservermpx.dll"-"!:\sys\bin\musicappobservermpx.dll"
+"$(EPOCROOT)epoc32\data\z\resource\plugins\musicappobservermpx.rsc"-"!:\resource\plugins\musicappobservermpx.rsc"
+
 ; 5th edition touch feedback
 "$(EPOCROOT)epoc32\release\$(PLATFORM)\$(TARGET)\mobblertouchfeedback.dll"-"!:\sys\bin\mobblertouchfeedback.dll"
 "$(EPOCROOT)epoc32\data\z\resource\plugins\mobblertouchfeedback.rsc"-"!:\resource\plugins\mobblertouchfeedback.rsc"

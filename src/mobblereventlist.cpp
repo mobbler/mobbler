@@ -116,39 +116,42 @@ void CMobblerEventList::SupportedCommandsL(RArray<TInt>& aCommands)
 	aCommands.AppendL(EMobblerCommandAttendanceNo);
 	}
 
-void CMobblerEventList::DataL(CMobblerFlatDataObserverHelper* aObserver, const TDesC8& aData, CMobblerLastFmConnection::TTransactionError /*aTransactionError*/)
+void CMobblerEventList::DataL(CMobblerFlatDataObserverHelper* aObserver, const TDesC8& aData, CMobblerLastFmConnection::TTransactionError aTransactionError)
 	{
-	if (aObserver == iAttendanceHelperNo &&
-			iType == EMobblerCommandUserEvents)
+	if (aTransactionError == CMobblerLastFmConnection::ETransactionErrorNone)
 		{
-		// We have removed an event from the
-		// user's list so remove it
-
-		// Create the XML reader and DOM fragment and associate them with each other
-		CSenXmlReader* xmlReader(CSenXmlReader::NewL());
-		CleanupStack::PushL(xmlReader);
-		CSenDomFragment* domFragment(CSenDomFragment::NewL());
-		CleanupStack::PushL(domFragment);
-		xmlReader->SetContentHandler(*domFragment);
-		domFragment->SetReader(*xmlReader);
-		
-		xmlReader->ParseL(aData);
-		
-		const TDesC8* statusText(domFragment->AsElement().AttrValue(_L8("status")));
-		
-		if (statusText && (statusText->CompareF(_L8("ok")) == 0))
+		if (aObserver == iAttendanceHelperNo &&
+				iType == EMobblerCommandUserEvents)
 			{
-			iListBoxItems->Delete(iListBox->CurrentItemIndex());
-			delete iList[iListBox->CurrentItemIndex()];
-			iList.Remove(iListBox->CurrentItemIndex());
-			iListBox->HandleItemRemovalL();
-			}
-		else
-			{
-			// TODO: There was an error!
-			}
+			// We have removed an event from the
+			// user's list so remove it
+	
+			// Create the XML reader and DOM fragement and associate them with each other
+			CSenXmlReader* xmlReader(CSenXmlReader::NewL());
+			CleanupStack::PushL(xmlReader);
+			CSenDomFragment* domFragment(CSenDomFragment::NewL());
+			CleanupStack::PushL(domFragment);
+			xmlReader->SetContentHandler(*domFragment);
+			domFragment->SetReader(*xmlReader);
+			
+			xmlReader->ParseL(aData);
+			
+			const TDesC8* statusText(domFragment->AsElement().AttrValue(_L8("status")));
+			
+			if (statusText && (statusText->CompareF(_L8("ok")) == 0))
+				{
+				iListBoxItems->Delete(iListBox->CurrentItemIndex());
+				delete iList[iListBox->CurrentItemIndex()];
+				iList.Remove(iListBox->CurrentItemIndex());
+				iListBox->HandleItemRemovalL();
+				}
+			else
+				{
+				// There was an error!
+				}
 		
-		CleanupStack::PopAndDestroy(2);
+			CleanupStack::PopAndDestroy(2);
+			}
 		}
 	}
 
