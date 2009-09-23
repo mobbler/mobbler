@@ -80,6 +80,7 @@ void CMobblerRadioPlayer::ConstructL()
 	iStation = CMobblerString::NewL(KNullDesC);
 	User::LeaveIfError(iTimer.CreateLocal());
 	iPlaylist = CMobblerRadioPlaylist::NewL();
+	iLastFmConnection.AddStateChangeObserverL(this);
 	}
 
 CMobblerRadioPlayer::~CMobblerRadioPlayer()
@@ -165,6 +166,38 @@ void CMobblerRadioPlayer::DoChangeTransactionStateL(TTransactionState aTransacti
 	for (TInt i(0); i < KObserverCount; ++i)
 		{
 		iObservers[i]->HandleRadioStateChangedL();
+		}
+	}
+
+void CMobblerRadioPlayer::HandleConnectionStateChangedL()
+	{
+	switch (iLastFmConnection.State())
+		{
+		case ENone:
+			{
+			if (iRestart)
+				{
+				iRestart = EFalse;
+				RequestPlaylistL(ETrue);
+				DoChangeStateL(EStarting);
+				}
+			}
+			break;
+		case CMobblerLastFmConnection::EConnecting:
+		case CMobblerLastFmConnection::EHandshaking:
+			{
+			if (iState == EPlaying)
+				{
+				// if we are in the playing state and we start
+				// connecting then it means we have lost connection
+				// we should stop the radio and wait to be told
+				// that the connection is back, this will come through
+				// the try again callback from the auido control
+				DoStop(ETrue);
+				iRestart = ETrue;
+				}
+			}
+			break;
 		}
 	}
 
