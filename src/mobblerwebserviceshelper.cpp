@@ -224,6 +224,7 @@ HBufC* CMobblerWebServicesHelper::DisplayContactListL()
 		{
 		HBufC8* photo(contacts->GetPhotoAtL(i));
 		TPtrC name(contacts->GetNameAt(i));
+		TPtrC firstEmail(contacts->GetNameAt(i));
 		
 		if (photo)
 			{
@@ -243,7 +244,7 @@ HBufC* CMobblerWebServicesHelper::DisplayContactListL()
 		else
 			{
 			TBuf<1024> formatted;
-			formatted.Format(_L("%d\t%S\tyeah"), 0, &name); // TODO: TODO: "yeah" should be email address
+			formatted.Format(_L("%d\t%S\tyeah"), 0, &name); // TODO: "yeah" should be email address
 			items->AppendL(formatted);
 			}
 		}

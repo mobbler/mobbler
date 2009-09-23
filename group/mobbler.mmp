@@ -101,7 +101,7 @@ LANG 01 02 03 04 05 06 08 09 10 14 16 17 18 25 26 27 31 34 37 42 54 57 59 67 68 
 
 SOURCEPATH	..\src
 USERINCLUDE	..\inc
-SYSTEMINCLUDE	 \epoc32\include \epoc32\include\applications \epoc32\include\middleware \epoc32\include\domain\middleware \epoc32\include\osextensions \epoc32\include\mmf\plugin
+SYSTEMINCLUDE	 \epoc32\include
 
 SOURCE		mobbler.cpp
 SOURCE		mobbleraccesspointsettingitem.cpp
@@ -199,7 +199,7 @@ LIBRARY		RemConCoreApi.lib
 LIBRARY		RemConInterfaceBase.lib
 LIBRARY		senxml.lib
 #ifdef SYMBIAN_SIGNED
-#ifdef WINS
+#ifndef WINS
 LIBRARY		swinstcli.lib
 #endif
 #endif
@@ -243,10 +243,4 @@ TARGET mobbler_reg
 #endif
 TARGETPATH 	  \private\10003a3f\apps
 END //RESOURCE
-
-#ifdef SYMBIAN_SIGNED
-START RESOURCE ..\data\mobbler_startup.rss
-LANG 01
-END
-#endif
 

@@ -114,10 +114,6 @@ RESOURCE MENU_PANE r_mobbler_webservices_menu_pane
 			},
 		MENU_ITEM
 			{
-			command = EMobblerCommandBuy;
-			},
-		MENU_ITEM
-			{
 			command = EMobblerCommandTrackLove;
 			},
 		MENU_ITEM

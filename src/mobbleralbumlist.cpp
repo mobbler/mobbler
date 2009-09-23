@@ -69,9 +69,6 @@ CMobblerListControl* CMobblerAlbumList::HandleListCommandL(TInt aCommand)
 		case EMobblerCommandOpen:
 			list = CMobblerListControl::CreateListL(iAppUi, iWebServicesControl, EMobblerCommandPlaylistFetchAlbum, iList[iListBox->CurrentItemIndex()]->Title()->String8(), iList[iListBox->CurrentItemIndex()]->Id());
 			break;
-		case EMobblerCommandBuy:
-			MobblerUtility::OpenAmazonL(iList[iListBox->CurrentItemIndex()]->Title()->String8(), iList[iListBox->CurrentItemIndex()]->Description()->String8());
-			break;
 		default:
 			break;	
 		}
@@ -82,7 +79,6 @@ CMobblerListControl* CMobblerAlbumList::HandleListCommandL(TInt aCommand)
 void CMobblerAlbumList::SupportedCommandsL(RArray<TInt>& aCommands)
 	{
 	aCommands.AppendL(EMobblerCommandOpen);
-	aCommands.AppendL(EMobblerCommandBuy);
 	}
 
 void CMobblerAlbumList::ParseL(const TDesC8& aXML)

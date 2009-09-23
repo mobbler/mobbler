@@ -1,8 +1,8 @@
 /*
-mobbler.mmh
+musicappobserver.rss
 
-Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
-Copyright (C) 2009  Michael Coffey
+mobbler, a last.fm mobile scrobbler for Symbian smartphones.
+Copyright (C) 2008  Michael Coffey
 
 http://code.google.com/p/mobbler
 
@@ -21,17 +21,40 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-// uncomment this to use a beta build
-//MACRO BETA_BUILD
+#include <ecom/registryinfo.rh>
 
-// uncomment this to build a version with protected UIDs for Symbian Signing
-#define SYMBIAN_SIGNED
-
-#ifdef SYMBIAN_SIGNED
-MACRO __SYMBIAN_SIGNED__
-CAPABILITY	NetworkServices ReadUserData TrustedUI
+RESOURCE REGISTRY_INFO theInfo
+	{
+#ifdef __SYMBIAN_SIGNED__
+	dll_uid = 0x20027114;
 #else
-CAPABILITY	NetworkServices ReadUserData
+	dll_uid = 0xA000D9F4;
 #endif
-
-// End of file
+	
+	interfaces = 
+		{
+		INTERFACE_INFO
+			{
+#ifdef __SYMBIAN_SIGNED__
+			interface_uid = 0x2002655D;
+#else
+			interface_uid = 0xA0007CAA;
+#endif
+			implementations = 
+				{
+				IMPLEMENTATION_INFO
+					{
+#ifdef __SYMBIAN_SIGNED__
+					implementation_uid = 0x20027115;
+#else
+					implementation_uid = 0xA000D9F5;
+#endif
+					version_no = 2;
+					display_name = "Mobbler Music App Observer";
+					default_data = "";
+					opaque_data = "";
+					}
+				};
+			}
+		};
+	}

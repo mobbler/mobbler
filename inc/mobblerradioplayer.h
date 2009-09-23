@@ -112,6 +112,8 @@ private:
 	void DoChangeStateL(TState aState);
 	void DoChangeTransactionStateL(TTransactionState aState);
 	
+	void RequestPlaylistL(TBool aCancelPrevious);
+	
 private:
 	void DialogDismissedL(TInt aButtonId);
 	void UpdateVolume();
