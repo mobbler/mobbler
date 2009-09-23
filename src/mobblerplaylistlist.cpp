@@ -25,8 +25,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <sendomfragment.h>
 #include <senxmlutils.h> 
 
-#include <mobbler.rsg>
-#include <mobbler_strings.rsg>
+#include "mobbler.rsg.h"
+#include "mobbler_strings.rsg.h"
 
 #include "mobbler.hrh"
 #include "mobblerappui.h"
