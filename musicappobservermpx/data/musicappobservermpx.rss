@@ -1,8 +1,8 @@
 /*
-musicappobservermpx.rss
+musicappobserver.rss
 
-Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
-Copyright (C) 2009  Michael Coffey
+mobbler, a last.fm mobile scrobbler for Symbian smartphones.
+Copyright (C) 2008  Michael Coffey
 
 http://code.google.com/p/mobbler
 
@@ -58,5 +58,3 @@ RESOURCE REGISTRY_INFO theInfo
 			}
 		};
 	}
-
-// End of file

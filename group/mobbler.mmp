@@ -96,7 +96,7 @@ SECUREID		0xA0007648
 #ifdef WINS
 LANG 01
 #else
-LANG 01 02 03 04 05 06 08 09 10 14 16 17 18 25 26 27 31 34 37 42 54 57 59 67 68 76 78 333 337 888
+LANG 01 02 03 04 05 06 08 09 10 14 16 17 18 25 26 27 31 34 37 42 47 54 57 59 67 68 76 78
 #endif
 
 SOURCEPATH	..\src
@@ -114,7 +114,7 @@ SOURCE		mobbleraudiocontrol.cpp
 SOURCE		mobbleraudiothread.cpp
 SOURCE		mobblerbitmap.cpp
 SOURCE		mobblerbitmapcollection.cpp
-SOURCE		mobblercontacts.cpp
+//SOURCE		mobblercontacts.cpp
 SOURCE		mobblerdataobserver.cpp
 SOURCE		mobblerdocument.cpp
 SOURCE		mobblerdownload.cpp
@@ -165,9 +165,6 @@ LIBRARY		avkon.lib
 LIBRARY		bafl.lib
 LIBRARY		bitgdi.lib
 LIBRARY		bitmaptransforms.lib
-#ifndef WINS
-LIBRARY		browserlauncher.lib
-#endif
 LIBRARY		centralrepository.lib
 LIBRARY		charconv.lib
 LIBRARY		cntmodel.lib
@@ -207,6 +204,10 @@ LIBRARY		swinstcli.lib
 #endif
 #endif
 LIBRARY		ws32.lib
+
+#ifndef WINS
+LIBRARY		browserlauncher.lib
+#endif
 
 VENDORID	0
 

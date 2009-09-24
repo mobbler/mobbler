@@ -2,7 +2,7 @@
 musicappobservermpx.h
 
 Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
-Copyright (C) 2009  Michael Coffey
+Copyright (C) 2008  Michael Coffey
 
 http://code.google.com/p/mobbler
 
@@ -26,6 +26,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <e32base.h>
 #include <mobbler\mobblermusicapp.h>
+
 #include <mpxplaybackutility.h>
 #include <mpxplaybackobserver.h>
 
@@ -51,17 +52,17 @@ private: // from MMobblerMusicApp
 	TTimeIntervalSeconds Duration();
 	
 private:
-	void HandlePlaybackMessage(CMPXMessage* aMessage, TInt aError);
+	void HandlePlaybackMessage( CMPXMessage* aMessage, TInt aError );
 	
 private:
-	void HandlePropertyL(TMPXPlaybackProperty aProperty, TInt aValue, TInt aError);
-	void HandleSubPlayerNamesL(TUid aPlayer, const MDesCArray* aSubPlayers, TBool aComplete, TInt aError);
-	void HandleMediaL(const CMPXMedia& aMedia, TInt aError);
-	void HandlePlaybackCommandComplete(CMPXCommand* aCommandResult, TInt aError);
+	void HandlePropertyL( TMPXPlaybackProperty aProperty, TInt aValue, TInt aError );
+	void HandleSubPlayerNamesL( TUid aPlayer, const MDesCArray* aSubPlayers, TBool aComplete, TInt aError );
+	void HandleMediaL( const CMPXMedia& aMedia, TInt aError );
+	void HandlePlaybackCommandComplete( CMPXCommand* aCommandResult, TInt aError );
 	
 private: // from MMPlayerCommandObserver
 	void CommandReceived(TMPlayerRemoteControlCommands aCmd);
-	
+		
 private: // from MMPlayerPlaybackObserver
 	void PlayerStateChanged(TMPlayerRemoteControlState aState);
 	void TrackInfoChanged(const TDesC& aTitle, const TDesC& aArtist);
@@ -69,8 +70,8 @@ private: // from MMPlayerPlaybackObserver
 	void PlaybackPositionChanged(TInt aPosition);
 	void EqualizerPresetChanged(TInt aPresetNameKey); 
 	void PlaybackModeChanged(TBool aRandom, TMPlayerRepeatMode aRepeat); 
-	void PlayerUidChanged(TInt aPlayerUid);
-	void VolumeChanged(TInt aVolume); 
+	void PlayerUidChanged(TInt aPlayerUid );   
+    void VolumeChanged(TInt aVolume); 
 	
 private:
 	MMobblerMusicAppObserver* iObserver;
@@ -86,5 +87,3 @@ private:
 	};
 
 #endif // __MUSICAPPOBSERVER_H__
-
-// End of file
