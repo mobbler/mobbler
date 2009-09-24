@@ -114,7 +114,7 @@ SOURCE		mobbleraudiocontrol.cpp
 SOURCE		mobbleraudiothread.cpp
 SOURCE		mobblerbitmap.cpp
 SOURCE		mobblerbitmapcollection.cpp
-SOURCE		mobblercontacts.cpp
+//SOURCE		mobblercontacts.cpp
 SOURCE		mobblerdataobserver.cpp
 SOURCE		mobblerdocument.cpp
 SOURCE		mobblerdownload.cpp
