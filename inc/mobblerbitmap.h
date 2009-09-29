@@ -56,7 +56,11 @@ public:
 	void Open() const;
 	void Close() const;
 	
+#ifdef __SYMBIAN_SIGNED__
+	CFbsBitmap* Bitmap(TBool aOriginalPlease = EFalse) const;
+#else
 	CFbsBitmap* Bitmap() const;
+#endif
 	CFbsBitmap* BitmapGrayL() const;
 	CFbsBitmap* Mask() const;
 	
