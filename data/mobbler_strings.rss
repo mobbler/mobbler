@@ -317,5 +317,8 @@ RESOURCE STRING r_mobbler_attendance			{ text = STR_mobbler_attendance; }
 RESOURCE STRING r_mobbler_attendance_yes		{ text = STR_mobbler_attendance_yes; }
 RESOURCE STRING r_mobbler_attendance_maybe		{ text = STR_mobbler_attendance_maybe; }
 RESOURCE STRING r_mobbler_attendance_no			{ text = STR_mobbler_attendance_no; }
+RESOURCE STRING r_mobbler_set_as_wallpaper			{ text = STR_mobbler_set_as_wallpaper; }
+RESOURCE STRING r_mobbler_note_wallpaper_set		{ text = STR_mobbler_note_wallpaper_set; }
+RESOURCE STRING r_mobbler_note_wallpaper_not_set	{ text = STR_mobbler_note_wallpaper_not_set; }
 
 // End of file

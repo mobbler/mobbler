@@ -455,6 +455,12 @@ RESOURCE MENU_PANE r_mobbler_tools_submenu_pane
 			{
 			command = EMobblerCommandToggleScrobbling;
 			},
+#ifdef __SYMBIAN_SIGNED__
+		MENU_ITEM
+			{
+			command = EMobblerCommandSetAsWallpaper;
+			},
+#endif
 		MENU_ITEM
 			{
 			command = EMobblerCommandSleepTimer;
