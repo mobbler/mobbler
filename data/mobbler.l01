@@ -259,4 +259,6 @@ rls_string STR_mobbler_attendance "Attendance"
 rls_string STR_mobbler_attendance_yes "I'm going"
 rls_string STR_mobbler_attendance_maybe "I might go"
 rls_string STR_mobbler_attendance_no "I'm not going"
-
+rls_string STR_mobbler_set_as_wallpaper "Set as wallpaper"
+rls_string STR_mobbler_note_wallpaper_set "Wallpaper set"
+rls_string STR_mobbler_note_wallpaper_not_set "Wallpaper not set"

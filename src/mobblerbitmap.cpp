@@ -114,14 +114,24 @@ void CMobblerBitmap::SetObserver(MMobblerBitmapObserver& aObserver)
 	{
 	iObserver = &aObserver;
 	}
-	
+
+#ifdef __SYMBIAN_SIGNED__
+CFbsBitmap* CMobblerBitmap::Bitmap(TBool aOriginalPlease) const
+#else
 CFbsBitmap* CMobblerBitmap::Bitmap() const
+#endif
 	{
 	CFbsBitmap* bitmap(NULL);
 	
 	if (iBitmapLoaded)
 		{
+#ifdef __SYMBIAN_SIGNED__
+		aOriginalPlease && iOriginalBitmap ?
+			bitmap = iOriginalBitmap:
+			bitmap = iBitmap;
+#else
 		bitmap = iBitmap;
+#endif
 		}
 	
 	return bitmap;
