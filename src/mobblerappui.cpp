@@ -130,23 +130,22 @@ void CMobblerAppUi::ConstructL()
 	LoadRadioStationsL();
 	
 	iMobblerDownload = CMobblerDownload::NewL(*this);
-
+	
 	iSleepTimer = CMobblerSleepTimer::NewL(EPriorityLow, *this);
 	iAlarmTimer = CMobblerSleepTimer::NewL(EPriorityLow, *this);
-
+	
 	iWebServicesView = CMobblerWebServicesView::NewL();
 	
 	iLastFmConnection->SetModeL(iSettingView->Mode());
 	iLastFmConnection->LoadCurrentTrackL();
-
+	
 	if (iSettingView->AlarmOn())
 		{
 		// If the time has already passed, no problem, the timer will 
 		// simply expire immediately with KErrUnderflow.
 		iAlarmTimer->At(iSettingView->AlarmTime());
 		}
-
-
+	
 	// Attempt to load gesture plug-in
 	iGesturePlugin = NULL;
 	TRAP_IGNORE(LoadGesturesPluginL());
@@ -179,7 +178,7 @@ CMobblerAppUi::~CMobblerAppUi()
 		delete iDestinations;
 		REComSession::DestroyedImplementation(iDestinationsDtorUid);
 		}
-
+	
 	delete iPreviousRadioArtist;
 	delete iPreviousRadioTag;
 	delete iPreviousRadioUser;
@@ -212,7 +211,7 @@ TBool CMobblerAppUi::AccelerometerGesturesAvailable() const
 
 TInt CMobblerAppUi::VolumeUpCallBackL(TAny *aSelf)
 	{
-	CMobblerAppUi* self = static_cast<CMobblerAppUi*>(aSelf);
+	CMobblerAppUi* self(static_cast<CMobblerAppUi*>(aSelf));
 	
 	self->iRadioPlayer->VolumeUp();
 	
@@ -226,7 +225,7 @@ TInt CMobblerAppUi::VolumeUpCallBackL(TAny *aSelf)
 
 TInt CMobblerAppUi::VolumeDownCallBackL(TAny *aSelf)
 	{
-	CMobblerAppUi* self = static_cast<CMobblerAppUi*>(aSelf);
+	CMobblerAppUi* self(static_cast<CMobblerAppUi*>(aSelf));
 	
 	self->iRadioPlayer->VolumeDown();
 	
@@ -392,7 +391,7 @@ const CMobblerTrack* CMobblerAppUi::CurrentTrack() const
 		{
 		track = iMusicListener->CurrentTrack();
 		}
-
+	
 	return track;
 	}
 
@@ -493,7 +492,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 			Exit();
 			break;
 		case EAknSoftkeyBack:
-			task.SetWgId( CEikonEnv::Static()->RootWin().Identifier());
+			task.SetWgId(CEikonEnv::Static()->RootWin().Identifier());
 			task.SendToBackground();
 			break;
 		case EMobblerCommandOnline:
@@ -685,7 +684,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 			tagDialog->PrepareLC(R_MOBBLER_TEXT_QUERY_DIALOG);
 			tagDialog->SetPromptL(iResourceReader->ResourceL(R_MOBBLER_RADIO_ENTER_TAG));
 			tagDialog->SetPredictiveTextInputPermitted(ETrue);
-
+			
 			if (tagDialog->RunLD())
 				{
 				CMobblerString* tagString(CMobblerString::NewL(tag));
@@ -712,7 +711,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 			userDialog->PrepareLC(R_MOBBLER_TEXT_QUERY_DIALOG);
 			userDialog->SetPromptL(iResourceReader->ResourceL(R_MOBBLER_RADIO_ENTER_USER));
 			userDialog->SetPredictiveTextInputPermitted(ETrue);
-
+			
 			if (userDialog->RunLD())
 				{
 				CMobblerString* userString(CMobblerString::NewL(user));
@@ -808,7 +807,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 				items->AppendL(iResourceReader->ResourceL(R_MOBBLER_TOP_ALBUMS));
 				items->AppendL(iResourceReader->ResourceL(R_MOBBLER_TOP_TRACKS));
 				items->AppendL(iResourceReader->ResourceL(R_MOBBLER_TOP_TAGS));
-
+				
 				CleanupStack::Pop(items);
 				
 				list->Model()->SetItemTextArray(items);
@@ -963,6 +962,20 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 			iLastFmConnection->ToggleScrobblingL();
 			iStatusView->DrawDeferred();
 			break;
+#ifdef __SYMBIAN_SIGNED__
+		case EMobblerCommandSetAsWallpaper:
+			{
+			TInt error(iStatusView->StatusControl()->SetAlbumArtAsWallpaperL());
+			TInt resourceId(R_MOBBLER_NOTE_WALLPAPER_SET);
+			if (error != KErrNone)
+				{
+				resourceId = R_MOBBLER_NOTE_WALLPAPER_NOT_SET;
+				}
+			CAknResourceNoteDialog *note(new (ELeave) CAknInformationNote(EFalse));
+			note->ExecuteLD(iResourceReader->ResourceL(resourceId));
+			}
+			break;
+#endif
 		case EMobblerCommandSleepTimer:
 			ActivateLocalViewL(iSettingView->Id(),
 								TUid::Uid(CMobblerSettingItemListView::ESleepTimer),
@@ -1051,7 +1064,7 @@ void CMobblerAppUi::RadioStartL(TInt aRadioStation,
 			default:
 				break;
 			}
-
+		
 		SaveRadioStationsL();
 		}
 	
@@ -1211,7 +1224,7 @@ void CMobblerAppUi::HandleConnectCompleteL(TInt aError)
 			{
 			TTime now;
 			now.UniversalTime();
-		
+			
 			if (now > iSettingView->NextUpdateCheck())
 				{
 				// do an update check
@@ -1220,7 +1233,7 @@ void CMobblerAppUi::HandleConnectCompleteL(TInt aError)
 				iLastFmConnection->CheckForUpdateL(*iCheckForUpdatesObserver);
 				}
 			}
-
+		
 		// See if there's better album art online
 		if (CurrentTrack())
 			{
@@ -1283,7 +1296,7 @@ void CMobblerAppUi::HandleTrackSubmittedL(const CMobblerTrack& /*aTrack*/)
 	}
 
 void CMobblerAppUi::HandleTrackQueuedL(const CMobblerTrack& /*aTrack*/)
-	{		
+	{
 	if (iStatusView)
 		{
 //		iStatusView->DrawDeferred();
@@ -1410,7 +1423,7 @@ void CMobblerAppUi::LoadRadioStationsL()
 			delete iPreviousRadioPlaylistId;
 			iPreviousRadioPlaylistId = CMobblerString::NewL(radio);
 			}
-
+		
 		CleanupStack::PopAndDestroy(&readStream);
 		}
 	else
@@ -1532,31 +1545,31 @@ void CMobblerAppUi::SetAlarmTimerL(const TTime aTime)
 	TDateTime alarmDateTime(aTime.DateTime());
 	TTime now;
 	now.HomeTime();
-
+	
 	// Set the date to today, keep the time
 	alarmDateTime.SetYear(now.DateTime().Year());
 	alarmDateTime.SetMonth(now.DateTime().Month());
 	alarmDateTime.SetDay(now.DateTime().Day());
-
+	
 	// TTime from TDateTime
 	TTime alarmTime(alarmDateTime);
-
+	
 	// If the time was earlier today, it must be for tomorrow
 	if (alarmTime < now)
 		{
 		alarmTime += (TTimeIntervalDays)1;
 		}
-
+	
 	iSettingView->SetAlarmL(alarmTime);
 	iAlarmTimer->At(alarmTime);
 	CEikonEnv::Static()->InfoMsg(_L("Alarm set"));
-
+	
 	TTimeIntervalMinutes minutesInterval;
 	alarmTime.MinutesFrom(now, minutesInterval);
 	TInt hours(minutesInterval.Int() / 60);
 	TInt minutes(minutesInterval.Int() - (hours * 60));
 	CAknInformationNote* note(new (ELeave) CAknInformationNote(ETrue));
-
+	
 	TInt resourceId(R_MOBBLER_ALARM_HOURS_MINUTES);
 	if (hours == 1 && minutes == 1)
 		{
@@ -1570,7 +1583,7 @@ void CMobblerAppUi::SetAlarmTimerL(const TTime aTime)
 		{
 		resourceId = R_MOBBLER_ALARM_HOURS_MINUTE;
 		}
-
+	
 	TBuf<256> confirmationText;
 	confirmationText.Format(iResourceReader->ResourceL(resourceId), hours, minutes);
 	note->ExecuteLD(confirmationText);
@@ -1666,13 +1679,13 @@ void CMobblerAppUi::SleepL()
 	// the newly stopped song to Last.fm whilst displaying the dialog
 	iLastFmConnection->TrackStoppedL();
 	iRadioPlayer->Stop();
-
+	
 #ifdef _DEBUG
 	CEikonEnv::Static()->InfoMsg(_L("Sleep!"));
 #endif
 	CAknInformationNote* note(new (ELeave) CAknInformationNote(ETrue));
 	note->ExecuteLD(iResourceReader->ResourceL(R_MOBBLER_SLEEP_TIMER_EXPIRED));
-
+	
 	LOG(iSettingView->SleepTimerAction());
 	switch (iSettingView->SleepTimerAction())
 		{
@@ -1726,14 +1739,14 @@ void CMobblerAppUi::LoadGesturesPluginL()
 	
 	const TInt KImplCount(implInfoPtrArray.Count());
 	if (KImplCount < 1)
-		{		
+		{
 		// Plug-in not found.
 		User::Leave(KErrNotFound);
 		}
 	
 	TUid dtorIdKey;
 	CMobblerGesturesInterface* mobblerGestures(NULL);
-
+	
 	// Search for the preferred plug-in implementation
 	TBool fifthEditionPluginLoaded(EFalse);
 	for (TInt i(0); i < KImplCount; ++i)
@@ -1802,13 +1815,13 @@ void CMobblerAppUi::HandleSingleShakeL(TMobblerShakeGestureDirection aDirection)
 void CMobblerAppUi::LaunchFileEmbeddedL(const TDesC& aFilename)
 	{
 	CDocumentHandler* docHandler(CDocumentHandler::NewL(CEikonEnv::Static()->Process()));
-
+	
 	// Set the exit observer so HandleServerAppExit will be called
 	docHandler->SetExitObserver(this);
-
+	
 	TDataType emptyDataType = TDataType();
 	docHandler->OpenFileEmbeddedL(aFilename, emptyDataType);
-
+	
 	delete docHandler;
 	}
  

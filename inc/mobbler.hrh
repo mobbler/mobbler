@@ -49,6 +49,9 @@ enum TMobblerSettingItemListViewCommands
 	EMobblerCommandAlarm,
 	EMobblerCommandRemove,
 	EMobblerCommandExportQueueToLogFile,
+#ifdef __SYMBIAN_SIGNED__
+	EMobblerCommandSetAsWallpaper,
+#endif
 	
 	EMobblerCommandEqualizer = 0x7000,
 	EMobblerCommandEqualizerDefault,
