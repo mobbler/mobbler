@@ -2,7 +2,7 @@
 musicappobservermpx.cpp
 
 Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
-Copyright (C) 2008  Michael Coffey
+Copyright (C) 2009  Michael Coffey
 
 http://code.google.com/p/mobbler
 
@@ -24,14 +24,13 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <apaid.h>
 #include <apgcli.h>
 #include <ecom/implementationproxy.h>
-
-#include <mpxmessage2.h>
-#include <mpxplaybackutility.h>
-#include <mpxplaybackmessage.h>
 #include <mpxmedia.h>
 #include <mpxmediageneraldefs.h>
 #include <mpxmediamusicdefs.h>
+#include <mpxmessage2.h>
 #include <mpxmessagegeneraldefs.h>
+#include <mpxplaybackmessage.h>
+#include <mpxplaybackutility.h>
 
 #include "musicappobservermpx.h"
 
@@ -45,30 +44,30 @@ const TInt KImplementationUid = {0xA000D9F5};
 #endif
 
 const TImplementationProxy ImplementationTable[] =
-    {
-    {KImplementationUid, TProxyNewLPtr(CMobblerMusicAppObserverMPX::NewL)}
-    };
+	{
+	{KImplementationUid, TProxyNewLPtr(CMobblerMusicAppObserverMPX::NewL)}
+	};
 
 EXPORT_C const TImplementationProxy* ImplementationGroupProxy(TInt& aTableCount)
-    {
-    aTableCount = sizeof(ImplementationTable) / sizeof(TImplementationProxy);
-    return ImplementationTable;
-    }
+	{
+	aTableCount = sizeof(ImplementationTable) / sizeof(TImplementationProxy);
+	return ImplementationTable;
+	}
 
 CMobblerMusicAppObserverMPX* CMobblerMusicAppObserverMPX::NewL(TAny* aObserver)
 	{
-	CMobblerMusicAppObserverMPX* self = new(ELeave) CMobblerMusicAppObserverMPX(aObserver);
+	CMobblerMusicAppObserverMPX* self(new(ELeave) CMobblerMusicAppObserverMPX(aObserver));
 	CleanupStack::PushL(self);
 	self->ConstructL();
 	CleanupStack::Pop(self);
 	return self;
 	}
-	
+
 CMobblerMusicAppObserverMPX::CMobblerMusicAppObserverMPX(TAny* aObserver)
 	:iObserver(static_cast<MMobblerMusicAppObserver*>(aObserver))
 	{
 	}
-	
+
 void CMobblerMusicAppObserverMPX::ConstructL()
 	{
 #ifndef __WINS__
@@ -89,80 +88,78 @@ void CMobblerMusicAppObserverMPX::ConstructL()
 	iTitle = KNullDesC().AllocL();
 	iArtist = KNullDesC().AllocL();
 	
-	if( iPlaybackUtility &&
+	if(iPlaybackUtility &&
 			iPlaybackUtility->StateL() != EPbStateNotInitialised &&
-			iPlaybackUtility->StateL() != EPbStateInitialising )
+			iPlaybackUtility->StateL() != EPbStateInitialising)
 		{
 		// Playback is already ongoing. We aren't going to receive EMediaChanged
 		// for the current song so we need manually update the media info   
 		RequestMediaL();
 		}
 	}
-	
+
 CMobblerMusicAppObserverMPX::~CMobblerMusicAppObserverMPX()
 	{
 #ifndef __WINS__
-	if ( iPlaybackUtility )
+	if (iPlaybackUtility)
 		{
 		iPlaybackUtility->Close();
 		}
 #endif
 	}
 
-void CMobblerMusicAppObserverMPX::HandlePlaybackMessage( CMPXMessage* aMessage, TInt aError )
+void CMobblerMusicAppObserverMPX::HandlePlaybackMessage(CMPXMessage* aMessage, TInt aError)
 	{
 #ifndef __WINS__
-    TMPXMessageId id( aMessage->ValueTObjectL<TMPXMessageId>( KMPXMessageGeneralId ) );
-     
-    if ( KMPXMessageGeneral == id )
-        {
-        TInt event( aMessage->ValueTObjectL<TInt>( KMPXMessageGeneralEvent ) );
-
-        switch ( event )
-            {
-            case TMPXPlaybackMessage::EPropertyChanged:
-                {
-                TInt error( KErrNone );
-                
-                HandlePropertyL(aMessage->ValueTObjectL<TMPXPlaybackProperty>( KMPXMessageGeneralType ), aMessage->ValueTObjectL<TInt>( KMPXMessageGeneralData ), error );
-                break;
-                }
-            case TMPXPlaybackMessage::EStateChanged:
-                {
-                TMPlayerRemoteControlState state = MPlayerState(aMessage->ValueTObjectL<TMPXPlaybackState>( KMPXMessageGeneralType ));
-                
-                iObserver->PlayerStateChangedL(state);
-                break;
-                }
-            case TMPXPlaybackMessage::EMediaChanged:
-            case TMPXPlaybackMessage::EPlaylistUpdated:
-                {
-                iPlaybackUtility->PropertyL( *this, EPbPropertyPosition );
-                iPlaybackUtility->PropertyL( *this, EPbPropertyDuration );
-                
-                RequestMediaL();
-
-                break;
-                }
-            case TMPXPlaybackMessage::EActivePlayerChanged:
-                {
-                iPlaybackUtility->PropertyL( *this, EPbPropertyPosition );
-                iPlaybackUtility->PropertyL( *this, EPbPropertyDuration );
-                //iPlaybackUtility->PropertyL( *this, EPbPropertyMaxVolume );
-                //iPlaybackUtility->PropertyL( *this, EPbPropertyVolume );
-                
-                iObserver->PlayerStateChangedL(MPlayerState( iPlaybackUtility->StateL() ));
-                
-                RequestMediaL();
-
-                break;
-                }
-            default:
-                {
-                break;
-                }
-            }
-        }
+	TMPXMessageId id(aMessage->ValueTObjectL<TMPXMessageId>(KMPXMessageGeneralId));
+	 
+	if (KMPXMessageGeneral == id)
+		{
+		TInt event(aMessage->ValueTObjectL<TInt>(KMPXMessageGeneralEvent));
+		
+		switch (event)
+			{
+			case TMPXPlaybackMessage::EPropertyChanged:
+				{
+				TInt error(KErrNone);
+				
+				HandlePropertyL(aMessage->ValueTObjectL<TMPXPlaybackProperty>(KMPXMessageGeneralType), aMessage->ValueTObjectL<TInt>(KMPXMessageGeneralData), error);
+				break;
+				}
+			case TMPXPlaybackMessage::EStateChanged:
+				{
+				TMPlayerRemoteControlState state = MPlayerState(aMessage->ValueTObjectL<TMPXPlaybackState>(KMPXMessageGeneralType));
+				
+				iObserver->PlayerStateChangedL(state);
+				break;
+				}
+			case TMPXPlaybackMessage::EMediaChanged:
+			case TMPXPlaybackMessage::EPlaylistUpdated:
+				{
+				iPlaybackUtility->PropertyL(*this, EPbPropertyPosition);
+				iPlaybackUtility->PropertyL(*this, EPbPropertyDuration);
+				
+				RequestMediaL();
+				break;
+				}
+			case TMPXPlaybackMessage::EActivePlayerChanged:
+				{
+				iPlaybackUtility->PropertyL(*this, EPbPropertyPosition);
+				iPlaybackUtility->PropertyL(*this, EPbPropertyDuration);
+				//iPlaybackUtility->PropertyL(*this, EPbPropertyMaxVolume);
+				//iPlaybackUtility->PropertyL(*this, EPbPropertyVolume);
+				
+				iObserver->PlayerStateChangedL(MPlayerState(iPlaybackUtility->StateL()));
+				
+				RequestMediaL();
+				break;
+				}
+			default:
+				{
+				break;
+				}
+			}
+		}
 #endif
 	}
 
@@ -205,16 +202,16 @@ TMPlayerRemoteControlState CMobblerMusicAppObserverMPX::MPlayerState(TMPXPlaybac
 	return state;
 	}
 
-void CMobblerMusicAppObserverMPX::HandlePropertyL( TMPXPlaybackProperty aProperty, TInt aValue, TInt aError )
+void CMobblerMusicAppObserverMPX::HandlePropertyL(TMPXPlaybackProperty aProperty, TInt aValue, TInt aError)
 	{
-	if ( KErrNone == aError )
+	if (KErrNone == aError)
 		{
-		switch ( aProperty  )
+		switch (aProperty)
 			{
 			case EPbPropertyPosition:
 				{
 				iPosition = aValue / 1000;
-				iObserver->PlayerPositionL( iPosition );
+				iObserver->PlayerPositionL(iPosition);
 				break;
 				}
 			case EPbPropertyDuration:
@@ -230,7 +227,7 @@ void CMobblerMusicAppObserverMPX::HandlePropertyL( TMPXPlaybackProperty aPropert
 		}
 	}
 
-void CMobblerMusicAppObserverMPX::HandleSubPlayerNamesL( TUid aPlayer, const MDesCArray* aSubPlayers, TBool aComplete, TInt aError )
+void CMobblerMusicAppObserverMPX::HandleSubPlayerNamesL(TUid /*aPlayer*/, const MDesCArray* /*aSubPlayers*/, TBool /*aComplete*/, TInt /*aError*/)
 	{
 	
 	}
@@ -238,47 +235,46 @@ void CMobblerMusicAppObserverMPX::HandleSubPlayerNamesL( TUid aPlayer, const MDe
 void CMobblerMusicAppObserverMPX::RequestMediaL()
 	{
 #ifndef __WINS__
-	MMPXSource* s = iPlaybackUtility->Source();
-	if ( s )
+	MMPXSource* s(iPlaybackUtility->Source());
+	if (s)
 		{
 		RArray<TMPXAttribute> attrs;
 		CleanupClosePushL(attrs);
-		attrs.Append( KMPXMediaGeneralUri );
-		attrs.Append( KMPXMediaGeneralTitle );
-		attrs.Append( KMPXMediaMusicArtist );
-		s->MediaL( attrs.Array(), *this );
-		CleanupStack::PopAndDestroy( &attrs );
+		attrs.Append(KMPXMediaGeneralUri);
+		attrs.Append(KMPXMediaGeneralTitle);
+		attrs.Append(KMPXMediaMusicArtist);
+		s->MediaL(attrs.Array(), *this);
+		CleanupStack::PopAndDestroy(&attrs);
 		}
 #endif
 	}
 
-
-void CMobblerMusicAppObserverMPX::HandleMediaL( const CMPXMedia& aMedia, TInt aError )
+void CMobblerMusicAppObserverMPX::HandleMediaL(const CMPXMedia& aMedia, TInt aError)
 	{
 #ifndef __WINS__
-	if ( KErrNone == aError )
+	if (KErrNone == aError)
 		{
 		delete iTitle;
 		iTitle = NULL;
-		if ( aMedia.IsSupported( KMPXMediaGeneralTitle ) )
+		if (aMedia.IsSupported(KMPXMediaGeneralTitle))
 			{
-			iTitle = (aMedia.ValueText( KMPXMediaGeneralTitle )).AllocL();
+			iTitle = (aMedia.ValueText(KMPXMediaGeneralTitle)).AllocL();
 			}
-		else if ( aMedia.IsSupported( KMPXMediaGeneralUri ) )
+		else if (aMedia.IsSupported(KMPXMediaGeneralUri))
 			{
-			TParsePtrC filePath( aMedia.ValueText( KMPXMediaGeneralUri ) );
+			TParsePtrC filePath(aMedia.ValueText(KMPXMediaGeneralUri));
 			iTitle = (filePath.Name()).AllocL();
 			}
 		delete iArtist;
 		iArtist = NULL;
-		iArtist = (aMedia.ValueText( KMPXMediaMusicArtist )).AllocL();
-
-		iObserver->TrackInfoChangedL( *iTitle, *iArtist );
+		iArtist = (aMedia.ValueText(KMPXMediaMusicArtist)).AllocL();
+		
+		iObserver->TrackInfoChangedL(*iTitle, *iArtist);
 		}
 #endif
 	}
 
-void CMobblerMusicAppObserverMPX::HandlePlaybackCommandComplete( CMPXCommand* aCommandResult, TInt aError )
+void CMobblerMusicAppObserverMPX::HandlePlaybackCommandComplete(CMPXCommand* /*aCommandResult*/, TInt /*aError*/)
 	{
 	
 	}
@@ -292,33 +288,33 @@ void CMobblerMusicAppObserverMPX::PlayerStateChanged(TMPlayerRemoteControlState 
 	{
 	TRAP_IGNORE(iObserver->PlayerStateChangedL(aState));
 	}
-	
+
 void CMobblerMusicAppObserverMPX::TrackInfoChanged(const TDesC& aTitle, const TDesC& aArtist)
 	{
 	TRAP_IGNORE(iObserver->TrackInfoChangedL(aTitle, aArtist));
 	}
-	
+
 void CMobblerMusicAppObserverMPX::PlaylistChanged()
 	{
 	}
-	
+
 void CMobblerMusicAppObserverMPX::PlaybackPositionChanged(TInt aPosition)
 	{
 	TRAP_IGNORE(iObserver->PlayerPositionL(aPosition));
 	}
-	
+
 void CMobblerMusicAppObserverMPX::EqualizerPresetChanged(TInt /*aPresetNameKey*/)
 	{
 	}
-	
+
 void CMobblerMusicAppObserverMPX::PlaybackModeChanged(TBool /*aRandom*/, TMPlayerRepeatMode /*aRepeat*/)
 	{
 	}
-	
+
 void CMobblerMusicAppObserverMPX::PlayerUidChanged(TInt /*aPlayerUid*/)
 	{
 	}
-	
+
 void CMobblerMusicAppObserverMPX::VolumeChanged(TInt /*aVolume*/)
 	{
 	}
@@ -336,6 +332,7 @@ TMPlayerRemoteControlState CMobblerMusicAppObserverMPX::PlayerState()
 	return EMPlayerRCtrlNotRunning;
 #endif
 	}
+
 const TDesC& CMobblerMusicAppObserverMPX::Title()
 	{
 	return *iTitle; 
@@ -355,4 +352,5 @@ TTimeIntervalSeconds CMobblerMusicAppObserverMPX::Duration()
 	{
 	return iDuration;
 	}
-	
+
+// End of file
