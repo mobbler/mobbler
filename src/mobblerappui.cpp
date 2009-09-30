@@ -26,6 +26,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <AknLists.h>
 #include <aknnotewrappers.h>
 #include <aknsutils.h>
+
+#ifdef __SYMBIAN_SIGNED__
+#include <aknswallpaperutils.h>
+#endif
+
 #include <bautils.h> 
 
 #ifndef __WINS__
@@ -965,7 +970,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 #ifdef __SYMBIAN_SIGNED__
 		case EMobblerCommandSetAsWallpaper:
 			{
-			TInt error(iStatusView->StatusControl()->SetAlbumArtAsWallpaperL());
+			TInt error(SetAlbumArtAsWallpaperL());
 			TInt resourceId(R_MOBBLER_NOTE_WALLPAPER_SET);
 			if (error != KErrNone)
 				{
@@ -1286,6 +1291,11 @@ void CMobblerAppUi::HandleTrackNowPlayingL(const CMobblerTrack& /*aTrack*/)
 	{
 	// Tell the status view that the track has changed
 //	iStatusView->DrawDeferred();
+
+#ifdef __SYMBIAN_SIGNED__
+	iWallpaperSet = EFalse;
+	SetAlbumArtAsWallpaperL(ETrue);
+#endif
 	}
 
 void CMobblerAppUi::HandleTrackSubmittedL(const CMobblerTrack& /*aTrack*/)
@@ -1393,7 +1403,7 @@ void CMobblerAppUi::LoadRadioStationsL()
 		if (iPreviousRadioStation <= EMobblerCommandRadioEnumFirst ||
 			iPreviousRadioStation >= EMobblerCommandRadioEnumLast)
 			{
-			iPreviousRadioStation = EMobblerCommandRadioUnknown;
+			iPreviousRadioStation = EMobblerCommandRadioPersonal;
 			}
 		
 		TBuf<255> radio;
@@ -1428,7 +1438,7 @@ void CMobblerAppUi::LoadRadioStationsL()
 		}
 	else
 		{
-		iPreviousRadioStation = EMobblerCommandRadioUnknown;
+		iPreviousRadioStation = EMobblerCommandRadioPersonal;
 		}
 	
 	CleanupStack::PopAndDestroy(&file);
@@ -1902,5 +1912,50 @@ void CMobblerAppUi::HandleWsEventL(const TWsEvent &aEvent,
 		CAknViewAppUi::HandleWsEventL(aEvent, aDestination);
 		}
 	}
+
+#ifdef __SYMBIAN_SIGNED__
+TInt CMobblerAppUi::SetAlbumArtAsWallpaperL(TBool aAutomatically)
+	{
+	TInt error(KErrUnknown);
+	_LIT(KWallpaperFile, "C:\\System\\Data\\Mobbler\\wallpaperimage.mbm");
+	
+	if (!aAutomatically || iSettingView->AutomaticWallpaper())
+		{
+		LOG(_L8("Set as wallpaper"));
+		if (!iWallpaperSet &&
+			CurrentTrack() && 
+			CurrentTrack()->AlbumArt() && 
+			CurrentTrack()->AlbumArt()->Bitmap())
+			{
+			// The current track has album art and it has finished loading
+			CCoeEnv::Static()->FsSession().MkDirAll(KWallpaperFile);
+			error = CurrentTrack()->AlbumArt()->Bitmap(ETrue)->Save(KWallpaperFile);
+			if (error == KErrNone)
+				{
+				error = AknsWallpaperUtils::SetIdleWallpaper(KWallpaperFile, NULL);
+				LOG2(_L8("Set as wallpaper"), error);
+				if (error == KErrNone)
+					{
+					iWallpaperSet = ETrue;
+					}
+				}
+			}
+		
+/*TODO
+		// No success with album art, try Mobbler icon
+		if (!aAutomatically && error != KErrNone)
+			{
+			error = iMobblerBitmapAppIcon->Bitmap(ETrue)->Save(KWallpaperFile);
+			if (error == KErrNone)
+				{
+				error = AknsWallpaperUtils::SetIdleWallpaper(KWallpaperFile, NULL);
+				LOG2(_L8("Set as wallpaper"), error);
+				}
+			}
+*/
+		}
+	return error;
+	}
+#endif
 
 // End of file

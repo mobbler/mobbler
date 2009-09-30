@@ -62,7 +62,7 @@ CMobblerTrack* CMobblerTrack::NewL(const TDesC8& aArtist,
 									TTimeIntervalSeconds aTrackLength,
 									const TDesC8& aRadioAuth)
 	{
-	CMobblerTrack* self = new(ELeave) CMobblerTrack;
+	CMobblerTrack* self(new(ELeave) CMobblerTrack);
 	CleanupStack::PushL(self);
 	self->ConstructL(aArtist, aTitle, aAlbum, /*aMbAlbumId,*/ aMbTrackId, aImage, aMp3Location, aTrackLength, aRadioAuth);
 	CleanupStack::Pop(self);
@@ -71,7 +71,7 @@ CMobblerTrack* CMobblerTrack::NewL(const TDesC8& aArtist,
 
 CMobblerTrack* CMobblerTrack::NewL(RReadStream& aReadStream)
 	{
-	CMobblerTrack* self = new(ELeave) CMobblerTrack;
+	CMobblerTrack* self(new(ELeave) CMobblerTrack);
 	CleanupStack::PushL(self);
 	self->InternalizeL(aReadStream);
 	CleanupStack::Pop(self);
@@ -338,6 +338,9 @@ const TDesC8& CMobblerTrack::Mp3Location() const
 void CMobblerTrack::BitmapLoadedL(const CMobblerBitmap* /*aMobblerBitmap*/)
 	{
 	static_cast<CMobblerAppUi*>(CEikonEnv::Static()->AppUi())->StatusDrawDeferred();
+#ifdef __SYMBIAN_SIGNED__
+	static_cast<CMobblerAppUi*>(CEikonEnv::Static()->AppUi())->SetAlbumArtAsWallpaperL(ETrue);
+#endif
 	}
 
 void CMobblerTrack::BitmapResizedL(const CMobblerBitmap* /*aMobblerBitmap*/)
@@ -673,7 +676,7 @@ void CMobblerTrack::FetchAlbumInfoL()
 	{
 	if (OkToDownloadAlbumArt())
 		{
-		static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->LastFmConnection().AlbumGetInfoL(iAlbum->String(), iArtist->String(), *this);
+		static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->LastFmConnection().AlbumGetInfoL(iAlbum->String8(), iArtist->String8(), *this);
 		iState = EFetchingAlbumInfo;
 		}
 	}
@@ -682,7 +685,7 @@ void CMobblerTrack::FetchArtistInfoL()
 	{
 	if (OkToDownloadAlbumArt())
 		{
-		static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->LastFmConnection().ArtistGetImageL(iArtist->String(), *this);
+		static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->LastFmConnection().ArtistGetImageL(iArtist->String8(), *this);
 		iState = EFetchingArtistInfo;
 		}
 	}

@@ -92,19 +92,6 @@ HBufC8* MobblerUtility::URLEncodeLC(const TDesC8& aString)
 	return urlEncoded;
 	}
 
-HBufC8* MobblerUtility::URLEncodeLC(const TDesC& aString)
-	{
-	HBufC8* urlEncoded(HBufC8::NewLC(aString.Length() * 3));
-	// sanitise the input string
-	const TInt KCharCount(aString.Length());
-	for (TInt i(0); i < KCharCount; ++i)
-		{
-		urlEncoded->Des().AppendFormat(_L8("%%%2x"), aString[i]);
-		}
-	
-	return urlEncoded;
-	}
-
 TBuf8<2> MobblerUtility::LanguageL()
 	{
 	TBuf8<2> language;

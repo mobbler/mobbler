@@ -162,6 +162,10 @@ public:
 	void RemoveSleepTimerL();
 	void RemoveAlarmL();
 
+#ifdef __SYMBIAN_SIGNED__
+	TInt SetAlbumArtAsWallpaperL(TBool aAutomatically = EFalse);
+#endif
+
 public: // CEikAppUi
 	void HandleCommandL(TInt aCommand);
 	void HandleForegroundEventL(TBool aForeground);
@@ -274,6 +278,10 @@ private:
 	
 	CMobblerDestinationsInterface* iDestinations;
 	TUid iDestinationsDtorUid;
+	
+#ifdef __SYMBIAN_SIGNED__
+	TBool iWallpaperSet;
+#endif
 	};
 
 #endif // __MOBBLERAPPUI_H__
