@@ -324,7 +324,7 @@ void CMobblerRadioPlayer::StartL(CMobblerLastFmConnection::TRadioStation aRadioS
 	// now ask for the radio to start again
 	if (aRadioText)
 		{
-		HBufC8* urlEncoded(MobblerUtility::URLEncodeLC(aRadioText->String()));
+		HBufC8* urlEncoded(MobblerUtility::URLEncodeLC(aRadioText->String8()));
 		iLastFmConnection.SelectStationL(this, aRadioStation, *urlEncoded);
 		CleanupStack::PopAndDestroy(urlEncoded);
 		}

@@ -105,7 +105,12 @@ CMobblerLastFmConnection* CMobblerLastFmConnection::NewL(MMobblerLastFmConnectio
 	}
 
 CMobblerLastFmConnection::CMobblerLastFmConnection(MMobblerLastFmConnectionObserver& aObserver, TUint32 aIapId, TInt aBitRate)
-	:CActive(CActive::EPriorityStandard), iIapId(aIapId), iObserver(aObserver), iBitRate(aBitRate)
+	:CActive(CActive::EPriorityStandard), iIapId(aIapId), iObserver(aObserver), iBitRate(aBitRate),
+#ifdef __WINS__
+	iScrobblingOn(EFalse)
+#else
+	iScrobblingOn(ETrue)
+#endif
 	{
 	CActiveScheduler::Add(this);
 	}
@@ -153,8 +158,6 @@ void CMobblerLastFmConnection::ConstructL(const TDesC& aRecipient, const TDesC& 
 	LoadTrackQueueL();
 	
 	User::LeaveIfError(iSocketServ.Connect());
-	
-	iScrobblingOn = ETrue;
 	}
 
 void CMobblerLastFmConnection::DoSetModeL(TMode aMode)
@@ -874,7 +877,7 @@ void CMobblerLastFmConnection::RecentTracksL(const TDesC8& aUser, MMobblerFlatDa
 	AppendAndSubmitTransactionL(transaction);
 	}
 
-void CMobblerLastFmConnection::ArtistGetImageL(const TDesC& aArtist, MMobblerFlatDataObserver& aObserver)
+void CMobblerLastFmConnection::ArtistGetImageL(const TDesC8& aArtist, MMobblerFlatDataObserver& aObserver)
 	{
 	CUri8* uri(CUri8::NewL());
 	CleanupStack::PushL(uri);
@@ -900,7 +903,7 @@ void CMobblerLastFmConnection::ArtistGetImageL(const TDesC& aArtist, MMobblerFla
 	AppendAndSubmitTransactionL(transaction);
 	}
 
-void CMobblerLastFmConnection::ArtistGetTagsL(const TDesC& aArtist, MMobblerFlatDataObserver& aObserver)
+void CMobblerLastFmConnection::ArtistGetTagsL(const TDesC8& aArtist, MMobblerFlatDataObserver& aObserver)
 	{
 	CUri8* uri(CUri8::NewL());
 	CleanupStack::PushL(uri);
@@ -925,7 +928,7 @@ void CMobblerLastFmConnection::ArtistGetTagsL(const TDesC& aArtist, MMobblerFlat
 	AppendAndSubmitTransactionL(transaction);
 	}
 
-void CMobblerLastFmConnection::AlbumGetInfoL(const TDesC& aAlbum, const TDesC& aArtist, MMobblerFlatDataObserver& aObserver)
+void CMobblerLastFmConnection::AlbumGetInfoL(const TDesC8& aAlbum, const TDesC8& aArtist, MMobblerFlatDataObserver& aObserver)
 	{
 	CUri8* uri(CUri8::NewL());
 	CleanupStack::PushL(uri);

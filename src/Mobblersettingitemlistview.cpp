@@ -36,7 +36,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 CMobblerSettingItemListView* CMobblerSettingItemListView::NewL()
 	{
-	CMobblerSettingItemListView* self = new(ELeave) CMobblerSettingItemListView;
+	CMobblerSettingItemListView* self(new(ELeave) CMobblerSettingItemListView);
 	CleanupStack::PushL(self);
 	self->ConstructL();
 	CleanupStack::Pop(self);
@@ -304,6 +304,15 @@ void CMobblerSettingItemListView::LoadListL()
 								  R_MOBBLER_ACCELEROMETER_GESTURES_OFF,
 								  R_MOBBLER_ACCELEROMETER_GESTURES_ON);
 			}
+		
+		// Automatic wallpaper binary popup setting item // TODO move higher up?
+#ifdef __SYMBIAN_SIGNED__
+		CreateBinaryItemL(iSettings->AutomaticWallpaper(),
+						  R_MOBBLER_AUTOMATICALLY_SET_WALLPAPER,
+						  R_MOBBLER_BINARY_SETTING_PAGE,
+						  R_MOBBLER_SET_WALLPAPER_MANUALLY,
+						  R_MOBBLER_SET_WALLPAPER_AUTOMATICALLY);
+#endif
 		}
 	else if (iSettingsToSet == ESleepTimer)
 		{
