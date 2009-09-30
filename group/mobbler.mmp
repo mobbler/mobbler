@@ -156,6 +156,9 @@ SOURCE		mobblerwebservicesview.cpp
 
 LIBRARY		aknicon.lib
 LIBRARY		aknskins.lib
+#ifdef SYMBIAN_SIGNED
+LIBRARY		aknswallpaperutils.lib
+#endif
 LIBRARY		apgrfx.lib
 LIBRARY		apparc.lib
 LIBRARY		apmime.lib	// TDataType
@@ -243,3 +246,4 @@ TARGET mobbler_reg
 TARGETPATH 	  \private\10003a3f\apps
 END //RESOURCE
 
+// End of file
