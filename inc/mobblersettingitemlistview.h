@@ -72,6 +72,7 @@ public:
 	TInt AlarmVolume()				{ return iSettings->AlarmVolume(); }
 	TInt AlarmStation()				{ return iSettings->AlarmStation(); }
 	const TDesC& AlarmOption() const	{ return iSettings->AlarmOption(); }
+	TBool AutomaticWallpaper() const	{ return iSettings->AutomaticWallpaper(); }
 	
 	void SetEqualizerIndexL(TInt aIndex);
 	void SetVolumeL(TInt aVolume);

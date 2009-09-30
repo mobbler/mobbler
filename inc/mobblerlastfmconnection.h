@@ -162,11 +162,11 @@ public:
 	void SimilarTracksL(const TDesC8& aArtist, const TDesC8& aTrack, MMobblerFlatDataObserver& aObserver);
 	
 	void SimilarArtistsL(const TDesC8& aArtist, MMobblerFlatDataObserver& aObserver);
-	void ArtistGetImageL(const TDesC& aArtist, MMobblerFlatDataObserver& aObserver);
-	void ArtistGetTagsL(const TDesC& aArtist, MMobblerFlatDataObserver& aObserver);
+	void ArtistGetImageL(const TDesC8& aArtist, MMobblerFlatDataObserver& aObserver);
+	void ArtistGetTagsL(const TDesC8& aArtist, MMobblerFlatDataObserver& aObserver);
 	
 	void AlbumGetInfoL(const TDesC8& aMbId, MMobblerFlatDataObserver& aObserver);
-	void AlbumGetInfoL(const TDesC& aAlbum, const TDesC& aArtist, MMobblerFlatDataObserver& aObserver);
+	void AlbumGetInfoL(const TDesC8& aAlbum, const TDesC8& aArtist, MMobblerFlatDataObserver& aObserver);
 	
 	void PlaylistCreateL(const TDesC& aTitle, const TDesC& aDescription, MMobblerFlatDataObserver& aObserver);
 	void PlaylistFetchUserL(const TDesC8& aPlaylistId, MMobblerFlatDataObserver& aObserver);
@@ -295,12 +295,11 @@ private:
 	TState iState;
 	TBool iAuthenticated;
 	
+	TInt iBitRate;
 	TBool iScrobblingOn;
 	TBool iCurrentTrackSaved;
 	
 	RPointerArray<MMobblerConnectionStateObserver> iStateChangeObservers;
-	
-	TInt iBitRate;
 	
 	TLastFmMemberType iMemberType;
 	

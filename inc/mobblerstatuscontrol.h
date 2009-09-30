@@ -58,10 +58,6 @@ public:
 	void VolumeChanged();
 	TBool IsFifthEdition() const { return (iMobblerFeedback != NULL); }
 	
-#ifdef __SYMBIAN_SIGNED__
-	TInt SetAlbumArtAsWallpaperL();
-#endif
-	
 private:
 	void ConstructL(const TRect& aRect);
 	CMobblerStatusControl(const CMobblerAppUi& aAppUi);
