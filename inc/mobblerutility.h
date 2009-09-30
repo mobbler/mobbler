@@ -1,7 +1,7 @@
 /*
 mobblerutility.h
 
-mobbler, a last.fm mobile scrobbler for Symbian smartphones.
+Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
 Copyright (C) 2008  Michael Coffey
 
 http://code.google.com/p/mobbler
@@ -31,7 +31,6 @@ class MobblerUtility
 public:
 	static HBufC8* MD5LC(const TDesC8& aSource);
 	static HBufC8* URLEncodeLC(const TDesC8& aString);
-	static HBufC8* URLEncodeLC(const TDesC& aString);
 	
 	static TBuf8<2> LanguageL();
 	static TBuf<30> LocalLastFmDomainL();

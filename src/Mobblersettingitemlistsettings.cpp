@@ -47,7 +47,7 @@ _LIT(KDefaultAlarmTime, "070000."); // "HHMMSS."
 
 CMobblerSettingItemListSettings* CMobblerSettingItemListSettings::NewL()
 	{
-	CMobblerSettingItemListSettings* self = new(ELeave) CMobblerSettingItemListSettings;
+	CMobblerSettingItemListSettings* self(new(ELeave) CMobblerSettingItemListSettings);
 	return self;
 	}
 
@@ -94,6 +94,7 @@ void CMobblerSettingItemListSettings::LoadSettingValuesL()
 	TUint32 destinationId(0);
 	TInt alarmVolume(KDefaultVolume);
 	TInt alarmStation(EMobblerCommandRadioPersonal - EMobblerCommandRadioArtist);
+	TBool automaticWallpaper(EFalse);
 	
 	if (openError == KErrNone)
 		{
@@ -161,6 +162,8 @@ void CMobblerSettingItemListSettings::LoadSettingValuesL()
 		TRAP_IGNORE(alarmVolume = readStream.ReadInt16L());
 		TRAP_IGNORE(alarmStation = readStream.ReadInt32L());
 		TRAP_IGNORE(readStream >> alarmOption);
+		TRAP_IGNORE(automaticWallpaper = readStream.ReadInt8L());
+		
 		SetAlarmOption(alarmOption);
 		
 		SetUsername(username);
@@ -202,6 +205,7 @@ void CMobblerSettingItemListSettings::LoadSettingValuesL()
 	SetBitRate(bitRate);
 	SetAlarmVolume(alarmVolume);
 	SetAlarmStation(alarmStation);
+	SetAutomaticWallpaper(automaticWallpaper);
 	
 	CleanupStack::PopAndDestroy(&file);
 	}
@@ -244,6 +248,7 @@ void CMobblerSettingItemListSettings::SaveSettingValuesL()
 		writeStream.WriteInt16L(AlarmVolume());
 		writeStream.WriteInt32L(AlarmStation());
 		writeStream << AlarmOption();
+		writeStream.WriteInt8L(AutomaticWallpaper());
 		
 		CleanupStack::PopAndDestroy(&writeStream);
 		}

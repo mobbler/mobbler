@@ -49,7 +49,7 @@ public:
 public:
 	static CMobblerSettingItemListSettings* NewL();
 	~CMobblerSettingItemListSettings();
-		
+
 private:
 	CMobblerSettingItemListSettings();
 
@@ -81,10 +81,10 @@ public:
 	
 	TInt& ScrobblePercent() { return iScrobblePercent; }
 	void SetScrobblePercent(TInt aPercent) { iScrobblePercent = aPercent; }
-
+	
 	TInt& Volume() { return iVolume; }
 	void SetVolume(TInt aVolume) { iVolume = aVolume; }
-
+	
 	TInt& SleepTimerMinutes() { return iSleepTimerMinutes; }
 	void SetSleepTimerMinutes(TInt aSleepTimerMinutes) { iSleepTimerMinutes = aSleepTimerMinutes; }
 	
@@ -105,10 +105,10 @@ public:
 	
 	TInt& SleepTimerImmediacy() { return iSleepTimerImmediacy; }
 	void SetSleepTimerImmediacy(TInt aSleepTimerImmediacy) { iSleepTimerImmediacy = aSleepTimerImmediacy; }
-
+	
 	TBool& AlarmOn() { return iAlarmOn; }
 	void SetAlarmOn(TBool aAlarmOn) { iAlarmOn = aAlarmOn; };
-
+	
 	TTime& AlarmTime() { return iAlarmTime; }
 	void SetAlarmTime(TTime aAlarmTime) { iAlarmTime = aAlarmTime; }
 
@@ -126,6 +126,9 @@ public:
 	
 	TDes& AlarmOption() { return iAlarmOption; }
 	void SetAlarmOption(const TDesC& aAlarmOption) { iAlarmOption.Copy(aAlarmOption); }
+	
+	TBool& AutomaticWallpaper() { return iAutomaticWallpaper; }
+	void SetAutomaticWallpaper(TBool aAutomaticWallpaper) { iAutomaticWallpaper = aAutomaticWallpaper; }
 
 protected:
 	TBuf<30> iUsername;
@@ -151,6 +154,7 @@ protected:
 	TInt iAlarmVolume;
 	TInt iAlarmStation;
 	TBuf<255> iAlarmOption;
+	TBool iAutomaticWallpaper;
 	};
 
 #endif // __MOBBLERSETTINGITEMLISTSETTINGS_H__

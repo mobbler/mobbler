@@ -28,10 +28,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <aknutils.h>
 #include <gulicon.h>
 
-#ifdef __SYMBIAN_SIGNED__
-#include <aknswallpaperutils.h>
-#endif
-
 #ifdef  __S60_50__
 #include <mobbler/mobblertouchfeedbackinterface.h>
 #include <touchfeedback.h>
@@ -1020,7 +1016,7 @@ TKeyResponse CMobblerStatusControl::OfferKeyEventL(const TKeyEvent& aKeyEvent, T
 #ifdef _DEBUG
 #ifdef __SYMBIAN_SIGNED__
 			case '3':
-			SetAlbumArtAsWallpaperL();
+			const_cast<CMobblerAppUi&>(iAppUi).HandleCommandL(EMobblerCommandSetAsWallpaper);
 			response = EKeyWasConsumed;
 			break;
 #endif
@@ -1090,7 +1086,7 @@ void CMobblerStatusControl::HandlePointerEventL(const TPointerEvent& aPointerEve
 	TKeyEvent event;
 	event.iCode = EKeyNull;
 	
-	switch( aPointerEvent.iType )
+	switch(aPointerEvent.iType)
 		{
 		case TPointerEvent::EButton1Down:
 			{
@@ -1192,41 +1188,5 @@ void CMobblerStatusControl::HandlePointerEventL(const TPointerEvent& aPointerEve
 	
 	CCoeControl::HandlePointerEventL(aPointerEvent);
 	}
-
-#ifdef __SYMBIAN_SIGNED__
-TInt CMobblerStatusControl::SetAlbumArtAsWallpaperL()
-	{
-	TInt error(KErrUnknown);
-	_LIT(KWallpaperFile, "C:\\System\\Data\\Mobbler\\wallpaperimage.mbm");
-	LOG(_L8("Set as wallpaper"));
-	
-	if (iAppUi.CurrentTrack() && 
-		iAppUi.CurrentTrack()->AlbumArt() && 
-		iAppUi.CurrentTrack()->AlbumArt()->Bitmap())
-		{
-		// The current track has album art and it has finished loading
-		CCoeEnv::Static()->FsSession().MkDirAll(KWallpaperFile);
-		error = iAppUi.CurrentTrack()->AlbumArt()->Bitmap(ETrue)->Save(KWallpaperFile);
-		if (error == KErrNone)
-			{
-			error = AknsWallpaperUtils::SetIdleWallpaper(KWallpaperFile, NULL);
-			LOG2(_L8("Set as wallpaper"), error);
-			}
-		}
-	
-	// No success with album art, try Mobbler icon
-	if (error != KErrNone)
-		{
-		error = iMobblerBitmapAppIcon->Bitmap(ETrue)->Save(KWallpaperFile);
-		if (error == KErrNone)
-			{
-			error = AknsWallpaperUtils::SetIdleWallpaper(KWallpaperFile, NULL);
-			LOG2(_L8("Set as wallpaper"), error);
-			}
-		}
-	
-	return error;
-	}
-#endif
 
 // End of file
