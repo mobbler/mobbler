@@ -43,20 +43,20 @@ void CMobblerEventList::ConstructL()
 	{
 	iDefaultImage = iAppUi.BitmapCollection().BitmapL(*this, CMobblerBitmapCollection::EBitmapDefaultEventImage);
 	
-    switch (iType)
-    	{
-    	case EMobblerCommandUserEvents:
-    		iAppUi.LastFmConnection().WebServicesCallL(_L8("user"), _L8("getevents"), iText1->String8(), *this);
-    		break;
-    	case EMobblerCommandArtistEvents:
-    		iAppUi.LastFmConnection().WebServicesCallL(_L8("artist"), _L8("getevents"), iText1->String8(), *this);
-    		break;
-    	case EMobblerCommandRecommendedEvents:
-    		iAppUi.LastFmConnection().RecommendedEventsL(*this);
-    		break;
-    	default:
-    		break;
-    	}
+	switch (iType)
+		{
+		case EMobblerCommandUserEvents:
+			iAppUi.LastFmConnection().WebServicesCallL(_L8("user"), _L8("getevents"), iText1->String8(), *this);
+			break;
+		case EMobblerCommandArtistEvents:
+			iAppUi.LastFmConnection().WebServicesCallL(_L8("artist"), _L8("getevents"), iText1->String8(), *this);
+			break;
+		case EMobblerCommandRecommendedEvents:
+			iAppUi.LastFmConnection().RecommendedEventsL(*this);
+			break;
+		default:
+			break;
+		}
 	}
 
 CMobblerEventList::~CMobblerEventList()
@@ -71,32 +71,32 @@ CMobblerListControl* CMobblerEventList::HandleListCommandL(TInt aCommand)
 	CMobblerListControl* list(NULL);
 	
 	switch (aCommand)
-		{	
+		{
 		case EMobblerCommandEventShoutbox:
 			list = CMobblerListControl::CreateListL(iAppUi, iWebServicesControl, EMobblerCommandEventShoutbox, iList[iListBox->CurrentItemIndex()]->Title()->String8(), iList[iListBox->CurrentItemIndex()]->Id());
 			break;
-    	case EMobblerCommandEventShare:
-    		delete iWebServicesHelper;
-    		iWebServicesHelper = CMobblerWebServicesHelper::NewL(iAppUi);
-    		iWebServicesHelper->EventShareL(iList[iListBox->CurrentItemIndex()]->Id());
-    		break;
-    	case EMobblerCommandAttendanceYes:
-    		delete iAttendanceHelper;
-    		iAttendanceHelper = CMobblerFlatDataObserverHelper::NewL(iAppUi.LastFmConnection(), *this, ETrue);
-    		iAppUi.LastFmConnection().EventAttendL(iList[iListBox->CurrentItemIndex()]->Id(), CMobblerLastFmConnection::EAttending, *iAttendanceHelper);
-    		break;
-    	case EMobblerCommandAttendanceMaybe:
-    		delete iAttendanceHelper;
-    		iAttendanceHelper = CMobblerFlatDataObserverHelper::NewL(iAppUi.LastFmConnection(), *this, ETrue);
-    		iAppUi.LastFmConnection().EventAttendL(iList[iListBox->CurrentItemIndex()]->Id(), CMobblerLastFmConnection::EMaybe, *iAttendanceHelper);
-    		break;
-    	case EMobblerCommandAttendanceNo:
-    		delete iAttendanceHelperNo;
-    		iAttendanceHelperNo = CMobblerFlatDataObserverHelper::NewL(iAppUi.LastFmConnection(), *this, ETrue);
-    		iAppUi.LastFmConnection().EventAttendL(iList[iListBox->CurrentItemIndex()]->Id(), CMobblerLastFmConnection::ENotAttending, *iAttendanceHelperNo);
-    		break;
+		case EMobblerCommandEventShare:
+			delete iWebServicesHelper;
+			iWebServicesHelper = CMobblerWebServicesHelper::NewL(iAppUi);
+			iWebServicesHelper->EventShareL(iList[iListBox->CurrentItemIndex()]->Id());
+			break;
+		case EMobblerCommandAttendanceYes:
+			delete iAttendanceHelper;
+			iAttendanceHelper = CMobblerFlatDataObserverHelper::NewL(iAppUi.LastFmConnection(), *this, ETrue);
+			iAppUi.LastFmConnection().EventAttendL(iList[iListBox->CurrentItemIndex()]->Id(), CMobblerLastFmConnection::EAttending, *iAttendanceHelper);
+			break;
+		case EMobblerCommandAttendanceMaybe:
+			delete iAttendanceHelper;
+			iAttendanceHelper = CMobblerFlatDataObserverHelper::NewL(iAppUi.LastFmConnection(), *this, ETrue);
+			iAppUi.LastFmConnection().EventAttendL(iList[iListBox->CurrentItemIndex()]->Id(), CMobblerLastFmConnection::EMaybe, *iAttendanceHelper);
+			break;
+		case EMobblerCommandAttendanceNo:
+			delete iAttendanceHelperNo;
+			iAttendanceHelperNo = CMobblerFlatDataObserverHelper::NewL(iAppUi.LastFmConnection(), *this, ETrue);
+			iAppUi.LastFmConnection().EventAttendL(iList[iListBox->CurrentItemIndex()]->Id(), CMobblerLastFmConnection::ENotAttending, *iAttendanceHelperNo);
+			break;
 		default:
-			break;	
+			break;
 		}
 	
 	return list;
@@ -106,7 +106,7 @@ void CMobblerEventList::SupportedCommandsL(RArray<TInt>& aCommands)
 	{
 	aCommands.AppendL(EMobblerCommandView);
 	aCommands.AppendL(EMobblerCommandEventShoutbox);
-
+	
 	aCommands.AppendL(EMobblerCommandShare);
 	aCommands.AppendL(EMobblerCommandEventShare);
 	
@@ -125,7 +125,7 @@ void CMobblerEventList::DataL(CMobblerFlatDataObserverHelper* aObserver, const T
 			{
 			// We have removed an event from the
 			// user's list so remove it
-	
+			
 			// Create the XML reader and DOM fragement and associate them with each other
 			CSenXmlReader* xmlReader(CSenXmlReader::NewL());
 			CleanupStack::PushL(xmlReader);
@@ -138,12 +138,24 @@ void CMobblerEventList::DataL(CMobblerFlatDataObserverHelper* aObserver, const T
 			
 			const TDesC8* statusText(domFragment->AsElement().AttrValue(_L8("status")));
 			
-			if (statusText && (statusText->CompareF(_L8("ok")) == 0))
+			if (iListBox && statusText && (statusText->CompareF(_L8("ok")) == 0))
 				{
-				iListBoxItems->Delete(iListBox->CurrentItemIndex());
-				delete iList[iListBox->CurrentItemIndex()];
-				iList.Remove(iListBox->CurrentItemIndex());
-				iListBox->HandleItemRemovalL();
+				// Get the list box items model
+				MDesCArray* listArray(iListBox->Model()->ItemTextArray());
+				CDesCArray* itemArray(static_cast<CDesCArray*>(listArray));
+				
+				 // Number of items in the list
+				const TInt KCount(itemArray->Count());
+				
+				// Validate index then delete
+				const TInt KIndex(iListBox->CurrentItemIndex());
+				if (KIndex >= 0 && KIndex < KCount)
+					{
+					itemArray->Delete(KIndex, 1);
+					AknListBoxUtils::HandleItemRemovalAndPositionHighlightL(
+						iListBox, KIndex, ETrue);
+					iListBox->DrawNow();
+					}
 				}
 			else
 				{

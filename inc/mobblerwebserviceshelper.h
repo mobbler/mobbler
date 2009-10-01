@@ -52,8 +52,8 @@ private:
 	void ConstructL();
 	CMobblerWebServicesHelper(CMobblerAppUi& aAppUi);
 	
-	//HBufC* DisplayContactListL();
-	//HBufC* DisplayEmailListL(const CDesCArray& aEmails);
+	HBufC* DisplayContactListL();
+	HBufC* DisplayEmailListL(const CDesCArray& aEmails);
 
 private:
 	void DataL(CMobblerFlatDataObserverHelper* aObserver, const TDesC8& aData, CMobblerLastFmConnection::TTransactionError aTransactionError);
