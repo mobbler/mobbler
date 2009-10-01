@@ -1940,19 +1940,6 @@ TInt CMobblerAppUi::SetAlbumArtAsWallpaperL(TBool aAutomatically)
 					}
 				}
 			}
-		
-/*TODO
-		// No success with album art, try Mobbler icon
-		if (!aAutomatically && error != KErrNone)
-			{
-			error = iMobblerBitmapAppIcon->Bitmap(ETrue)->Save(KWallpaperFile);
-			if (error == KErrNone)
-				{
-				error = AknsWallpaperUtils::SetIdleWallpaper(KWallpaperFile, NULL);
-				LOG2(_L8("Set as wallpaper"), error);
-				}
-			}
-*/
 		}
 	return error;
 	}
