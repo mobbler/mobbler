@@ -1,7 +1,7 @@
 /*
 mobblerdocument.cpp
 
-mobbler, a last.fm mobile scrobbler for Symbian smartphones.
+Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
 Copyright (C) 2008  Michael Coffey
 
 http://code.google.com/p/mobbler
@@ -26,39 +26,36 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 CMobblerDocument* CMobblerDocument::NewL(CEikApplication& aApp)
 	{
-	CMobblerDocument* self = NewLC(aApp);
+	CMobblerDocument* self(NewLC(aApp));
 	CleanupStack::Pop(self);
 	return self;
 	}
 
 CMobblerDocument* CMobblerDocument::NewLC(CEikApplication& aApp)
 	{
-	CMobblerDocument* self = new(ELeave) CMobblerDocument(aApp);
+	CMobblerDocument* self(new(ELeave) CMobblerDocument(aApp));
 	CleanupStack::PushL(self);
 	self->ConstructL();
 	
 	return self;
 	}
 
-
 void CMobblerDocument::ConstructL()
 	{
 	}
-
 
 CMobblerDocument::CMobblerDocument(CEikApplication& aApp)
 	:CAknDocument(aApp)
 	{
 	}
 
-
 CMobblerDocument::~CMobblerDocument()
 	{
 	}
-
 
 CEikAppUi* CMobblerDocument::CreateAppUiL()
 	{
 	return new(ELeave) CMobblerAppUi;
 	}
 
+// End of file

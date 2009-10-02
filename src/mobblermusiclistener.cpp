@@ -42,7 +42,7 @@ const TUid KContentListingImplUid = {0xA000BEB3};
 
 CMobblerMusicAppListener* CMobblerMusicAppListener::NewL(CMobblerLastFmConnection& aSubmitter)
 	{
-	CMobblerMusicAppListener* self = new(ELeave) CMobblerMusicAppListener(aSubmitter);
+	CMobblerMusicAppListener* self(new(ELeave) CMobblerMusicAppListener(aSubmitter));
 	CleanupStack::PushL(self);
 	self->ConstructL();
 	CleanupStack::Pop(self);
@@ -82,7 +82,7 @@ void CMobblerMusicAppListener::ConstructL()
 		}
 	
 	CleanupStack::PopAndDestroy(&implInfoPtrArray);
-
+	
 	TRAP_IGNORE(iMobblerContentListing = static_cast<CMobblerContentListingInterface*>(REComSession::CreateImplementationL(KContentListingImplUid, iDtorIdKey)));
 	if (iMobblerContentListing)
 		{
@@ -90,7 +90,7 @@ void CMobblerMusicAppListener::ConstructL()
 		}
 	
 	iMusicPlayerState = EMPlayerRCtrlNotRunning;
-
+	
 	// check if there is a song playing when Mobbler is started
 	ScheduleNowPlayingL();
 	}
@@ -105,7 +105,7 @@ CMobblerMusicAppListener::~CMobblerMusicAppListener()
 	iMobblerMusicApps.ResetAndDestroy();
 	
 	const TInt KDtorIdKeysCount(iDtorIdKeys.Count());
-	for (TInt i(0) ; i < KDtorIdKeysCount ; ++i)
+	for (TInt i(0); i < KDtorIdKeysCount; ++i)
 		{
 		REComSession::DestroyedImplementation(iDtorIdKeys[i]);
 		}
@@ -116,7 +116,7 @@ CMobblerMusicAppListener::~CMobblerMusicAppListener()
 	REComSession::FinalClose();
 	
 	delete iNowPlayingCallback;
-
+	
 	if (iMobblerContentListing)
 		{
 		delete iMobblerContentListing;
@@ -140,7 +140,7 @@ void CMobblerMusicAppListener::RemoveObserver(MMobblerMusicAppListenerObserver* 
 		iObservers.Remove(position);
 		}
 	}
-	
+
 void CMobblerMusicAppListener::NotifyChangeL()
 	{
 	const TInt KObserverCount(iObservers.Count());
@@ -236,7 +236,7 @@ void CMobblerMusicAppListener::NowPlayingL()
 												RadioPlayer().Stop();
 		}
 
-	if ( iCurrentTrack )
+	if (iCurrentTrack)
 		{
 		// We are currently listening to a track so just send the old one again
 		iLastFmConnection.TrackStartedL(iCurrentTrack);
@@ -290,7 +290,7 @@ void CMobblerMusicAppListener::NowPlayingL()
 				if (trackAlbum.Length() == 0)
 					{
 					iCurrentTrack = CMobblerTrack::NewL(*artist, *title, KNullDesC8, /*KNullDesC8,*/ KNullDesC8, KNullDesC8, KNullDesC8, trackLength, KNullDesC8);
-
+					
 					if (trackTitle.Length() != 0 && trackArtist.Length() != 0)
 						{
 						iMobblerContentListing->FindAndSetAlbumNameL(*artist, *title);
@@ -320,7 +320,7 @@ void CMobblerMusicAppListener::SetAlbumL(const TDesC& aAlbum)
 		iCurrentTrack->SetAlbumL(aAlbum);
 		}
 	}
-	
+
 void CMobblerMusicAppListener::SetPathL(const TDesC& aPath)
 	{
 	if (iCurrentTrack)
@@ -342,7 +342,7 @@ void CMobblerMusicAppListener::PlayerStateChangedL(TMPlayerRemoteControlState aS
 	TMPlayerRemoteControlState oldState(iMusicPlayerState);
 	TMPlayerRemoteControlState newState(aState);
 	iMusicPlayerState = newState;
-
+	
 	if ((oldState != EMPlayerRCtrlPlaying) && 
 		(newState == EMPlayerRCtrlPlaying))
 		{
@@ -362,13 +362,13 @@ void CMobblerMusicAppListener::PlayerStateChangedL(TMPlayerRemoteControlState aS
 		if (iCurrentTrack)
 			{
 			TTimeIntervalSeconds totalPlayed(iCurrentTrack->TotalPlayed());
-
+			
 			TTime now;
 			now.UniversalTime();
 			TTimeIntervalSeconds newPeriod;
 			User::LeaveIfError(now.SecondsFrom(iCurrentTrack->StartTimeUTC(), 
 											   newPeriod));
-
+			
 			TInt64 newTotal(totalPlayed.Int() + newPeriod.Int());
 			iCurrentTrack->SetTotalPlayed(newTotal);
 			}
@@ -438,5 +438,5 @@ TBool CMobblerMusicAppListener::IsPlaying() const
 	{
 	return (iCurrentTrack && iMusicPlayerState == EMPlayerRCtrlPlaying);
 	}
-	
+
 // End of file

@@ -63,7 +63,7 @@ const TUid KMusicAppUid = {0x102072C3};
 
 CMobblerBitmapCollection::CBitmapCollectionItem* CMobblerBitmapCollection::CBitmapCollectionItem::NewLC(CMobblerBitmap* aBitmap, TInt aBitmapId)
 	{
-	CBitmapCollectionItem* self = new(ELeave) CBitmapCollectionItem(aBitmapId);
+	CBitmapCollectionItem* self(new(ELeave) CBitmapCollectionItem(aBitmapId));
 	CleanupStack::PushL(self);
 	self->ConstructL(aBitmap);
 	//CleanupStack::Pop(self);
@@ -102,7 +102,7 @@ CMobblerBitmap* CMobblerBitmapCollection::CBitmapCollectionItem::Bitmap() const
 	
 CMobblerBitmapCollection* CMobblerBitmapCollection::NewL()
 	{
-	CMobblerBitmapCollection* self = new(ELeave) CMobblerBitmapCollection();
+	CMobblerBitmapCollection* self(new(ELeave) CMobblerBitmapCollection());
 	CleanupStack::PushL(self);
 	self->ConstructL();
 	CleanupStack::Pop(self);
@@ -150,7 +150,7 @@ CMobblerBitmap* CMobblerBitmapCollection::BitmapL(MMobblerBitmapObserver& aObser
 				break;
 			case EBitmapLove:
 				bitmap = CMobblerBitmap::NewL(aObserver, KMobblerMifFile, EMbmMobblerLove, EMbmMobblerLove_mask);
-				break;	
+				break;
 			case EBitmapBan:
 				bitmap = CMobblerBitmap::NewL(aObserver, KMobblerMifFile, EMbmMobblerBan, EMbmMobblerBan_mask);
 				break;
@@ -220,7 +220,7 @@ void CMobblerBitmapCollection::Cancel(CMobblerBitmap* aBitmap) const
 	{
 	// Cancel all the callbacks for this observer
 	const TInt KBitmapCount(iBitmaps.Count());
-	for (TInt i(0) ; i < KBitmapCount ; ++i)
+	for (TInt i(0); i < KBitmapCount; ++i)
 		{
 		if (iBitmaps[i]->Bitmap() == aBitmap)
 			{
@@ -229,6 +229,5 @@ void CMobblerBitmapCollection::Cancel(CMobblerBitmap* aBitmap) const
 			}
 		}
 	}
-	
-				
+
 // End of file

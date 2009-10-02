@@ -332,7 +332,7 @@ CMobblerLastFmError* CMobblerParser::ParseOldRadioPlaylistL(const TDesC8& aXml, 
 	// Parse the XML into the DOM fragment
 	xmlReader->ParseL(aXml);
 	
-	RPointerArray<CSenElement>& tracks = domFragment->AsElement().Element(KElementTrackList)->ElementsL();
+	RPointerArray<CSenElement>& tracks(domFragment->AsElement().Element(KElementTrackList)->ElementsL());
 	
 	const TInt KTrackCount(tracks.Count());
 	for (TInt i(0); i < KTrackCount; ++i)
@@ -445,7 +445,7 @@ CMobblerLastFmError* CMobblerParser::ParseRadioPlaylistL(const TDesC8& aXml, CMo
 		// The Last.fm error status was ok so get the tracks from the playlist 
 		
 		RPointerArray<CSenElement>* tracks(NULL);
-			
+		
 		CSenElement& domElement(domFragment->AsElement());
 		
 		CSenElement* playlistElement(domElement.Child(0));
@@ -583,7 +583,7 @@ CMobblerLastFmError* CMobblerParser::ParseBetaTestersHandshakeL(const TDesC8& aH
 	// parse the XML into the DOM fragment
 	xmlReader->ParseL(aHandshakeResponse);
 	
-	RPointerArray<CSenElement>& testers = domFragment->AsElement().ElementsL();
+	RPointerArray<CSenElement>& testers(domFragment->AsElement().ElementsL());
 	
 	aIsBetaTester = EFalse;
 	
@@ -625,8 +625,8 @@ void CMobblerParser::ParseSearchTrackL(const TDesC8& aXml, CMobblerTrackList& aO
 	
 	RPointerArray<CSenElement>& items(domFragment->AsElement().Element(_L8("results"))->Element(_L8("trackmatches"))->ElementsL());
 	
-    const TInt KCount(items.Count());
-    for (TInt i(0); i < KCount; ++i)
+	const TInt KCount(items.Count());
+	for (TInt i(0); i < KCount; ++i)
 		{
 		HBufC8* image((items[i]->Element(KElementImage) == NULL) ?
 						KNullDesC8().AllocLC() :
@@ -664,8 +664,8 @@ void CMobblerParser::ParseSearchAlbumL(const TDesC8& aXml, CMobblerAlbumList& aO
 	
 	RPointerArray<CSenElement>& items(domFragment->AsElement().Element(_L8("results"))->Element(_L8("albummatches"))->ElementsL());
 	
-    const TInt KCount(items.Count());
-    for (TInt i(0); i < KCount; ++i)
+	const TInt KCount(items.Count());
+	for (TInt i(0); i < KCount; ++i)
 		{
 		HBufC8* image((items[i]->Element(KElementImage) == NULL) ?
 						KNullDesC8().AllocLC() :

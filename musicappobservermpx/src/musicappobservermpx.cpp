@@ -128,7 +128,7 @@ void CMobblerMusicAppObserverMPX::HandlePlaybackMessage(CMPXMessage* aMessage, T
 				}
 			case TMPXPlaybackMessage::EStateChanged:
 				{
-				TMPlayerRemoteControlState state = MPlayerState(aMessage->ValueTObjectL<TMPXPlaybackState>(KMPXMessageGeneralType));
+				TMPlayerRemoteControlState state(MPlayerState(aMessage->ValueTObjectL<TMPXPlaybackState>(KMPXMessageGeneralType)));
 				
 				iObserver->PlayerStateChangedL(state);
 				break;

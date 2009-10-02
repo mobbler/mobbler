@@ -26,7 +26,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 CMobblerTimeout* CMobblerTimeout::NewL(const TTimeIntervalMicroSeconds32& aTimeoutTime)
 	{
-	CMobblerTimeout* self = new(ELeave) CMobblerTimeout(aTimeoutTime);
+	CMobblerTimeout* self(new(ELeave) CMobblerTimeout(aTimeoutTime));
 	CleanupStack::PushL(self);
 	self->ConstructL();
 	CleanupStack::Pop(self);

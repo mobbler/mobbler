@@ -21,7 +21,6 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-#include <apaid.h>
 #include <apgcli.h>
 #include <ecom/implementationproxy.h>
 #include "musicappobserver.h"
@@ -35,30 +34,30 @@ const TInt KImplementationUid = {0xA0007CAC};
 #endif
 
 const TImplementationProxy ImplementationTable[] =
-    {
-    {KImplementationUid, TProxyNewLPtr(CMobblerMusicAppObserver::NewL)}
-    };
+	{
+	{KImplementationUid, TProxyNewLPtr(CMobblerMusicAppObserver::NewL)}
+	};
 
 EXPORT_C const TImplementationProxy* ImplementationGroupProxy(TInt& aTableCount)
-    {
-    aTableCount = sizeof(ImplementationTable) / sizeof(TImplementationProxy);
-    return ImplementationTable;
-    }
+	{
+	aTableCount = sizeof(ImplementationTable) / sizeof(TImplementationProxy);
+	return ImplementationTable;
+	}
 
 CMobblerMusicAppObserver* CMobblerMusicAppObserver::NewL(TAny* aObserver)
 	{
-	CMobblerMusicAppObserver* self = new(ELeave) CMobblerMusicAppObserver(aObserver);
+	CMobblerMusicAppObserver* self(new(ELeave) CMobblerMusicAppObserver(aObserver));
 	CleanupStack::PushL(self);
 	self->ConstructL();
 	CleanupStack::Pop(self);
 	return self;
 	}
-	
+
 CMobblerMusicAppObserver::CMobblerMusicAppObserver(TAny* aObserver)
 	:iObserver(static_cast<MMobblerMusicAppObserver*>(aObserver))
 	{
 	}
-	
+
 void CMobblerMusicAppObserver::ConstructL()
 	{
 #ifndef __WINS__
@@ -78,7 +77,7 @@ void CMobblerMusicAppObserver::ConstructL()
 	// The caption is the app's name (e.g. EN: "Music player" or FI: "Soitin")
 	iName = info.iCaption;
 	}
-	
+
 CMobblerMusicAppObserver::~CMobblerMusicAppObserver()
 	{
 #ifndef __WINS__
@@ -86,7 +85,6 @@ CMobblerMusicAppObserver::~CMobblerMusicAppObserver()
 	iEngine->UnregisterCommandObserver(this);
 #endif
 	}
-
 
 void CMobblerMusicAppObserver::CommandReceived(TMPlayerRemoteControlCommands aCmd)
 	{
@@ -97,33 +95,33 @@ void CMobblerMusicAppObserver::PlayerStateChanged(TMPlayerRemoteControlState aSt
 	{
 	TRAP_IGNORE(iObserver->PlayerStateChangedL(aState));
 	}
-	
+
 void CMobblerMusicAppObserver::TrackInfoChanged(const TDesC& aTitle, const TDesC& aArtist)
 	{
 	TRAP_IGNORE(iObserver->TrackInfoChangedL(aTitle, aArtist));
 	}
-	
+
 void CMobblerMusicAppObserver::PlaylistChanged()
 	{
 	}
-	
+
 void CMobblerMusicAppObserver::PlaybackPositionChanged(TInt aPosition)
 	{
 	TRAP_IGNORE(iObserver->PlayerPositionL(aPosition));
 	}
-	
+
 void CMobblerMusicAppObserver::EqualizerPresetChanged(TInt /*aPresetNameKey*/)
 	{
 	}
-	
+
 void CMobblerMusicAppObserver::PlaybackModeChanged(TBool /*aRandom*/, TMPlayerRepeatMode /*aRepeat*/)
 	{
 	}
-	
+
 void CMobblerMusicAppObserver::PlayerUidChanged(TInt /*aPlayerUid*/)
 	{
 	}
-	
+
 void CMobblerMusicAppObserver::VolumeChanged(TInt /*aVolume*/)
 	{
 	}
@@ -172,4 +170,5 @@ TTimeIntervalSeconds CMobblerMusicAppObserver::Duration()
 	return 0;
 #endif
 	}
-	
+
+// End of file

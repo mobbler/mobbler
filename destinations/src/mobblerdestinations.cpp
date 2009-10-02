@@ -46,7 +46,7 @@ EXPORT_C const TImplementationProxy* ImplementationGroupProxy(TInt& aTableCount)
 
 CMobblerDestinations* CMobblerDestinations::NewL()
 	{
-	CMobblerDestinations* self = new(ELeave) CMobblerDestinations();
+	CMobblerDestinations* self(new(ELeave) CMobblerDestinations());
 	CleanupStack::PushL(self);
 	self->ConstructL();
 	CleanupStack::Pop(self);
@@ -133,11 +133,11 @@ TInt CMobblerDestinations::LoadDestinationListL(CArrayPtr<CAknEnumeratedText>& a
 	iCmManager.AllDestinationsL(destinations);
 	
 	const TInt KDestinationCount(destinations.Count());
-	for (TInt i(0) ; i < KDestinationCount ; ++i)
+	for (TInt i(0); i < KDestinationCount; ++i)
 		{
-		RCmDestination destination = iCmManager.DestinationL(destinations[i]);
+		RCmDestination destination(iCmManager.DestinationL(destinations[i]));
 		
-		HBufC* name = destination.NameLC();
+		HBufC* name(destination.NameLC());
 		
 		CAknEnumeratedText* enumText(new(ELeave) CAknEnumeratedText(destinations[i], name));
 		CleanupStack::Pop(name);

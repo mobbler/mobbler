@@ -22,7 +22,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
 #include <e32math.h>
-#include <gulicon.h>
 #include <hal.h>
 
 #include "mobbleralbumarttransition.h"
@@ -35,7 +34,7 @@ const TInt KTotalSlideTime(750000);
 
 CMobblerAlbumArtTransition* CMobblerAlbumArtTransition::NewL(CMobblerStatusControl& aStatusControl)
 	{
-	CMobblerAlbumArtTransition* self = new(ELeave) CMobblerAlbumArtTransition(aStatusControl);
+	CMobblerAlbumArtTransition* self(new(ELeave) CMobblerAlbumArtTransition(aStatusControl));
 	CleanupStack::PushL(self);
 	self->ConstructL();
 	CleanupStack::Pop(self);
@@ -187,7 +186,6 @@ void CMobblerAlbumArtTransition::DrawAlbumArtL(const CMobblerBitmap* aCurrentAlb
 				DoDrawAlbumArtL(aCurrentAlbumArt, aNextAlbumArt, aAlbumArtRect, Clamp(actualSlideAmount, 0, aAlbumArtRect.Width()));
 				}
 				break;
-				
 			}
 		}
 	}

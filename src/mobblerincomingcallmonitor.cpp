@@ -1,7 +1,7 @@
 /*
 mobblerincomingcallmonitor.cpp
 
-mobbler, a last.fm mobile scrobbler for Symbian smartphones.
+Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
 Copyright (C) 2008  Michael Coffey
 
 http://code.google.com/p/mobbler
@@ -23,15 +23,15 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "mobblerincomingcallmonitor.h"
 
-//Telephony call handling PS Uid. 
+// Telephony call handling PS UID
 const TUid KPSUidTelephonyCallHandling = {0x101F8787};
 
-//State of ongoing call(s). 
-const TUint32 KTelephonyCallState = 0x00000004;
+// State of ongoing call(s)
+const TUint32 KTelephonyCallState(0x00000004);
 
 CMobblerIncomingCallMonitor* CMobblerIncomingCallMonitor::NewL(MMobblerIncomingCallMonitorObserver& aObserver)
 	{
-	CMobblerIncomingCallMonitor* self = new(ELeave) CMobblerIncomingCallMonitor(aObserver);
+	CMobblerIncomingCallMonitor* self(new(ELeave) CMobblerIncomingCallMonitor(aObserver));
 	CleanupStack::PushL(self);
 	self->ConstructL();
 	CleanupStack::Pop(self);
@@ -76,3 +76,5 @@ void CMobblerIncomingCallMonitor::DoCancel()
 	{
 	iProperty.Cancel();
 	}
+
+// End of file

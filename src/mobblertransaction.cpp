@@ -34,7 +34,7 @@ const TInt KBufferGranularity(256);
 
 CMobblerTransaction* CMobblerTransaction::NewL(CMobblerLastFmConnection& aConnection, CUri8* aURI)
 	{
-	CMobblerTransaction* self = new(ELeave) CMobblerTransaction(aConnection, EFalse);
+	CMobblerTransaction* self(new(ELeave) CMobblerTransaction(aConnection, EFalse));
 	CleanupStack::PushL(self);
 	self->ConstructL(aURI);
 	CleanupStack::Pop(self);
@@ -43,7 +43,7 @@ CMobblerTransaction* CMobblerTransaction::NewL(CMobblerLastFmConnection& aConnec
 
 CMobblerTransaction* CMobblerTransaction::NewL(CMobblerLastFmConnection& aConnection, TBool aRequiresAuthentication, CUri8* aURI, CHTTPFormEncoder* aForm)
 	{
-	CMobblerTransaction* self = new(ELeave) CMobblerTransaction(aConnection, aRequiresAuthentication);
+	CMobblerTransaction* self(new(ELeave) CMobblerTransaction(aConnection, aRequiresAuthentication));
 	CleanupStack::PushL(self);
 	self->ConstructL(aURI, aForm);
 	CleanupStack::Pop(self);
@@ -52,7 +52,7 @@ CMobblerTransaction* CMobblerTransaction::NewL(CMobblerLastFmConnection& aConnec
 
 CMobblerTransaction* CMobblerTransaction::NewL(CMobblerLastFmConnection& aConnection, TBool aRequiresAuthentication, CUri8* aURI, CMobblerWebServicesQuery* aQuery)
 	{
-	CMobblerTransaction* self = new(ELeave) CMobblerTransaction(aConnection, aRequiresAuthentication);
+	CMobblerTransaction* self(new(ELeave) CMobblerTransaction(aConnection, aRequiresAuthentication));
 	CleanupStack::PushL(self);
 	self->ConstructL(aURI, aQuery);
 	CleanupStack::Pop(self);
@@ -61,7 +61,7 @@ CMobblerTransaction* CMobblerTransaction::NewL(CMobblerLastFmConnection& aConnec
 
 CMobblerTransaction* CMobblerTransaction::NewL(CMobblerLastFmConnection& aConnection, TBool aRequiresAuthentication)
 	{
-	CMobblerTransaction* self = new(ELeave) CMobblerTransaction(aConnection, aRequiresAuthentication);
+	CMobblerTransaction* self(new(ELeave) CMobblerTransaction(aConnection, aRequiresAuthentication));
 	//CleanupStack::PushL(self);
 	//self->ConstructL();
 	//CleanupStack::Pop(self);

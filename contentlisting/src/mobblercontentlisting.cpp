@@ -37,19 +37,19 @@ const TInt KImplementationUid = {0xA000BEB3};
 #endif
 
 const TImplementationProxy ImplementationTable[] =
-    {
-    {KImplementationUid, TProxyNewLPtr(CMobblerContentListing::NewL)}
-    };
+	{
+	{KImplementationUid, TProxyNewLPtr(CMobblerContentListing::NewL)}
+	};
 
 EXPORT_C const TImplementationProxy* ImplementationGroupProxy(TInt& aTableCount)
-    {
-    aTableCount = sizeof(ImplementationTable) / sizeof(TImplementationProxy);
-    return ImplementationTable;
-    }
+	{
+	aTableCount = sizeof(ImplementationTable) / sizeof(TImplementationProxy);
+	return ImplementationTable;
+	}
 
 CMobblerContentListing* CMobblerContentListing::NewL()
 	{
-	CMobblerContentListing* self = new(ELeave) CMobblerContentListing();
+	CMobblerContentListing* self(new(ELeave) CMobblerContentListing());
 	CleanupStack::PushL(self);
 	self->ConstructL();
 	CleanupStack::Pop(self);
