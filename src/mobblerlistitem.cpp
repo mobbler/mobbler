@@ -27,7 +27,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 CMobblerListItem* CMobblerListItem::NewL(CMobblerListControl& aObserver, const TDesC8& aTitle, const TDesC8& aDescription, const TDesC8& aImageLocation)
 	{
-	CMobblerListItem* self = new(ELeave) CMobblerListItem(aObserver);
+	CMobblerListItem* self(new(ELeave) CMobblerListItem(aObserver));
 	CleanupStack::PushL(self);
 	self->ConstructL(aTitle, aDescription, aImageLocation);
 	CleanupStack::Pop(self);

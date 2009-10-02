@@ -83,7 +83,7 @@ const TDesC& CMobblerResourceReader::CMobblerResource::String() const
 
 CMobblerResourceReader* CMobblerResourceReader::NewL()
 	{
-	CMobblerResourceReader* self = new(ELeave) CMobblerResourceReader();
+	CMobblerResourceReader* self(new(ELeave) CMobblerResourceReader());
 	CleanupStack::PushL(self);
 	self->ConstructL();
 	CleanupStack::Pop(self);

@@ -35,15 +35,15 @@ const TInt KImplementationUid = {0xA000B6C2};
 
 // Required for ECOM plugin
 const TImplementationProxy ImplementationTable[] =
-    {
-    {KImplementationUid, TProxyNewLPtr( CMobblerGestureObserver5x::NewL )}
-    };
+	{
+	{KImplementationUid, TProxyNewLPtr( CMobblerGestureObserver5x::NewL )}
+	};
 
 EXPORT_C const TImplementationProxy* ImplementationGroupProxy(TInt& aTableCount)
-    {
-    aTableCount = sizeof(ImplementationTable) / sizeof(TImplementationProxy);
-    return ImplementationTable;
-    }
+	{
+	aTableCount = sizeof(ImplementationTable) / sizeof(TImplementationProxy);
+	return ImplementationTable;
+	}
 
 // S60 5th edition implementation
 
@@ -59,7 +59,7 @@ const TInt KFilterValue(108);
 
 // Accelerometer sensor UID, can be used to inform common gesture action
 // objects that the event data is of the expected format.
-const TInt KAccelerometerSensorUID = 0x10273024;
+const TInt KAccelerometerSensorUID(0x10273024);
 
 // Constants for Transform() (see comments above function definition)
 const TReal KCorrectionFactor(5.3125); // (680 / 128)
@@ -78,7 +78,7 @@ CMobblerGestureObserver5x::~CMobblerGestureObserver5x()
 
 CMobblerGestureObserver* CMobblerGestureObserver5x::NewL()
 	{
-	CMobblerGestureObserver5x* self = new(ELeave) CMobblerGestureObserver5x;
+	CMobblerGestureObserver5x* self(new(ELeave) CMobblerGestureObserver5x);
 	CleanupStack::PushL(self);
 	self->ConstructL();
 	CleanupStack::Pop(self);
@@ -186,9 +186,8 @@ void CMobblerGestureObserver5x::DoStopObservingL()
 		}
 	}
 
-	
 void CMobblerGestureObserver5x::ConditionMet(CSensrvChannel& aChannel, CSensrvChannelConditionSet& aChannelConditionSet, 
-    		TDesC8& aValue)
+			TDesC8& aValue)
 	{
 	if (aChannel.GetChannelInfo().iChannelType == KSensrvChannelTypeIdAccelerometerXYZAxisData)
 		{
@@ -198,9 +197,9 @@ void CMobblerGestureObserver5x::ConditionMet(CSensrvChannel& aChannel, CSensrvCh
 			// Copy into a TPckgBuf
 			TPckgBuf<TSensrvAccelerometerAxisData> dataBuffer;
 			dataBuffer.Copy(aValue);
-	
+			
 			TSensrvAccelerometerAxisData accData(dataBuffer());
-	
+			
 			// Instantiate an event and deliver it to action delegates
 			TMobblerGestureEvent event(KAccelerometerSensorUID, Transform(accData.iAxisY),
 					Transform(accData.iAxisX), Transform(accData.iAxisZ));

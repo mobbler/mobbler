@@ -26,26 +26,28 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <AknLists.h>
 #include <aknnotewrappers.h>
 #include <aknsutils.h>
-
-#ifdef __SYMBIAN_SIGNED__
-#include <aknswallpaperutils.h>
-#endif
-
 #include <bautils.h> 
-
-#ifndef __WINS__
-#include <browserlauncher.h>
-#endif
 
 #include <EscapeUtils.h>
 #include <DocumentHandler.h>
 #include <s32file.h>
 
+
 #ifdef __SYMBIAN_SIGNED__
+#include <aknswallpaperutils.h>
+#include <apgcli.h>
+
 // SW Installer Launcher API
 #include <SWInstApi.h>
 #include <SWInstDefs.h>
-#endif
+
+#else // !__SYMBIAN_SIGNED__
+
+#ifndef __WINS__
+#include <browserlauncher.h>
+#endif // __WINS__
+
+#endif // __SYMBIAN_SIGNED__
 
 #include "mobbler.hrh"
 #include "mobbler.rsg.h"
@@ -85,7 +87,7 @@ void CMobblerAppUi::ConstructL()
 	// This is the Symbian Signed version so try
 	// to silently remove the self-signed version
 	
-	SwiUI::RSWInstLauncher swInstLauncher;
+	SwiUI::RSWInstSilentLauncher swInstLauncher;
 	CleanupClosePushL(swInstLauncher);
 	User::LeaveIfError(swInstLauncher.Connect());
 	
@@ -129,9 +131,6 @@ void CMobblerAppUi::ConstructL()
 	
 	RProcess().SetPriority(EPriorityHigh);
 	
-#ifndef __WINS__
-	iBrowserLauncher = CBrowserLauncher::NewL();
-#endif
 	LoadRadioStationsL();
 	
 	iMobblerDownload = CMobblerDownload::NewL(*this);
@@ -195,10 +194,6 @@ CMobblerAppUi::~CMobblerAppUi()
 	delete iInterfaceSelector;
 	delete iVolumeUpTimer;
 	delete iVolumeDownTimer;
-	
-#ifndef __WINS__
-	delete iBrowserLauncher;
-#endif
 	delete iResourceReader;
 	delete iSleepTimer;
 	delete iAlarmTimer;
@@ -435,15 +430,6 @@ CMobblerSettingItemListView& CMobblerAppUi::SettingView() const
 CMobblerDestinationsInterface* CMobblerAppUi::Destinations() const
 	{
 	return iDestinations;
-	}
-
-CBrowserLauncher* CMobblerAppUi::BrowserLauncher() const
-	{
-#ifndef __WINS__
-	return iBrowserLauncher;
-#else
-	return NULL;
-#endif
 	}
 
 const TDesC& CMobblerAppUi::MusicAppNameL() const
@@ -777,7 +763,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 				CAknSinglePopupMenuStyleListBox* list(new(ELeave) CAknSinglePopupMenuStyleListBox);
 				CleanupStack::PushL(list);
 				 
-				CAknPopupList* popup = CAknPopupList::NewL(list, R_AVKON_SOFTKEYS_OK_CANCEL, AknPopupLayouts::EMenuWindow);
+				CAknPopupList* popup(CAknPopupList::NewL(list, R_AVKON_SOFTKEYS_OK_CANCEL, AknPopupLayouts::EMenuWindow));
 				CleanupStack::PushL(popup);
 				
 				list->ConstructL(popup, CEikListBox::ELeftDownInViewRect);
@@ -787,7 +773,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 				list->CreateScrollBarFrameL(ETrue);
 				list->ScrollBarFrame()->SetScrollBarVisibilityL(CEikScrollBarFrame::EOff, CEikScrollBarFrame::EAuto);
 				
-				CDesCArrayFlat* items = new(ELeave) CDesCArrayFlat(11);
+				CDesCArrayFlat* items(new(ELeave) CDesCArrayFlat(11));
 				CleanupStack::PushL(items);
 				
 				// Add the first menu item and append the shortcut key 
@@ -1890,10 +1876,38 @@ void CMobblerAppUi::GoToLastFmL(TInt aCommand)
 		// Escape encode things like Ä and ö
 		HBufC16* encode(EscapeUtils::EscapeEncodeL(url, EscapeUtils::EEscapeNormal));
 		CleanupStack::PushL(encode);
-
+		
+#ifdef __SYMBIAN_SIGNED__
+		RApaLsSession apaLsSession;
+		const TUid KBrowserUid = {0x10008D39};
+		TApaTaskList taskList(CEikonEnv::Static()->WsSession());
+		TApaTask task(taskList.FindApp(KBrowserUid));
+		if(task.Exists())
+			{
+			task.BringToForeground();
+			HBufC8* param8(HBufC8::NewLC(encode->Length()));
+			param8->Des().Append(*encode);
+			task.SendMessage(TUid::Uid(0), *param8); // UID not used
+			CleanupStack::PopAndDestroy(param8);
+			}
+		else
+			{
+			if(!apaLsSession.Handle())
+				{
+				User::LeaveIfError(apaLsSession.Connect());
+				}
+			TThreadId thread;
+			User::LeaveIfError(apaLsSession.StartDocument(*encode, KBrowserUid, thread));
+			apaLsSession.Close();   
+			}
+#else // !__SYMBIAN_SIGNED__
 #ifndef __WINS__
-		iBrowserLauncher->LaunchBrowserEmbeddedL(*encode);
+		CBrowserLauncher* browserLauncher(CBrowserLauncher::NewL());
+		browserLauncher->LaunchBrowserEmbeddedL(*encode);
+		delete browserLauncher;
 #endif
+#endif // __SYMBIAN_SIGNED__
+		
 		CleanupStack::PopAndDestroy(encode);
 		}
 	}

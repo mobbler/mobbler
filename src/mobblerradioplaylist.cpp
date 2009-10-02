@@ -1,7 +1,7 @@
 /*
 mobblerradioplaylist.cpp
 
-mobbler, a last.fm mobile scrobbler for Symbian smartphones.
+Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
 Copyright (C) 2008  Michael Coffey
 
 http://code.google.com/p/mobbler
@@ -22,12 +22,12 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
 #include "mobblerradioplaylist.h"
-#include "mobblertrack.h"
 #include "mobblerstring.h"
+#include "mobblertrack.h"
 
 CMobblerRadioPlaylist* CMobblerRadioPlaylist::NewL()
 	{
-	CMobblerRadioPlaylist* self = new(ELeave) CMobblerRadioPlaylist();
+	CMobblerRadioPlaylist* self(new(ELeave) CMobblerRadioPlaylist());
 	CleanupStack::PushL(self);
 	self->ConstructL();
 	CleanupStack::Pop(self);
@@ -43,7 +43,7 @@ void CMobblerRadioPlaylist::ConstructL()
 	}
 
 CMobblerRadioPlaylist::~CMobblerRadioPlaylist()
-	{	
+	{
 	Reset();
 	}
 
@@ -83,6 +83,4 @@ CMobblerTrack* CMobblerRadioPlaylist::operator[](TInt aCount)
 	return iPlaylist[aCount];
 	}
 
-
-
-
+// End of file

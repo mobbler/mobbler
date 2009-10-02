@@ -31,7 +31,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 CMobblerFlatDataObserverHelper* CMobblerFlatDataObserverHelper::NewL(CMobblerLastFmConnection& aConnection, MMobblerFlatDataObserverHelper& aObserver, TBool aShowWaitDialog)
 	{
-	CMobblerFlatDataObserverHelper* self = new(ELeave) CMobblerFlatDataObserverHelper(aConnection, aObserver);
+	CMobblerFlatDataObserverHelper* self(new(ELeave) CMobblerFlatDataObserverHelper(aConnection, aObserver));
 	CleanupStack::PushL(self);
 	self->ConstructL(aShowWaitDialog);
 	CleanupStack::Pop(self);

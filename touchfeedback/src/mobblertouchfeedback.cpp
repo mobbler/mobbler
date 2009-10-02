@@ -32,29 +32,29 @@ const TInt KImplementationUid = {0xA000B6CD};
 
 
 const TImplementationProxy ImplementationTable[] =
-    {
-    {KImplementationUid, TProxyNewLPtr(CMobblerTouchFeedback::NewL)}
-    };
+	{
+	{KImplementationUid, TProxyNewLPtr(CMobblerTouchFeedback::NewL)}
+	};
 
 EXPORT_C const TImplementationProxy* ImplementationGroupProxy(TInt& aTableCount)
-    {
-    aTableCount = sizeof(ImplementationTable) / sizeof(TImplementationProxy);
-    return ImplementationTable;
-    }
+	{
+	aTableCount = sizeof(ImplementationTable) / sizeof(TImplementationProxy);
+	return ImplementationTable;
+	}
 
 CMobblerTouchFeedback* CMobblerTouchFeedback::NewL()
 	{
-	CMobblerTouchFeedback* self = new(ELeave) CMobblerTouchFeedback();
+	CMobblerTouchFeedback* self(new(ELeave) CMobblerTouchFeedback());
 	CleanupStack::PushL(self);
 	self->ConstructL();
 	CleanupStack::Pop(self);
 	return self;
 	}
-	
+
 CMobblerTouchFeedback::CMobblerTouchFeedback()
 	{
 	}
-	
+
 void CMobblerTouchFeedback::ConstructL()
 	{
 #ifdef  __S60_50__
@@ -64,7 +64,7 @@ void CMobblerTouchFeedback::ConstructL()
 	User::Leave(KErrNotSupported);
 #endif
 	}
-	
+
 CMobblerTouchFeedback::~CMobblerTouchFeedback()
 	{
 	}
@@ -76,3 +76,4 @@ void CMobblerTouchFeedback::InstantFeedback(TInt aType)
 #endif
 	}
 
+// End of file

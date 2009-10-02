@@ -51,7 +51,7 @@ CMobblerRadioPlayer* CMobblerRadioPlayer::NewL(CMobblerLastFmConnection& aSubmit
 												TInt aVolume,
 												TInt aBitRate)
 	{
-	CMobblerRadioPlayer* self = new(ELeave) CMobblerRadioPlayer(aSubmitter, aPreBufferSize, aEqualizerIndex, aVolume, aBitRate);
+	CMobblerRadioPlayer* self(new(ELeave) CMobblerRadioPlayer(aSubmitter, aPreBufferSize, aEqualizerIndex, aVolume, aBitRate));
 	CleanupStack::PushL(self);
 	self->ConstructL();
 	CleanupStack::Pop(self);

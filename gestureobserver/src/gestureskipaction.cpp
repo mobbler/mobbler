@@ -24,7 +24,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "gestureskipaction.h"
 
 // Accelerometer sensor UID
-const TInt KAccelerometerSensorUID = 0x10273024;
+const TInt KAccelerometerSensorUID(0x10273024);
 
 // Constants for identifying skip acceleration (in scaled m/s^2)
 // Values below these constants are to be considered insignificant,
@@ -55,7 +55,7 @@ CMobblerGestureSkipAction::~CMobblerGestureSkipAction()
 
 CMobblerGestureSkipAction* CMobblerGestureSkipAction::NewL(RPointerArray<MMobblerGestures>& aNotify)
 	{
-	CMobblerGestureSkipAction* self = new(ELeave) CMobblerGestureSkipAction(aNotify);
+	CMobblerGestureSkipAction* self(new(ELeave) CMobblerGestureSkipAction(aNotify));
 	CleanupStack::PushL(self);
 	self->ConstructL();
 	CleanupStack::Pop(self);
@@ -84,7 +84,7 @@ void CMobblerGestureSkipAction::Action(TMobblerGestureEvent& aEvent)
 		{
 		return;
 		}
-	        
+	
 	switch(iSkipGestureState)
 		{
 		default:
@@ -105,7 +105,7 @@ void CMobblerGestureSkipAction::Action(TMobblerGestureEvent& aEvent)
 			break;
 		}
 	}
-        
+
 /* 
  * If a skip gesture has been running too long after its first
  * phase, this function is called, and state changes back
@@ -116,7 +116,7 @@ void CMobblerGestureSkipAction::NotifyGestureTimeOut()
 	{
 	iSkipGestureState = EAccelerationStage;
 	}
-        
+
 void CMobblerGestureSkipAction::NotifySkip()
 	{
 	const TInt KNumberOfListeners(iNotify.Count());

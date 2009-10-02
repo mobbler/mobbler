@@ -30,7 +30,7 @@ CMobblerSleepTimer::CMobblerSleepTimer(const TInt aPriority,
 	}
 
 CMobblerSleepTimer::~CMobblerSleepTimer()
-	{	
+	{
 	Cancel();
 	iTimer.Close();
 	}
@@ -38,9 +38,9 @@ CMobblerSleepTimer::~CMobblerSleepTimer()
 CMobblerSleepTimer* CMobblerSleepTimer::NewL(const TInt aPriority,
 											 MMobblerSleepTimerNotify& aNotify)
 	{
-    CMobblerSleepTimer* timer = new (ELeave) CMobblerSleepTimer(aPriority, 
-    															aNotify);
-    CleanupStack::PushL(timer);
+	CMobblerSleepTimer* timer(new (ELeave) CMobblerSleepTimer(aPriority, 
+																aNotify));
+	CleanupStack::PushL(timer);
 	timer->ConstructL();
 	CleanupStack::Pop();
     return timer;
