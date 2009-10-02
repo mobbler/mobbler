@@ -33,7 +33,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
 // Accelerometer sensor UID
-const TInt KAccelerometerSensorUID = 0x10273024;
+const TInt KAccelerometerSensorUID(0x10273024);
 
 // Microsecond time-out constants for user tapping the phone.
 const TTimeIntervalMicroSeconds32 KSecondTapArrivalTimeOut(400000);
@@ -55,7 +55,7 @@ CMobblerGestureDoubleTapSkip::~CMobblerGestureDoubleTapSkip()
 
 CMobblerGestureDoubleTapSkip* CMobblerGestureDoubleTapSkip::NewL(RPointerArray<MMobblerGestures>& aNotify)
 	{
-	CMobblerGestureDoubleTapSkip* self = new(ELeave) CMobblerGestureDoubleTapSkip(aNotify);
+	CMobblerGestureDoubleTapSkip* self(new(ELeave) CMobblerGestureDoubleTapSkip(aNotify));
 	CleanupStack::PushL(self);
 	self->ConstructL();
 	CleanupStack::Pop(self);
@@ -71,7 +71,7 @@ void CMobblerGestureDoubleTapSkip::ConstructL()
 	{
 	iTimeOut = CMobblerGestureTimeout::NewL(CActive::EPriorityStandard, *this);
 	}
-	
+
 void CMobblerGestureDoubleTapSkip::Action(TMobblerGestureEvent& aEvent)
 	{
 	if (aEvent.iSensorId != KAccelerometerSensorUID)
@@ -83,7 +83,7 @@ void CMobblerGestureDoubleTapSkip::Action(TMobblerGestureEvent& aEvent)
 		{
 		// Count this Tap
 		++iTapCount;
-				
+		
 		if (iTapCount == KNumberOfTaps)
 			{
 			NotifySkip();

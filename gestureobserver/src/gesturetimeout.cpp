@@ -23,12 +23,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "gesturetimeout.h"
 
-
-//CMobblerGestureTimeout
 CMobblerGestureTimeout* CMobblerGestureTimeout::NewL(TInt aPriority,
 		MMobblerGestureNotifyTimeOut& aNotify)
 	{
-	CMobblerGestureTimeout* self = new(ELeave) CMobblerGestureTimeout(aPriority, aNotify);
+	CMobblerGestureTimeout* self(new(ELeave) CMobblerGestureTimeout(aPriority, aNotify));
 	CleanupStack::PushL(self);
 	self->ConstructL();
 	CleanupStack::Pop(self);

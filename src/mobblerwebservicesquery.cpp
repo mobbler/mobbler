@@ -34,7 +34,7 @@ _LIT8(KMobblerParameterMethod, "method");
 
 CMobblerWebServicesQuery* CMobblerWebServicesQuery::NewLC(const TDesC8& aMethod)
 	{
-	CMobblerWebServicesQuery* self = new(ELeave) CMobblerWebServicesQuery();
+	CMobblerWebServicesQuery* self(new(ELeave) CMobblerWebServicesQuery());
 	CleanupStack::PushL(self);
 	self->ConstructL(aMethod);
 	//CleanupStack::Pop(self);
@@ -50,7 +50,7 @@ void CMobblerWebServicesQuery::ConstructL(const TDesC8& aMethod)
 	AddFieldL(KMobblerParameterMethod, aMethod);
 	AddFieldL(KMobblerParameterAPIKey, KMobblerAPIKey);
 	}
-	
+
 CMobblerWebServicesQuery::~CMobblerWebServicesQuery()
 	{
 	const TInt KFieldCount(iFields.Count());

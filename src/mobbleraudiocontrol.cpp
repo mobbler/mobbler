@@ -22,15 +22,12 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
 #include <aknnotewrappers.h>
-#include <e32svr.h>
 
-#include "mobbleraudiocontrol.h"
 #include "mobblerappui.h"
+#include "mobbleraudiocontrol.h"
 #include "mobbleraudiothread.h"
 #include "mobblerstring.h"
 #include "mobblertrack.h"
-
-
 
 const TInt KTimerDuration(250000); // 1/4 second
 
@@ -39,7 +36,7 @@ const TInt KMobblerAudioThreadMaxHeapSize(0x300000); // 3 MB
 
 CMobblerAudioControl* CMobblerAudioControl::NewL(MMobblerAudioControlObserver& aObserver, CMobblerTrack& aTrack, TTimeIntervalSeconds aPreBufferSize, TInt aVolume, TInt aEqualizerIndex, TInt aBitRate)
 	{
-	CMobblerAudioControl* self = new(ELeave) CMobblerAudioControl(aObserver);
+	CMobblerAudioControl* self(new(ELeave) CMobblerAudioControl(aObserver));
 	CleanupStack::PushL(self);
 	self->ConstructL(aTrack, aPreBufferSize, aVolume, aEqualizerIndex, aBitRate);
 	CleanupStack::Pop(self);
@@ -163,7 +160,7 @@ void CMobblerAudioControl::DataCompleteL(CMobblerLastFmConnection::TTransactionE
 			CMobblerString* string(CMobblerString::NewL(aStatusText));
 			message.Format(KAudioErrorFormat, aHTTPStatusCode, &string->String());
 			delete string;
-			CAknInformationNote* note = new (ELeave) CAknInformationNote(EFalse);
+			CAknInformationNote* note(new (ELeave) CAknInformationNote(EFalse));
 			note->ExecuteLD(message);
 			}
 			// Intentional follow through to the next case statement
@@ -206,9 +203,9 @@ void CMobblerAudioControl::SetCurrent()
 	}
 
 void CMobblerAudioControl::SendCmd(TMobblerAudioCmd aCmd)
-	{	    
+	{
 	// send the command and wait for the audio thread to respond to it
-
+	
 	if (!iDestroyCmdSent)
 		{
 		if (aCmd == ECmdDestroyAudio)

@@ -30,7 +30,7 @@ const TTimeIntervalMicroSeconds32 KInterval(100000);
 
 CMobblerMarquee* CMobblerMarquee::NewL(CMobblerStatusControl& aStatusControl)
 	{
-	CMobblerMarquee* self = new(ELeave) CMobblerMarquee(aStatusControl);
+	CMobblerMarquee* self(new(ELeave) CMobblerMarquee(aStatusControl));
 	CleanupStack::PushL(self);
 	self->ConstructL();
 	CleanupStack::Pop(self);
@@ -72,7 +72,7 @@ void CMobblerMarquee::Start(const TDesC& aText, TInt aInitialOffset, TInt aTextW
 		iState = EStart;
 		}
 	}
-	
+
 TInt CMobblerMarquee::GetPosition1() const
 	{
 	TInt offset(iInitialOffset);
@@ -124,7 +124,7 @@ void CMobblerMarquee::Update()
 		iTimer->Cancel();
 		Reset();
 		}
-
+	
 	switch (iState)
 		{
 		case EStart:

@@ -36,7 +36,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 CMobblerWebServicesControl* CMobblerWebServicesControl::NewL(CMobblerAppUi& aAppUi, const TRect& aRect, TUid aCustomMessageId, const TDesC8& aCustomMessage)
 	{
-	CMobblerWebServicesControl* self = new(ELeave) CMobblerWebServicesControl(aAppUi);
+	CMobblerWebServicesControl* self(new(ELeave) CMobblerWebServicesControl(aAppUi));
 	CleanupStack::PushL(self);
 	self->ConstructL(aRect, aCustomMessageId, aCustomMessage);
 	CleanupStack::Pop(self);

@@ -1,7 +1,7 @@
 /*
 mobblernowplayingcallback.cpp
 
-mobbler, a last.fm mobile scrobbler for Symbian smartphones.
+Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
 Copyright (C) 2008  Michael Coffey
 
 http://code.google.com/p/mobbler
@@ -21,12 +21,12 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-#include "mobblernowplayingcallback.h"
 #include "mobblermusiclistener.h"
+#include "mobblernowplayingcallback.h"
 
 CMobblerNowPlayingCallback* CMobblerNowPlayingCallback::NewL(CMobblerMusicAppListener& aMusicListener)
 	{
-	CMobblerNowPlayingCallback* self = new(ELeave) CMobblerNowPlayingCallback(aMusicListener);
+	CMobblerNowPlayingCallback* self(new(ELeave) CMobblerNowPlayingCallback(aMusicListener));
 	CleanupStack::PushL(self);
 	self->ConstructL();
 	CleanupStack::Pop(self);
@@ -37,7 +37,6 @@ CMobblerNowPlayingCallback::~CMobblerNowPlayingCallback()
 	{
 	Cancel();
 	}
-	
 
 CMobblerNowPlayingCallback::CMobblerNowPlayingCallback(CMobblerMusicAppListener& aMusicListener)
 	:CTimer(EPriorityStandard), iMusicListener(aMusicListener)
@@ -59,4 +58,4 @@ void CMobblerNowPlayingCallback::RunL()
 		}
 	}
 
-	
+// End of file

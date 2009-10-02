@@ -32,18 +32,18 @@ const TInt KImplementationUid = {0xA000B6D0};
 
 // Required for ECOM plugin
 const TImplementationProxy ImplementationTable[] =
-    {
-    {KImplementationUid, TProxyNewLPtr( CMobblerGestureObserver3x::NewL )}
-    };
+	{
+	{KImplementationUid, TProxyNewLPtr(CMobblerGestureObserver3x::NewL)}
+	};
 
 EXPORT_C const TImplementationProxy* ImplementationGroupProxy(TInt& aTableCount)
-    {
-    aTableCount = sizeof(ImplementationTable) / sizeof(TImplementationProxy);
-    return ImplementationTable;
-    }
+	{
+	aTableCount = sizeof(ImplementationTable) / sizeof(TImplementationProxy);
+	return ImplementationTable;
+	}
 
 // Accelerometer sensor UID
-const TInt KAccelerometerSensorUID = 0x10273024;
+const TInt KAccelerometerSensorUID(0x10273024);
 
 // S60 3rd Edition implementation
 CMobblerGestureObserver3x::CMobblerGestureObserver3x()
@@ -57,7 +57,7 @@ CMobblerGestureObserver3x::~CMobblerGestureObserver3x()
 
 CMobblerGestureObserver* CMobblerGestureObserver3x::NewL()
 	{
-	CMobblerGestureObserver3x* self = new(ELeave) CMobblerGestureObserver3x;
+	CMobblerGestureObserver3x* self(new(ELeave) CMobblerGestureObserver3x);
 	CleanupStack::PushL(self);
 	self->ConstructL();
 	CleanupStack::Pop(self);

@@ -1,7 +1,7 @@
 /*
 mobblerdownloadmanager.cpp
 
-mobbler, a last.fm mobile scrobbler for Symbian smartphones.
+Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
 Copyright (C) 2008  Michael Coffey
 
 http://code.google.com/p/mobbler
@@ -21,9 +21,8 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-#include <eikenv.h>
-#include <apgcli.h>
 #include <aknwaitdialog.h>
+#include <apgcli.h>
 
 #include "mobbler.rsg.h"
 #include "mobbler_strings.rsg.h"
@@ -32,7 +31,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 CMobblerDownload* CMobblerDownload::NewL(MMobblerDownloadObserver& aDownloadObserver)
 	{
-	CMobblerDownload* self = new(ELeave) CMobblerDownload(aDownloadObserver);
+	CMobblerDownload* self(new(ELeave) CMobblerDownload(aDownloadObserver));
 	CleanupStack::PushL(self);
 	self->ConstructL();
 	CleanupStack::Pop(self);
@@ -47,7 +46,7 @@ CMobblerDownload::CMobblerDownload(MMobblerDownloadObserver& aDownloadObserver)
 void CMobblerDownload::ConstructL()
 	{
 	iDownloadMgr.ConnectL(TUid::Uid(KMobblerAppUid), *this, EFalse);
-    iDownloadMgr.DeleteAll();
+	iDownloadMgr.DeleteAll();
 	}
 
 CMobblerDownload::~CMobblerDownload()
@@ -56,7 +55,7 @@ CMobblerDownload::~CMobblerDownload()
 		{
 		iWait->ProcessFinishedL();
 		}
-	    		
+	
 	iDownloadMgr.Close();
 	}
 
@@ -82,53 +81,55 @@ void CMobblerDownload::DownloadL(const TDesC8& aDownloadUrl, TUint32 aIap)
 
 void CMobblerDownload::HandleDMgrEventL(RHttpDownload& aDownload, THttpDownloadEvent aEvent)
 	{
-    if(EHttpContentTypeReceived == aEvent.iProgressState)
-    	{
-        // Start download again if content-type is acceptable 
-        // and UiLib is not installed
-        User::LeaveIfError(aDownload.Start());
-        }
-    
-    switch (aEvent.iDownloadState)
-    	{
-    	case EHttpDlCompleted:
-	    	{
-	        TFileName fileName;
-	        aDownload.GetStringAttribute(EDlAttrDestFilename, fileName);
-	        
-            RApaLsSession apaLsSession;
-	        CleanupClosePushL(apaLsSession);
-	        User::LeaveIfError(apaLsSession.Connect());
-	        
-	        if (iWait)
-	        	{
-		        iWait->ProcessFinishedL();
-		        iWait = NULL;
-	        	}
-	        
-	        TThreadId threadId;
-	        User::LeaveIfError(apaLsSession.StartDocument(fileName, threadId));
-	        
-	        CleanupStack::PopAndDestroy(&apaLsSession);
-	        
-	        iDownloadObserver.HandleInstallStartedL();
-	    	}
-	    	break;
-    	case EHttpDlFailed:
-    		{
-	        if (iWait)
-	        	{
-		        iWait->ProcessFinishedL();
-		        iWait = NULL;
-	        	}
-    		
-	        TInt32 error = 0;
-	        TInt32 globalError = 0;
-	        aDownload.GetIntAttribute(EDlAttrErrorId, error);
-	        aDownload.GetIntAttribute(EDlAttrGlobalErrorId, globalError);
-	        }
-    		break;
-    	default:
-    		break;
-    	};
+	if(EHttpContentTypeReceived == aEvent.iProgressState)
+		{
+		// Start download again if content-type is acceptable 
+		// and UiLib is not installed
+		User::LeaveIfError(aDownload.Start());
+		}
+	
+	switch (aEvent.iDownloadState)
+		{
+		case EHttpDlCompleted:
+			{
+			TFileName fileName;
+			aDownload.GetStringAttribute(EDlAttrDestFilename, fileName);
+			
+			RApaLsSession apaLsSession;
+			CleanupClosePushL(apaLsSession);
+			User::LeaveIfError(apaLsSession.Connect());
+			
+			if (iWait)
+				{
+				iWait->ProcessFinishedL();
+				iWait = NULL;
+				}
+			
+			TThreadId threadId;
+			User::LeaveIfError(apaLsSession.StartDocument(fileName, threadId));
+			
+			CleanupStack::PopAndDestroy(&apaLsSession);
+			
+			iDownloadObserver.HandleInstallStartedL();
+			}
+			break;
+		case EHttpDlFailed:
+			{
+			if (iWait)
+				{
+				iWait->ProcessFinishedL();
+				iWait = NULL;
+				}
+			
+			TInt32 error(0);
+			TInt32 globalError(0);
+			aDownload.GetIntAttribute(EDlAttrErrorId, error);
+			aDownload.GetIntAttribute(EDlAttrGlobalErrorId, globalError);
+			}
+			break;
+		default:
+			break;
+		};
 	}
+
+// End of file

@@ -1,7 +1,7 @@
 /*
 mobblerlastfmerror.cpp
 
-mobbler, a last.fm mobile scrobbler for Symbian smartphones.
+Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
 Copyright (C) 2008  Michael Coffey
 
 http://code.google.com/p/mobbler
@@ -25,7 +25,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 CMobblerLastFmError* CMobblerLastFmError::NewL(const TDesC8& aText, TInt aLastFmErrorCode)
 	{
-	CMobblerLastFmError* self = new(ELeave) CMobblerLastFmError(aLastFmErrorCode);
+	CMobblerLastFmError* self(new(ELeave) CMobblerLastFmError(aLastFmErrorCode));
 	CleanupStack::PushL(self);
 	self->ConstructL(aText);
 	CleanupStack::Pop(self);
@@ -34,7 +34,7 @@ CMobblerLastFmError* CMobblerLastFmError::NewL(const TDesC8& aText, TInt aLastFm
 
 CMobblerLastFmError* CMobblerLastFmError::NewL(const TDesC& aText, TInt aLastFmErrorCode)
 	{
-	CMobblerLastFmError* self = new(ELeave) CMobblerLastFmError(aLastFmErrorCode);
+	CMobblerLastFmError* self(new(ELeave) CMobblerLastFmError(aLastFmErrorCode));
 	CleanupStack::PushL(self);
 	self->ConstructL(aText);
 	CleanupStack::Pop(self);
@@ -61,7 +61,7 @@ CMobblerLastFmError::~CMobblerLastFmError()
 	{
 	delete iText;
 	}
-	
+
 const TDesC& CMobblerLastFmError::Text() const
 	{
 	return *iText;
@@ -71,3 +71,5 @@ TInt CMobblerLastFmError::LastFmErrorCode() const
 	{
 	return iLastFmErrorCode;
 	}
+
+// End of file

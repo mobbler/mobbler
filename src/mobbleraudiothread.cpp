@@ -21,8 +21,6 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-#include <e32svr.h>
-
 #include "mobbleraudiothread.h"
 #include "mobblershareddata.h"
 #include "mobblertrack.h"
@@ -39,7 +37,7 @@ TInt ThreadFunction(TAny* aData)
 	CActiveScheduler::Install(activeScheduler);
 	
 	CMobblerAudioThread* audioThread(NULL);
-		  
+	
 	TRAPD(error, audioThread = CMobblerAudioThread::NewL(aData));
 	
 	RThread().Rendezvous(KErrNone);
@@ -56,13 +54,13 @@ TInt ThreadFunction(TAny* aData)
 	delete cleanupStack;
 	
 	__UHEAP_MARKEND;
-		
+	
 	return error;
 	}
 
 CMobblerAudioThread* CMobblerAudioThread::NewL(TAny* aData)
 	{
-	CMobblerAudioThread* self = new(ELeave) CMobblerAudioThread(aData);
+	CMobblerAudioThread* self(new(ELeave) CMobblerAudioThread(aData));
 	CleanupStack::PushL(self);
 	self->ConstructL();
 	CleanupStack::Pop(self);
@@ -94,7 +92,7 @@ CMobblerAudioThread::~CMobblerAudioThread()
 	
 	delete iEqualizer;
 	delete iStream;
-
+	
 	iBuffer.ResetAndDestroy();
 	}
 
