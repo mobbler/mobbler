@@ -35,7 +35,7 @@ UID		0x10009D8D 0xA000B6CB
 
 SOURCEPATH	..\src
 USERINCLUDE	..\inc
-SYSTEMINCLUDE	\epoc32\include \epoc32\include\middleware
+SYSTEMINCLUDE	\epoc32\include
 
 SOURCE		mobblertouchfeedback.cpp
 
