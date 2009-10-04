@@ -472,6 +472,10 @@ RESOURCE MENU_PANE r_mobbler_tools_submenu_pane
 		MENU_ITEM
 			{
 			command = EMobblerCommandExportQueueToLogFile;
+			},
+		MENU_ITEM
+			{
+			command = EMobblerCommandLanguagePatches;
 			}
 		};
 	}

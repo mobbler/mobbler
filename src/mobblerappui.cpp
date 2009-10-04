@@ -89,15 +89,16 @@ void CMobblerAppUi::ConstructL()
 	
 	SwiUI::RSWInstSilentLauncher swInstLauncher;
 	CleanupClosePushL(swInstLauncher);
-	User::LeaveIfError(swInstLauncher.Connect());
-	
-	SwiUI::TUninstallOptions uninstallOptions;
-	uninstallOptions.iKillApp = SwiUI::EPolicyAllowed;
-	uninstallOptions.iBreakDependency = SwiUI::EPolicyAllowed;
-	SwiUI::TUninstallOptionsPckg optionsPckg(uninstallOptions); 
-
-	swInstLauncher.SilentUninstall(TUid::Uid(0xA0007648), optionsPckg, SwiUI::KSisxMimeType);
-	 
+	if (swInstLauncher.Connect() == KErrNone)
+		{
+		SwiUI::TUninstallOptions uninstallOptions;
+		uninstallOptions.iKillApp = SwiUI::EPolicyAllowed;
+		uninstallOptions.iBreakDependency = SwiUI::EPolicyAllowed;
+		SwiUI::TUninstallOptionsPckg optionsPckg(uninstallOptions); 
+		
+		swInstLauncher.SilentUninstall(TUid::Uid(0xA0007648), optionsPckg, SwiUI::KSisxMimeType);
+		} 
+		
 	CleanupStack::PopAndDestroy(&swInstLauncher);
 #endif
 	
@@ -1013,6 +1014,10 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 				}
 			}
 			break;
+		case EMobblerCommandLanguagePatches:
+			_LIT(KLanguagePatchesUrl, "http://code.google.com/p/mobbler/downloads/list?can=2&q=Type-Language&sort=summary&colspec=Filename+Uploaded");
+			OpenWebBrowserL(KLanguagePatchesUrl);
+			break;
 		default:
 			if (aCommand >= EMobblerCommandEqualizerDefault && 
 				aCommand <= EMobblerCommandEqualizerMaximum)
@@ -1869,47 +1874,56 @@ void CMobblerAppUi::GoToLastFmL(TInt aCommand)
 			position = url.Find(_L(" "));
 			}
 		
-		// Convert to UTF-8
-		HBufC8* utf8(EscapeUtils::ConvertFromUnicodeToUtf8L(url));
-		url.Copy(*utf8);
 		
-		// Escape encode things like Ä and ö
-		HBufC16* encode(EscapeUtils::EscapeEncodeL(url, EscapeUtils::EEscapeNormal));
-		CleanupStack::PushL(encode);
-		
+		OpenWebBrowserL(url);
+		}
+	}
+
+void CMobblerAppUi::OpenWebBrowserL(const TDesC& aUrl)
+	{
+	TBuf<255> url(aUrl);
+	
+	// Convert to UTF-8
+	HBufC8* utf8(EscapeUtils::ConvertFromUnicodeToUtf8L(url));
+	url.Copy(*utf8);
+	delete utf8;
+	
+	// Escape encode things like Ä and ö
+	HBufC16* encode(EscapeUtils::EscapeEncodeL(url, EscapeUtils::EEscapeNormal));
+	CleanupStack::PushL(encode);
+	
 #ifdef __SYMBIAN_SIGNED__
-		RApaLsSession apaLsSession;
-		const TUid KBrowserUid = {0x10008D39};
-		TApaTaskList taskList(CEikonEnv::Static()->WsSession());
-		TApaTask task(taskList.FindApp(KBrowserUid));
-		if(task.Exists())
+	RApaLsSession apaLsSession;
+	const TUid KBrowserUid = {0x10008D39};
+	TApaTaskList taskList(CEikonEnv::Static()->WsSession());
+	TApaTask task(taskList.FindApp(KBrowserUid));
+	if(task.Exists())
+		{
+		task.BringToForeground();
+		HBufC8* param8(HBufC8::NewLC(encode->Length()));
+		param8->Des().Append(*encode);
+		task.SendMessage(TUid::Uid(0), *param8); // UID not used
+		CleanupStack::PopAndDestroy(param8);
+		}
+	else
+		{
+		if(!apaLsSession.Handle())
 			{
-			task.BringToForeground();
-			HBufC8* param8(HBufC8::NewLC(encode->Length()));
-			param8->Des().Append(*encode);
-			task.SendMessage(TUid::Uid(0), *param8); // UID not used
-			CleanupStack::PopAndDestroy(param8);
+			User::LeaveIfError(apaLsSession.Connect());
 			}
-		else
-			{
-			if(!apaLsSession.Handle())
-				{
-				User::LeaveIfError(apaLsSession.Connect());
-				}
-			TThreadId thread;
-			User::LeaveIfError(apaLsSession.StartDocument(*encode, KBrowserUid, thread));
-			apaLsSession.Close();   
-			}
+		TThreadId thread;
+		User::LeaveIfError(apaLsSession.StartDocument(*encode, KBrowserUid, thread));
+		apaLsSession.Close();
+		}
 #else // !__SYMBIAN_SIGNED__
 #ifndef __WINS__
-		CBrowserLauncher* browserLauncher(CBrowserLauncher::NewL());
-		browserLauncher->LaunchBrowserEmbeddedL(*encode);
-		delete browserLauncher;
+	CBrowserLauncher* browserLauncher(CBrowserLauncher::NewL());
+	browserLauncher->LaunchBrowserEmbeddedL(*encode);
+	delete browserLauncher;
 #endif
 #endif // __SYMBIAN_SIGNED__
-		
-		CleanupStack::PopAndDestroy(encode);
-		}
+	
+	CleanupStack::PopAndDestroy(encode);
 	}
 
 void CMobblerAppUi::HandleWsEventL(const TWsEvent &aEvent, 
