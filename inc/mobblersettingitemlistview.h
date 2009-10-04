@@ -123,6 +123,9 @@ private:
 	void CreateVolumeItemL(TInt& aVolume,
 							const TInt aTitleResource,
 							const TInt aPageResource);
+	void CreateIntegerItemL(TInt& aIntegerValue, 
+							const TInt aTitleResource, 
+							const TInt aPageResource);
 
 private:
 	CMobblerSettingItemList* iMobblerSettingItemList;
