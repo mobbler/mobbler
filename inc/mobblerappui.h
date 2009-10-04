@@ -163,6 +163,7 @@ public:
 #ifdef __SYMBIAN_SIGNED__
 	TInt SetAlbumArtAsWallpaperL(TBool aAutomatically = EFalse);
 #endif
+	void OpenWebBrowserL(const TDesC& aUrl);
 
 public: // CEikAppUi
 	void HandleCommandL(TInt aCommand);

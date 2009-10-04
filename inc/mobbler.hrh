@@ -52,6 +52,7 @@ enum TMobblerSettingItemListViewCommands
 #ifdef __SYMBIAN_SIGNED__
 	EMobblerCommandSetAsWallpaper,
 #endif
+	EMobblerCommandLanguagePatches,
 	
 	EMobblerCommandEqualizer = 0x7000,
 	EMobblerCommandEqualizerDefault,
