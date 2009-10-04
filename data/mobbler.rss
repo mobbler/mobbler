@@ -650,25 +650,17 @@ RESOURCE SLIDER r_mobbler_slider_setting_editor_scrobble_percent
 	maxlabel = "100";
 	}
 
-RESOURCE AVKON_SETTING_PAGE r_mobbler_slider_setting_page_sleep_minutes
+RESOURCE AVKON_SETTING_PAGE r_mobbler_integer_setting_page_sleep_minutes
 	{
-	label = "";
-	type = EAknCtSlider;
-	editor_resource_id = r_mobbler_slider_setting_editor_sleep_minutes;
+	type = EAknCtIntegerEdwin;
+	editor_resource_id = r_mobbler_integer_edwin_sleep_minutes;
 	}
 
-RESOURCE SLIDER r_mobbler_slider_setting_editor_sleep_minutes
+RESOURCE AVKON_INTEGER_EDWIN r_mobbler_integer_edwin_sleep_minutes
 	{
-	layout = EAknSettingsItemSliderLayout;
-	minvalue = 1;
-	maxvalue = 999; // 16 hours and 39 minutes
-	step = 1;
-	valuetype = EAknSliderValueBareFigure;
-	singular_valuelabel = STR_mobbler_sleep_timer_minute;
-	valuelabel = STR_mobbler_sleep_timer_minutes;
-	minlabel = "1";
-	maxlabel = "999";
-	}
+	min = 1;
+	max = 999; // 16 hours and 39 minutes
+	}  
 
 RESOURCE DIALOG r_mobbler_wait_dialog
 	{

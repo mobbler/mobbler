@@ -321,11 +321,9 @@ void CMobblerSettingItemListView::LoadListL()
 			{
 			iSettings->SetSleepTimerMinutes(1);
 			}
-		CreateSliderItemL(iSettings->SleepTimerMinutes(), // TODO or CreateIntegerItemL ?
-						  R_MOBBLER_SLEEP_TIMER_TIME,
-						  R_MOBBLER_SLIDER_SETTING_PAGE_SLEEP_MINUTES,
-						  R_MOBBLER_SLEEP_TIMER_MINUTE,
-						  R_MOBBLER_SLEEP_TIMER_MINUTES);
+		CreateIntegerItemL(iSettings->SleepTimerMinutes(),
+						  R_MOBBLER_SLEEP_TIMER_TIME_MINUTES,
+						  R_MOBBLER_INTEGER_SETTING_PAGE_SLEEP_MINUTES);
 		
 		// Sleep timer action enumerated setting item
 		RArray<TInt> array;
@@ -489,7 +487,7 @@ void CMobblerSettingItemListView::CreateSliderItemL(TInt& aSliderValue,
 													const TInt aTitleResource, 
 													const TInt aPageResource,
 													const TInt aResourceSingular,
-							  						const TInt aResourcePlural)
+													const TInt aResourcePlural)
 	{
 	CMobblerSliderSettingItem* item(new (ELeave) CMobblerSliderSettingItem(
 				iOrdinal, aSliderValue, aResourceSingular, aResourcePlural));
@@ -621,6 +619,22 @@ void CMobblerSettingItemListView::CreateVolumeItemL(TInt& aValue,
 	
 	item->SetEmptyItemTextL(title);
 	item->ConstructL(iIsNumberedStyle, iOrdinal, title, iIcons, aPageResource, -1);
+	
+	iMobblerSettingItemList->SettingItemArray()->AppendL(item);
+	CleanupStack::Pop(item);
+	++iOrdinal;
+	}
+
+void CMobblerSettingItemListView::CreateIntegerItemL(TInt& aIntegerValue, 
+													const TInt aTitleResource, 
+													const TInt aPageResource)
+	{
+	CAknIntegerEdwinSettingItem* item(new (ELeave) CAknIntegerEdwinSettingItem(
+													iOrdinal, aIntegerValue));
+	CleanupStack::PushL(item);
+	
+	const TDesC& text(static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->ResourceReader().ResourceL(aTitleResource));
+	item->ConstructL(iIsNumberedStyle, iOrdinal, text, iIcons, aPageResource, -1);
 	
 	iMobblerSettingItemList->SettingItemArray()->AppendL(item);
 	CleanupStack::Pop(item);

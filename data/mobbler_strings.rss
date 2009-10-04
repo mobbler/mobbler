@@ -324,5 +324,6 @@ RESOURCE STRING r_mobbler_automatically_set_wallpaper	{ text = STR_mobbler_autom
 RESOURCE STRING r_mobbler_set_wallpaper_automatically	{ text = STR_mobbler_set_wallpaper_automatically; }
 RESOURCE STRING r_mobbler_set_wallpaper_manually		{ text = STR_mobbler_set_wallpaper_manually; }
 RESOURCE STRING r_mobbler_language_patches				{ text = STR_mobbler_language_patches; }
+RESOURCE STRING r_mobbler_sleep_timer_time_minutes		{ text = STR_mobbler_sleep_timer_time_minutes; }
 
 // End of file
