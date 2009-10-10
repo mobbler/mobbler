@@ -262,8 +262,7 @@ void CMobblerStatusControl::SetPositions()
 	const TInt KTextRectHeight(iMobblerFont->HeightInPixels() + iMobblerFont->DescentInPixels() + 2);
 	
 	// Check if the device is in portrait or landscape mode
-	TRect applicationRect(iAppUi.ApplicationRect());
-	if (applicationRect.Width() <= applicationRect.Height())
+	if (Size().iWidth <= (Size().iHeight * 11) / 10)
 		{
 		// Portrait graphics positions
 		
