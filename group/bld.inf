@@ -28,10 +28,14 @@ gnumakefile icons.mk
 // projects
 mobbler.mmp
 ..\musicappobserver\group\musicappobserver.mmp
+
+#ifdef __S60_50__
 ..\musicappobservermpx\group\musicappobservermpx.mmp
+#endif // __S60_50__
+
 ..\touchfeedback\group\mobblertouchfeedback.mmp
 ..\contentlisting\group\mobblercontentlisting.mmp
-..\gestureobserver\group\gestureobserver3x.mmp
+//..\gestureobserver\group\gestureobserver3x.mmp
 ..\destinations\group\mobblerdestinations.mmp
 
 // In 5th edition, the sensor framework now requires SymbianSigned (ReadDeviceData)
