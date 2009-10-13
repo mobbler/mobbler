@@ -156,6 +156,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "mobbler.l78"
 #endif
 
+// Serbian
+#ifdef LANGUAGE_79
+#include "mobbler.l79"
+#endif
+
 // Klingon
 #ifdef LANGUAGE_333
 #include "mobbler.l333"
