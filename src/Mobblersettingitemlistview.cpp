@@ -339,13 +339,12 @@ void CMobblerSettingItemListView::LoadListL()
 		
 		CleanupStack::PopAndDestroy(&array);
 		
-/*		// TODO needs more testing, so don't show yet
 		// Sleep immediacy binary setting item
 		CreateBinaryItemL(iSettings->SleepTimerImmediacy(),
 						  R_MOBBLER_SLEEP_TIMER_IMMEDIACY,
 						  R_MOBBLER_BINARY_SETTING_PAGE,
 						  R_MOBBLER_SLEEP_TIMER_IMMEDIATE,
-						  R_MOBBLER_SLEEP_TIMER_END_OF_TRACK);*/
+						  R_MOBBLER_SLEEP_TIMER_END_OF_TRACK);
 		}
 	else if (iSettingsToSet == EAlarm)
 		{

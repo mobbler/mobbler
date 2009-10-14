@@ -159,6 +159,7 @@ public:
 	TBool AlarmActive() const { return iAlarmTimer->IsActive(); }
 	void RemoveSleepTimerL();
 	void RemoveAlarmL();
+	TBool SleepAfterTrackStopped() { return iSleepAfterTrackStopped; }
 
 #ifdef __SYMBIAN_SIGNED__
 	TInt SetAlbumArtAsWallpaperL(TBool aAutomatically = EFalse);
