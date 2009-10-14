@@ -21,15 +21,14 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-#include <aknmessagequerydialog.h>
 #include <akninfopopupnotecontroller.h>
 #include <AknLists.h>
+#include <aknmessagequerydialog.h>
 #include <aknnotewrappers.h>
 #include <aknsutils.h>
 #include <bautils.h> 
-
-#include <EscapeUtils.h>
 #include <DocumentHandler.h>
+#include <EscapeUtils.h>
 #include <s32file.h>
 
 
@@ -1687,7 +1686,6 @@ void CMobblerAppUi::SleepL()
 	CAknInformationNote* note(new (ELeave) CAknInformationNote(ETrue));
 	note->ExecuteLD(iResourceReader->ResourceL(R_MOBBLER_SLEEP_TIMER_EXPIRED));
 	
-	LOG(iSettingView->SleepTimerAction());
 	switch (iSettingView->SleepTimerAction())
 		{
 		case CMobblerSettingItemListSettings::EStopPlaying:
@@ -1696,7 +1694,7 @@ void CMobblerAppUi::SleepL()
 			HandleCommandL(EMobblerCommandOffline);
 			break;
 		case CMobblerSettingItemListSettings::ExitMobber:
-			HandleCommandL(EAknSoftkeyExit);
+			iAvkonAppUi->RunAppShutter();
 			break;
 		default:
 			break;

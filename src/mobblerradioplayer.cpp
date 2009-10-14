@@ -446,57 +446,64 @@ void CMobblerRadioPlayer::DataL(const TDesC8& aData, CMobblerLastFmConnection::T
 	}
 
 void CMobblerRadioPlayer::SkipTrackL()
-	{	
-	DoStop(EFalse);
-	
-	if (iPlaylist->Count() > 1)
+	{
+	if 	(static_cast<CMobblerAppUi*>(CEikonEnv::Static()->AppUi())->SleepAfterTrackStopped())
 		{
-		if (iPlaylist->Count() < 5)
-			{
-			// This is the last track in the playlist so
-			// fetch the next playlist
-			
-			RequestPlaylistL(EFalse);
-			}
+		DoStop(ETrue);
+		}
+	else
+		{
+		DoStop(EFalse);
 		
-		if (iPlaylist->Count() > 0)
+		if (iPlaylist->Count() > 1)
 			{
-			// We are indexing a track in this playlist so start it
-			
-			delete iCurrentAudioControl;
-			iCurrentAudioControl = NULL;
-			
-			if (iNextAudioControl)
+			if (iPlaylist->Count() < 5)
 				{
-				// We have already created the next audio control so use that
-				iCurrentAudioControl = iNextAudioControl;
-				iNextAudioControl = NULL;
-				}
-			else
-				{
-				// Create the next audio control and request the mp3
-				iCurrentAudioControl = CMobblerAudioControl::NewL(*this, *(*iPlaylist)[0], iPreBufferSize, iVolume, iEqualizerIndex, iBitRate);
-				iLastFmConnection.RequestMp3L(*iCurrentAudioControl, (*iPlaylist)[0]->Mp3Location());
-				DoChangeStateL(EPlaying);
+				// This is the last track in the playlist so
+				// fetch the next playlist
+				
+				RequestPlaylistL(EFalse);
 				}
 			
-			// Tell the audio thread that is should start writing data to the output stream
-			iCurrentAudioControl->SetCurrent();
-			
-			// We have started playing the track so tell Last.fm
-			CMobblerTrack* track((*iPlaylist)[0]);
-			
-			if (track->StartTimeUTC() == Time::NullTTime())
+			if (iPlaylist->Count() > 0)
 				{
-				// we haven't set the start time for this track yet
-				// so this must be the first time we are writing data
-				// to the output stream.  Set the start time now.
-				TTime now;
-				now.UniversalTime();
-				track->SetStartTimeUTC(now);
+				// We are indexing a track in this playlist so start it
+				
+				delete iCurrentAudioControl;
+				iCurrentAudioControl = NULL;
+				
+				if (iNextAudioControl)
+					{
+					// We have already created the next audio control so use that
+					iCurrentAudioControl = iNextAudioControl;
+					iNextAudioControl = NULL;
+					}
+				else
+					{
+					// Create the next audio control and request the mp3
+					iCurrentAudioControl = CMobblerAudioControl::NewL(*this, *(*iPlaylist)[0], iPreBufferSize, iVolume, iEqualizerIndex, iBitRate);
+					iLastFmConnection.RequestMp3L(*iCurrentAudioControl, (*iPlaylist)[0]->Mp3Location());
+					DoChangeStateL(EPlaying);
+					}
+				
+				// Tell the audio thread that is should start writing data to the output stream
+				iCurrentAudioControl->SetCurrent();
+				
+				// We have started playing the track so tell Last.fm
+				CMobblerTrack* track((*iPlaylist)[0]);
+				
+				if (track->StartTimeUTC() == Time::NullTTime())
+					{
+					// we haven't set the start time for this track yet
+					// so this must be the first time we are writing data
+					// to the output stream.  Set the start time now.
+					TTime now;
+					now.UniversalTime();
+					track->SetStartTimeUTC(now);
+					}
+				
+				iLastFmConnection.TrackStartedL(track);
 				}
-			
-			iLastFmConnection.TrackStartedL(track);
 			}
 		}
 	}
