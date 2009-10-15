@@ -599,7 +599,7 @@ CMobblerLastFmError* CMobblerParser::ParseBetaTestersHandshakeL(const TDesC8& aH
 	
 	if (!aIsBetaTester)
 		{
-		error = CMobblerLastFmError::NewL(_L8("Sorry. You're not registered to use this private beta version. Please visit http://code.google.com/p/mobbler"), CMobblerLastFmError::EOther);
+		error = CMobblerLastFmError::NewL(_L8("Sorry. You're not registered to use this private beta version. Please visit http://code.google.com/p/mobbler"), CMobblerLastFmError::EFailed);
 		}
 	
 	CleanupStack::PopAndDestroy(2, xmlReader);

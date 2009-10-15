@@ -323,5 +323,6 @@ RESOURCE STRING r_mobbler_note_wallpaper_not_set		{ text = STR_mobbler_note_wall
 RESOURCE STRING r_mobbler_automatically_set_wallpaper	{ text = STR_mobbler_automatically_set_wallpaper; }
 RESOURCE STRING r_mobbler_set_wallpaper_automatically	{ text = STR_mobbler_set_wallpaper_automatically; }
 RESOURCE STRING r_mobbler_set_wallpaper_manually		{ text = STR_mobbler_set_wallpaper_manually; }
+RESOURCE STRING r_mobbler_close_query					{ text = STR_mobbler_close_query; }
 
 // End of file
