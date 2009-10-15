@@ -114,7 +114,7 @@ SOURCE		mobbleraudiocontrol.cpp
 SOURCE		mobbleraudiothread.cpp
 SOURCE		mobblerbitmap.cpp
 SOURCE		mobblerbitmapcollection.cpp
-SOURCE		mobblercontacts.cpp
+//SOURCE		mobblercontacts.cpp
 SOURCE		mobblerdataobserver.cpp
 SOURCE		mobblerdocument.cpp
 SOURCE		mobblerdownload.cpp
@@ -155,6 +155,7 @@ SOURCE		mobblerwebservicesquery.cpp
 SOURCE		mobblerwebservicesview.cpp
 
 LIBRARY		aknicon.lib
+LIBRARY		aknnotify.lib
 LIBRARY		aknskins.lib
 #ifdef SYMBIAN_SIGNED
 LIBRARY		aknswallpaperutils.lib
