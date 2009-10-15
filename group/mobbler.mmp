@@ -205,11 +205,6 @@ LIBRARY 	MetaDataUtility.lib
 LIBRARY		RemConCoreApi.lib
 LIBRARY		RemConInterfaceBase.lib
 LIBRARY		senxml.lib
-#ifdef SYMBIAN_SIGNED
-#ifndef WINS
-LIBRARY		swinstcli.lib
-#endif
-#endif
 LIBRARY		ws32.lib
 
 VENDORID	0

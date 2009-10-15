@@ -22,31 +22,33 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
 #include <aknglobalconfirmationquery.h>
+#include <aknmessagequerydialog.h>
 #include <akninfopopupnotecontroller.h>
 #include <aknlists.h>
 #include <aknmessagequerydialog.h>
 #include <aknnotewrappers.h>
 #include <aknsutils.h>
+#include <bautils.h> 
+#include <DocumentHandler.h>
+#include <EscapeUtils.h>
+#include <s32file.h>
+
 
 #ifdef __SYMBIAN_SIGNED__
 #include <aknswallpaperutils.h>
-#endif
+#include <apgcli.h>
 
-#include <bautils.h> 
-
-#ifndef __WINS__
-#include <browserlauncher.h>
-#endif
-
-#include <EscapeUtils.h>
-#include <DocumentHandler.h>
-#include <s32file.h>
-
-#ifdef __SYMBIAN_SIGNED__
 // SW Installer Launcher API
 #include <SWInstApi.h>
 #include <SWInstDefs.h>
-#endif
+
+#else // !__SYMBIAN_SIGNED__
+
+#ifndef __WINS__
+#include <browserlauncher.h>
+#endif // __WINS__
+
+#endif // __SYMBIAN_SIGNED__
 
 #include "mobbler.hrh"
 #include "mobbler.rsg.h"
@@ -129,24 +131,6 @@ void CMobblerSystemCloseGlobalQuery::DoCancel()
 
 void CMobblerAppUi::ConstructL()
 	{
-#if defined(__SYMBIAN_SIGNED__) && !defined(__WINS__)
-	// This is the Symbian Signed version so try
-	// to silently remove the self-signed version
-	
-	SwiUI::RSWInstLauncher swInstLauncher;
-	CleanupClosePushL(swInstLauncher);
-	User::LeaveIfError(swInstLauncher.Connect());
-	
-	SwiUI::TUninstallOptions uninstallOptions;
-	uninstallOptions.iKillApp = SwiUI::EPolicyAllowed;
-	uninstallOptions.iBreakDependency = SwiUI::EPolicyAllowed;
-	SwiUI::TUninstallOptionsPckg optionsPckg(uninstallOptions); 
-
-	swInstLauncher.SilentUninstall(TUid::Uid(0xA0007648), optionsPckg, SwiUI::KSisxMimeType);
-	 
-	CleanupStack::PopAndDestroy(&swInstLauncher);
-#endif
-	
 	iResourceReader = CMobblerResourceReader::NewL();
 	iBitmapCollection = CMobblerBitmapCollection::NewL();
 	
@@ -177,9 +161,6 @@ void CMobblerAppUi::ConstructL()
 	
 	RProcess().SetPriority(EPriorityHigh);
 	
-#ifndef __WINS__
-	iBrowserLauncher = CBrowserLauncher::NewL();
-#endif
 	LoadRadioStationsL();
 	
 	iMobblerDownload = CMobblerDownload::NewL(*this);
@@ -243,10 +224,6 @@ CMobblerAppUi::~CMobblerAppUi()
 	delete iInterfaceSelector;
 	delete iVolumeUpTimer;
 	delete iVolumeDownTimer;
-	
-#ifndef __WINS__
-	delete iBrowserLauncher;
-#endif
 	delete iResourceReader;
 	delete iSleepTimer;
 	delete iAlarmTimer;
@@ -485,15 +462,6 @@ CMobblerSettingItemListView& CMobblerAppUi::SettingView() const
 CMobblerDestinationsInterface* CMobblerAppUi::Destinations() const
 	{
 	return iDestinations;
-	}
-
-CBrowserLauncher* CMobblerAppUi::BrowserLauncher() const
-	{
-#ifndef __WINS__
-	return iBrowserLauncher;
-#else
-	return NULL;
-#endif
 	}
 
 const TDesC& CMobblerAppUi::MusicAppNameL() const
@@ -827,7 +795,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 				CAknSinglePopupMenuStyleListBox* list(new(ELeave) CAknSinglePopupMenuStyleListBox);
 				CleanupStack::PushL(list);
 				 
-				CAknPopupList* popup = CAknPopupList::NewL(list, R_AVKON_SOFTKEYS_OK_CANCEL, AknPopupLayouts::EMenuWindow);
+				CAknPopupList* popup(CAknPopupList::NewL(list, R_AVKON_SOFTKEYS_OK_CANCEL, AknPopupLayouts::EMenuWindow));
 				CleanupStack::PushL(popup);
 				
 				list->ConstructL(popup, CEikListBox::ELeftDownInViewRect);
@@ -837,7 +805,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 				list->CreateScrollBarFrameL(ETrue);
 				list->ScrollBarFrame()->SetScrollBarVisibilityL(CEikScrollBarFrame::EOff, CEikScrollBarFrame::EAuto);
 				
-				CDesCArrayFlat* items = new(ELeave) CDesCArrayFlat(11);
+				CDesCArrayFlat* items(new(ELeave) CDesCArrayFlat(11));
 				CleanupStack::PushL(items);
 				
 				// Add the first menu item and append the shortcut key 
@@ -1076,6 +1044,10 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 					}
 				}
 			}
+			break;
+		case EMobblerCommandLanguagePatches:
+			_LIT(KLanguagePatchesUrl, "http://code.google.com/p/mobbler/downloads/list?can=2&q=Type-Language&sort=summary&colspec=Filename+Uploaded");
+			OpenWebBrowserL(KLanguagePatchesUrl);
 			break;
 		default:
 			if (aCommand >= EMobblerCommandEqualizerDefault && 
@@ -1746,7 +1718,6 @@ void CMobblerAppUi::SleepL()
 	CAknInformationNote* note(new (ELeave) CAknInformationNote(ETrue));
 	note->ExecuteLD(iResourceReader->ResourceL(R_MOBBLER_SLEEP_TIMER_EXPIRED));
 	
-	LOG(iSettingView->SleepTimerAction());
 	switch (iSettingView->SleepTimerAction())
 		{
 		case CMobblerSettingItemListSettings::EStopPlaying:
@@ -1755,7 +1726,7 @@ void CMobblerAppUi::SleepL()
 			HandleCommandL(EMobblerCommandOffline);
 			break;
 		case CMobblerSettingItemListSettings::ExitMobber:
-			HandleCommandL(EAknSoftkeyExit);
+			iAvkonAppUi->RunAppShutter();
 			break;
 		default:
 			break;
@@ -1933,19 +1904,56 @@ void CMobblerAppUi::GoToLastFmL(TInt aCommand)
 			position = url.Find(_L(" "));
 			}
 		
-		// Convert to UTF-8
-		HBufC8* utf8(EscapeUtils::ConvertFromUnicodeToUtf8L(url));
-		url.Copy(*utf8);
 		
-		// Escape encode things like Ä and ö
-		HBufC16* encode(EscapeUtils::EscapeEncodeL(url, EscapeUtils::EEscapeNormal));
-		CleanupStack::PushL(encode);
-
-#ifndef __WINS__
-		iBrowserLauncher->LaunchBrowserEmbeddedL(*encode);
-#endif
-		CleanupStack::PopAndDestroy(encode);
+		OpenWebBrowserL(url);
 		}
+	}
+
+void CMobblerAppUi::OpenWebBrowserL(const TDesC& aUrl)
+	{
+	TBuf<255> url(aUrl);
+	
+	// Convert to UTF-8
+	HBufC8* utf8(EscapeUtils::ConvertFromUnicodeToUtf8L(url));
+	url.Copy(*utf8);
+	delete utf8;
+	
+	// Escape encode things like Ä and ö
+	HBufC16* encode(EscapeUtils::EscapeEncodeL(url, EscapeUtils::EEscapeNormal));
+	CleanupStack::PushL(encode);
+	
+#ifdef __SYMBIAN_SIGNED__
+	RApaLsSession apaLsSession;
+	const TUid KBrowserUid = {0x10008D39};
+	TApaTaskList taskList(CEikonEnv::Static()->WsSession());
+	TApaTask task(taskList.FindApp(KBrowserUid));
+	if(task.Exists())
+		{
+		task.BringToForeground();
+		HBufC8* param8(HBufC8::NewLC(encode->Length()));
+		param8->Des().Append(*encode);
+		task.SendMessage(TUid::Uid(0), *param8); // UID not used
+		CleanupStack::PopAndDestroy(param8);
+		}
+	else
+		{
+		if(!apaLsSession.Handle())
+			{
+			User::LeaveIfError(apaLsSession.Connect());
+			}
+		TThreadId thread;
+		User::LeaveIfError(apaLsSession.StartDocument(*encode, KBrowserUid, thread));
+		apaLsSession.Close();
+		}
+#else // !__SYMBIAN_SIGNED__
+#ifndef __WINS__
+	CBrowserLauncher* browserLauncher(CBrowserLauncher::NewL());
+	browserLauncher->LaunchBrowserEmbeddedL(*encode);
+	delete browserLauncher;
+#endif
+#endif // __SYMBIAN_SIGNED__
+	
+	CleanupStack::PopAndDestroy(encode);
 	}
 
 void CMobblerAppUi::HandleSystemEventL(const TWsEvent& aEvent)
@@ -2022,19 +2030,6 @@ TInt CMobblerAppUi::SetAlbumArtAsWallpaperL(TBool aAutomatically)
 					}
 				}
 			}
-		
-/*TODO
-		// No success with album art, try Mobbler icon
-		if (!aAutomatically && error != KErrNone)
-			{
-			error = iMobblerBitmapAppIcon->Bitmap(ETrue)->Save(KWallpaperFile);
-			if (error == KErrNone)
-				{
-				error = AknsWallpaperUtils::SetIdleWallpaper(KWallpaperFile, NULL);
-				LOG2(_L8("Set as wallpaper"), error);
-				}
-			}
-*/
 		}
 	return error;
 	}

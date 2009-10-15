@@ -29,7 +29,7 @@ MACRO BETA_BUILD
 
 #ifdef SYMBIAN_SIGNED
 MACRO __SYMBIAN_SIGNED__
-CAPABILITY	NetworkServices ReadUserData SwEvent TrustedUI WriteDeviceData
+CAPABILITY	NetworkServices ReadUserData SwEvent WriteDeviceData
 #else
 CAPABILITY	NetworkServices ReadUserData
 #endif
