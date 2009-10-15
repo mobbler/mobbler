@@ -21,8 +21,9 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
+#include <aknmessagequerydialog.h>
 #include <akninfopopupnotecontroller.h>
-#include <AknLists.h>
+#include <aknlists.h>
 #include <aknmessagequerydialog.h>
 #include <aknnotewrappers.h>
 #include <aknsutils.h>
@@ -79,6 +80,53 @@ const TUid KGesturesInterfaceUid = {0xA000B6CF};
 const TUid KDestinationImplUid = {0xA000BEB6};
 const TUid KMobblerGesturePlugin5xUid = {0xA000B6C2};
 #endif
+
+
+CMobblerSystemCloseGlobalQuery* CMobblerSystemCloseGlobalQuery::NewL()
+	{
+	CMobblerSystemCloseGlobalQuery* self = new(ELeave) CMobblerSystemCloseGlobalQuery;
+	CleanupStack::PushL(self);
+	self->ConstructL();
+	CleanupStack::Pop(self);
+	return self;
+	}
+
+
+	
+CMobblerSystemCloseGlobalQuery::CMobblerSystemCloseGlobalQuery()
+	:CActive(CActive::EPriorityStandard)
+	{
+	CActiveScheduler::Add(this);
+	}
+
+void CMobblerSystemCloseGlobalQuery::ConstructL()
+	{
+	iGlobalConfirmationQuery = CAknGlobalConfirmationQuery::NewL();
+	iMessage = static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->ResourceReader().ResourceL(R_MOBBLER_CLOSE_QUERY).AllocL();
+	iGlobalConfirmationQuery->ShowConfirmationQueryL(iStatus, *iMessage, R_AVKON_SOFTKEYS_YES_NO, R_QGN_NOTE_INFO_ANIM);
+   	SetActive();
+	}
+
+CMobblerSystemCloseGlobalQuery::~CMobblerSystemCloseGlobalQuery()
+	{
+	delete iGlobalConfirmationQuery;
+	delete iMessage;
+	}
+
+void CMobblerSystemCloseGlobalQuery::RunL()
+	{
+	if (iStatus >= 0)
+		{
+		CActiveScheduler::Stop();
+		}
+	}
+
+void CMobblerSystemCloseGlobalQuery::DoCancel()
+	{
+	iGlobalConfirmationQuery->CancelConfirmationQuery();
+	}
+
+// CMobblerAppUi
 
 void CMobblerAppUi::ConstructL()
 	{
@@ -202,6 +250,8 @@ CMobblerAppUi::~CMobblerAppUi()
 	delete iWebServicesHelper;
 	
 	delete iCheckForUpdatesObserver;
+	
+	delete iSystemCloseGlobalQuery;
 	}
 
 TBool CMobblerAppUi::AccelerometerGesturesAvailable() const
@@ -1924,19 +1974,51 @@ void CMobblerAppUi::OpenWebBrowserL(const TDesC& aUrl)
 	CleanupStack::PopAndDestroy(encode);
 	}
 
-void CMobblerAppUi::HandleWsEventL(const TWsEvent &aEvent, 
-								   CCoeControl *aDestination)
+void CMobblerAppUi::HandleSystemEventL(const TWsEvent& aEvent)
 	{
-	if (aEvent.Type() == KAknUidValueEndKeyCloseEvent)
-		{
-		// Do nothing for the red end key, 
-		// so Mobbler is minimised but still running
-		}
-	else
-		{
-		// This will allow pressing C in the task manager to EEikCmdExit
-		CAknViewAppUi::HandleWsEventL(aEvent, aDestination);
-		}
+	switch (*(TApaSystemEvent*)(aEvent.EventData()))
+	     {
+	     case EApaSystemEventShutdown:
+	    	 {
+	    	 if (!iSystemCloseGlobalQuery)
+	    		 {
+				 iSystemCloseGlobalQuery = CMobblerSystemCloseGlobalQuery::NewL();
+				 CActiveScheduler::Start();
+				 
+				 switch (iSystemCloseGlobalQuery->iStatus.Int())
+					 {
+					 case EAknSoftkeyYes:
+						 {
+						 CAknAppUi::HandleSystemEventL(aEvent);
+						 }
+						 break;
+					 default:
+						 break;
+					 }
+				 
+				 delete iSystemCloseGlobalQuery;
+				 iSystemCloseGlobalQuery = NULL;
+	    		 }
+	    	 }
+	    	 break;
+	     default:
+	    	 CAknAppUi::HandleSystemEventL(aEvent);
+	    	 break;
+	     }
+	}
+
+
+void CMobblerAppUi::HandleWsEventL(const TWsEvent &aEvent, CCoeControl *aDestination)
+	{
+	 if (aEvent.Type() == KAknUidValueEndKeyCloseEvent)
+		 {
+		 // Do nothing for the red end key, 
+		 // so Mobbler is minimised but still running
+		 }
+	 else
+		 {
+		 CAknViewAppUi::HandleWsEventL(aEvent, aDestination);
+		 }
 	}
 
 #ifdef __SYMBIAN_SIGNED__
