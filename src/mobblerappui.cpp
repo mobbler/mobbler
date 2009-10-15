@@ -21,32 +21,32 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
+#include <aknglobalconfirmationquery.h>
 #include <akninfopopupnotecontroller.h>
-#include <AknLists.h>
+#include <aknlists.h>
 #include <aknmessagequerydialog.h>
 #include <aknnotewrappers.h>
 #include <aknsutils.h>
-#include <bautils.h> 
-#include <DocumentHandler.h>
-#include <EscapeUtils.h>
-#include <s32file.h>
-
 
 #ifdef __SYMBIAN_SIGNED__
 #include <aknswallpaperutils.h>
-#include <apgcli.h>
+#endif
 
-// SW Installer Launcher API
-#include <SWInstApi.h>
-#include <SWInstDefs.h>
-
-#else // !__SYMBIAN_SIGNED__
+#include <bautils.h> 
 
 #ifndef __WINS__
 #include <browserlauncher.h>
-#endif // __WINS__
+#endif
 
-#endif // __SYMBIAN_SIGNED__
+#include <EscapeUtils.h>
+#include <DocumentHandler.h>
+#include <s32file.h>
+
+#ifdef __SYMBIAN_SIGNED__
+// SW Installer Launcher API
+#include <SWInstApi.h>
+#include <SWInstDefs.h>
+#endif
 
 #include "mobbler.hrh"
 #include "mobbler.rsg.h"
@@ -80,24 +80,70 @@ const TUid KDestinationImplUid = {0xA000BEB6};
 const TUid KMobblerGesturePlugin5xUid = {0xA000B6C2};
 #endif
 
+
+CMobblerSystemCloseGlobalQuery* CMobblerSystemCloseGlobalQuery::NewL()
+	{
+	CMobblerSystemCloseGlobalQuery* self = new(ELeave) CMobblerSystemCloseGlobalQuery;
+	CleanupStack::PushL(self);
+	self->ConstructL();
+	CleanupStack::Pop(self);
+	return self;
+	}
+
+
+	
+CMobblerSystemCloseGlobalQuery::CMobblerSystemCloseGlobalQuery()
+	:CActive(CActive::EPriorityStandard)
+	{
+	CActiveScheduler::Add(this);
+	}
+
+void CMobblerSystemCloseGlobalQuery::ConstructL()
+	{
+	iGlobalConfirmationQuery = CAknGlobalConfirmationQuery::NewL();
+	iMessage = static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->ResourceReader().ResourceL(R_MOBBLER_CLOSE_QUERY).AllocL();
+	iGlobalConfirmationQuery->ShowConfirmationQueryL(iStatus, *iMessage, R_AVKON_SOFTKEYS_YES_NO, R_QGN_NOTE_INFO_ANIM);
+   	SetActive();
+	}
+
+CMobblerSystemCloseGlobalQuery::~CMobblerSystemCloseGlobalQuery()
+	{
+	delete iGlobalConfirmationQuery;
+	delete iMessage;
+	}
+
+void CMobblerSystemCloseGlobalQuery::RunL()
+	{
+	if (iStatus >= 0)
+		{
+		CActiveScheduler::Stop();
+		}
+	}
+
+void CMobblerSystemCloseGlobalQuery::DoCancel()
+	{
+	iGlobalConfirmationQuery->CancelConfirmationQuery();
+	}
+
+// CMobblerAppUi
+
 void CMobblerAppUi::ConstructL()
 	{
 #if defined(__SYMBIAN_SIGNED__) && !defined(__WINS__)
 	// This is the Symbian Signed version so try
 	// to silently remove the self-signed version
 	
-	SwiUI::RSWInstSilentLauncher swInstLauncher;
+	SwiUI::RSWInstLauncher swInstLauncher;
 	CleanupClosePushL(swInstLauncher);
-	if (swInstLauncher.Connect() == KErrNone)
-		{
-		SwiUI::TUninstallOptions uninstallOptions;
-		uninstallOptions.iKillApp = SwiUI::EPolicyAllowed;
-		uninstallOptions.iBreakDependency = SwiUI::EPolicyAllowed;
-		SwiUI::TUninstallOptionsPckg optionsPckg(uninstallOptions); 
-		
-		swInstLauncher.SilentUninstall(TUid::Uid(0xA0007648), optionsPckg, SwiUI::KSisxMimeType);
-		} 
-		
+	User::LeaveIfError(swInstLauncher.Connect());
+	
+	SwiUI::TUninstallOptions uninstallOptions;
+	uninstallOptions.iKillApp = SwiUI::EPolicyAllowed;
+	uninstallOptions.iBreakDependency = SwiUI::EPolicyAllowed;
+	SwiUI::TUninstallOptionsPckg optionsPckg(uninstallOptions); 
+
+	swInstLauncher.SilentUninstall(TUid::Uid(0xA0007648), optionsPckg, SwiUI::KSisxMimeType);
+	 
 	CleanupStack::PopAndDestroy(&swInstLauncher);
 #endif
 	
@@ -131,6 +177,9 @@ void CMobblerAppUi::ConstructL()
 	
 	RProcess().SetPriority(EPriorityHigh);
 	
+#ifndef __WINS__
+	iBrowserLauncher = CBrowserLauncher::NewL();
+#endif
 	LoadRadioStationsL();
 	
 	iMobblerDownload = CMobblerDownload::NewL(*this);
@@ -194,6 +243,10 @@ CMobblerAppUi::~CMobblerAppUi()
 	delete iInterfaceSelector;
 	delete iVolumeUpTimer;
 	delete iVolumeDownTimer;
+	
+#ifndef __WINS__
+	delete iBrowserLauncher;
+#endif
 	delete iResourceReader;
 	delete iSleepTimer;
 	delete iAlarmTimer;
@@ -202,6 +255,8 @@ CMobblerAppUi::~CMobblerAppUi()
 	delete iWebServicesHelper;
 	
 	delete iCheckForUpdatesObserver;
+	
+	delete iSystemCloseGlobalQuery;
 	}
 
 TBool CMobblerAppUi::AccelerometerGesturesAvailable() const
@@ -430,6 +485,15 @@ CMobblerSettingItemListView& CMobblerAppUi::SettingView() const
 CMobblerDestinationsInterface* CMobblerAppUi::Destinations() const
 	{
 	return iDestinations;
+	}
+
+CBrowserLauncher* CMobblerAppUi::BrowserLauncher() const
+	{
+#ifndef __WINS__
+	return iBrowserLauncher;
+#else
+	return NULL;
+#endif
 	}
 
 const TDesC& CMobblerAppUi::MusicAppNameL() const
@@ -763,7 +827,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 				CAknSinglePopupMenuStyleListBox* list(new(ELeave) CAknSinglePopupMenuStyleListBox);
 				CleanupStack::PushL(list);
 				 
-				CAknPopupList* popup(CAknPopupList::NewL(list, R_AVKON_SOFTKEYS_OK_CANCEL, AknPopupLayouts::EMenuWindow));
+				CAknPopupList* popup = CAknPopupList::NewL(list, R_AVKON_SOFTKEYS_OK_CANCEL, AknPopupLayouts::EMenuWindow);
 				CleanupStack::PushL(popup);
 				
 				list->ConstructL(popup, CEikListBox::ELeftDownInViewRect);
@@ -773,7 +837,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 				list->CreateScrollBarFrameL(ETrue);
 				list->ScrollBarFrame()->SetScrollBarVisibilityL(CEikScrollBarFrame::EOff, CEikScrollBarFrame::EAuto);
 				
-				CDesCArrayFlat* items(new(ELeave) CDesCArrayFlat(11));
+				CDesCArrayFlat* items = new(ELeave) CDesCArrayFlat(11);
 				CleanupStack::PushL(items);
 				
 				// Add the first menu item and append the shortcut key 
@@ -1012,10 +1076,6 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 					}
 				}
 			}
-			break;
-		case EMobblerCommandLanguagePatches:
-			_LIT(KLanguagePatchesUrl, "http://code.google.com/p/mobbler/downloads/list?can=2&q=Type-Language&sort=summary&colspec=Filename+Uploaded");
-			OpenWebBrowserL(KLanguagePatchesUrl);
 			break;
 		default:
 			if (aCommand >= EMobblerCommandEqualizerDefault && 
@@ -1686,6 +1746,7 @@ void CMobblerAppUi::SleepL()
 	CAknInformationNote* note(new (ELeave) CAknInformationNote(ETrue));
 	note->ExecuteLD(iResourceReader->ResourceL(R_MOBBLER_SLEEP_TIMER_EXPIRED));
 	
+	LOG(iSettingView->SleepTimerAction());
 	switch (iSettingView->SleepTimerAction())
 		{
 		case CMobblerSettingItemListSettings::EStopPlaying:
@@ -1694,7 +1755,7 @@ void CMobblerAppUi::SleepL()
 			HandleCommandL(EMobblerCommandOffline);
 			break;
 		case CMobblerSettingItemListSettings::ExitMobber:
-			iAvkonAppUi->RunAppShutter();
+			HandleCommandL(EAknSoftkeyExit);
 			break;
 		default:
 			break;
@@ -1872,71 +1933,66 @@ void CMobblerAppUi::GoToLastFmL(TInt aCommand)
 			position = url.Find(_L(" "));
 			}
 		
+		// Convert to UTF-8
+		HBufC8* utf8(EscapeUtils::ConvertFromUnicodeToUtf8L(url));
+		url.Copy(*utf8);
 		
-		OpenWebBrowserL(url);
-		}
-	}
+		// Escape encode things like Ä and ö
+		HBufC16* encode(EscapeUtils::EscapeEncodeL(url, EscapeUtils::EEscapeNormal));
+		CleanupStack::PushL(encode);
 
-void CMobblerAppUi::OpenWebBrowserL(const TDesC& aUrl)
-	{
-	TBuf<255> url(aUrl);
-	
-	// Convert to UTF-8
-	HBufC8* utf8(EscapeUtils::ConvertFromUnicodeToUtf8L(url));
-	url.Copy(*utf8);
-	delete utf8;
-	
-	// Escape encode things like Ä and ö
-	HBufC16* encode(EscapeUtils::EscapeEncodeL(url, EscapeUtils::EEscapeNormal));
-	CleanupStack::PushL(encode);
-	
-#ifdef __SYMBIAN_SIGNED__
-	RApaLsSession apaLsSession;
-	const TUid KBrowserUid = {0x10008D39};
-	TApaTaskList taskList(CEikonEnv::Static()->WsSession());
-	TApaTask task(taskList.FindApp(KBrowserUid));
-	if(task.Exists())
-		{
-		task.BringToForeground();
-		HBufC8* param8(HBufC8::NewLC(encode->Length()));
-		param8->Des().Append(*encode);
-		task.SendMessage(TUid::Uid(0), *param8); // UID not used
-		CleanupStack::PopAndDestroy(param8);
-		}
-	else
-		{
-		if(!apaLsSession.Handle())
-			{
-			User::LeaveIfError(apaLsSession.Connect());
-			}
-		TThreadId thread;
-		User::LeaveIfError(apaLsSession.StartDocument(*encode, KBrowserUid, thread));
-		apaLsSession.Close();
-		}
-#else // !__SYMBIAN_SIGNED__
 #ifndef __WINS__
-	CBrowserLauncher* browserLauncher(CBrowserLauncher::NewL());
-	browserLauncher->LaunchBrowserEmbeddedL(*encode);
-	delete browserLauncher;
+		iBrowserLauncher->LaunchBrowserEmbeddedL(*encode);
 #endif
-#endif // __SYMBIAN_SIGNED__
-	
-	CleanupStack::PopAndDestroy(encode);
+		CleanupStack::PopAndDestroy(encode);
+		}
 	}
 
-void CMobblerAppUi::HandleWsEventL(const TWsEvent &aEvent, 
-								   CCoeControl *aDestination)
+void CMobblerAppUi::HandleSystemEventL(const TWsEvent& aEvent)
 	{
-	if (aEvent.Type() == KAknUidValueEndKeyCloseEvent)
-		{
-		// Do nothing for the red end key, 
-		// so Mobbler is minimised but still running
-		}
-	else
-		{
-		// This will allow pressing C in the task manager to EEikCmdExit
-		CAknViewAppUi::HandleWsEventL(aEvent, aDestination);
-		}
+	switch (*(TApaSystemEvent*)(aEvent.EventData()))
+	     {
+	     case EApaSystemEventShutdown:
+	    	 {
+	    	 if (!iSystemCloseGlobalQuery)
+	    		 {
+				 iSystemCloseGlobalQuery = CMobblerSystemCloseGlobalQuery::NewL();
+				 CActiveScheduler::Start();
+				 
+				 switch (iSystemCloseGlobalQuery->iStatus.Int())
+					 {
+					 case EAknSoftkeyYes:
+						 {
+						 CAknAppUi::HandleSystemEventL(aEvent);
+						 }
+						 break;
+					 default:
+						 break;
+					 }
+				 
+				 delete iSystemCloseGlobalQuery;
+				 iSystemCloseGlobalQuery = NULL;
+	    		 }
+	    	 }
+	    	 break;
+	     default:
+	    	 CAknAppUi::HandleSystemEventL(aEvent);
+	    	 break;
+	     }
+	}
+
+
+void CMobblerAppUi::HandleWsEventL(const TWsEvent &aEvent, CCoeControl *aDestination)
+	{
+	 if (aEvent.Type() == KAknUidValueEndKeyCloseEvent)
+		 {
+		 // Do nothing for the red end key, 
+		 // so Mobbler is minimised but still running
+		 }
+	 else
+		 {
+		 CAknViewAppUi::HandleWsEventL(aEvent, aDestination);
+		 }
 	}
 
 #ifdef __SYMBIAN_SIGNED__
@@ -1966,6 +2022,19 @@ TInt CMobblerAppUi::SetAlbumArtAsWallpaperL(TBool aAutomatically)
 					}
 				}
 			}
+		
+/*TODO
+		// No success with album art, try Mobbler icon
+		if (!aAutomatically && error != KErrNone)
+			{
+			error = iMobblerBitmapAppIcon->Bitmap(ETrue)->Save(KWallpaperFile);
+			if (error == KErrNone)
+				{
+				error = AknsWallpaperUtils::SetIdleWallpaper(KWallpaperFile, NULL);
+				LOG2(_L8("Set as wallpaper"), error);
+				}
+			}
+*/
 		}
 	return error;
 	}

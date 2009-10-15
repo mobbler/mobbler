@@ -155,6 +155,7 @@ SOURCE		mobblerwebservicesquery.cpp
 SOURCE		mobblerwebservicesview.cpp
 
 LIBRARY		aknicon.lib
+LIBRARY		aknnotify.lib
 LIBRARY		aknskins.lib
 #ifdef SYMBIAN_SIGNED
 LIBRARY		aknswallpaperutils.lib

@@ -40,7 +40,7 @@
 [0x1028315F], 0, 0, 0, {"Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID"}
 
 ; The Mobbler application
-"$(EPOCROOT)epoc32\release\$(PLATFORM)\$(TARGET)\mobbler_0x2002655A.exe"-"!:\sys\bin\mobbler_0x2002655A.exe", FR, RI
+"$(EPOCROOT)epoc32\release\$(PLATFORM)\$(TARGET)\mobbler_0x2002655A.exe"-"!:\sys\bin\mobbler_0x2002655A.exe"
 
 ; The Mobbler music app observer
 "$(EPOCROOT)epoc32\release\$(PLATFORM)\$(TARGET)\musicappobserver_0x2002655E.dll"-"!:\sys\bin\musicappobserver_0x2002655E.dll"
