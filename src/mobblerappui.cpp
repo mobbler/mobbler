@@ -21,6 +21,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
+#include <aknglobalconfirmationquery.h>
 #include <aknmessagequerydialog.h>
 #include <akninfopopupnotecontroller.h>
 #include <aknlists.h>
@@ -130,25 +131,6 @@ void CMobblerSystemCloseGlobalQuery::DoCancel()
 
 void CMobblerAppUi::ConstructL()
 	{
-#if defined(__SYMBIAN_SIGNED__) && !defined(__WINS__)
-	// This is the Symbian Signed version so try
-	// to silently remove the self-signed version
-	
-	SwiUI::RSWInstSilentLauncher swInstLauncher;
-	CleanupClosePushL(swInstLauncher);
-	if (swInstLauncher.Connect() == KErrNone)
-		{
-		SwiUI::TUninstallOptions uninstallOptions;
-		uninstallOptions.iKillApp = SwiUI::EPolicyAllowed;
-		uninstallOptions.iBreakDependency = SwiUI::EPolicyAllowed;
-		SwiUI::TUninstallOptionsPckg optionsPckg(uninstallOptions); 
-		
-		swInstLauncher.SilentUninstall(TUid::Uid(0xA0007648), optionsPckg, SwiUI::KSisxMimeType);
-		} 
-		
-	CleanupStack::PopAndDestroy(&swInstLauncher);
-#endif
-	
 	iResourceReader = CMobblerResourceReader::NewL();
 	iBitmapCollection = CMobblerBitmapCollection::NewL();
 	
