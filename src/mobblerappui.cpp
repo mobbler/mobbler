@@ -22,7 +22,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
 #include <aknglobalconfirmationquery.h>
-#include <aknmessagequerydialog.h>
 #include <akninfopopupnotecontroller.h>
 #include <aknlists.h>
 #include <aknmessagequerydialog.h>
@@ -85,15 +84,13 @@ const TUid KMobblerGesturePlugin5xUid = {0xA000B6C2};
 
 CMobblerSystemCloseGlobalQuery* CMobblerSystemCloseGlobalQuery::NewL()
 	{
-	CMobblerSystemCloseGlobalQuery* self = new(ELeave) CMobblerSystemCloseGlobalQuery;
+	CMobblerSystemCloseGlobalQuery* self(new(ELeave) CMobblerSystemCloseGlobalQuery);
 	CleanupStack::PushL(self);
 	self->ConstructL();
 	CleanupStack::Pop(self);
 	return self;
 	}
 
-
-	
 CMobblerSystemCloseGlobalQuery::CMobblerSystemCloseGlobalQuery()
 	:CActive(CActive::EPriorityStandard)
 	{
@@ -105,7 +102,7 @@ void CMobblerSystemCloseGlobalQuery::ConstructL()
 	iGlobalConfirmationQuery = CAknGlobalConfirmationQuery::NewL();
 	iMessage = static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->ResourceReader().ResourceL(R_MOBBLER_CLOSE_QUERY).AllocL();
 	iGlobalConfirmationQuery->ShowConfirmationQueryL(iStatus, *iMessage, R_AVKON_SOFTKEYS_YES_NO, R_QGN_NOTE_INFO_ANIM);
-   	SetActive();
+	SetActive();
 	}
 
 CMobblerSystemCloseGlobalQuery::~CMobblerSystemCloseGlobalQuery()
@@ -794,7 +791,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 				{
 				CAknSinglePopupMenuStyleListBox* list(new(ELeave) CAknSinglePopupMenuStyleListBox);
 				CleanupStack::PushL(list);
-				 
+				
 				CAknPopupList* popup(CAknPopupList::NewL(list, R_AVKON_SOFTKEYS_OK_CANCEL, AknPopupLayouts::EMenuWindow));
 				CleanupStack::PushL(popup);
 				
@@ -899,7 +896,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 							}
 						}
 					}
-				 
+				
 				CleanupStack::PopAndDestroy(list);
 				}
 			
@@ -1959,48 +1956,47 @@ void CMobblerAppUi::OpenWebBrowserL(const TDesC& aUrl)
 void CMobblerAppUi::HandleSystemEventL(const TWsEvent& aEvent)
 	{
 	switch (*(TApaSystemEvent*)(aEvent.EventData()))
-	     {
-	     case EApaSystemEventShutdown:
-	    	 {
-	    	 if (!iSystemCloseGlobalQuery)
-	    		 {
-				 iSystemCloseGlobalQuery = CMobblerSystemCloseGlobalQuery::NewL();
-				 CActiveScheduler::Start();
-				 
-				 switch (iSystemCloseGlobalQuery->iStatus.Int())
-					 {
-					 case EAknSoftkeyYes:
-						 {
-						 CAknAppUi::HandleSystemEventL(aEvent);
-						 }
-						 break;
-					 default:
-						 break;
-					 }
-				 
-				 delete iSystemCloseGlobalQuery;
-				 iSystemCloseGlobalQuery = NULL;
-	    		 }
-	    	 }
-	    	 break;
-	     default:
-	    	 CAknAppUi::HandleSystemEventL(aEvent);
-	    	 break;
-	     }
+		{
+		case EApaSystemEventShutdown:
+			{
+			if (!iSystemCloseGlobalQuery)
+				{
+				iSystemCloseGlobalQuery = CMobblerSystemCloseGlobalQuery::NewL();
+				CActiveScheduler::Start();
+				
+				switch (iSystemCloseGlobalQuery->iStatus.Int())
+					{
+					case EAknSoftkeyYes:
+						{
+						CAknAppUi::HandleSystemEventL(aEvent);
+						}
+						break;
+					default:
+						break;
+					}
+				
+				delete iSystemCloseGlobalQuery;
+				iSystemCloseGlobalQuery = NULL;
+				}
+			}
+			break;
+		default:
+			CAknAppUi::HandleSystemEventL(aEvent);
+			break;
+		}
 	}
-
 
 void CMobblerAppUi::HandleWsEventL(const TWsEvent &aEvent, CCoeControl *aDestination)
 	{
-	 if (aEvent.Type() == KAknUidValueEndKeyCloseEvent)
-		 {
-		 // Do nothing for the red end key, 
-		 // so Mobbler is minimised but still running
-		 }
-	 else
-		 {
-		 CAknViewAppUi::HandleWsEventL(aEvent, aDestination);
-		 }
+	if (aEvent.Type() == KAknUidValueEndKeyCloseEvent)
+		{
+		// Do nothing for the red end key, 
+		// so Mobbler is minimised but still running
+		}
+	else
+		{
+		CAknViewAppUi::HandleWsEventL(aEvent, aDestination);
+		}
 	}
 
 #ifdef __SYMBIAN_SIGNED__
