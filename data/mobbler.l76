@@ -4,7 +4,6 @@ mobbler.l76 - Brazilian Portuguese
 Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
 Copyright (C) 2008  Michael Coffey
 
-
 http://code.google.com/p/mobbler
 
 This program is free software; you can redistribute it and/or
@@ -258,3 +257,12 @@ rls_string STR_mobbler_attendance "Attendance"
 rls_string STR_mobbler_attendance_yes "I'm going"
 rls_string STR_mobbler_attendance_maybe "I might go"
 rls_string STR_mobbler_attendance_no "I'm not going"
+rls_string STR_mobbler_set_as_wallpaper "Set as wallpaper"
+rls_string STR_mobbler_note_wallpaper_set "Wallpaper set"
+rls_string STR_mobbler_note_wallpaper_not_set "Wallpaper not set"
+rls_string STR_mobbler_automatically_set_wallpaper "Set wallpaper"
+rls_string STR_mobbler_set_wallpaper_automatically "Automatically"
+rls_string STR_mobbler_set_wallpaper_manually "Manually"
+rls_string STR_mobbler_language_patches "Language patches"
+rls_string STR_mobbler_sleep_timer_time_minutes "Sleep after (minutes)"
+rls_string STR_mobbler_close_query "Something is trying to close Mobbler. Are you sure you want to stop scrobbling?"

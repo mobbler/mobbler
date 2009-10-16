@@ -4,7 +4,6 @@ mobbler.l27 - Polish
 Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
 Copyright (C) 2008  Michael Coffey
 
-
 http://code.google.com/p/mobbler
 
 This program is free software; you can redistribute it and/or
@@ -251,11 +250,20 @@ rls_string STR_mobbler_128_kbps "128 kb/s"
 rls_string STR_mobbler_format_search "Szukanie %S"
 rls_string STR_mobbler_64_kbps_warning "Radio 64 kb/s jest dostępne tylko dla abonentów Last.fm. Zostanie użyte 128 kb/s."
 rls_string STR_mobbler_volume "Głośność"
-rls_string STR_mobbler_station "Station"
-rls_string STR_mobbler_station_text "Artist/tag/user"
-rls_string STR_mobbler_visit_lastfm_menu "Visit Last.fm"
-rls_string STR_mobbler_album_unknown "(Album unknown)"
-rls_string STR_mobbler_attendance "Attendance"
-rls_string STR_mobbler_attendance_yes "I'm going"
-rls_string STR_mobbler_attendance_maybe "I might go"
-rls_string STR_mobbler_attendance_no "I'm not going"
+rls_string STR_mobbler_station "Stacja"
+rls_string STR_mobbler_station_text "Artysta/tag/użytkownik"
+rls_string STR_mobbler_visit_lastfm_menu "Odwiedź Last.fm"
+rls_string STR_mobbler_album_unknown "(Album nieznany)"
+rls_string STR_mobbler_attendance "Uczestnictwo"
+rls_string STR_mobbler_attendance_yes "Zamierzam"
+rls_string STR_mobbler_attendance_maybe "Może"
+rls_string STR_mobbler_attendance_no "Nie zamierzam"
+rls_string STR_mobbler_set_as_wallpaper "Set as wallpaper"
+rls_string STR_mobbler_note_wallpaper_set "Wallpaper set"
+rls_string STR_mobbler_note_wallpaper_not_set "Wallpaper not set"
+rls_string STR_mobbler_automatically_set_wallpaper "Set wallpaper"
+rls_string STR_mobbler_set_wallpaper_automatically "Automatically"
+rls_string STR_mobbler_set_wallpaper_manually "Manually"
+rls_string STR_mobbler_language_patches "Language patches"
+rls_string STR_mobbler_sleep_timer_time_minutes "Sleep after (minutes)"
+rls_string STR_mobbler_close_query "Something is trying to close Mobbler. Are you sure you want to stop scrobbling?"

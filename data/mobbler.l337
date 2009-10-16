@@ -5,7 +5,6 @@ Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
 Copyright (C) 2008  Michael Coffey
 7R4n5l473D U51n' http://www.jayssite.com/stuff/l33t/l33t_translator.html
 
-
 http://code.google.com/p/mobbler
 
 This program is free software; you can redistribute it and/or
@@ -260,3 +259,12 @@ rls_string STR_mobbler_attendance "A773ndANc3"
 rls_string STR_mobbler_attendance_yes "1'M 901N'"
 rls_string STR_mobbler_attendance_maybe "1 m19h7 90"
 rls_string STR_mobbler_attendance_no "1'M N07 901n'"
+rls_string STR_mobbler_set_as_wallpaper "5E7 4z w4LLp4PEr"
+rls_string STR_mobbler_note_wallpaper_set "W4llp4P3R 53T"
+rls_string STR_mobbler_note_wallpaper_not_set "w4llP4p3R N0t 53t"
+rls_string STR_mobbler_automatically_set_wallpaper "5E7 WalLpApER"
+rls_string STR_mobbler_set_wallpaper_automatically "4u70M471C4lLY"
+rls_string STR_mobbler_set_wallpaper_manually "M4nu4LLY"
+rls_string STR_mobbler_language_patches "lAn9uA93 pA7Ch32"
+rls_string STR_mobbler_sleep_timer_time_minutes "5l33P 4Ft3R cM1nUT35)"
+rls_string STR_mobbler_close_query "5om3thIN' IZ TRYIn' to Cloz3 MObBl3R. r joO 5ur3 jOO w4NT tO 5top 5CRoBBLIn'?"
