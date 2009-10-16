@@ -115,6 +115,7 @@ CMobblerAudioControl::~CMobblerAudioControl()
 
 void CMobblerAudioControl::RunL()
 	{
+	iDestroyCmdSent = ETrue;
 	iObserver.HandleAudioFinishedL(this);
 	}
 
