@@ -7,7 +7,6 @@ mobbler.l888 - Pirate English
 Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
 Copyright (C) 2009  Michael Coffey
 
-
 http://code.google.com/p/mobbler
 
 This program is free software; you can redistribute it and/or
@@ -262,3 +261,12 @@ rls_string STR_mobbler_attendance "Attendance"
 rls_string STR_mobbler_attendance_yes "I be a-goin'"
 rls_string STR_mobbler_attendance_maybe "I may go, yarrrr!"
 rls_string STR_mobbler_attendance_no "I be nay a-goin'"
+rls_string STR_mobbler_set_as_wallpaper "Set as wallpaper"
+rls_string STR_mobbler_note_wallpaper_set "Yarr, wallpaper set!"
+rls_string STR_mobbler_note_wallpaper_not_set "Blast ye! Wallpaper nay be set!"
+rls_string STR_mobbler_automatically_set_wallpaper "Set ye wallpaper"
+rls_string STR_mobbler_set_wallpaper_automatically "Automatically"
+rls_string STR_mobbler_set_wallpaper_manually "Manually"
+rls_string STR_mobbler_language_patches "Lingo eye-patches"
+rls_string STR_mobbler_sleep_timer_time_minutes "Sleep after (minutes)"
+rls_string STR_mobbler_close_query "Something be a-tryin' t' scuttle Mobbler! Be ye sure ye want t' avast a-scrobblin'?"

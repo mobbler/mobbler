@@ -29,6 +29,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "mobblerlastfmconnection.h"
 #include "mobblerlistitem.h"
 #include "mobblerparser.h"
+#include "mobblersettingitemlistview.h"
 #include "mobblerstring.h"
 #include "mobblerwebserviceshelper.h"
 
@@ -123,53 +124,57 @@ void CMobblerEventList::DataL(CMobblerFlatDataObserverHelper* aObserver, const T
 		if (aObserver == iAttendanceHelperNo &&
 				iType == EMobblerCommandUserEvents)
 			{
-			// We have removed an event from the
-			// user's list so remove it
+			// We have removed an event from the person's Last.fm events. 
+			// If the person is the user, remove it from the list.
+			// Don't remove it from friends' lists.
 			
-			// Create the XML reader and DOM fragement and associate them with each other
-			CSenXmlReader* xmlReader(CSenXmlReader::NewL());
-			CleanupStack::PushL(xmlReader);
-			CSenDomFragment* domFragment(CSenDomFragment::NewL());
-			CleanupStack::PushL(domFragment);
-			xmlReader->SetContentHandler(*domFragment);
-			domFragment->SetReader(*xmlReader);
-			
-			xmlReader->ParseL(aData);
-			
-			const TDesC8* statusText(domFragment->AsElement().AttrValue(_L8("status")));
-			
-			if (iListBox && statusText && (statusText->CompareF(_L8("ok")) == 0))
+			if (iText1->String().CompareF(iAppUi.SettingView().Username()) == 0)
 				{
-				// Get the list box items model
-				MDesCArray* listArray(iListBox->Model()->ItemTextArray());
-				CDesCArray* itemArray(static_cast<CDesCArray*>(listArray));
+				// Create the XML reader and DOM fragement and associate them with each other
+				CSenXmlReader* xmlReader(CSenXmlReader::NewL());
+				CleanupStack::PushL(xmlReader);
+				CSenDomFragment* domFragment(CSenDomFragment::NewL());
+				CleanupStack::PushL(domFragment);
+				xmlReader->SetContentHandler(*domFragment);
+				domFragment->SetReader(*xmlReader);
 				
-				 // Number of items in the list
-				const TInt KCount(itemArray->Count());
+				xmlReader->ParseL(aData);
 				
-				// Validate index then delete
-				const TInt KIndex(iListBox->CurrentItemIndex());
-				if (KIndex >= 0 && KIndex < KCount)
+				const TDesC8* statusText(domFragment->AsElement().AttrValue(_L8("status")));
+				
+				if (iListBox && statusText && (statusText->CompareF(_L8("ok")) == 0))
 					{
-					itemArray->Delete(KIndex, 1);
-					AknListBoxUtils::HandleItemRemovalAndPositionHighlightL(
-						iListBox, KIndex, ETrue);
-					iListBox->DrawNow();
+					// Get the list box items model
+					MDesCArray* listArray(iListBox->Model()->ItemTextArray());
+					CDesCArray* itemArray(static_cast<CDesCArray*>(listArray));
+					
+					 // Number of items in the list
+					const TInt KCount(itemArray->Count());
+					
+					// Validate index then delete
+					const TInt KIndex(iListBox->CurrentItemIndex());
+					if (KIndex >= 0 && KIndex < KCount)
+						{
+						itemArray->Delete(KIndex, 1);
+						AknListBoxUtils::HandleItemRemovalAndPositionHighlightL(
+							iListBox, KIndex, ETrue);
+						iListBox->DrawNow();
+						}
 					}
+				else
+					{
+					// There was an error!
+					}
+				
+				CleanupStack::PopAndDestroy(2);
 				}
-			else
-				{
-				// There was an error!
-				}
-		
-			CleanupStack::PopAndDestroy(2);
 			}
 		}
 	}
 
-void CMobblerEventList::ParseL(const TDesC8& aXML)
+void CMobblerEventList::ParseL(const TDesC8& aXml)
 	{
-	CMobblerParser::ParseEventsL(aXML, *this, iList);
+	CMobblerParser::ParseEventsL(aXml, *this, iList);
 	}
 
 // End of file
