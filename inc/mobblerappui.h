@@ -60,6 +60,7 @@ const TInt KMobblerStatusViewUid = 0xA0007CA8;
 const TInt KMobblerWebServicesViewUid = 0xA000B6C3;
 #endif
 
+class CAknGlobalConfirmationQuery;
 class CMobblerBitmapCollection;
 class CMobblerDestinationsInterface;
 class CMobblerDownload;
@@ -72,6 +73,26 @@ class CMobblerString;
 class CMobblerTrack;
 class CMobblerWebServicesView;
 class CMobblerWebServicesHelper;
+
+
+class CMobblerSystemCloseGlobalQuery : public CActive
+	{
+public:
+	static CMobblerSystemCloseGlobalQuery* NewL();
+	~CMobblerSystemCloseGlobalQuery();
+	
+private:
+	CMobblerSystemCloseGlobalQuery();
+	void ConstructL();
+	
+private: // from CActive
+	void RunL();
+	void DoCancel();
+	
+private:
+	CAknGlobalConfirmationQuery* iGlobalConfirmationQuery;
+	HBufC* iMessage;
+	};
 
 class CMobblerAppUi : public CAknViewAppUi,
 						public MMobblerLastFmConnectionObserver,
@@ -159,6 +180,7 @@ public:
 	TBool AlarmActive() const { return iAlarmTimer->IsActive(); }
 	void RemoveSleepTimerL();
 	void RemoveAlarmL();
+	TBool SleepAfterTrackStopped() { return iSleepAfterTrackStopped; }
 
 #ifdef __SYMBIAN_SIGNED__
 	TInt SetAlbumArtAsWallpaperL(TBool aAutomatically = EFalse);
@@ -217,6 +239,7 @@ private: // from MAknServerAppExitObserver
  
 private: // from MAknWsEventObserver
 	void HandleWsEventL(const TWsEvent &aEvent, CCoeControl *aDestination);
+	void HandleSystemEventL(const TWsEvent& aEvent);
  
 private:
 	// the view classes
@@ -272,6 +295,8 @@ private:
 	
 	CMobblerDestinationsInterface* iDestinations;
 	TUid iDestinationsDtorUid;
+	
+	CMobblerSystemCloseGlobalQuery* iSystemCloseGlobalQuery;
 	
 #ifdef __SYMBIAN_SIGNED__
 	TBool iWallpaperSet;
