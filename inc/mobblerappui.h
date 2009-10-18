@@ -24,8 +24,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #ifndef __MOBBLERAPPUI_H__
 #define __MOBBLERAPPUI_H__
 
-#include <aknviewappui.h>
 #include <aknserverapp.h>	// MAknServerAppExitObserver
+#include <aknviewappui.h>
 #include <remconcoreapitargetobserver.h>    // link against RemConCoreApi.lib
 #include <remconcoreapitarget.h>            // and
 #include <remconinterfaceselector.h>        // RemConInterfaceBase.lib
@@ -58,6 +58,9 @@ const TInt KMobblerAppUid = 0xA0007648;
 const TInt KMobblerSettingsViewUid = 0xA0007CA9;
 const TInt KMobblerStatusViewUid = 0xA0007CA8;
 const TInt KMobblerWebServicesViewUid = 0xA000B6C3;
+#ifndef __WINS__
+class CBrowserLauncher;
+#endif
 #endif
 
 class CAknGlobalConfirmationQuery;
@@ -279,6 +282,10 @@ private:
 	
 	CMobblerBitmapCollection* iBitmapCollection;
 	
+#if !defined(__SYMBIAN_SIGNED__) && !defined(__WINS__)
+	CBrowserLauncher* iBrowserLauncher;
+#endif
+
 	TBool iForeground;
 	
 	CMobblerDownload* iMobblerDownload;
