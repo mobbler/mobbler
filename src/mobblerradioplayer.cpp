@@ -455,54 +455,65 @@ void CMobblerRadioPlayer::SkipTrackL()
 		{
 		DoStop(EFalse);
 		
-		if (iPlaylist->Count() > 1)
+		if (iPlaylist->Count() < 5)
 			{
-			if (iPlaylist->Count() < 5)
+			// This is the last track in the playlist so
+			// fetch the next playlist
+			
+			RequestPlaylistL(EFalse);
+			}
+		
+		if (iPlaylist->Count() > 0)
+			{
+			// We are indexing a track in this playlist so start it
+			
+			delete iCurrentAudioControl;
+			iCurrentAudioControl = NULL;
+			
+			if (iNextAudioControl)
 				{
-				// This is the last track in the playlist so
-				// fetch the next playlist
-				
-				RequestPlaylistL(EFalse);
+				// We have already created the next audio control so use that
+				iCurrentAudioControl = iNextAudioControl;
+				iNextAudioControl = NULL;
+				}
+			else
+				{
+				// Create the next audio control and request the mp3
+				iCurrentAudioControl = CMobblerAudioControl::NewL(*this, *(*iPlaylist)[0], iPreBufferSize, iVolume, iEqualizerIndex, iBitRate);
+				iLastFmConnection.RequestMp3L(*iCurrentAudioControl, (*iPlaylist)[0]->Mp3Location());
+				DoChangeStateL(EPlaying);
 				}
 			
-			if (iPlaylist->Count() > 0)
+			// Tell the audio thread that is should start writing data to the output stream
+			iCurrentAudioControl->SetCurrent();
+			
+			// We have started playing the track so tell Last.fm
+			CMobblerTrack* track((*iPlaylist)[0]);
+			
+			if (track->StartTimeUTC() == Time::NullTTime())
 				{
-				// We are indexing a track in this playlist so start it
+				// we haven't set the start time for this track yet
+				// so this must be the first time we are writing data
+				// to the output stream.  Set the start time now.
+				TTime now;
+				now.UniversalTime();
+				track->SetStartTimeUTC(now);
+				}
+			
+			iLastFmConnection.TrackStartedL(track);
+			}
+		else
+			{
+			// There are no tracks in the playlist
+			
+			if (iState == EPlaying)
+				{
+				// We have skipped of the end of the fetched playlist
+				// We are playing so we must already be fetching a playlist
+				// so go back to the starting state and wait for the
+				// playlist to downloads
 				
-				delete iCurrentAudioControl;
-				iCurrentAudioControl = NULL;
-				
-				if (iNextAudioControl)
-					{
-					// We have already created the next audio control so use that
-					iCurrentAudioControl = iNextAudioControl;
-					iNextAudioControl = NULL;
-					}
-				else
-					{
-					// Create the next audio control and request the mp3
-					iCurrentAudioControl = CMobblerAudioControl::NewL(*this, *(*iPlaylist)[0], iPreBufferSize, iVolume, iEqualizerIndex, iBitRate);
-					iLastFmConnection.RequestMp3L(*iCurrentAudioControl, (*iPlaylist)[0]->Mp3Location());
-					DoChangeStateL(EPlaying);
-					}
-				
-				// Tell the audio thread that is should start writing data to the output stream
-				iCurrentAudioControl->SetCurrent();
-				
-				// We have started playing the track so tell Last.fm
-				CMobblerTrack* track((*iPlaylist)[0]);
-				
-				if (track->StartTimeUTC() == Time::NullTTime())
-					{
-					// we haven't set the start time for this track yet
-					// so this must be the first time we are writing data
-					// to the output stream.  Set the start time now.
-					TTime now;
-					now.UniversalTime();
-					track->SetStartTimeUTC(now);
-					}
-				
-				iLastFmConnection.TrackStartedL(track);
+				DoChangeStateL(EStarting);
 				}
 			}
 		}
@@ -684,14 +695,6 @@ void CMobblerRadioPlayer::DoStop(TBool aFullStop)
 		{
 		//  We are stopping because we want to skip to the next track
 		
-		if (iCurrentAudioControl)
-			{
-			iPlaylist->RemoveAndReleaseTrack(0);
-			
-			delete iCurrentAudioControl;
-			iCurrentAudioControl = NULL;
-			}
-		
 		if (!iNextAudioControl)
 			{
 			// We don't want to delete the next track, but
@@ -699,6 +702,14 @@ void CMobblerRadioPlayer::DoStop(TBool aFullStop)
 			// the current one
 			iLastFmConnection.RadioStop();
 			}
+	
+		if (iCurrentAudioControl)
+			{
+			iPlaylist->RemoveAndReleaseTrack(0);
+			
+			delete iCurrentAudioControl;
+			iCurrentAudioControl = NULL;
+			}	
 		}
 	
 //	static_cast<CMobblerAppUi*>(CEikonEnv::Static()->AppUi())->StatusDrawDeferred();
