@@ -158,6 +158,9 @@ void CMobblerAppUi::ConstructL()
 	
 	RProcess().SetPriority(EPriorityHigh);
 	
+#if !defined(__SYMBIAN_SIGNED__) && !defined(__WINS__)
+	iBrowserLauncher = CBrowserLauncher::NewL();
+#endif
 	LoadRadioStationsL();
 	
 	iMobblerDownload = CMobblerDownload::NewL(*this);
@@ -221,6 +224,10 @@ CMobblerAppUi::~CMobblerAppUi()
 	delete iInterfaceSelector;
 	delete iVolumeUpTimer;
 	delete iVolumeDownTimer;
+	
+#if !defined(__SYMBIAN_SIGNED__) && !defined(__WINS__)
+	delete iBrowserLauncher;
+#endif
 	delete iResourceReader;
 	delete iSleepTimer;
 	delete iAlarmTimer;
@@ -1944,9 +1951,7 @@ void CMobblerAppUi::OpenWebBrowserL(const TDesC& aUrl)
 		}
 #else // !__SYMBIAN_SIGNED__
 #ifndef __WINS__
-	CBrowserLauncher* browserLauncher(CBrowserLauncher::NewL());
-	browserLauncher->LaunchBrowserEmbeddedL(*encode);
-	delete browserLauncher;
+	iBrowserLauncher->LaunchBrowserEmbeddedL(url);
 #endif
 #endif // __SYMBIAN_SIGNED__
 	

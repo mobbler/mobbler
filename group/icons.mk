@@ -30,13 +30,11 @@ endif
 TARGETDIR=$(ZDIR)\resource\apps
 
 ICONTARGETFILENAME=$(TARGETDIR)\mobbler.mif
-SSICONTARGETFILENAME=$(TARGETDIR)\ssmobbler.mif
 
 ICONDIR=..\gfx
 
 HEADERDIR=$(EPOCROOT)epoc32\include
 HEADERFILENAME=$(HEADERDIR)\mobbler.mbg
-SSHEADERFILENAME=$(HEADERDIR)\ssmobbler.mbg
 
 do_nothing :
 	@rem do_nothing
@@ -55,17 +53,6 @@ RESOURCE :
 
 	mifconv $(ICONTARGETFILENAME) /X /h$(HEADERFILENAME) \
 		/c32,8 $(ICONDIR)\mobbler.svg \
-		/c32,8 $(ICONDIR)\more.svg \
-		/c32,8 $(ICONDIR)\love.svg \
-		/c32,8 $(ICONDIR)\ban.svg \
-		/c32,8 $(ICONDIR)\stop.svg \
-		/c32,8 $(ICONDIR)\play.svg \
-		/c32,8 $(ICONDIR)\next.svg \
-		/c32,8 $(ICONDIR)\speaker_low.svg \
-		/c32,8 $(ICONDIR)\speaker_high.svg
-		
-	mifconv $(SSICONTARGETFILENAME) /X /h$(SSHEADERFILENAME) \
-		/c32,8 $(ICONDIR)\mobbler_icon_weird.svg \
 		/c32,8 $(ICONDIR)\more.svg \
 		/c32,8 $(ICONDIR)\love.svg \
 		/c32,8 $(ICONDIR)\ban.svg \
