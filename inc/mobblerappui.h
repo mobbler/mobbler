@@ -61,7 +61,6 @@ const TInt KMobblerWebServicesViewUid = 0xA000B6C3;
 #endif
 
 class CAknGlobalConfirmationQuery;
-class CBrowserLauncher;
 class CMobblerBitmapCollection;
 class CMobblerDestinationsInterface;
 class CMobblerDownload;
@@ -111,7 +110,7 @@ public:
 		EOnlyRadio,
 		EAlwaysWhenOnline
 		};
-	
+
 private:
 	enum TPlusOptions
 		{
@@ -141,7 +140,6 @@ public:
 	CMobblerMusicAppListener& MusicListener() const;
 	CMobblerBitmapCollection& BitmapCollection() const;
 	CMobblerDestinationsInterface* Destinations() const;
-	CBrowserLauncher* BrowserLauncher() const;
 	
 	CMobblerSettingItemListView& SettingView() const;
 	const TDesC& MusicAppNameL() const;
@@ -168,24 +166,26 @@ public:
 	CMobblerLastFmConnection::TMode Mode() const;
 	CMobblerLastFmConnection::TState State() const;
 	TBool ScrobblingOn() const;
-
+	
 	TBool RadioResumable() const;
 	TBool Foreground() const;
 	TBool Backlight() const;
 	TInt ScrobblePercent() const;
 	TInt DownloadAlbumArt() const;
 	void TrackStoppedL();
-
+	
 	CMobblerResourceReader& CMobblerAppUi::ResourceReader() const;
-
+	
 	TBool SleepTimerActive() const { return iSleepTimer->IsActive(); }
 	TBool AlarmActive() const { return iAlarmTimer->IsActive(); }
 	void RemoveSleepTimerL();
 	void RemoveAlarmL();
+	TBool SleepAfterTrackStopped() { return iSleepAfterTrackStopped; }
 
 #ifdef __SYMBIAN_SIGNED__
 	TInt SetAlbumArtAsWallpaperL(TBool aAutomatically = EFalse);
 #endif
+	void OpenWebBrowserL(const TDesC& aUrl);
 
 public: // CEikAppUi
 	void HandleCommandL(TInt aCommand);
@@ -193,7 +193,7 @@ public: // CEikAppUi
 
 private:
 	void HandleInstallStartedL();
-	
+
 private:
 	void HandleStatusPaneSizeChange();
 	
@@ -217,14 +217,14 @@ private:
 
 private: // from MMobblerSleepTimerNotify
 	void TimerExpiredL(TAny* aTimer, TInt aError);
-	
+
 private: // auto-repeat audio button callbacks
 	static TInt VolumeUpCallBackL(TAny *self);
 	static TInt VolumeDownCallBackL(TAny *self);
 
 private:
 	void LoadGesturesPluginL();
-
+	
 	// Gestures, from MMobblerGestures
 	void HandleSingleShakeL(TMobblerShakeGestureDirection aDirection);
 	
@@ -279,23 +279,18 @@ private:
 	
 	CMobblerBitmapCollection* iBitmapCollection;
 	
-#ifndef __WINS__
-	CBrowserLauncher* iBrowserLauncher;
-#endif
-
 	TBool iForeground;
 	
 	CMobblerDownload* iMobblerDownload;
-
+	
 	CMobblerResourceReader* iResourceReader;
-
+	
 	CMobblerSleepTimer* iSleepTimer;
 	TTime iTimeToSleep;
 	TBool iSleepAfterTrackStopped;
 	CMobblerSleepTimer* iAlarmTimer;
 	
 	CMobblerWebServicesHelper* iWebServicesHelper;
-	
 	CMobblerFlatDataObserverHelper* iCheckForUpdatesObserver;
 	
 	CMobblerDestinationsInterface* iDestinations;

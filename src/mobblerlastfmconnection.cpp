@@ -1176,7 +1176,7 @@ void CMobblerLastFmConnection::SelectStationL(MMobblerFlatDataObserver* aObserve
 	
 	CMobblerTransaction* transaction(NULL);
 	
-	if (iMemberType == ESubscriber || iMemberType == EMemberTypeUnknown)
+	if (iMemberType == ESubscriber)
 		{
 		CUri8* uri(CUri8::NewLC());
 	
@@ -1241,7 +1241,7 @@ void CMobblerLastFmConnection::RequestPlaylistL(MMobblerFlatDataObserver* aObser
 	{
 	CMobblerTransaction* transaction(NULL);
 	
-	if (iMemberType == ESubscriber || iMemberType == EMemberTypeUnknown)
+	if (iMemberType == ESubscriber)
 		{
 		CUri8* uri(CUri8::NewLC());
 		

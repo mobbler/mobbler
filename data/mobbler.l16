@@ -1,4 +1,4 @@
-﻿/*
+/*
 mobbler.l16 - Russian
 
 Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
@@ -132,7 +132,7 @@ rls_string STR_mobbler_confirm_replace_log ".scrobbler.log уже существ
 rls_string STR_mobbler_note_queue_exported "Очередь экспортирована в лог-файл: C:\Data\Mobbler\.scrobbler.log"
 rls_string STR_mobbler_note_queue_not_exported "Ошибка експорта"
 rls_string STR_mobbler_note_export_empty_queue "Очередь пуста"
-rls_string STR_mobbler_scrobble_percent "Скроблить после"
+rls_string STR_mobbler_scrobble_percent "Скробблить после"
 rls_string STR_mobbler_percent "%U процентов"
 rls_string STR_mobbler_get_latest_language "Файл перевода устарел, пожалуйста, обновите его с code.google.com/p/mobbler"
 rls_string STR_mobbler_sleep_timer "Таймер"
@@ -258,12 +258,12 @@ rls_string STR_mobbler_attendance "Посещение"
 rls_string STR_mobbler_attendance_yes "Пойду"
 rls_string STR_mobbler_attendance_maybe "Может быть"
 rls_string STR_mobbler_attendance_no "Не пойду"
-rls_string STR_mobbler_set_as_wallpaper "Set as wallpaper"
-rls_string STR_mobbler_note_wallpaper_set "Wallpaper set"
-rls_string STR_mobbler_note_wallpaper_not_set "Wallpaper not set"
-rls_string STR_mobbler_automatically_set_wallpaper "Set wallpaper"
-rls_string STR_mobbler_set_wallpaper_automatically "Automatically"
-rls_string STR_mobbler_set_wallpaper_manually "Manually"
-rls_string STR_mobbler_language_patches "Language patches"
-rls_string STR_mobbler_sleep_timer_time_minutes "Sleep after (minutes)"
-rls_string STR_mobbler_close_query "Something is trying to close Mobbler. Are you sure you want to stop scrobbling?"
+rls_string STR_mobbler_set_as_wallpaper "Установить как фоновое изображение"
+rls_string STR_mobbler_note_wallpaper_set "Фоновое изображение установлено"
+rls_string STR_mobbler_note_wallpaper_not_set "Фоновое изображение не установлено"
+rls_string STR_mobbler_automatically_set_wallpaper "Устанавливать фоновое изображение"
+rls_string STR_mobbler_set_wallpaper_automatically "Автоматически"
+rls_string STR_mobbler_set_wallpaper_manually "Вручную"
+rls_string STR_mobbler_language_patches "Обновления языка"
+rls_string STR_mobbler_sleep_timer_time_minutes "Сон после (минуты)"
+rls_string STR_mobbler_close_query "Что-то пытаеться закрыть Mobbler. Вы желаете отключить скробблинг?"
