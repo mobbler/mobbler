@@ -133,8 +133,8 @@ void CMobblerContentListing::FindAndSetAlbumNameL()
 			// Only if title and artist tags were found
 			if (artistError == KErrNone && titleError == KErrNone)
 				{
-				if ((artist.CompareC(iArtist) == 0) &&
-					(title.CompareC(iTitle) == 0))
+				if ((artist.Compare(iArtist) == 0) &&
+					(title.Compare(iTitle) == 0))
 					{
 					if (trackNumberError == KErrNone)
 						{
