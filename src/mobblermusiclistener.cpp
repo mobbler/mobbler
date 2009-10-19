@@ -293,7 +293,7 @@ void CMobblerMusicAppListener::NowPlayingL()
 					
 					if (trackTitle.Length() != 0 && trackArtist.Length() != 0)
 						{
-						iMobblerContentListing->FindAndSetAlbumNameL(*artist, *title);
+						iMobblerContentListing->FindAndSetAlbumNameL(trackArtist, trackTitle);
 						}
 					}
 				else

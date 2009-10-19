@@ -95,8 +95,8 @@ void CMobblerContentListing::SetObserver(MMobblerContentListingObserver& aObserv
 	iObserver = &aObserver;
 	}
 
-void CMobblerContentListing::FindAndSetAlbumNameL(const TDesC8& aArtist, 
-												  const TDesC8& aTitle)
+void CMobblerContentListing::FindAndSetAlbumNameL(const TDesC& aArtist, 
+												  const TDesC& aTitle)
 	{
 	iArtist = aArtist;
 	iTitle  = aTitle;
@@ -129,16 +129,12 @@ void CMobblerContentListing::FindAndSetAlbumNameL()
 			TInt trackNumberError(item.GetField(ECLFFieldIdTrackNumber, 
 												trackNumber));
 			TInt pathError(item.GetField(ECLFFieldIdFileNameAndPath, path));
-			TBuf16<255> artistBuf;
-			artistBuf.Copy(iArtist);
-			TBuf16<255> titleBuf;
-			titleBuf.Copy(iTitle);
 
 			// Only if title and artist tags were found
 			if (artistError == KErrNone && titleError == KErrNone)
 				{
-				if ((artist.Compare(artistBuf) == 0) &&
-					(title.Compare(titleBuf) == 0))
+				if ((artist.CompareC(iArtist) == 0) &&
+					(title.CompareC(iTitle) == 0))
 					{
 					if (trackNumberError == KErrNone)
 						{
@@ -174,8 +170,8 @@ void CMobblerContentListing::FindAndSetAlbumNameL()
 			iObserver->SetAlbumL(KNullDesC);
 			}
 		
-		iArtist = KNullDesC8;
-		iTitle  = KNullDesC8;
+		iArtist = KNullDesC;
+		iTitle  = KNullDesC;
 		}
 	}
 
