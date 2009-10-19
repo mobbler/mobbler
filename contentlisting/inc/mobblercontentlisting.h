@@ -42,7 +42,7 @@ private:
 
 private: // from CMobblerContentListingInterface
 	void SetObserver(MMobblerContentListingObserver& aObserver);
-	void FindAndSetAlbumNameL(const TDesC8& aArtist, const TDesC8& aTitle);
+	void FindAndSetAlbumNameL(const TDesC& aArtist, const TDesC& aTitle);
 
 protected: // from MCLFOperationObserver
 	void HandleOperationEventL(TCLFOperationEvent aOperationEvent,
@@ -52,8 +52,8 @@ private:
     MCLFContentListingEngine* iClfEngine;
     MCLFItemListModel* iClfModel;
 	TBool iClfModelReady;
-	TBuf8<255> iArtist;
-	TBuf8<255> iTitle;
+	TBuf<255> iArtist;
+	TBuf<255> iTitle;
 
 	MMobblerContentListingObserver* iObserver;
 	};

@@ -47,10 +47,7 @@ TARGET mobblercontentlisting
 #endif
 END
 
-LIBRARY		apgrfx.lib
-LIBRARY		apparc.lib
 LIBRARY		ContentListingFramework.lib
-LIBRARY		efsrv.lib // for logging only
 LIBRARY		euser.lib
 
 // End of file
