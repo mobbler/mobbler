@@ -30,8 +30,8 @@ class CMobblerContentListingInterface : public CBase
 	{
 public:
 	virtual void SetObserver(MMobblerContentListingObserver& aObserver) = 0;
-	virtual void FindAndSetAlbumNameL(const TDesC8& aArtist, 
-									  const TDesC8& aTitle) = 0;
+	virtual void FindAndSetAlbumNameL(const TDesC& aArtist, 
+									  const TDesC& aTitle) = 0;
 	};
 
 #endif // __MOBBLERTOUCHFEEDBACKINTERFACE_H__
