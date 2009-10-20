@@ -1326,17 +1326,17 @@ void CMobblerAppUi::HandleTrackNowPlayingL(const CMobblerTrack& /*aTrack*/)
 
 void CMobblerAppUi::HandleTrackSubmittedL(const CMobblerTrack& /*aTrack*/)
 	{
-//	iStatusView->DrawDeferred();
+	iStatusView->DrawDeferred();
 	++iTracksSubmitted;
 	--iTracksQueued;
 	}
 
 void CMobblerAppUi::HandleTrackQueuedL(const CMobblerTrack& /*aTrack*/)
 	{
-	if (iStatusView)
+/*	if (iStatusView)
 		{
-//		iStatusView->DrawDeferred();
-		}
+		iStatusView->DrawDeferred();
+		}*/
 	// update the track queued count and change the status bar text
 	++iTracksQueued;
 	}
