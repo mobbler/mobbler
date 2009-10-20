@@ -22,7 +22,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
 // uncomment this to use a beta build
-MACRO BETA_BUILD
+//MACRO BETA_BUILD
 
 // uncomment this to build a version with protected UIDs for Symbian Signing
 //#define SYMBIAN_SIGNED
