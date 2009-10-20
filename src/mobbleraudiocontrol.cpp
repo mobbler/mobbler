@@ -31,7 +31,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 const TInt KTimerDuration(250000); // 1/4 second
 
-const TInt KMobblerAudioThreadMinHeapSize(0x200000); // 2 MB
+const TInt KMobblerAudioThreadMinHeapSize(0x100000); // 1 MB
 const TInt KMobblerAudioThreadMaxHeapSize(0x700000); // 7 MB
 
 

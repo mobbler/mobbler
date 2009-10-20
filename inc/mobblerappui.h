@@ -44,7 +44,7 @@ const TInt KUpdateIntervalDays(1);
 const TInt KUpdateIntervalDays(7);
 #endif
 
-const TInt KMobblerBuildNumber(6182);
+const TInt KMobblerBuildNumber(6187);
 
 #ifdef __SYMBIAN_SIGNED__
 const TVersion KVersion(1, 0, KMobblerBuildNumber);
