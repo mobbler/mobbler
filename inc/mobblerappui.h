@@ -44,16 +44,17 @@ const TInt KUpdateIntervalDays(1);
 const TInt KUpdateIntervalDays(7);
 #endif
 
-const TInt KMobblerBuildNumber(6187);
+const TInt KMobblerMinorVersion(7);
+const TInt KMobblerBuildNumber(6193);
 
 #ifdef __SYMBIAN_SIGNED__
-const TVersion KVersion(1, 0, KMobblerBuildNumber);
+const TVersion KVersion(1, KMobblerMinorVersion, KMobblerBuildNumber);
 const TInt KMobblerAppUid = 0x2002655A;
 const TInt KMobblerSettingsViewUid = 0x2002655C;
 const TInt KMobblerStatusViewUid = 0x2002655B;
 const TInt KMobblerWebServicesViewUid = 0x2002656B;
 #else
-const TVersion KVersion(0, 7, KMobblerBuildNumber);
+const TVersion KVersion(0, KMobblerMinorVersion, KMobblerBuildNumber);
 const TInt KMobblerAppUid = 0xA0007648;
 const TInt KMobblerSettingsViewUid = 0xA0007CA9;
 const TInt KMobblerStatusViewUid = 0xA0007CA8;
@@ -203,10 +204,10 @@ private:
 	void HandleConnectCompleteL(TInt aError);
 	void HandleLastFmErrorL(CMobblerLastFmError& aError);
 	void HandleCommsErrorL(TInt aStatusCode, const TDesC8& aStatus);
-	void HandleTrackSubmittedL(const CMobblerTrack& aTrack);
-	void HandleTrackQueuedL(const CMobblerTrack& aTrack);
-	void HandleTrackDequeued(const CMobblerTrack& aTrack);
-	void HandleTrackNowPlayingL(const CMobblerTrack& aTrack);
+	void HandleTrackSubmittedL(const CMobblerTrackBase& aTrack);
+	void HandleTrackQueuedL(const CMobblerTrackBase& aTrack);
+	void HandleTrackDequeued(const CMobblerTrackBase& aTrack);
+	void HandleTrackNowPlayingL(const CMobblerTrackBase& aTrack);
 	
 	TBool GoOnlineL();
 	
