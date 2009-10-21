@@ -741,7 +741,7 @@ void CMobblerRadioPlayer::SubmitCurrentTrackL()
 	{
 	if (iCurrentAudioControl && (!iCurrentAudioControl->DownloadComplete() || iCurrentAudioControl->Playing()))
 		{
-		iLastFmConnection.TrackStoppedL();
+		iLastFmConnection.TrackStoppedL(CurrentTrack());
 		}
 	}
 

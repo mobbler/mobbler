@@ -129,8 +129,8 @@ public:
 	void CheckForUpdateL(MMobblerFlatDataObserver& aObserver);
 	
 	// Scrobbling methods
-	void TrackStartedL(CMobblerTrack* aCurrentTrack);
-	void TrackStoppedL();
+	void TrackStartedL(CMobblerTrack* aTrack);
+	void TrackStoppedL(const CMobblerTrackBase* aTrack);
 	
 	// Radio APIs
 	void SelectStationL(MMobblerFlatDataObserver* aObserver, TRadioStation aRadioStation, const TDesC8& aRadioText);

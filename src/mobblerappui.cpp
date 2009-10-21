@@ -514,7 +514,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 			task.SetWgId(CEikonEnv::Static()->RootWin().Identifier());
 			task.SendToBackground();
 			/// Check if scrobblable first and save queue
-			iLastFmConnection->TrackStoppedL();
+			iLastFmConnection->TrackStoppedL(currentTrack);
 			iRadioPlayer->Stop();
 			Exit();
 			break;
@@ -1713,7 +1713,7 @@ void CMobblerAppUi::SleepL()
 	LOG(_L8("CMobblerAppUi::SleepL()"));
 	// Do this for all actions, it gives Mobbler a chance to scrobble
 	// the newly stopped song to Last.fm whilst displaying the dialog
-	iLastFmConnection->TrackStoppedL();
+	iLastFmConnection->TrackStoppedL(CurrentTrack());
 	iRadioPlayer->Stop();
 	
 #ifdef _DEBUG
