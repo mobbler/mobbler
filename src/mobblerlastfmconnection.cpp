@@ -91,6 +91,7 @@ const TInt KMaxSubmitTracks(50);
 
 const TInt KOfflineProfileId(5);
 
+
 CMobblerLastFmConnection* CMobblerLastFmConnection::NewL(MMobblerLastFmConnectionObserver& aObserver, 
 															const TDesC& aRecipient, 
 															const TDesC& aPassword, 
@@ -119,17 +120,9 @@ CMobblerLastFmConnection::~CMobblerLastFmConnection()
 	{
 	Cancel();
 	
-	if (iCurrentTrack)
-		{
-		iCurrentTrack->Release();
-		}
+	delete iCurrentTrack;
 	
-	const TInt KTrackQueueCount(iTrackQueue.Count());
-	for (TInt i(0); i < KTrackQueueCount; ++i)
-		{
-		iTrackQueue[i]->Release();
-		}
-	iTrackQueue.Reset();
+	iTrackQueue.ResetAndDestroy();
 	
 	delete iMp3Location;
 	iRadioAudioTransaction.Close();
@@ -1446,14 +1439,8 @@ void CMobblerLastFmConnection::DoNowPlayingL()
 
 void CMobblerLastFmConnection::TrackStartedL(CMobblerTrack* aTrack)
 	{
-	if (iCurrentTrack)
-		{
-		//  There is already a current track so get rid of it
-		iCurrentTrack->Release();
-		}
-	
-	iCurrentTrack = aTrack;
-	iCurrentTrack->Open();
+	delete iCurrentTrack;
+	iCurrentTrack = CMobblerTrackBase::NewL(*aTrack);
 	
 	DoNowPlayingL();
 	}
@@ -1503,12 +1490,9 @@ void CMobblerLastFmConnection::TrackStoppedL()
 		}
 	
 	// There is no longer a current track
-	if (iCurrentTrack)
-		{
-		iCurrentTrack->Release();
-		}
-	
+	delete iCurrentTrack;
 	iCurrentTrack = NULL;
+	
 	static_cast<CMobblerAppUi*>(CEikonEnv::Static()->AppUi())->StatusDrawDeferred();
 	
 	// Save the track queue and try to do a submission
@@ -1831,7 +1815,7 @@ void CMobblerLastFmConnection::TransactionResponseL(CMobblerTransaction* aTransa
 			for (TInt i(Min(KCount - 1, KMaxSubmitTracks - 1)) ; i >= 0 ; --i)
 				{
 				iObserver.HandleTrackSubmittedL(*iTrackQueue[i]);
-				iTrackQueue[i]->Release();
+				delete iTrackQueue[i];
 				iTrackQueue.Remove(i);
 				}
 			
@@ -2136,12 +2120,7 @@ void CMobblerLastFmConnection::ScrobbleHandshakeL()
 
 void CMobblerLastFmConnection::LoadTrackQueueL()
 	{
-	const TInt KTrackQueueCount(iTrackQueue.Count());
-	for (TInt i(0); i < KTrackQueueCount; ++i)
-		{
-		iTrackQueue[i]->Release();
-		}
-	iTrackQueue.Reset();
+	iTrackQueue.ResetAndDestroy();
 	
 	RFile file;
 	CleanupClosePushL(file);
@@ -2157,7 +2136,7 @@ void CMobblerLastFmConnection::LoadTrackQueueL()
 		
 		for (TInt i(0); i < trackCount; ++i)
 			{
-			CMobblerTrack* track(CMobblerTrack::NewL(readStream));
+			CMobblerTrackBase* track(CMobblerTrackBase::NewL(readStream));
 			CleanupStack::PushL(track);
 			iTrackQueue.AppendL(track);
 			CleanupStack::Pop(track);
@@ -2303,7 +2282,7 @@ TBool CMobblerLastFmConnection::ExportQueueToLogFileL()
 		{
 		// If the track was loved, tough, that can't be submitted via log file
 		iObserver.HandleTrackDequeued(*iTrackQueue[i]);
-		iTrackQueue[i]->Release();
+		delete iTrackQueue[i];
 		iTrackQueue.Remove(i);
 		}
 	SaveTrackQueueL();
@@ -2344,12 +2323,11 @@ void CMobblerLastFmConnection::LoadCurrentTrackL()
 		RFileReadStream readStream(file);
 		CleanupClosePushL(readStream);
 		
-		if (iCurrentTrack)
-			{
-			//  There is already a current track so get rid of it
-			iCurrentTrack->Release();
-			}
-		iCurrentTrack  = CMobblerTrack::NewL(readStream);
+
+		//  There is already a current track so get rid of it
+		delete iCurrentTrack;
+		
+		iCurrentTrack  = CMobblerTrackBase::NewL(readStream);
 		iCurrentTrack->SetPlaybackPosition(readStream.ReadInt32L());
 		iCurrentTrack->SetTotalPlayed(readStream.ReadInt32L());
 		CleanupStack::PopAndDestroy(&readStream);

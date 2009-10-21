@@ -37,6 +37,7 @@ _LIT(KLogFile, "c:\\Data\\Mobbler\\.scrobbler.log");
 class CHTTPFormEncoder;
 class CMobblerString;
 class CMobblerTrack;
+class CMobblerTrackBase;
 class CMobblerTransaction;
 class MMobblerFlatDataObserver;
 class MMobblerLastFmConnectionObserver;
@@ -287,9 +288,9 @@ private:
 	
 	MMobblerLastFmConnectionObserver& iObserver;
 	
-	CMobblerTrack* iCurrentTrack;
+	CMobblerTrackBase* iCurrentTrack;
 	
-	RPointerArray<CMobblerTrack> iTrackQueue;
+	RPointerArray<CMobblerTrackBase> iTrackQueue;
 	
 	TMode iMode;
 	TState iState;
