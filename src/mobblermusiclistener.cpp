@@ -157,12 +157,14 @@ CMobblerTrack* CMobblerMusicAppListener::CurrentTrack()
 
 void CMobblerMusicAppListener::HandleTrackChangeL(const TDesC& /*aTrack*/)
 	{
+	iLastFmConnection.TrackStoppedL(iCurrentTrack);
+	
 	if (iCurrentTrack)
 		{
 		iCurrentTrack->Release();
 		iCurrentTrack = NULL;
 		}
-	iLastFmConnection.TrackStoppedL();
+	
 	ScheduleNowPlayingL();
 	
 	NotifyChangeL();
@@ -176,12 +178,13 @@ void CMobblerMusicAppListener::HandleMusicStateChangeL(TInt aState)
 		}
 	else
 		{
+		iLastFmConnection.TrackStoppedL(iCurrentTrack);
+		
 		if (iCurrentTrack)
 			{
 			iCurrentTrack->Release();
 			iCurrentTrack = NULL;
 			}
-		iLastFmConnection.TrackStoppedL();
 		}
 	
 	NotifyChangeL();
@@ -381,10 +384,14 @@ void CMobblerMusicAppListener::PlayerStateChangedL(TMPlayerRemoteControlState aS
 		if (iCurrentTrack)
 			{
 			iCurrentTrack->SetTrackPlaying(EFalse);
+			iLastFmConnection.TrackStoppedL(iCurrentTrack);
 			iCurrentTrack->Release();
 			iCurrentTrack = NULL;
 			}
-		iLastFmConnection.TrackStoppedL();
+		else
+			{
+			iLastFmConnection.TrackStoppedL(iCurrentTrack);
+			}
 		}
 	
 	NotifyChangeL();
@@ -392,12 +399,14 @@ void CMobblerMusicAppListener::PlayerStateChangedL(TMPlayerRemoteControlState aS
 
 void CMobblerMusicAppListener::TrackInfoChangedL(const TDesC& /*aTitle*/, const TDesC& /*aArtist*/)
 	{
+	iLastFmConnection.TrackStoppedL(iCurrentTrack);
+	
 	if (iCurrentTrack)
 		{
 		iCurrentTrack->Release();
 		iCurrentTrack = NULL;
 		}
-	iLastFmConnection.TrackStoppedL();
+	
 	ScheduleNowPlayingL();
 	}
 
@@ -410,12 +419,13 @@ void CMobblerMusicAppListener::CommandReceivedL(TMPlayerRemoteControlCommands aC
 	else if (aCommand != EMPlayerRCtrlCmdBack 
 				&& aCommand != EMPlayerRCtrlCmdNoCommand)
 		{
+		iLastFmConnection.TrackStoppedL(iCurrentTrack);
+		
 		if (iCurrentTrack)
 			{
 			iCurrentTrack->Release();
 			iCurrentTrack = NULL;
 			}
-		iLastFmConnection.TrackStoppedL();
 		}
 	
 	NotifyChangeL();
