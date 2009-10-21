@@ -1445,7 +1445,7 @@ void CMobblerLastFmConnection::TrackStartedL(CMobblerTrack* aTrack)
 	DoNowPlayingL();
 	}
 	
-void CMobblerLastFmConnection::TrackStoppedL()
+void CMobblerLastFmConnection::TrackStoppedL(const CMobblerTrackBase* aTrack)
 	{
 	// Make sure that we haven't already tried to scrobble this track
 	if (iCurrentTrack && !iCurrentTrack->Scrobbled())
@@ -1457,7 +1457,7 @@ void CMobblerLastFmConnection::TrackStoppedL()
 		if (!iCurrentTrack->IsMusicPlayerTrack())
 			{
 			// It's a radio track so test the amount of continuous playback
-			listenedFor = iCurrentTrack->PlaybackPosition();
+			listenedFor = aTrack->PlaybackPosition();
 			}
 		else
 			{
@@ -2322,7 +2322,6 @@ void CMobblerLastFmConnection::LoadCurrentTrackL()
 		{
 		RFileReadStream readStream(file);
 		CleanupClosePushL(readStream);
-		
 
 		//  There is already a current track so get rid of it
 		delete iCurrentTrack;
@@ -2331,7 +2330,7 @@ void CMobblerLastFmConnection::LoadCurrentTrackL()
 		iCurrentTrack->SetPlaybackPosition(readStream.ReadInt32L());
 		iCurrentTrack->SetTotalPlayed(readStream.ReadInt32L());
 		CleanupStack::PopAndDestroy(&readStream);
-		TrackStoppedL();
+		TrackStoppedL(iCurrentTrack);
 		DeleteCurrentTrackFile();
 		}
 	CleanupStack::PopAndDestroy(&file);
