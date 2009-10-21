@@ -146,6 +146,7 @@ SOURCE		mobblerstring.cpp
 SOURCE		mobblertaglist.cpp
 SOURCE		mobblertimeout.cpp
 SOURCE		mobblertrack.cpp
+SOURCE		mobblertrackbase.cpp
 SOURCE		mobblertracklist.cpp
 SOURCE		mobblertransaction.cpp
 SOURCE		mobblerutility.cpp

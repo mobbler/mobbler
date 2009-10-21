@@ -36,10 +36,10 @@ public:
 	virtual void HandleLastFmErrorL(CMobblerLastFmError& aError) = 0;
 	virtual void HandleCommsErrorL(TInt aStatusCode, const TDesC8& aStatus) = 0;
 	
-	virtual void HandleTrackNowPlayingL(const CMobblerTrack& aTrack) = 0;
-	virtual void HandleTrackQueuedL(const CMobblerTrack& aTrack) = 0;
-	virtual void HandleTrackDequeued(const CMobblerTrack& aTrack) = 0;
-	virtual void HandleTrackSubmittedL(const CMobblerTrack& aTrack) = 0;
+	virtual void HandleTrackNowPlayingL(const CMobblerTrackBase& aTrack) = 0;
+	virtual void HandleTrackQueuedL(const CMobblerTrackBase& aTrack) = 0;
+	virtual void HandleTrackDequeued(const CMobblerTrackBase& aTrack) = 0;
+	virtual void HandleTrackSubmittedL(const CMobblerTrackBase& aTrack) = 0;
 	
 	virtual TBool GoOnlineL() = 0;
 	};
