@@ -1313,7 +1313,7 @@ TInt CMobblerAppUi::Queued() const
 	return iTracksQueued;
 	}
 
-void CMobblerAppUi::HandleTrackNowPlayingL(const CMobblerTrack& /*aTrack*/)
+void CMobblerAppUi::HandleTrackNowPlayingL(const CMobblerTrackBase& /*aTrack*/)
 	{
 	// Tell the status view that the track has changed
 //	iStatusView->DrawDeferred();
@@ -1324,14 +1324,14 @@ void CMobblerAppUi::HandleTrackNowPlayingL(const CMobblerTrack& /*aTrack*/)
 #endif
 	}
 
-void CMobblerAppUi::HandleTrackSubmittedL(const CMobblerTrack& /*aTrack*/)
+void CMobblerAppUi::HandleTrackSubmittedL(const CMobblerTrackBase& /*aTrack*/)
 	{
 	iStatusView->DrawDeferred();
 	++iTracksSubmitted;
 	--iTracksQueued;
 	}
 
-void CMobblerAppUi::HandleTrackQueuedL(const CMobblerTrack& /*aTrack*/)
+void CMobblerAppUi::HandleTrackQueuedL(const CMobblerTrackBase& /*aTrack*/)
 	{
 /*	if (iStatusView)
 		{
@@ -1341,7 +1341,7 @@ void CMobblerAppUi::HandleTrackQueuedL(const CMobblerTrack& /*aTrack*/)
 	++iTracksQueued;
 	}
 
-void CMobblerAppUi::HandleTrackDequeued(const CMobblerTrack& /*aTrack*/)
+void CMobblerAppUi::HandleTrackDequeued(const CMobblerTrackBase& /*aTrack*/)
 	{
 //	iStatusView->DrawDeferred();
 	--iTracksQueued;

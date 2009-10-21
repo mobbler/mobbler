@@ -55,32 +55,21 @@ _LIT(KArtistImageCache, "E:\\System\\Data\\Mobbler\\cache\\");
 CMobblerTrack* CMobblerTrack::NewL(const TDesC8& aArtist,
 									const TDesC8& aTitle,
 									const TDesC8& aAlbum,
-									//const TDesC8& aMbAlbumId,
 									const TDesC8& aMbTrackId,
 									const TDesC8& aImage,
 									const TDesC8& aMp3Location,
 									TTimeIntervalSeconds aTrackLength,
 									const TDesC8& aRadioAuth)
 	{
-	CMobblerTrack* self(new(ELeave) CMobblerTrack);
+	CMobblerTrack* self(new(ELeave) CMobblerTrack(aTrackLength));
 	CleanupStack::PushL(self);
-	self->ConstructL(aArtist, aTitle, aAlbum, /*aMbAlbumId,*/ aMbTrackId, aImage, aMp3Location, aTrackLength, aRadioAuth);
+	self->ConstructL(aArtist, aTitle, aAlbum, aMbTrackId, aImage, aMp3Location, aRadioAuth);
 	CleanupStack::Pop(self);
 	return self;
 	}
 
-CMobblerTrack* CMobblerTrack::NewL(RReadStream& aReadStream)
-	{
-	CMobblerTrack* self(new(ELeave) CMobblerTrack);
-	CleanupStack::PushL(self);
-	self->InternalizeL(aReadStream);
-	CleanupStack::Pop(self);
-	return self;
-	}
-
-CMobblerTrack::CMobblerTrack()
-	: iTrackNumber(KErrUnknown), iStartTimeUTC(Time::NullTTime()),
-	  iTotalPlayed(0), iInitialPlaybackPosition(KErrUnknown),
+CMobblerTrack::CMobblerTrack(TTimeIntervalSeconds aTrackLength)
+	: CMobblerTrackBase(aTrackLength),
 	  iTriedButCouldntFindAlbumArt(EFalse),
 	  iUsingArtistImage(EFalse)
 	{
@@ -90,24 +79,18 @@ CMobblerTrack::CMobblerTrack()
 void CMobblerTrack::ConstructL(const TDesC8& aArtist,
 		const TDesC8& aTitle,
 		const TDesC8& aAlbum,
-		//const TDesC8& aMbAlbumId,
 		const TDesC8& aMbTrackId,
 		const TDesC8& aImage,
 		const TDesC8& aMp3Location,
-		TTimeIntervalSeconds aTrackLength,
 		const TDesC8& aRadioAuth)
 	{
-	iArtist = CMobblerString::NewL(aArtist);
-	iTitle = CMobblerString::NewL(aTitle);
-	iAlbum = CMobblerString::NewL(aAlbum);
-	//iMbAlbumId = CMobblerString::NewL(aMbAlbumId);
+	BaseConstructL(aTitle, aArtist, aAlbum, aRadioAuth);
+
 	iMbTrackId = CMobblerString::NewL(aMbTrackId);
 	iMp3Location = aMp3Location.AllocL();
-	iTrackLength = aTrackLength;
-	iRadioAuth = aRadioAuth.AllocL();
 	iImage = aImage.AllocL();
 
-	if (!iAlbumArt && iAlbum->String().Length() != 0)
+	if (!iAlbumArt && Album().String().Length() != 0)
 		{
 		// fetch the album info
 		LOG(_L8("0 FetchAlbumInfoL()"));
@@ -117,13 +100,8 @@ void CMobblerTrack::ConstructL(const TDesC8& aArtist,
 
 CMobblerTrack::~CMobblerTrack()
 	{
-	delete iArtist;
-	delete iTitle;
-	delete iAlbum;
 	delete iMbTrackId;
-	//delete iMbAlbumId;
 	delete iMp3Location;
-	delete iRadioAuth;
 	iAlbumArt->Close();
 	delete iPath;
 	delete iImage;
@@ -142,46 +120,6 @@ void CMobblerTrack::Release()
 		{
 		delete this;
 		}
-	}
-
-TBool CMobblerTrack::operator==(const CMobblerTrack& aTrack) const
-	{
-	// check that the artist, album, and track name are the same
-	return (iArtist->String().Compare(aTrack.iArtist->String()) == 0) &&
-		   (iTitle->String().Compare(aTrack.iTitle->String()) == 0) &&
-		   (iAlbum->String().Compare(aTrack.iAlbum->String()) == 0);
-	}
-
-void CMobblerTrack::InternalizeL(RReadStream& aReadStream)
-	{
-	TInt high(aReadStream.ReadInt32L());
-	TInt low(aReadStream.ReadInt32L());
-	iStartTimeUTC = MAKE_TINT64(high, low);
-	iTrackLength = aReadStream.ReadInt32L();
-	delete iArtist;
-	delete iTitle;
-	iArtist = CMobblerString::NewL(*HBufC8::NewLC(aReadStream, KMaxTInt));
-	CleanupStack::PopAndDestroy();
-	iTitle = CMobblerString::NewL(*HBufC8::NewLC(aReadStream, KMaxTInt));
-	CleanupStack::PopAndDestroy();
-	iLove = aReadStream.ReadInt8L();
-	delete iRadioAuth;
-	iRadioAuth = HBufC8::NewL(aReadStream, KMaxTInt);
-	delete iAlbum;
-	iAlbum = CMobblerString::NewL(*HBufC8::NewLC(aReadStream, KMaxTInt));
-	CleanupStack::PopAndDestroy();
-	}
-
-void CMobblerTrack::ExternalizeL(RWriteStream& aWriteStream) const
-	{
-	aWriteStream.WriteInt32L(I64HIGH(iStartTimeUTC.Int64()));
-	aWriteStream.WriteInt32L(I64LOW(iStartTimeUTC.Int64()));
-	aWriteStream.WriteInt32L(iTrackLength.Int());
-	aWriteStream << iArtist->String8();
-	aWriteStream << iTitle->String8();
-	aWriteStream.WriteInt8L(iLove);
-	aWriteStream << *iRadioAuth;
-	aWriteStream << iAlbum->String8();
 	}
 
 void CMobblerTrack::SetDataSize(TInt aDataSize)
@@ -206,74 +144,25 @@ TInt CMobblerTrack::Buffered() const
 	return (iDataSize == KErrNotFound) ? 0 : iBuffered;
 	}
 
-void CMobblerTrack::SetScrobbled()
-	{
-	iScrobbled = ETrue;
-	}
-
-TBool CMobblerTrack::Scrobbled() const
-	{
-	return iScrobbled;
-	}
-
-void CMobblerTrack::SetStartTimeUTC(const TTime& aStartTimeUTC)
-	{
-	iStartTimeUTC = aStartTimeUTC;
-	iTrackPlaying = ETrue;
-	}
-
-const TTime& CMobblerTrack::StartTimeUTC() const
-	{
-	return iStartTimeUTC;
-	}
-
-void CMobblerTrack::SetTotalPlayed(TTimeIntervalSeconds aTotalPlayed)
-	{
-
-	iTotalPlayed = aTotalPlayed;
-	iTrackPlaying = EFalse;
-	}
-
-TTimeIntervalSeconds CMobblerTrack::TotalPlayed() const
-	{
-	return iTotalPlayed;
-	}
-
-const CMobblerString& CMobblerTrack::Artist() const
-	{
-	return *iArtist;
-	}
-
-const CMobblerString& CMobblerTrack::Title() const
-	{
-	return *iTitle;
-	}
-
-const CMobblerString& CMobblerTrack::Album() const
-	{
-	return *iAlbum;
-	}
-
 void CMobblerTrack::SetAlbumL(const TDesC& aAlbum)
 	{
 	LOG(_L8("CMobblerTrack::SetAlbumL"));
 	LOG(aAlbum);
-
-	delete iAlbum;
-	iAlbum = CMobblerString::NewL(aAlbum);
+	
+	SetAlbumBaseL(aAlbum);
 
 	TFileName fileName;
 	TBool found(EFalse);
 
 	// First check for %album%.jpg/gif/png
 	if ((!iAlbumArt || iUsingArtistImage)
-		&& iPath && iAlbum->String().Length() > 0)
+		&& iPath && Album().String().Length() > 0)
 		{
 		const TInt arraySize(sizeof(KArtExtensionArray) / sizeof(TPtrC));
 		for (TInt i(0); i < arraySize; ++i)
 			{
 			fileName.Copy(*iPath);
-			fileName.Append(iAlbum->SafeFsString(fileName.Length() +
+			fileName.Append(Album().SafeFsString(fileName.Length() +
 							KArtExtensionArray[i].Length()));
 			fileName.Append(KArtExtensionArray[i]);
 
@@ -288,11 +177,11 @@ void CMobblerTrack::SetAlbumL(const TDesC& aAlbum)
 		}
 
 	// Next check the artist image cache
-	if (!found && !iAlbumArt && iArtist->String().Length() > 0)
+	if (!found && !iAlbumArt && Artist().String().Length() > 0)
 		{
 		// Not found track's path, check for %artist%.jpg in the cache
 		fileName.Copy(KArtistImageCache);
-		fileName.Append(iArtist->SafeFsString(fileName.Length() +
+		fileName.Append(Artist().SafeFsString(fileName.Length() +
 											  KArtExtensionArray[0].Length()));
 		fileName.Append(KArtExtensionArray[0]);
 		if (BaflUtils::FileExists(CCoeEnv::Static()->FsSession(), fileName))
@@ -313,21 +202,6 @@ void CMobblerTrack::SetAlbumL(const TDesC& aAlbum)
 
 	// Check if there's something better online
 	DownloadAlbumArtL();
-	}
-
-/*const CMobblerString& CMobblerTrack::MbAlbumId() const
-	{
-	return *iMbAlbumId;
-	}
-*/
-TInt CMobblerTrack::TrackNumber() const
-	{
-	return iTrackNumber;
-	}
-
-void CMobblerTrack::SetTrackNumber(TInt aTrackNumber)
-	{
-	iTrackNumber = aTrackNumber;
 	}
 
 const TDesC8& CMobblerTrack::Mp3Location() const
@@ -391,13 +265,13 @@ void CMobblerTrack::SetPathL(const TDesC& aPath)
 #endif
 
 	// First check for %album%.jpg/gif/png
-	if (iAlbum->String().Length() > 0 && !found)
+	if (Album().String().Length() > 0 && !found)
 		{
 		const TInt arraySize(sizeof(KArtExtensionArray) / sizeof(TPtrC));
 		for (TInt i(0); i < arraySize; ++i)
 			{
 			fileName.Copy(parse.DriveAndPath());
-			fileName.Append(iAlbum->SafeFsString(fileName.Length() +
+			fileName.Append(Album().SafeFsString(fileName.Length() +
 							KArtExtensionArray[i].Length()));
 			fileName.Append(KArtExtensionArray[i]);
 
@@ -426,13 +300,13 @@ void CMobblerTrack::SetPathL(const TDesC& aPath)
 		}
 
 	// If still not found, check for %artist%.jpg/gif/png
-	if (!found && iArtist->String().Length() > 0)
+	if (!found && Artist().String().Length() > 0)
 		{
 		const TInt arraySize(sizeof(KArtExtensionArray) / sizeof(TPtrC));
 		for (TInt i(0); i < arraySize; ++i)
 			{
 			fileName.Copy(parse.DriveAndPath());
-			fileName.Append(iArtist->SafeFsString(fileName.Length() +
+			fileName.Append(Artist().SafeFsString(fileName.Length() +
 											KArtExtensionArray[i].Length()));
 			fileName.Append(KArtExtensionArray[i]);
 
@@ -465,35 +339,6 @@ void CMobblerTrack::SetPathL(const TDesC& aPath)
 		}
 	}
 
-TTimeIntervalSeconds CMobblerTrack::PlaybackPosition() const
-	{
-	return iPlaybackPosition;
-	}
-
-void CMobblerTrack::SetPlaybackPosition(TTimeIntervalSeconds aPlaybackPosition)
-	{
-	iPlaybackPosition = aPlaybackPosition;
-
-	if (iInitialPlaybackPosition.Int() == KErrUnknown)
-		{
-		iInitialPlaybackPosition = aPlaybackPosition;
-
-		// Only need to correct music player tracks, because
-		// iInitialPlaybackPosition may be up to 5 seconds off
-		if (IsMusicPlayerTrack())
-			{
-			TTimeIntervalSeconds offset(0);
-			TTime now;
-			now.UniversalTime();
-			TInt error(now.SecondsFrom(iStartTimeUTC, offset));
-			if (error == KErrNone && offset.Int() > 0)
-				{
-				iInitialPlaybackPosition = Max(0, iInitialPlaybackPosition.Int() - offset.Int());
-				}
-			}
-		}
-	}
-
 const CMobblerBitmap* CMobblerTrack::AlbumArt() const
 	{
 	return iAlbumArt;
@@ -502,54 +347,6 @@ const CMobblerBitmap* CMobblerTrack::AlbumArt() const
 const CMobblerString& CMobblerTrack::MbTrackId() const
 	{
 	return *iMbTrackId;
-	}
-
-const TDesC8& CMobblerTrack::RadioAuth() const
-	{
-	return *iRadioAuth;
-	}
-
-void CMobblerTrack::SetLove(TBool aLove)
-	{
-	iLove = aLove;
-	}
-
-TBool CMobblerTrack::Love() const
-	{
-	return iLove;
-	}
-
-TTimeIntervalSeconds CMobblerTrack::TrackLength() const
-	{
-	return iTrackLength.Int() == 0 ? 1 : iTrackLength;
-	}
-
-TTimeIntervalSeconds CMobblerTrack::ScrobbleDuration() const
-	{
-	TInt scrobblePercent(static_cast<CMobblerAppUi*>(CEikonEnv::Static()->AppUi())->ScrobblePercent());
-	return (TTimeIntervalSeconds)Min(240, (iTrackLength.Int() *  scrobblePercent / 100));
-	}
-
-TTimeIntervalSeconds CMobblerTrack::InitialPlaybackPosition() const
-	{
-	if (iInitialPlaybackPosition.Int() == KErrUnknown)
-		{
-		return 0;
-		}
-	else
-		{
-		return iInitialPlaybackPosition;
-		}
-	}
-
-void CMobblerTrack::SetTrackPlaying(TBool aTrackPlaying)
-	{
-	iTrackPlaying = aTrackPlaying;
-	}
-
-TBool CMobblerTrack::TrackPlaying() const
-	{
-	return iTrackPlaying;
 	}
 
 void CMobblerTrack::DataL(const TDesC8& aData, CMobblerLastFmConnection::TTransactionError aTransactionError)
@@ -614,7 +411,7 @@ void CMobblerTrack::DataL(const TDesC8& aData, CMobblerLastFmConnection::TTransa
 				{
 				iState = ENone;
 				}
-			else if (!iTriedButCouldntFindAlbumArt && iAlbum->String().Length() != 0)
+			else if (!iTriedButCouldntFindAlbumArt && Album().String().Length() != 0)
 				{
 				// Just got artist info but there's now an album name, give up and try album art
 				LOG(_L8("12 FetchAlbumInfoL()"));
@@ -639,7 +436,7 @@ void CMobblerTrack::DataL(const TDesC8& aData, CMobblerLastFmConnection::TTransa
 				SaveAlbumArtL(aData);
 
 				if (!iTriedButCouldntFindAlbumArt &&
-					iAlbum->String().Length() != 0)
+					Album().String().Length() != 0)
 					{
 					// Just got artist art but there's now an album name, try album image
 					LOG(_L8("14 FetchAlbumInfoL()"));
@@ -652,13 +449,6 @@ void CMobblerTrack::DataL(const TDesC8& aData, CMobblerLastFmConnection::TTransa
 		default:
 			break;
 		}
-	}
-
-TBool CMobblerTrack::IsMusicPlayerTrack() const
-	{
-	return (iRadioAuth->Compare(KNullDesC8) == 0);
-
-	// TODO or return (iRadioAuth->Length() != 0) ?
 	}
 
 TBool CMobblerTrack::OkToDownloadAlbumArt() const
@@ -676,7 +466,7 @@ void CMobblerTrack::FetchAlbumInfoL()
 	{
 	if (OkToDownloadAlbumArt())
 		{
-		static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->LastFmConnection().AlbumGetInfoL(iAlbum->String8(), iArtist->String8(), *this);
+		static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->LastFmConnection().AlbumGetInfoL(Album().String8(), Artist().String8(), *this);
 		iState = EFetchingAlbumInfo;
 		}
 	}
@@ -685,7 +475,7 @@ void CMobblerTrack::FetchArtistInfoL()
 	{
 	if (OkToDownloadAlbumArt())
 		{
-		static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->LastFmConnection().ArtistGetImageL(iArtist->String8(), *this);
+		static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->LastFmConnection().ArtistGetImageL(Artist().String8(), *this);
 		iState = EFetchingArtistInfo;
 		}
 	}
@@ -795,11 +585,11 @@ void CMobblerTrack::SaveAlbumArtL(const TDesC8& aData)
 							 KArtExtensionArray[0].Length());
 		if (iState == EFetchingAlbumArt)
 			{
-			albumArtFileName.Append(iAlbum->SafeFsString(knownPathLength));
+			albumArtFileName.Append(Album().SafeFsString(knownPathLength));
 			}
 		else
 			{
-			albumArtFileName.Append(iArtist->SafeFsString(knownPathLength));
+			albumArtFileName.Append(Artist().SafeFsString(knownPathLength));
 			}
 		albumArtFileName.Append(KArtExtensionArray[0]);
 		LOG(albumArtFileName);
@@ -829,7 +619,7 @@ void CMobblerTrack::DownloadAlbumArtL()
 	if ((!iAlbumArt || iUsingArtistImage)
 				&& iState == ENone)
 		{
-		if (iAlbum->String().Length() != 0)
+		if (Album().String().Length() != 0)
 			{
 			// There is an album name!
 
