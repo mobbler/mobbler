@@ -151,8 +151,8 @@ rls_string STR_mobbler_disable_scrobbling "Skroplamayı kapat"
 rls_string STR_mobbler_note_stop_music_player "Radyoyu açmadan önce lütfen müzik çaları kapatın"
 rls_string STR_mobbler_download_album_art "Albüm resmini indir"
 rls_string STR_mobbler_download_album_art_never "Albüm resmini indirme"
-rls_string STR_mobbler_download_album_art_radio_only "Sadece radyonunkini indir" // TOO LONG -- TEXT TRUNCATED
-rls_string STR_mobbler_download_album_art_always_when_online "Çevrimiçi olduğu sürece indir" // TOO LONG -- TEXT TRUNCATED
+rls_string STR_mobbler_download_album_art_radio_only "Sadece radyonunki"
+rls_string STR_mobbler_download_album_art_always_when_online "Ç.içi oldukça indir"
 rls_string STR_mobbler_view "Görüntüle"
 rls_string STR_mobbler_top_artists "Popüler sanatçılar"
 rls_string STR_mobbler_top_albums "Popüler albümler"
@@ -229,7 +229,7 @@ rls_string STR_mobbler_alarm_hour_minute "Alarma kalan süre: %U saat ve %U daki
 rls_string STR_mobbler_alarm_hour_minutes "Alarma kalan süre: %U saat ve %U dakika"
 rls_string STR_mobbler_alarm_hours_minute "Alarma kalan süre: %U saat ve %U dakika"
 rls_string STR_mobbler_alarm_hours_minutes "Alarma kalan süre: %U saat ve %U dakika"
-rls_string STR_mobbler_alarm_disclaimer "Alarmı kurmak kullanıcıya kalmış bir şeydir. Mobbler programcıları alarmın olası bir gecikme durumuna karşı sorumluluk kabul etmez." // TOO LONG -- TEXT TRUNCATED
+rls_string STR_mobbler_alarm_disclaimer "Alarmı kurmak kullanıcıya kalmıştır. Mobbler yazarları alarmın olası gecikmesinde sorumluluk kabul etmez."
 rls_string STR_mobbler_search "Ara"
 rls_string STR_mobbler_search_tracks "Parça(lar)"
 rls_string STR_mobbler_search_albums "Albüm(ler)"
@@ -258,7 +258,7 @@ rls_string STR_mobbler_attendance "Katılım"
 rls_string STR_mobbler_attendance_yes "Katılıyorum"
 rls_string STR_mobbler_attendance_maybe "Katılabilirim"
 rls_string STR_mobbler_attendance_no "Katılmayacağım"
-rls_string STR_mobbler_set_as_wallpaper "Duvar kağıdı olarak ayarla" // TOO LONG -- TEXT TRUNCATED
+rls_string STR_mobbler_set_as_wallpaper "Duvar kağıdı yap"
 rls_string STR_mobbler_note_wallpaper_set "Duvar kağıdı olarak ayarlandı"
 rls_string STR_mobbler_note_wallpaper_not_set "duvar kağıdı olarak ayarlanamadı"
 rls_string STR_mobbler_automatically_set_wallpaper "Duvar kağıdı olarak ayarla"
