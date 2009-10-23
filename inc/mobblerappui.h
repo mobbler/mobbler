@@ -189,6 +189,7 @@ public:
 #ifdef __SYMBIAN_SIGNED__
 	TInt SetAlbumArtAsWallpaperL(TBool aAutomatically = EFalse);
 #endif
+	void GoToLastFmL(TInt aCommand, const TDesC8& aEventId = KNullDesC8);
 	void OpenWebBrowserL(const TDesC& aUrl);
 
 public: // CEikAppUi
@@ -217,7 +218,6 @@ private:
 	TBool RadioStartableL() const;
 	
 	void LaunchFileEmbeddedL(const TDesC& aFilename);
-	void GoToLastFmL(TInt aCommand);
 
 private: // from MMobblerSleepTimerNotify
 	void TimerExpiredL(TAny* aTimer, TInt aError);

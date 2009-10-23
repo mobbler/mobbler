@@ -115,23 +115,24 @@ void CMobblerWebServicesView::DynInitMenuPaneL(TInt aResourceId, CEikMenuPane* a
 		}	
 	else if (aResourceId == R_MOBBLER_VIEW_SUBMENU_PANE)
 		{		
-		SetMenuItemTextL(aMenuPane, R_MOBBLER_FRIENDS,			EMobblerCommandFriends);
-		SetMenuItemTextL(aMenuPane, R_MOBBLER_TOP_ARTISTS,		EMobblerCommandUserTopArtists);
-		SetMenuItemTextL(aMenuPane, R_MOBBLER_TOP_ALBUMS,		EMobblerCommandUserTopAlbums);
-		SetMenuItemTextL(aMenuPane, R_MOBBLER_TOP_TRACKS,		EMobblerCommandUserTopTracks);
-		SetMenuItemTextL(aMenuPane, R_MOBBLER_PLAYLISTS,		EMobblerCommandPlaylists);
-		SetMenuItemTextL(aMenuPane, R_MOBBLER_EVENTS,			EMobblerCommandUserEvents);
-		SetMenuItemTextL(aMenuPane, R_MOBBLER_EVENTS,			EMobblerCommandArtistEvents);
-		SetMenuItemTextL(aMenuPane, R_MOBBLER_TOP_TAGS,			EMobblerCommandUserTopTags);
-		SetMenuItemTextL(aMenuPane, R_MOBBLER_RECENT_TRACKS,	EMobblerCommandRecentTracks);
-		SetMenuItemTextL(aMenuPane, R_MOBBLER_SHOUTBOX,			EMobblerCommandUserShoutbox);
-		SetMenuItemTextL(aMenuPane, R_MOBBLER_SHOUTBOX,			EMobblerCommandArtistShoutbox);
-		SetMenuItemTextL(aMenuPane, R_MOBBLER_SHOUTBOX,			EMobblerCommandEventShoutbox);
-		SetMenuItemTextL(aMenuPane, R_MOBBLER_SIMILAR_ARTISTS,	EMobblerCommandSimilarArtists);
-		SetMenuItemTextL(aMenuPane, R_MOBBLER_SIMILAR_TRACKS,	EMobblerCommandSimilarTracks);
-		SetMenuItemTextL(aMenuPane, R_MOBBLER_TOP_ALBUMS,		EMobblerCommandArtistTopAlbums);
-		SetMenuItemTextL(aMenuPane, R_MOBBLER_TOP_TRACKS,		EMobblerCommandArtistTopTracks);
-		SetMenuItemTextL(aMenuPane, R_MOBBLER_TOP_TAGS,			EMobblerCommandArtistTopTags);
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_FRIENDS,				EMobblerCommandFriends);
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_TOP_ARTISTS,			EMobblerCommandUserTopArtists);
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_TOP_ALBUMS,			EMobblerCommandUserTopAlbums);
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_TOP_TRACKS,			EMobblerCommandUserTopTracks);
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_PLAYLISTS,			EMobblerCommandPlaylists);
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_EVENTS,				EMobblerCommandUserEvents);
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_EVENTS,				EMobblerCommandArtistEvents);
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_TOP_TAGS,				EMobblerCommandUserTopTags);
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_RECENT_TRACKS,		EMobblerCommandRecentTracks);
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_SHOUTBOX,				EMobblerCommandUserShoutbox);
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_SHOUTBOX,				EMobblerCommandArtistShoutbox);
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_SHOUTBOX,				EMobblerCommandEventShoutbox);
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_SIMILAR_ARTISTS,		EMobblerCommandSimilarArtists);
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_SIMILAR_TRACKS,		EMobblerCommandSimilarTracks);
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_TOP_ALBUMS,			EMobblerCommandArtistTopAlbums);
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_TOP_TRACKS,			EMobblerCommandArtistTopTracks);
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_TOP_TAGS,				EMobblerCommandArtistTopTags);
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_VISIT_LASTFM_MENU,	EMobblerCommandEventWebPage);
 		}
 	
 	// Now the menu text is set, dimming logic is next
