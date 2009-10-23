@@ -392,6 +392,10 @@ RESOURCE MENU_PANE r_mobbler_view_submenu_pane
 		MENU_ITEM
 			{
 			command = EMobblerCommandArtistTopTags;
+			},
+		MENU_ITEM
+			{
+			command = EMobblerCommandEventWebPage;
 			}
 		};
 	}

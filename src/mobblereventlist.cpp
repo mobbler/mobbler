@@ -96,6 +96,9 @@ CMobblerListControl* CMobblerEventList::HandleListCommandL(TInt aCommand)
 			iAttendanceHelperNo = CMobblerFlatDataObserverHelper::NewL(iAppUi.LastFmConnection(), *this, ETrue);
 			iAppUi.LastFmConnection().EventAttendL(iList[iListBox->CurrentItemIndex()]->Id(), CMobblerLastFmConnection::ENotAttending, *iAttendanceHelperNo);
 			break;
+		case EMobblerCommandEventWebPage:
+			iAppUi.GoToLastFmL(aCommand, iList[iListBox->CurrentItemIndex()]->Id());
+			break;
 		default:
 			break;
 		}
@@ -115,6 +118,8 @@ void CMobblerEventList::SupportedCommandsL(RArray<TInt>& aCommands)
 	aCommands.AppendL(EMobblerCommandAttendanceYes);
 	aCommands.AppendL(EMobblerCommandAttendanceMaybe);
 	aCommands.AppendL(EMobblerCommandAttendanceNo);
+	
+	aCommands.AppendL(EMobblerCommandVisitWebPage);
 	}
 
 void CMobblerEventList::DataL(CMobblerFlatDataObserverHelper* aObserver, const TDesC8& aData, CMobblerLastFmConnection::TTransactionError aTransactionError)
