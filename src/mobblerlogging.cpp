@@ -31,12 +31,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "mobblerlogging.h"
 #include "mobblerstring.h"
 
-#ifdef __WINS__
-_LIT(KLogPath, "C:");
-#else
 _LIT(KLogPath, "C:\\Mobbler\\");
-#endif
-
 _LIT(KLogFilename, "mobbler.log");
 
 void CMobblerLogging::DumpDataL(const TDesC8& aData, const TDesC& aLogFile)

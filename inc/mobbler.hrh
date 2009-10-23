@@ -43,6 +43,7 @@ enum TMobblerSettingItemListViewCommands
 	EMobblerCommandArtistWebPage,
 	EMobblerCommandAlbumWebPage,
 	EMobblerCommandEventsWebPage,
+	EMobblerCommandEventWebPage,
 	
 	EMobblerCommandToggleScrobbling,
 	EMobblerCommandSleepTimer,

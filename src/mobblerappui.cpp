@@ -1866,18 +1866,29 @@ void CMobblerAppUi::HandleServerAppExit(TInt aReason)
 	MAknServerAppExitObserver::HandleServerAppExit(aReason);
 	}
 
-void CMobblerAppUi::GoToLastFmL(TInt aCommand)
+void CMobblerAppUi::GoToLastFmL(TInt aCommand, const TDesC8& aEventId)
 	{
 	CMobblerTrack* currentTrack(CurrentTrack());
-	
-	if (currentTrack)
+	TBuf<255> url(MobblerUtility::LocalLastFmDomainL());
+
+	if (aCommand == EMobblerCommandEventWebPage)
+		{
+		_LIT(KEventSlash, "event/");
+		
+		url.Append(KEventSlash);
+		TBuf<255> eventId;
+		eventId.Copy(aEventId);
+		url.Append(eventId);
+		
+		OpenWebBrowserL(url);
+		}
+	else if (currentTrack) // for artist/album/track/events webpage
 		{
 		_LIT(KMusicSlash, "music/");
 		_LIT(KSlash, "/");
 		_LIT(KUnderscoreSlash, "_/");
 		_LIT(KPlusEvents, "+events");
 		
-		TBuf<255> url(MobblerUtility::LocalLastFmDomainL());
 		url.Append(KMusicSlash);
 		url.Append(currentTrack->Artist().String());
 		url.Append(KSlash);
@@ -1907,7 +1918,6 @@ void CMobblerAppUi::GoToLastFmL(TInt aCommand)
 			url.Replace(position, 1, _L("+"));
 			position = url.Find(_L(" "));
 			}
-		
 		
 		OpenWebBrowserL(url);
 		}
