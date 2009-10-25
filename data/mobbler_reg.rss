@@ -47,7 +47,8 @@ RESOURCE APP_REGISTRATION_INFO
 	
 	localisable_resource_id = R_LOCALISABLE_APP_INFO;
 
-	embeddability=KAppNotEmbeddable;
-	newfile=KAppDoesNotSupportNewFile;
+	embeddability = KAppNotEmbeddable;
+	newfile = KAppDoesNotSupportNewFile;
+	group_name = "music";
 	}
 
