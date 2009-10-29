@@ -84,6 +84,15 @@ RESOURCE AVKON_VIEW r_mobbler_webservices_view
 	toolbar = 0;
 	}
 
+RESOURCE AVKON_VIEW r_mobbler_browser_view
+    {
+    cba = R_AVKON_SOFTKEYS_OPTIONS_BACK;
+    menubar = r_mobbler_status_options_menu;
+    toolbar = 0;
+    }
+
+
+
 RESOURCE MENU_BAR r_mobbler_webservices_options_menu
 	{
 	titles =

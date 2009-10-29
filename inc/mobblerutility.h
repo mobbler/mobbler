@@ -34,6 +34,8 @@ public:
 	
 	static TBuf8<2> LanguageL();
 	static TBuf<30> LocalLastFmDomainL();
+
+	static void StripUnwantedTagsFromHtml(TDes8& aHtml);
 	};
 
 #endif // __MOBBLERUTILITY_H__

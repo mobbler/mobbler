@@ -30,42 +30,44 @@ class CAknNavigationControlContainer;
 class CAknNavigationDecorator;
 class CMobblerAppUi;
 class CMobblerListControl;
+class CBrCtlInterface;
 
 class CMobblerWebServicesControl : public CCoeControl, public MMobblerConnectionStateObserver
 	{
 public:
 	static CMobblerWebServicesControl* NewL(CMobblerAppUi& aAppUi, const TRect& aRect, TUid aCustomMessageId, const TDesC8& aCustomMessage);
 	~CMobblerWebServicesControl();
-	
+
 	CMobblerListControl* TopControl();
-	
+
 	void HandleListCommandL(TInt aCommand);
-	
+
 	void ForwardL(CMobblerListControl* aListControl);
 	void Back();
-	
+
 	void HandleListControlStateChangedL();
-	
+
 private:
 	CMobblerWebServicesControl(CMobblerAppUi& aAppUi);
 	void ConstructL(const TRect& aRect, TUid aCustomMessageId, const TDesC8& aCustomMessage);
-		
+
 	void ChangePaneTextL();
-	
+
 private: // from MMobblerConnectionStateObserver
 	void HandleConnectionStateChangedL();
-	
+
 private: // from CCoeControl
 	void Draw(const TRect& aRect) const;
-	
+
 	TInt CountComponentControls() const;
 	CCoeControl* ComponentControl(TInt aIndex) const;
 	TKeyResponse OfferKeyEventL(const TKeyEvent& aKeyEvent, TEventCode aEventCode);
-	
+
 private:
 	CMobblerAppUi& iAppUi;
 	RPointerArray<CMobblerListControl> iControls;
-	
+	CBrCtlInterface* iBrCtlInterface;
+
 	CAknNavigationControlContainer *iNaviContainer;
 	CAknNavigationDecorator* iNaviLabelDecorator;
 	};
