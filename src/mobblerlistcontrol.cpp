@@ -291,7 +291,7 @@ void CMobblerListControl::UpdateIconArrayL()
 			iListBox->ItemDrawer()->ColumnData()->IconArray()->AppendL(icon);
 			}
 		
-		iListBox->HandleItemAdditionL();
+		iListBox->DrawDeferred();
 		}
 	}
 
@@ -526,6 +526,8 @@ void CMobblerListControl::BitmapResizedL(const CMobblerBitmap* /*aMobblerBitmap*
 void CMobblerListControl::HandleListBoxEventL(CEikListBox* /*aListBox*/, TListBoxEvent aEventType)
 	{
 	CMobblerListControl* list(NULL);
+	
+	RequestImagesL();
 	
 	switch (aEventType)
 		{
