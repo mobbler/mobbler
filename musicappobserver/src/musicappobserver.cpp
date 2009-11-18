@@ -72,7 +72,7 @@ void CMobblerMusicAppObserver::ConstructL()
 
 	TApaAppInfo info;
 	User::LeaveIfError(apaLsSession.GetAppInfo(info, KMusicAppUID));
-	CleanupStack::PopAndDestroy(); // apaLsSession
+	CleanupStack::PopAndDestroy(&apaLsSession);
 
 	// The caption is the app's name (e.g. EN: "Music player" or FI: "Soitin")
 	iName = info.iCaption;

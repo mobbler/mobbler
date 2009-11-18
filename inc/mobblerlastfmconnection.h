@@ -117,7 +117,7 @@ public:
 	void SetIapIdL(TUint32 aIadId);
 	TUint32 IapId() const;
 	
-	void SetBitRateL(TInt aBitRate);
+	void SetBitRate(TInt aBitRate);
 	
 	TLastFmMemberType MemberType() const;
 	
