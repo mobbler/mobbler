@@ -59,7 +59,7 @@ private:
 private:
 	CMobblerStatusControl& iStatusControl;
 	
-	TBuf<255> iText;
+	TBuf<KMaxMobblerTextSize> iText;
 	
 	TInt iTextWidth;
 	TInt iDisplayWidth;

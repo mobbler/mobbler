@@ -28,12 +28,15 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "mobblereventlist.h"
 #include "mobblerlastfmconnection.h"
 #include "mobblerlistitem.h"
+#include "mobblerliterals.h"
 #include "mobblerparser.h"
 #include "mobblersettingitemlistview.h"
 #include "mobblerstring.h"
 #include "mobblerwebserviceshelper.h"
 
 #include "mobbler.hrh"
+
+_LIT8(KGetEvents, "getevents");
 
 CMobblerEventList::CMobblerEventList(CMobblerAppUi& aAppUi, CMobblerWebServicesControl& aWebServicesControl)
 	:CMobblerListControl(aAppUi, aWebServicesControl)
@@ -47,10 +50,10 @@ void CMobblerEventList::ConstructL()
 	switch (iType)
 		{
 		case EMobblerCommandUserEvents:
-			iAppUi.LastFmConnection().WebServicesCallL(_L8("user"), _L8("getevents"), iText1->String8(), *this);
+			iAppUi.LastFmConnection().WebServicesCallL(KUser, KGetEvents, iText1->String8(), *this);
 			break;
 		case EMobblerCommandArtistEvents:
-			iAppUi.LastFmConnection().WebServicesCallL(_L8("artist"), _L8("getevents"), iText1->String8(), *this);
+			iAppUi.LastFmConnection().WebServicesCallL(KArtist, KGetEvents, iText1->String8(), *this);
 			break;
 		case EMobblerCommandRecommendedEvents:
 			iAppUi.LastFmConnection().RecommendedEventsL(*this);
@@ -74,7 +77,10 @@ CMobblerListControl* CMobblerEventList::HandleListCommandL(TInt aCommand)
 	switch (aCommand)
 		{
 		case EMobblerCommandEventShoutbox:
-			list = CMobblerListControl::CreateListL(iAppUi, iWebServicesControl, EMobblerCommandEventShoutbox, iList[iListBox->CurrentItemIndex()]->Title()->String8(), iList[iListBox->CurrentItemIndex()]->Id());
+			list = CMobblerListControl::CreateListL(iAppUi, iWebServicesControl, 
+					EMobblerCommandEventShoutbox, 
+					iList[iListBox->CurrentItemIndex()]->Title()->String8(), 
+					iList[iListBox->CurrentItemIndex()]->Id());
 			break;
 		case EMobblerCommandEventShare:
 			delete iWebServicesHelper;
@@ -145,9 +151,9 @@ void CMobblerEventList::DataL(CMobblerFlatDataObserverHelper* aObserver, const T
 				
 				xmlReader->ParseL(aData);
 				
-				const TDesC8* statusText(domFragment->AsElement().AttrValue(_L8("status")));
+				const TDesC8* statusText(domFragment->AsElement().AttrValue(KElementStatus));
 				
-				if (iListBox && statusText && (statusText->CompareF(_L8("ok")) == 0))
+				if (iListBox && statusText && (statusText->CompareF(KOk) == 0))
 					{
 					// Get the list box items model
 					MDesCArray* listArray(iListBox->Model()->ItemTextArray());

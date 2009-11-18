@@ -180,6 +180,7 @@ void CMobblerStatusView::DynInitMenuPaneL(TInt aResourceId, CEikMenuPane* aMenuP
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_ALARM,					EMobblerCommandAlarm);
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_EXPORT_QUEUE_TO_LOG,		EMobblerCommandExportQueueToLogFile);
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_LANGUAGE_PATCHES,			EMobblerCommandLanguagePatches);
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_QR_CODE,					EMobblerCommandQrCode);
 		}
 
 	// Now the menu text is set, dimming logic is next
@@ -260,6 +261,8 @@ void CMobblerStatusView::DynInitMenuPaneL(TInt aResourceId, CEikMenuPane* aMenuP
 		aMenuPane->SetItemDimmed(EMobblerCommandArtistTopAlbums, ETrue);
 		aMenuPane->SetItemDimmed(EMobblerCommandArtistTopTracks, ETrue);
 		aMenuPane->SetItemDimmed(EMobblerCommandArtistTopTags, ETrue);
+		
+		aMenuPane->SetItemDimmed(EMobblerCommandEventWebPage, ETrue);
 		}
 	
 	// Third edition only due to an S60 5th edition bug (issue 364)

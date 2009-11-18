@@ -42,7 +42,7 @@ public:
 	void HandleListCommandL(TInt aCommand);
 	
 	void ForwardL(CMobblerListControl* aListControl);
-	void Back();
+	void BackL();
 	
 	void HandleListControlStateChangedL();
 	
