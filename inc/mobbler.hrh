@@ -54,6 +54,7 @@ enum TMobblerSettingItemListViewCommands
 	EMobblerCommandSetAsWallpaper,
 #endif
 	EMobblerCommandLanguagePatches,
+	EMobblerCommandQrCode,
 	
 	EMobblerCommandEqualizer = 0x7000,
 	EMobblerCommandEqualizerDefault,

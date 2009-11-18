@@ -236,7 +236,7 @@ void CMobblerMusicAppListener::NowPlayingL()
 												RadioPlayer().CurrentTrack())
 		{
 		static_cast<CMobblerAppUi*>(CEikonEnv::Static()->AppUi())->
-												RadioPlayer().Stop();
+												RadioPlayer().StopL();
 		}
 
 	if (iCurrentTrack)
@@ -248,9 +248,9 @@ void CMobblerMusicAppListener::NowPlayingL()
 		{
 		// We are not listening to a track so fetch the details
 		// and try to submit it as 'now playing'
-		TBuf<255> trackArtist;
-		TBuf<255> trackTitle;
-		TBuf<255> trackAlbum;
+		TBuf<KMaxMobblerTextSize> trackArtist;
+		TBuf<KMaxMobblerTextSize> trackTitle;
+		TBuf<KMaxMobblerTextSize> trackAlbum;
 		
 		TTimeIntervalSeconds trackLength(0);
 		

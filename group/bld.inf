@@ -21,19 +21,17 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-
-
 PRJ_MMPFILES
 // application icon makefile
 gnumakefile icons.mk
-PRJ_MMPFILES
+
 // projects
 mobbler.mmp
-
+..\musicappobserver\group\musicappobserver.mmp
 //..\musicappobservermpx\group\musicappobservermpx.mmp
-..\touchfeedback\group\mobblertouchfeedback.mmp
+//..\touchfeedback\group\mobblertouchfeedback.mmp
 ..\contentlisting\group\mobblercontentlisting.mmp
-//..\gestureobserver\group\gestureobserver3x.mmp
+..\gestureobserver\group\gestureobserver3x.mmp
 ..\destinations\group\mobblerdestinations.mmp
 
 // In 5th edition, the sensor framework now requires SymbianSigned (ReadDeviceData)
@@ -59,5 +57,7 @@ PRJ_EXPORTS
 ..\gfx\audio-x-generic.png									z:\resource\apps\mobbler\default_track.png
 ..\gfx\default_user_small.png								z:\resource\apps\mobbler\default_user.png
 ..\gfx\preferences-desktop-multimedia.png					z:\resource\apps\mobbler\icon_alarm.png
+
+..\gfx\mobbler_0_7_6187.sisx.png					z:\resource\apps\mobbler\Mobbler.png
 
 // End of file

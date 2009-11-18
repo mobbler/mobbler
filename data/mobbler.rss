@@ -489,6 +489,10 @@ RESOURCE MENU_PANE r_mobbler_tools_submenu_pane
 		MENU_ITEM
 			{
 			command = EMobblerCommandLanguagePatches;
+			},
+		MENU_ITEM
+			{
+			command = EMobblerCommandQrCode;
 			}
 		};
 	}
@@ -572,7 +576,15 @@ RESOURCE EDWIN r_mobbler_setting_page_resource_id_username
 	allowed_case_modes = EAknEditorAllCaseModes;
 	numeric_keymap = EAknEditorStandardNumberModeKeymap;
 	default_input_mode = EAknEditorTextInputMode;
-	allowed_input_modes = EAknEditorTextInputMode | EAknEditorNumericInputMode | EAknEditorSecretAlphaInputMode | EAknEditorKatakanaInputMode | EAknEditorFullWidthTextInputMode | EAknEditorFullWidthNumericInputMode | EAknEditorFullWidthKatakanaInputMode | EAknEditorHiraganaKanjiInputMode | EAknEditorHalfWidthTextInputMode;
+	allowed_input_modes = EAknEditorTextInputMode | 
+						  EAknEditorNumericInputMode | 
+						  EAknEditorSecretAlphaInputMode | 
+						  EAknEditorKatakanaInputMode |
+						  EAknEditorFullWidthTextInputMode | 
+						  EAknEditorFullWidthNumericInputMode | 
+						  EAknEditorFullWidthKatakanaInputMode | 
+						  EAknEditorHiraganaKanjiInputMode | 
+						  EAknEditorHalfWidthTextInputMode;
 	}
 
 RESOURCE AVKON_SETTING_PAGE r_mobbler_setting_page_password
@@ -742,7 +754,15 @@ RESOURCE EDWIN r_mobbler_setting_page_text_edwin
 	allowed_case_modes = EAknEditorAllCaseModes;
 	numeric_keymap = EAknEditorStandardNumberModeKeymap;
 	default_input_mode = EAknEditorTextInputMode;
-	allowed_input_modes = EAknEditorTextInputMode | EAknEditorNumericInputMode | EAknEditorSecretAlphaInputMode | EAknEditorKatakanaInputMode | EAknEditorFullWidthTextInputMode | EAknEditorFullWidthNumericInputMode | EAknEditorFullWidthKatakanaInputMode | EAknEditorHiraganaKanjiInputMode | EAknEditorHalfWidthTextInputMode;
+	allowed_input_modes = EAknEditorTextInputMode | 
+						  EAknEditorNumericInputMode | 
+						  EAknEditorSecretAlphaInputMode | 
+						  EAknEditorKatakanaInputMode | 
+						  EAknEditorFullWidthTextInputMode | 
+						  EAknEditorFullWidthNumericInputMode | 
+						  EAknEditorFullWidthKatakanaInputMode | 
+						  EAknEditorHiraganaKanjiInputMode | 
+						  EAknEditorHalfWidthTextInputMode;
 	}
 
 RESOURCE DIALOG r_mobbler_downloading_dialog

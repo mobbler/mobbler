@@ -43,12 +43,13 @@ const TInt KUpdateIntervalDays(1);
 #else
 const TInt KUpdateIntervalDays(7);
 #endif
+const TInt KMaxMobblerTextSize(255);
 
 const TInt KMobblerMinorVersion(7);
 const TInt KMobblerBuildNumber(6194);
 
 #ifdef __SYMBIAN_SIGNED__
-const TVersion KVersion(1, KMobblerMinorVersion, KMobblerBuildNumber);
+const TVersion KVersion(0, KMobblerMinorVersion, KMobblerBuildNumber);
 const TInt KMobblerAppUid = 0x2002655A;
 const TInt KMobblerSettingsViewUid = 0x2002655C;
 const TInt KMobblerStatusViewUid = 0x2002655B;
@@ -66,6 +67,7 @@ class CBrowserLauncher;
 #endif
 
 class CAknGlobalConfirmationQuery;
+class CDocumentHandler;
 class CMobblerBitmapCollection;
 class CMobblerBrowserView;
 class CMobblerDestinationsInterface;
@@ -190,7 +192,7 @@ public:
 	TBool SleepAfterTrackStopped() { return iSleepAfterTrackStopped; }
 
 #ifdef __SYMBIAN_SIGNED__
-	TInt SetAlbumArtAsWallpaperL(TBool aAutomatically = EFalse);
+	TInt SetAlbumArtAsWallpaper(TBool aAutomatically = EFalse);
 #endif
 	void GoToLastFmL(TInt aCommand, const TDesC8& aEventId = KNullDesC8);
 	void OpenWebBrowserL(const TDesC& aUrl);
@@ -208,7 +210,7 @@ private:
 	void HandleConnectCompleteL(TInt aError);
 	void HandleLastFmErrorL(CMobblerLastFmError& aError);
 	void HandleCommsErrorL(TInt aStatusCode, const TDesC8& aStatus);
-	void HandleTrackSubmittedL(const CMobblerTrackBase& aTrack);
+	void HandleTrackSubmitted(const CMobblerTrackBase& aTrack);
 	void HandleTrackQueuedL(const CMobblerTrackBase& aTrack);
 	void HandleTrackDequeued(const CMobblerTrackBase& aTrack);
 	void HandleTrackNowPlayingL(const CMobblerTrackBase& aTrack);
@@ -226,8 +228,8 @@ private: // from MMobblerSleepTimerNotify
 	void TimerExpiredL(TAny* aTimer, TInt aError);
 
 private: // auto-repeat audio button callbacks
-	static TInt VolumeUpCallBackL(TAny *self);
-	static TInt VolumeDownCallBackL(TAny *self);
+	static TInt VolumeUpCallBack(TAny *self);
+	static TInt VolumeDownCallBack(TAny *self);
 
 private:
 	void LoadGesturesPluginL();
@@ -314,6 +316,8 @@ private:
 #ifdef __SYMBIAN_SIGNED__
 	TBool iWallpaperSet;
 #endif
+
+	CDocumentHandler* iDocHandler;
 	};
 
 #endif // __MOBBLERAPPUI_H__

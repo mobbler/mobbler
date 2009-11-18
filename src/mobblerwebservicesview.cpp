@@ -21,19 +21,11 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-#include <akncontext.h>
-#include <akntitle.h>
-#include <audioequalizerutility.h>
-#include <barsread.h>
-#include <eikmenub.h>
-#include <mdaaudiooutputstream.h>
-
 #include "mobbler.hrh"
 #include "mobbler.rsg.h"
 #include "mobbler_strings.rsg.h"
 #include "mobblerappui.h"
 #include "mobblerlistcontrol.h"
-#include "mobblerradioplayer.h"
 #include "mobblerresourcereader.h"
 #include "mobblershoutbox.h"
 #include "mobblerwebservicescontrol.h"
@@ -112,9 +104,9 @@ void CMobblerWebServicesView::DynInitMenuPaneL(TInt aResourceId, CEikMenuPane* a
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_TRACK,			EMobblerCommandTrackShare);
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_ARTIST,			EMobblerCommandArtistShare);
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_EVENT,			EMobblerCommandEventShare);
-		}	
+		}
 	else if (aResourceId == R_MOBBLER_VIEW_SUBMENU_PANE)
-		{		
+		{
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_FRIENDS,				EMobblerCommandFriends);
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_TOP_ARTISTS,			EMobblerCommandUserTopArtists);
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_TOP_ALBUMS,			EMobblerCommandUserTopAlbums);
@@ -230,7 +222,7 @@ void CMobblerWebServicesView::HandleCommandL(TInt aCommand)
 	switch (aCommand)
 		{
 		case EAknSoftkeyBack:
-			iWebServicesControl->Back();
+			iWebServicesControl->BackL();
 			break;
 		case EAknSoftkeyExit:
 			AppUi()->HandleCommandL(aCommand);
