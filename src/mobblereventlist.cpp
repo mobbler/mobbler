@@ -106,7 +106,9 @@ CMobblerListControl* CMobblerEventList::HandleListCommandL(TInt aCommand)
 			iAppUi.GoToLastFmL(aCommand, iList[iListBox->CurrentItemIndex()]->Id());
 			break;
 		case EMobblerCommandVisitMap:
-			iAppUi.GoToMapL(iList[iListBox->CurrentItemIndex()]->Latitude(), iList[iListBox->CurrentItemIndex()]->Longitude());
+			iAppUi.GoToMapL(iList[iListBox->CurrentItemIndex()]->Title()->String8(),
+								iList[iListBox->CurrentItemIndex()]->Latitude(),
+								iList[iListBox->CurrentItemIndex()]->Longitude());
 			break;
 		default:
 			break;
