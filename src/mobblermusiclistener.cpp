@@ -203,31 +203,27 @@ void CMobblerMusicAppListener::ScheduleNowPlayingL()
 		}
 	}
 
-const TDesC& CMobblerMusicAppListener::MusicAppNameL() const
+HBufC* CMobblerMusicAppListener::MusicAppNameL() const
 	{
-	iMusicAppName.Zero(); 
+	HBufC* musicAppName(NULL);
 	
 	const TInt KMusicAppCount(iMobblerMusicApps.Count());
 	for (TInt i(0); i < KMusicAppCount; ++i)
 		{
 		if (iMobblerMusicApps[i]->PlayerState() == EMPlayerRCtrlPlaying)
 			{
-			HBufC* appName(iMobblerMusicApps[i]->NameL());
-			iMusicAppName.Copy(*appName);
-			delete appName;
+			musicAppName = iMobblerMusicApps[i]->NameL();
 			break;
 			}
 		else if (iMobblerMusicApps[i]->PlayerState() == EMPlayerRCtrlPaused)
 			{
-			HBufC* appName(iMobblerMusicApps[i]->NameL());
-			iMusicAppName.Copy(*appName);
-			delete appName;
+			musicAppName = iMobblerMusicApps[i]->NameL();
 			// Intentionally don't break if found a paused app,
 			// so a playing app takes precendence.
 			}
 		}
 	
-	return iMusicAppName;
+	return musicAppName;
 	}
 
 void CMobblerMusicAppListener::NowPlayingL()

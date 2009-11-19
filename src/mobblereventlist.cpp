@@ -105,6 +105,9 @@ CMobblerListControl* CMobblerEventList::HandleListCommandL(TInt aCommand)
 		case EMobblerCommandEventWebPage:
 			iAppUi.GoToLastFmL(aCommand, iList[iListBox->CurrentItemIndex()]->Id());
 			break;
+		case EMobblerCommandVisitMap:
+			iAppUi.GoToMapL(iList[iListBox->CurrentItemIndex()]->Latitude(), iList[iListBox->CurrentItemIndex()]->Longitude());
+			break;
 		default:
 			break;
 		}
@@ -116,6 +119,8 @@ void CMobblerEventList::SupportedCommandsL(RArray<TInt>& aCommands)
 	{
 	aCommands.AppendL(EMobblerCommandView);
 	aCommands.AppendL(EMobblerCommandEventShoutbox);
+	aCommands.AppendL(EMobblerCommandVisitWebPage);
+	aCommands.AppendL(EMobblerCommandVisitMap);
 	
 	aCommands.AppendL(EMobblerCommandShare);
 	aCommands.AppendL(EMobblerCommandEventShare);
@@ -124,8 +129,6 @@ void CMobblerEventList::SupportedCommandsL(RArray<TInt>& aCommands)
 	aCommands.AppendL(EMobblerCommandAttendanceYes);
 	aCommands.AppendL(EMobblerCommandAttendanceMaybe);
 	aCommands.AppendL(EMobblerCommandAttendanceNo);
-	
-	aCommands.AppendL(EMobblerCommandVisitWebPage);
 	}
 
 void CMobblerEventList::DataL(CMobblerFlatDataObserverHelper* aObserver, const TDesC8& aData, CMobblerLastFmConnection::TTransactionError aTransactionError)

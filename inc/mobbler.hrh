@@ -116,6 +116,8 @@ enum TMobblerSettingItemListViewCommands
 	EMobblerCommandShoutOwner,
 	EMobblerCommandShoutUser,
 	
+	EMobblerCommandVisitMap,
+	
 	EMobblerCommandSearch,
 	EMobblerCommandSearchArtist,
 	EMobblerCommandSearchTrack,

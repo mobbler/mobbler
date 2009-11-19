@@ -28,8 +28,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <MCLFOperationObserver.h>
 #include <mobbler\mobblercontentlistinginterface.h>
 
-const TInt KMaxMobblerTextSize(255);
-
 class CMobblerContentListing : public CMobblerContentListingInterface,
 							   public MCLFOperationObserver
 	{
@@ -54,8 +52,8 @@ private:
     MCLFContentListingEngine* iClfEngine;
     MCLFItemListModel* iClfModel;
 	TBool iClfModelReady;
-	TBuf<KMaxMobblerTextSize> iArtist;
-	TBuf<KMaxMobblerTextSize> iTitle;
+	HBufC* iArtist;
+	HBufC* iTitle;
 
 	MMobblerContentListingObserver* iObserver;
 	};
