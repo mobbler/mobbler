@@ -160,7 +160,9 @@ void CMobblerStatusControl::DoChangePaneTextL()
 		else
 			{
 			// This is a music player track
-			stateText.Copy(iAppUi.MusicAppNameL());
+			HBufC* musicAppName = iAppUi.MusicAppNameL();
+			stateText.Copy(*musicAppName);
+			delete musicAppName;
 			stateText.Append(KMusicAppNameAndConnectionSeperator);
 			
 			if (iAppUi.Mode() == CMobblerLastFmConnection::EOnline)
