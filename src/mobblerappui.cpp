@@ -1931,22 +1931,57 @@ void CMobblerAppUi::GoToLastFmL(TInt aCommand, const TDesC8& aEventId)
 		}
 	}
 
-void CMobblerAppUi::GoToMapL(const TDesC8& aLatitude, const TDesC8& aLongitude)
+void CMobblerAppUi::GoToMapL(const TDesC8& aName, const TDesC8& aLatitude, const TDesC8& aLongitude)
 	{
-	_LIT(KMapURLFormat, "http://maptwits.com/displaymap.php?lat=%S&long=%S");
+	_LIT(KMapKmlFilename, "c:\\mobblermap.kml");
 	
-	CMobblerString* longitude(CMobblerString::NewL(aLongitude));
-	CleanupStack::PushL(longitude);
-	CMobblerString* latitude(CMobblerString::NewL(aLatitude));
-	CleanupStack::PushL(latitude);
+	_LIT8(KMapKmlFormat,	"<kml xmlns=\"http://earth.google.com/kml/2.0\">\r\n"
+							"\t<Placemark>\r\n "
+							"\t\t<name>%S</name>\r\n"
+							"\t\t<description>Created by Mobbler</description>\r\n" 
+							"\t\t<Point>\r\n "
+							"\t\t\t<coordinates>%S,%S</coordinates>\r\n"
+							"\t\t</Point>\r\n"
+							"\t</Placemark>\r\n"
+							"</kml>\r\n");	
 	
-	HBufC* url(HBufC::NewLC(KMapURLFormat().Length() + longitude->String().Length() + latitude->String().Length()));
+	HBufC8* kmlFileContents(HBufC8::NewLC(KMapKmlFormat().Length() + aName.Length() + aLongitude.Length() + aLatitude.Length()));
 	
-	url->Des().Format(KMapURLFormat, &latitude->String(), &longitude->String());
+	kmlFileContents->Des().Format(KMapKmlFormat, &aName, &aLongitude, &aLatitude);
 	
-	OpenWebBrowserL(*url);
+	RFile file;
+	CleanupClosePushL(file);
+	file.Replace(CCoeEnv::Static()->FsSession(), KMapKmlFilename, EFileWrite);
+	file.Write(*kmlFileContents);
+	CleanupStack::PopAndDestroy(&file);
 	
-	CleanupStack::PopAndDestroy(3);
+	CleanupStack::PopAndDestroy(kmlFileContents);
+	
+	CDocumentHandler* docHandler(CDocumentHandler::NewL(CEikonEnv::Static()->Process()));
+	CleanupStack::PushL(docHandler)
+	TDataType emptyDataType = TDataType();
+	TInt error = docHandler->OpenFileEmbeddedL(KMapKmlFilename, emptyDataType);
+	CleanupStack::PopAndDestroy(docHandler);
+	
+	if (error != KErrNone)
+		{
+		_LIT(KMapURLFormat, "http://maptwits.com/displaymap.php?lat=%S&long=%S");
+		
+		CMobblerString* longitude(CMobblerString::NewL(aLongitude));
+		CleanupStack::PushL(longitude);
+		CMobblerString* latitude(CMobblerString::NewL(aLatitude));
+		CleanupStack::PushL(latitude);
+		CMobblerString* name(CMobblerString::NewL(aName));
+		CleanupStack::PushL(name);
+	
+		HBufC* url(HBufC::NewLC(KMapURLFormat().Length() + longitude->String().Length() + latitude->String().Length()));
+		
+		url->Des().Format(KMapURLFormat, &latitude->String(), &longitude->String());
+		
+		OpenWebBrowserL(*url);
+		
+		CleanupStack::PopAndDestroy(4);
+		}
 	}
 
 void CMobblerAppUi::OpenWebBrowserL(const TDesC& aUrl)

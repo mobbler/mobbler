@@ -194,7 +194,7 @@ public:
 	void GoToLastFmL(TInt aCommand, const TDesC8& aEventId = KNullDesC8);
 	void OpenWebBrowserL(const TDesC& aUrl);
 	
-	void GoToMapL(const TDesC8& aLatitude, const TDesC8& aLongitude);
+	void GoToMapL(const TDesC8& aName, const TDesC8& aLatitude, const TDesC8& aLongitude);
 
 public: // CEikAppUi
 	void HandleCommandL(TInt aCommand);
