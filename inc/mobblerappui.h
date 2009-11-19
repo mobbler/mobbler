@@ -54,7 +54,6 @@ const TInt KMobblerAppUid = 0x2002655A;
 const TInt KMobblerSettingsViewUid = 0x2002655C;
 const TInt KMobblerStatusViewUid = 0x2002655B;
 const TInt KMobblerWebServicesViewUid = 0x2002656B;
-const TInt KMobblerBrowserViewUid = 0x2002656C;
 #else
 const TVersion KVersion(0, KMobblerMinorVersion, KMobblerBuildNumber);
 const TInt KMobblerAppUid = 0xA0007648;
@@ -69,7 +68,6 @@ class CBrowserLauncher;
 class CAknGlobalConfirmationQuery;
 class CDocumentHandler;
 class CMobblerBitmapCollection;
-class CMobblerBrowserView;
 class CMobblerDestinationsInterface;
 class CMobblerDownload;
 class CMobblerMusicAppListener;
@@ -123,7 +121,6 @@ private:
 	enum TPlusOptions
 		{
 		EPlusOptionVisitLastFm,
-		EPlusOptionViewArtistBio,
 		EPlusOptionShareTrack,
 		EPlusOptionShareArtist,
 		EPlusOptionPlaylistAddTrack,
@@ -255,9 +252,7 @@ private:
 	CMobblerSettingItemListView* iSettingView;
 	CMobblerStatusView* iStatusView;
 	CMobblerWebServicesView* iWebServicesView;
-	CMobblerBrowserView* iBrowserView;
-
-
+	
 	// The application engine classes
 	CMobblerLastFmConnection* iLastFmConnection;
 	CMobblerRadioPlayer* iRadioPlayer;
