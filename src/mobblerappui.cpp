@@ -470,7 +470,7 @@ CMobblerDestinationsInterface* CMobblerAppUi::Destinations() const
 	return iDestinations;
 	}
 
-const TDesC& CMobblerAppUi::MusicAppNameL() const
+HBufC* CMobblerAppUi::MusicAppNameL() const
 	{
 	return iMusicListener->MusicAppNameL();
 	}
@@ -1929,6 +1929,24 @@ void CMobblerAppUi::GoToLastFmL(TInt aCommand, const TDesC8& aEventId)
 		
 		OpenWebBrowserL(url);
 		}
+	}
+
+void CMobblerAppUi::GoToMapL(const TDesC8& aLatitude, const TDesC8& aLongitude)
+	{
+	_LIT(KMapURLFormat, "http://maptwits.com/displaymap.php?lat=%S&long=%S");
+	
+	CMobblerString* longitude(CMobblerString::NewL(aLongitude));
+	CleanupStack::PushL(longitude);
+	CMobblerString* latitude(CMobblerString::NewL(aLatitude));
+	CleanupStack::PushL(latitude);
+	
+	HBufC* url(HBufC::NewLC(KMapURLFormat().Length() + longitude->String().Length() + latitude->String().Length()));
+	
+	url->Des().Format(KMapURLFormat, &latitude->String(), &longitude->String());
+	
+	OpenWebBrowserL(*url);
+	
+	CleanupStack::PopAndDestroy(3);
 	}
 
 void CMobblerAppUi::OpenWebBrowserL(const TDesC& aUrl)
