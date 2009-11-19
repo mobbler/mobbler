@@ -38,12 +38,6 @@ enum TMobblerSettingItemListViewCommands
 	EMobblerCommandTools,
 	
 	EMobblerCommandPlus,
-	EMobblerCommandVisitWebPage,
-	EMobblerCommandTrackWebPage,
-	EMobblerCommandArtistWebPage,
-	EMobblerCommandAlbumWebPage,
-	EMobblerCommandEventsWebPage,
-	EMobblerCommandEventWebPage,
 	
 	EMobblerCommandToggleScrobbling,
 	EMobblerCommandSleepTimer,
@@ -146,7 +140,13 @@ enum TMobblerSettingItemListViewCommands
 	EMobblerCommandRadioEnumLast = 0xA000,
 	
 	EMobblerCommandCheckForUpdates,
-
+	EMobblerCommandVisitWebPage,
+	EMobblerCommandTrackWebPage,
+	EMobblerCommandArtistWebPage,
+	EMobblerCommandAlbumWebPage,
+	EMobblerCommandEventsWebPage,
+	EMobblerCommandEventWebPage,
+	
 	EMobblerCommandLast
 	};
 	
