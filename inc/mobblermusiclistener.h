@@ -52,7 +52,7 @@ public:
 	
 	CMobblerTrack* CurrentTrack();
 	void NowPlayingL();
-	const TDesC& MusicAppNameL() const;
+	HBufC* MusicAppNameL() const;
 	TBool IsPlaying() const;
 	
 private:
@@ -88,8 +88,6 @@ private:
 	CMobblerNowPlayingCallback* iNowPlayingCallback;
 	
 	CMobblerTrack* iCurrentTrack;
-	
-	mutable TBuf<255> iMusicAppName;
 
 	CMobblerContentListingInterface* iMobblerContentListing;
 	TUid iDtorIdKey;
