@@ -126,6 +126,7 @@ void CMobblerWebServicesView::DynInitMenuPaneL(TInt aResourceId, CEikMenuPane* a
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_TOP_TAGS,				EMobblerCommandArtistTopTags);
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_VISIT_LASTFM_MENU,	EMobblerCommandEventWebPage);
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_VISIT_MAP,			EMobblerCommandVisitMap);
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_FOURSQUARE,			EMobblerCommandFoursquare);
 		}
 	
 	// Now the menu text is set, dimming logic is next

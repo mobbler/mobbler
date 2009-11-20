@@ -400,6 +400,10 @@ RESOURCE MENU_PANE r_mobbler_view_submenu_pane
 		MENU_ITEM
 			{
 			command = EMobblerCommandVisitMap;
+			},
+		MENU_ITEM
+			{
+			command = EMobblerCommandFoursquare;
 			}
 		};
 	}
