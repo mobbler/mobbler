@@ -1958,7 +1958,7 @@ void CMobblerAppUi::GoToMapL(const TDesC8& aName, const TDesC8& aLatitude, const
 	CleanupStack::PopAndDestroy(kmlFileContents);
 	
 	CDocumentHandler* docHandler(CDocumentHandler::NewL(CEikonEnv::Static()->Process()));
-	CleanupStack::PushL(docHandler)
+	CleanupStack::PushL(docHandler);
 	TDataType emptyDataType = TDataType();
 	TInt error = docHandler->OpenFileEmbeddedL(KMapKmlFilename, emptyDataType);
 	CleanupStack::PopAndDestroy(docHandler);
