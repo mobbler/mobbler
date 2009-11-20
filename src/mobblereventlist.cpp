@@ -22,6 +22,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
 #include <sendomfragment.h>
+#include <documenthandler.h>
+#include <s32file.h>
 
 #include "mobblerappui.h"
 #include "mobblerbitmapcollection.h"
@@ -68,6 +70,7 @@ CMobblerEventList::~CMobblerEventList()
 	delete iAttendanceHelper;
 	delete iAttendanceHelperNo;
 	delete iWebServicesHelper;
+	delete iFoursquareHelper;
 	}
 
 CMobblerListControl* CMobblerEventList::HandleListCommandL(TInt aCommand)
@@ -110,6 +113,13 @@ CMobblerListControl* CMobblerEventList::HandleListCommandL(TInt aCommand)
 								iList[iListBox->CurrentItemIndex()]->Latitude(),
 								iList[iListBox->CurrentItemIndex()]->Longitude());
 			break;
+		case EMobblerCommandFoursquare:
+			delete iFoursquareHelper;
+			iFoursquareHelper = CMobblerFlatDataObserverHelper::NewL(iAppUi.LastFmConnection(), *this, ETrue);
+			iAppUi.LastFmConnection().FoursquareL(*iFoursquareHelper,
+													iList[iListBox->CurrentItemIndex()]->Longitude(),
+													iList[iListBox->CurrentItemIndex()]->Latitude());
+			break;
 		default:
 			break;
 		}
@@ -123,6 +133,7 @@ void CMobblerEventList::SupportedCommandsL(RArray<TInt>& aCommands)
 	aCommands.AppendL(EMobblerCommandEventShoutbox);
 	aCommands.AppendL(EMobblerCommandVisitWebPage);
 	aCommands.AppendL(EMobblerCommandVisitMap);
+	aCommands.AppendL(EMobblerCommandFoursquare);
 	
 	aCommands.AppendL(EMobblerCommandShare);
 	aCommands.AppendL(EMobblerCommandEventShare);
@@ -184,6 +195,68 @@ void CMobblerEventList::DataL(CMobblerFlatDataObserverHelper* aObserver, const T
 				
 				CleanupStack::PopAndDestroy(2);
 				}
+			}
+		else if (aObserver == iFoursquareHelper)
+			{
+			_LIT(KMapKmlFilename, "c:\\mobblermap.kml");
+			
+			_LIT8(KMapKmlStartFormat,		"<kml xmlns=\"http://earth.google.com/kml/2.0\">\r\n");	
+			
+			_LIT8(KMapKmlPlacemarkFormat,	"\t<Placemark>\r\n"
+											"\t\t<name>%S</name>\r\n"
+											"\t\t<description>%S said \"%S\"</description>\r\n" 
+											"\t\t<Point>\r\n"
+											"\t\t\t<coordinates>%S,%S</coordinates>\r\n"
+											"\t\t</Point>\r\n"
+											"\t</Placemark>\r\n");
+			
+			_LIT8(KMapKmlEndFormat,			"</kml>\r\n");	
+			
+			RFileWriteStream file;
+			CleanupClosePushL(file);
+			file.Replace(CCoeEnv::Static()->FsSession(), KMapKmlFilename, EFileWrite);
+			
+			file.WriteL(KMapKmlStartFormat);
+
+			// Create the XML reader and DOM fragement and associate them with each other
+			CSenXmlReader* xmlReader(CSenXmlReader::NewL());
+			CleanupStack::PushL(xmlReader);
+			CSenDomFragment* domFragment(CSenDomFragment::NewL());
+			CleanupStack::PushL(domFragment);
+			xmlReader->SetContentHandler(*domFragment);
+			domFragment->SetReader(*xmlReader);
+			
+			xmlReader->ParseL(aData);
+			
+			RPointerArray<CSenElement>& tips(domFragment->AsElement().Element(_L8("group"))->ElementsL());
+			
+			const TInt KTipCount(tips.Count());
+			for (TInt i(0) ; i < KTipCount ; ++i)
+				{
+				TPtrC8 title(tips[i]->Element(_L8("venue"))->Element(_L8("name"))->Content());
+				TPtrC8 firstname(tips[i]->Element(_L8("user"))->Element(_L8("firstname"))->Content());
+				TPtrC8 description(tips[i]->Element(_L8("text"))->Content());
+				
+				TPtrC8 longitude(tips[i]->Element(_L8("venue"))->Element(_L8("geolong"))->Content());
+				TPtrC8 latitude(tips[i]->Element(_L8("venue"))->Element(_L8("geolat"))->Content());
+				
+				// Add this tip to the kml file
+				HBufC8* placemark(HBufC8::NewLC(KMapKmlPlacemarkFormat().Length() + title.Length() + firstname.Length() + description.Length() + longitude.Length() + latitude.Length()));
+				placemark->Des().Format(KMapKmlPlacemarkFormat, &title, &firstname, &description, &longitude, &latitude);
+				file.WriteL(*placemark);
+				CleanupStack::PopAndDestroy(placemark);
+				}
+			
+			CleanupStack::PopAndDestroy(2);
+			
+			file.WriteL(KMapKmlEndFormat);
+			CleanupStack::PopAndDestroy(&file);
+			
+			CDocumentHandler* docHandler(CDocumentHandler::NewL(CEikonEnv::Static()->Process()));
+			CleanupStack::PushL(docHandler);
+			TDataType emptyDataType = TDataType();
+			TInt error = docHandler->OpenFileEmbeddedL(KMapKmlFilename, emptyDataType);
+			CleanupStack::PopAndDestroy(docHandler);
 			}
 		}
 	}
