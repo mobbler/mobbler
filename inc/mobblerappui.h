@@ -154,7 +154,8 @@ public:
 					 const CMobblerString* aRadioOption, 
 					 TBool aSaveStations = ETrue);
 	
-	void SetDetailsL(const TDesC& aUsername, const TDesC& aPassword);
+	void SetDetailsL(const TDesC& aUsername, const TDesC& aPassword, 
+					 TBool aAndSaveToSettings = EFalse);
 	void SetIapIDL(TUint32 aIapID);
 	void SetBufferSize(TTimeIntervalSeconds aBufferSize);
 	void SetAccelerometerGesturesL(TBool aAccelerometerGestures);
@@ -193,8 +194,8 @@ public:
 #endif
 	void GoToLastFmL(TInt aCommand, const TDesC8& aEventId = KNullDesC8);
 	void OpenWebBrowserL(const TDesC& aUrl);
-	
 	void GoToMapL(const TDesC8& aName, const TDesC8& aLatitude, const TDesC8& aLongitude);
+	TBool DetailsNeeded();
 
 public: // CEikAppUi
 	void HandleCommandL(TInt aCommand);
@@ -304,6 +305,7 @@ private:
 	
 	CMobblerWebServicesHelper* iWebServicesHelper;
 	CMobblerFlatDataObserverHelper* iCheckForUpdatesObserver;
+	CMobblerFlatDataObserverHelper* iFetchLyricsObserver;
 	
 	CMobblerDestinationsInterface* iDestinations;
 	TUid iDestinationsDtorUid;

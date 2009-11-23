@@ -93,7 +93,6 @@ _LIT8(KElementTrackMatches, "trackmatches");
 _LIT8(KElementTrue, "true");
 //_LIT8(KElementTrack, "track");
 _LIT8(KElementUts, "uts");
-_LIT8(KElementVenue, "venue");
 _LIT8(KElementGeoNamespaceUri, "http://www.w3.org/2003/01/geo/wgs84_pos#");
 _LIT8(KElementPoint, "point");
 _LIT8(KElementLat, "lat");
@@ -1010,8 +1009,6 @@ void CMobblerParser::ParseEventsL(const TDesC8& aXml, CMobblerEventList& aObserv
 		eventTitle->Des().Format(KEventTitleFormat, &title, &startDate);
 		HBufC8* eventTitleDecoded(SenXmlUtils::DecodeHttpCharactersLC(*eventTitle));
 		
-
-		
 		CMobblerListItem* item(CMobblerListItem::NewL(aObserver,
 														*eventTitleDecoded,
 														*locationDecoded,
@@ -1020,7 +1017,7 @@ void CMobblerParser::ParseEventsL(const TDesC8& aXml, CMobblerEventList& aObserv
 		item->SetIdL(items[i]->Element(KElementId)->Content());
 		
 		// Get the location of the event
-		CSenElement* geoPoint = items[i]->Element(KElementVenue)->Element(KElementLocation)->Element(KElementGeoNamespaceUri, KElementPoint);
+		CSenElement* geoPoint(items[i]->Element(KElementVenue)->Element(KElementLocation)->Element(KElementGeoNamespaceUri, KElementPoint));
 		
 		if (geoPoint)
 			{
