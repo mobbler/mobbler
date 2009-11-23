@@ -35,6 +35,7 @@ _LIT8(KElementName, "name");
 _LIT8(KElementPlaylists, "playlists");
 _LIT8(KElementStatus, "status");
 _LIT8(KElementTitle, "title");
+_LIT8(KElementVenue, "venue");
 
 // Web service call parameters
 _LIT8(KAlbum, "album");

@@ -95,8 +95,8 @@ CMobblerListControl* CMobblerPlaylistList::HandleListCommandL(TInt aCommand)
 		case EMobblerCommandPlaylistCreate:
 			{
 			// ask for title and description
-			TBuf<EMobblerMaxQueryDialogLength> title;
-			TBuf<EMobblerMaxQueryDialogLength> description;
+			TBuf<KMobblerMaxQueryDialogLength> title;
+			TBuf<KMobblerMaxQueryDialogLength> description;
 			
 			CAknTextQueryDialog* titleDialog(new(ELeave) CAknTextQueryDialog(title));
 			titleDialog->PrepareLC(R_MOBBLER_TEXT_QUERY_DIALOG);

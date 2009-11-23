@@ -160,7 +160,7 @@ void CMobblerStatusControl::DoChangePaneTextL()
 		else
 			{
 			// This is a music player track
-			HBufC* musicAppName = iAppUi.MusicAppNameL();
+			HBufC* musicAppName(iAppUi.MusicAppNameL());
 			stateText.Copy(*musicAppName);
 			delete musicAppName;
 			stateText.Append(KMusicAppNameAndConnectionSeperator);
@@ -1051,6 +1051,12 @@ TKeyResponse CMobblerStatusControl::OfferKeyEventL(const TKeyEvent& aKeyEvent, T
 #ifdef _DEBUG
 		case '6':
 			const_cast<CMobblerAppUi&>(iAppUi).HandleCommandL(EMobblerCommandAlarm);
+			response = EKeyWasConsumed;
+			break;
+#endif
+#ifdef _DEBUG
+		case '7':
+			const_cast<CMobblerAppUi&>(iAppUi).HandleCommandL(EMobblerCommandFetchLyrics);
 			response = EKeyWasConsumed;
 			break;
 #endif

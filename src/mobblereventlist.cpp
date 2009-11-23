@@ -21,9 +21,9 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-#include <sendomfragment.h>
 #include <documenthandler.h>
 #include <s32file.h>
+#include <sendomfragment.h>
 
 #include "mobblerappui.h"
 #include "mobblerbitmapcollection.h"
@@ -116,9 +116,9 @@ CMobblerListControl* CMobblerEventList::HandleListCommandL(TInt aCommand)
 		case EMobblerCommandFoursquare:
 			delete iFoursquareHelper;
 			iFoursquareHelper = CMobblerFlatDataObserverHelper::NewL(iAppUi.LastFmConnection(), *this, ETrue);
-			iAppUi.LastFmConnection().FoursquareL(*iFoursquareHelper,
-													iList[iListBox->CurrentItemIndex()]->Longitude(),
-													iList[iListBox->CurrentItemIndex()]->Latitude());
+			iAppUi.LastFmConnection().FoursquareL(	iList[iListBox->CurrentItemIndex()]->Longitude(),
+													iList[iListBox->CurrentItemIndex()]->Latitude(),
+													*iFoursquareHelper);
 			break;
 		default:
 			break;
@@ -210,8 +210,13 @@ void CMobblerEventList::DataL(CMobblerFlatDataObserverHelper* aObserver, const T
 											"\t\t</Point>\r\n"
 											"\t</Placemark>\r\n");
 			
-			_LIT8(KMapKmlEndFormat,			"</kml>\r\n");	
-			
+			_LIT8(KMapKmlEndFormat,			"</kml>\r\n");
+			_LIT8(KElementFirstName, 		"firstname");
+			_LIT8(KElementGeoLat, 			"geolat");
+			_LIT8(KElementGeoLong, 			"geolong");
+			_LIT8(KElementGroup, 			"group");
+			_LIT8(KElementText, 			"text");
+
 			RFileWriteStream file;
 			CleanupClosePushL(file);
 			file.Replace(CCoeEnv::Static()->FsSession(), KMapKmlFilename, EFileWrite);
@@ -228,19 +233,19 @@ void CMobblerEventList::DataL(CMobblerFlatDataObserverHelper* aObserver, const T
 			
 			xmlReader->ParseL(aData);
 			
-			RPointerArray<CSenElement>& tips(domFragment->AsElement().Element(_L8("group"))->ElementsL());
+			RPointerArray<CSenElement>& tips(domFragment->AsElement().Element(KElementGroup)->ElementsL());
 			
 			const TInt KTipCount(tips.Count());
-			for (TInt i(0) ; i < KTipCount ; ++i)
+			for (TInt i(0); i < KTipCount; ++i)
 				{
-				TPtrC8 title(tips[i]->Element(_L8("venue"))->Element(_L8("name"))->Content());
-				TPtrC8 firstname(tips[i]->Element(_L8("user"))->Element(_L8("firstname"))->Content());
-				TPtrC8 description(tips[i]->Element(_L8("text"))->Content());
+				TPtrC8 title(tips[i]->Element(KElementVenue)->Element(KElementName)->Content());
+				TPtrC8 firstname(tips[i]->Element(KUser)->Element(KElementFirstName)->Content());
+				TPtrC8 description(tips[i]->Element(KElementText)->Content());
 				
-				TPtrC8 longitude(tips[i]->Element(_L8("venue"))->Element(_L8("geolong"))->Content());
-				TPtrC8 latitude(tips[i]->Element(_L8("venue"))->Element(_L8("geolat"))->Content());
+				TPtrC8 longitude(tips[i]->Element(KElementVenue)->Element(KElementGeoLong)->Content());
+				TPtrC8 latitude(tips[i]->Element(KElementVenue)->Element(KElementGeoLat)->Content());
 				
-				// Add this tip to the kml file
+				// Add this tip to the KML file
 				HBufC8* placemark(HBufC8::NewLC(KMapKmlPlacemarkFormat().Length() + title.Length() + firstname.Length() + description.Length() + longitude.Length() + latitude.Length()));
 				placemark->Des().Format(KMapKmlPlacemarkFormat, &title, &firstname, &description, &longitude, &latitude);
 				file.WriteL(*placemark);
@@ -255,7 +260,7 @@ void CMobblerEventList::DataL(CMobblerFlatDataObserverHelper* aObserver, const T
 			CDocumentHandler* docHandler(CDocumentHandler::NewL(CEikonEnv::Static()->Process()));
 			CleanupStack::PushL(docHandler);
 			TDataType emptyDataType = TDataType();
-			TInt error = docHandler->OpenFileEmbeddedL(KMapKmlFilename, emptyDataType);
+			docHandler->OpenFileEmbeddedL(KMapKmlFilename, emptyDataType);
 			CleanupStack::PopAndDestroy(docHandler);
 			}
 		}
