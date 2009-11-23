@@ -512,7 +512,7 @@ RESOURCE DIALOG r_mobbler_text_query_dialog
 				control = EDWIN
 					{
 					flags= EEikEdwinNoHorizScrolling | EEikEdwinResizable;
-					maxlength = EMobblerMaxQueryDialogLength;
+					maxlength = KMobblerMaxQueryDialogLength;
 					width = 4;
 					lines = 1;
 					};
@@ -570,7 +570,7 @@ RESOURCE AVKON_SETTING_PAGE r_mobbler_setting_page_username
 
 RESOURCE EDWIN r_mobbler_setting_page_resource_id_username
 	{
-	maxlength = 30;
+	maxlength = KMobblerMaxUsernameLength;
 	default_case = EAknEditorLowerCase;
 	allowed_case_modes = EAknEditorAllCaseModes;
 	numeric_keymap = EAknEditorStandardNumberModeKeymap;
@@ -595,7 +595,7 @@ RESOURCE AVKON_SETTING_PAGE r_mobbler_setting_page_password
 	
 RESOURCE SECRETED r_mobbler_setting_page_resource_id_password
 	{
-	num_letters = 30;
+	num_letters = KMobblerMaxPasswordLength;
 	}
 
 RESOURCE ARRAY r_mobbler_binary_texts
@@ -865,6 +865,58 @@ RESOURCE DIALOG r_mobbler_get_latest_language_dialog
 				{
 				layout = EConfirmationQueryLayout;
 				animation = R_QGN_NOTE_ERROR_ANIM;
+				};
+			}
+		};
+	}
+
+RESOURCE DIALOG r_mobbler_username_password_query_dialog
+	{
+	flags = EGeneralQueryFlags;
+//	buttons = R_AVKON_SOFTKEYS_OK_CANCEL;
+	buttons = R_AVKON_SOFTKEYS_OK_EMPTY;
+	items =
+		{
+		DLG_LINE
+			{
+			type = EAknCtMultilineQuery;
+			id = EMultilineFirstLine;
+			control = AVKON_DATA_QUERY
+				{
+				layout = EMultiDataFirstEdwin;
+				control = EDWIN
+					{
+					flags = EEikEdwinNoHorizScrolling | EEikEdwinResizable;
+					width = 25;
+					lines = 1;
+					maxlength = KMobblerMaxUsernameLength;
+					default_case = EAknEditorLowerCase;
+					allowed_case_modes = EAknEditorAllCaseModes;
+					numeric_keymap = EAknEditorStandardNumberModeKeymap;
+					default_input_mode = EAknEditorTextInputMode;
+					allowed_input_modes = EAknEditorTextInputMode | 
+										  EAknEditorNumericInputMode | 
+										  EAknEditorSecretAlphaInputMode | 
+										  EAknEditorKatakanaInputMode |
+										  EAknEditorFullWidthTextInputMode | 
+										  EAknEditorFullWidthNumericInputMode | 
+										  EAknEditorFullWidthKatakanaInputMode | 
+										  EAknEditorHiraganaKanjiInputMode | 
+										  EAknEditorHalfWidthTextInputMode;
+					};
+				};
+			},
+		DLG_LINE
+			{
+			type = EAknCtMultilineQuery;
+			id = EMultilineSecondLine;
+			control = AVKON_DATA_QUERY
+				{
+				layout = EMultiDataSecondSecEd;
+				control = SECRETED
+					{
+					num_letters = KMobblerMaxPasswordLength;
+					};
 				};
 			}
 		};

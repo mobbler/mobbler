@@ -72,7 +72,7 @@ CMobblerListControl* CMobblerFriendList::HandleListCommandL(TInt aCommand)
 		case EMobblerCommandTrackShare:
 		case EMobblerCommandArtistShare:
 			{
-			TBuf<EMobblerMaxQueryDialogLength> message;
+			TBuf<KMobblerMaxQueryDialogLength> message;
 			
 			CAknTextQueryDialog* shareDialog(new(ELeave) CAknTextQueryDialog(message));
 			shareDialog->PrepareLC(R_MOBBLER_TEXT_QUERY_DIALOG);

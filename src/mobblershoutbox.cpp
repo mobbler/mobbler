@@ -117,7 +117,7 @@ CMobblerListControl* CMobblerShoutbox::HandleListCommandL(TInt aCommand)
 	CMobblerListControl* list(NULL);
 	
 	CAknTextQueryDialog* shoutDialog(NULL);
-	TBuf<EMobblerMaxQueryDialogLength> shoutMessage;
+	TBuf<KMobblerMaxQueryDialogLength> shoutMessage;
 	
 	HBufC* dialogPromptText(NULL);
 	

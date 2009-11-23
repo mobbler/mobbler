@@ -38,6 +38,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "mobblerlastfmconnection.h"
 #include "mobblerlastfmconnectionobserver.h"
 #include "mobblerliterals.h"
+#include "mobblerlogging.h"
 #include "mobblerparser.h"
 #include "mobblerradioplayer.h"
 #include "mobblerradioplaylist.h"
@@ -913,7 +914,7 @@ void CMobblerLastFmConnection::SimilarTracksL(const TDesC8& aArtist, const TDesC
 	AppendAndSubmitTransactionL(transaction);
 	}
 
-void CMobblerLastFmConnection::FoursquareL(MMobblerFlatDataObserver& aObserver, const TDesC8& aLongitude, const TDesC8& aLatitude)
+void CMobblerLastFmConnection::FoursquareL(const TDesC8& aLongitude, const TDesC8& aLatitude, MMobblerFlatDataObserver& aObserver)
 	{
 	_LIT8(KFoursquareTipsFormat, "http://api.foursquare.com/v1/tips?geolat=%S&geolong=%S");
 	
@@ -931,6 +932,61 @@ void CMobblerLastFmConnection::FoursquareL(MMobblerFlatDataObserver& aObserver, 
 	
 	CleanupStack::Pop(uri);
 	CleanupStack::PopAndDestroy(uriBuf);
+	
+	AppendAndSubmitTransactionL(transaction);
+	}
+
+void CMobblerLastFmConnection::FetchLyricsL(const TDesC8& aArtist, // TODO probably no need to pass these in
+											const TDesC8& aTitle, 
+											MMobblerFlatDataObserver& aObserver)
+	{
+	LOG(_L8("CMobblerLastFmConnection::FetchLyricsL"));
+	LOG2(aArtist, aTitle);
+	// TODO Lyricsfly: "Because our database varies with many html format encodings including international characters, we recommend that you replace all quotes, ampersands and all other special and international characters with "%". Simply put; if the character is not [A-Z a-z 0-9] or space, just substitute "%" for it to get most out of your results. All API calls return an XML document."
+	
+	/*/ TODO 1. replace special as above
+	HBufC8* artist(aArtist.AllocLC();
+	_LIT8(KHash, "#");
+	for (TInt pos(0); pos < artist->;Length() ++pos)
+		{
+		if (artist->Des()
+		// replace the plus with a space
+		artist->Des().Delete(pos, 1);
+		artist->Des().Insert(pos, KSpace);
+		
+		// try to find the next one
+		pos = artist->Find(KPlus);
+		}
+	CleanupStack::PopAndDestroy(artist);
+*/
+
+	
+	// 2. URL encode artist and title
+
+	_LIT8(KLyricsflyFormat, "http://lyricsfly.com/api/api.php?i=c5ae7256cdababe54-temporary.API.access&a=%S&t=%S");
+	
+	HBufC8* artistEncoded(MobblerUtility::URLEncodeLC(aArtist));
+	HBufC8* titleEncoded(MobblerUtility::URLEncodeLC(aTitle));
+	
+	HBufC8* uriBuf(HBufC8::NewLC(KLyricsflyFormat().Length() + 
+								 artistEncoded->Length() + 
+								 titleEncoded->Length()));
+	
+	uriBuf->Des().Format(KLyricsflyFormat, artistEncoded, titleEncoded);
+	LOG(*uriBuf);
+	
+	TUriParser8 uriParser;
+	uriParser.Parse(*uriBuf);
+	
+	CUri8* uri(CUri8::NewLC(uriParser));
+	
+	CMobblerTransaction* transaction(CMobblerTransaction::NewL(*this, uri));
+	transaction->SetFlatDataObserver(&aObserver);
+	
+	CleanupStack::Pop(uri);
+	CleanupStack::PopAndDestroy(uriBuf);
+	CleanupStack::PopAndDestroy(titleEncoded);
+	CleanupStack::PopAndDestroy(artistEncoded);
 	
 	AppendAndSubmitTransactionL(transaction);
 	}
@@ -1846,7 +1902,7 @@ void CMobblerLastFmConnection::CloseTransactionsL(TBool aCloseTransactionArray)
 	if (aCloseTransactionArray)
 		{
 		// close all the transactions and callback the observers
-		for (TInt i(iTransactions.Count() - 1) ; i >= 0 ; --i)
+		for (TInt i(iTransactions.Count() - 1); i >= 0; --i)
 			{
 			if (iTransactions[i]->FlatDataObserver())
 				{

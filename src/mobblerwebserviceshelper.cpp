@@ -364,7 +364,7 @@ void CMobblerWebServicesHelper::DataL(CMobblerFlatDataObserverHelper* aObserver,
 				CMobblerString* recipient(CMobblerString::NewL((*items)[list->CurrentItemIndex()]));
 				CleanupStack::PushL(recipient);
 				
-				TBuf<EMobblerMaxQueryDialogLength> message;
+				TBuf<KMobblerMaxQueryDialogLength> message;
 				
 				CAknTextQueryDialog* shoutDialog(new(ELeave) CAknTextQueryDialog(message));
 				shoutDialog->PrepareLC(R_MOBBLER_TEXT_QUERY_DIALOG);
