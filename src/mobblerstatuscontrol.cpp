@@ -161,7 +161,10 @@ void CMobblerStatusControl::DoChangePaneTextL()
 			{
 			// This is a music player track
 			HBufC* musicAppName(iAppUi.MusicAppNameL());
-			stateText.Copy(*musicAppName);
+			if (musicAppName)
+				{
+				stateText.Copy(*musicAppName);
+				}
 			delete musicAppName;
 			stateText.Append(KMusicAppNameAndConnectionSeperator);
 			
