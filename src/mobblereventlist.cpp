@@ -21,6 +21,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
+#include <apgcli.h>  
 #include <documenthandler.h>
 #include <s32file.h>
 #include <sendomfragment.h>
@@ -31,6 +32,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "mobblerlastfmconnection.h"
 #include "mobblerlistitem.h"
 #include "mobblerliterals.h"
+#include "mobblerlogging.h"
 #include "mobblerparser.h"
 #include "mobblersettingitemlistview.h"
 #include "mobblerstring.h"
@@ -39,6 +41,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "mobbler.hrh"
 
 _LIT8(KGetEvents, "getevents");
+
+const TUid KGoogleMapsUid = {0x2000CEA3};
 
 CMobblerEventList::CMobblerEventList(CMobblerAppUi& aAppUi, CMobblerWebServicesControl& aWebServicesControl)
 	:CMobblerListControl(aAppUi, aWebServicesControl)
@@ -132,8 +136,23 @@ void CMobblerEventList::SupportedCommandsL(RArray<TInt>& aCommands)
 	aCommands.AppendL(EMobblerCommandView);
 	aCommands.AppendL(EMobblerCommandEventShoutbox);
 	aCommands.AppendL(EMobblerCommandVisitWebPage);
-	aCommands.AppendL(EMobblerCommandVisitMap);
-	aCommands.AppendL(EMobblerCommandFoursquare);
+	
+	RApaLsSession lsSession;
+	CleanupClosePushL(lsSession);
+	User::LeaveIfError(lsSession.Connect());
+	
+	TApaAppInfo appInfo;
+
+	if (lsSession.GetAppInfo(appInfo, KGoogleMapsUid) == KErrNone)
+		{
+		// Google Maps is installed
+		
+		aCommands.AppendL(EMobblerCommandMaps);
+		aCommands.AppendL(EMobblerCommandVisitMap);
+		//aCommands.AppendL(EMobblerCommandFoursquare);
+		}
+	
+	CleanupStack::PopAndDestroy(&lsSession);
 	
 	aCommands.AppendL(EMobblerCommandShare);
 	aCommands.AppendL(EMobblerCommandEventShare);
