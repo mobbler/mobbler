@@ -936,14 +936,14 @@ void CMobblerLastFmConnection::FoursquareL(const TDesC8& aLongitude, const TDesC
 	AppendAndSubmitTransactionL(transaction);
 	}
 
-void CMobblerLastFmConnection::FetchLyricsL(const TDesC8& aArtist, // TODO probably no need to pass these in
+/*void CMobblerLastFmConnection::FetchLyricsL(const TDesC8& aArtist, // TODO probably no need to pass these in
 											const TDesC8& aTitle, 
 											MMobblerFlatDataObserver& aObserver)
 	{
 	LOG(_L8("CMobblerLastFmConnection::FetchLyricsL"));
 	LOG2(aArtist, aTitle);
 	// TODO Lyricsfly: "Because our database varies with many html format encodings including international characters, we recommend that you replace all quotes, ampersands and all other special and international characters with "%". Simply put; if the character is not [A-Z a-z 0-9] or space, just substitute "%" for it to get most out of your results. All API calls return an XML document."
-	
+	*/
 	/*/ TODO 1. replace special as above
 	HBufC8* artist(aArtist.AllocLC();
 	_LIT8(KHash, "#");
@@ -959,11 +959,13 @@ void CMobblerLastFmConnection::FetchLyricsL(const TDesC8& aArtist, // TODO proba
 		}
 	CleanupStack::PopAndDestroy(artist);
 */
-
+/*
 	
 	// 2. URL encode artist and title
 
-	_LIT8(KLyricsflyFormat, "http://lyricsfly.com/api/api.php?i=c5ae7256cdababe54-temporary.API.access&a=%S&t=%S");
+	_LIT8(KLyricsflyFormat, "http://lyricsfly.com/api/api.php?i=828166fe68a35862e-temporary.API.access&a=%S&t=%S");
+//	http://lyricsfly.com/api/api.php?i=828166fe68a35862e-temporary.API.access&a=Sigur R%s&t=Star%lfur
+//	http://lyricsfly.com/api/api.php?i=828166fe68a35862e-temporary.API.access&a=Sigur R%s&t=Hopp%polla
 	
 	HBufC8* artistEncoded(MobblerUtility::URLEncodeLC(aArtist));
 	HBufC8* titleEncoded(MobblerUtility::URLEncodeLC(aTitle));
@@ -990,7 +992,7 @@ void CMobblerLastFmConnection::FetchLyricsL(const TDesC8& aArtist, // TODO proba
 	
 	AppendAndSubmitTransactionL(transaction);
 	}
-
+*/
 void CMobblerLastFmConnection::RecentTracksL(const TDesC8& aUser, MMobblerFlatDataObserver& aObserver)
 	{
 	CUri8* uri(CUri8::NewL());
