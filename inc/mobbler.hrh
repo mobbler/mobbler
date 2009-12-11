@@ -133,7 +133,7 @@ enum TMobblerSettingItemListViewCommands
 	EMobblerCommandRadioEnumLast = 0xA000,
 	
 	EMobblerCommandCheckForUpdates,
-	EMobblerCommandFetchLyrics,
+//	EMobblerCommandFetchLyrics,
 	EMobblerCommandVisitWebPage,
 	EMobblerCommandTrackWebPage,
 	EMobblerCommandArtistWebPage,
