@@ -226,7 +226,7 @@ CMobblerAppUi::~CMobblerAppUi()
 	delete iBitmapCollection;
 	delete iCheckForUpdatesObserver;
 	delete iDocHandler;
-	delete iFetchLyricsObserver;
+//	delete iFetchLyricsObserver;
 	delete iInterfaceSelector;
 	delete iLastFmConnection;
 	delete iMobblerDownload;
@@ -596,7 +596,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 			iLastFmConnection->CheckForUpdateL(*iCheckForUpdatesObserver);
 			}
 			break;
-		case EMobblerCommandFetchLyrics:
+/*		case EMobblerCommandFetchLyrics:
 			{
 			if (currentTrack)
 				{
@@ -609,6 +609,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 				}
 			}
 			break;
+*/
 		case EMobblerCommandEditSettings:
 			ActivateLocalViewL(iSettingView->Id(), 
 								TUid::Uid(CMobblerSettingItemListView::ENormalSettings), 
@@ -1246,12 +1247,12 @@ void CMobblerAppUi::DataL(CMobblerFlatDataObserverHelper* aObserver, const TDesC
 					}
 				}
 			}
-		else if (aObserver == iFetchLyricsObserver)
+/*		else if (aObserver == iFetchLyricsObserver)
 			{
 			DUMPDATA(aData, _L("lyricsdata.txt"));
 			_LIT(KLyricsFilename, "c:\\mobblerlyrics.txt");
-			_LIT8(KElementStart, "start");
-			_LIT8(KElementSg, "sq");
+			//_LIT8(KElementStart, "start");
+			//_LIT8(KElementSg, "sq");
 			_LIT8(KElementTx, "tx");
 			_LIT8(KElement200, "200");
 			_LIT8(KElement300, "300");
@@ -1302,6 +1303,7 @@ void CMobblerAppUi::DataL(CMobblerFlatDataObserverHelper* aObserver, const TDesC
 			
 			LaunchFileEmbeddedL(KLyricsFilename);
 			}
+*/
 		}
 	}
 
@@ -1636,6 +1638,14 @@ void CMobblerAppUi::SetSleepTimerL(const TInt aMinutes)
 #endif
 	iTimeToSleep.UniversalTime();
 	iTimeToSleep += delay;
+	
+	if (sleepMinutes == 0)
+		{
+		 // Use a one second delay
+		TTimeIntervalSeconds oneSecond(1);
+		iTimeToSleep += oneSecond;
+		}
+	
 	iSleepTimer->AtUTC(iTimeToSleep);
 
 #ifdef _DEBUG

@@ -682,7 +682,7 @@ RESOURCE AVKON_SETTING_PAGE r_mobbler_integer_setting_page_sleep_minutes
 
 RESOURCE AVKON_INTEGER_EDWIN r_mobbler_integer_edwin_sleep_minutes
 	{
-	min = 1;
+	min = 0;
 	max = 999; // 16 hours and 39 minutes
 	}  
 
