@@ -45,11 +45,11 @@ const TInt KUpdateIntervalDays(7);
 #endif
 const TInt KMaxMobblerTextSize(255);
 
-const TInt KMobblerMinorVersion(7);
-const TInt KMobblerBuildNumber(6194);
+const TInt KMobblerMinorVersion(8);
+const TInt KMobblerBuildNumber(237);
 
 #ifdef __SYMBIAN_SIGNED__
-const TVersion KVersion(0, KMobblerMinorVersion, KMobblerBuildNumber);
+const TVersion KVersion(1, KMobblerMinorVersion, KMobblerBuildNumber);
 const TInt KMobblerAppUid = 0x2002655A;
 const TInt KMobblerSettingsViewUid = 0x2002655C;
 const TInt KMobblerStatusViewUid = 0x2002655B;

@@ -1,7 +1,7 @@
 /*
-musicappobserver.h
+mobblermusicapp30.h
 
-Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
+mobbler, a last.fm mobile scrobbler for Symbian smartphones.
 Copyright (C) 2008  Michael Coffey
 
 http://code.google.com/p/mobbler
@@ -21,22 +21,37 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-#ifndef __MUSICAPPOBSERVER_H__
-#define __MUSICAPPOBSERVER_H__
+#ifndef __MOBBLERMUSICAPP30_H__
+#define __MOBBLERMUSICAPP30_H__
 
 #include <e32base.h>
-#include <mobbler\mobblermusicapp.h>
 #include <mplayerremotecontrol.h>
+#include <mobbler\mobblermusicapp.h>
 
-class CMobblerMusicAppObserver : public CMobblerMusicApp, public MMPlayerPlaybackObserver, public MMPlayerCommandObserver
+#include "mobblermusicstatelistener.h"
+#include "mobblertracklistener.h"
+#include "mobblerplaybackpositionlistener.h"
+
+class CMobblerMusicAppObserver30 : public CMobblerMusicApp,
+									public CMobblerTrackListener::MMobblerTrackObserver,
+									public CMobblerMusicAppStateListener::MMobblerMusicAppStateObserver,
+									public CMobblerPlaybackPositionListener::MMobblerPlaybackPositionObserver
 	{
 public:
-	static CMobblerMusicAppObserver* NewL(TAny* aObserver);
-	~CMobblerMusicAppObserver();
+	static CMobblerMusicAppObserver30* NewL(TAny* aObserver);
+	~CMobblerMusicAppObserver30();
 	
 private:
-	CMobblerMusicAppObserver(TAny* aObserver);
+	CMobblerMusicAppObserver30(TAny* aObserver);
 	void ConstructL();
+	
+	TMobblerMusicAppObserverState ConvertState(TMPlayerRemoteControlState aState);
+	TMobblerMusicAppObserverCommand ConvertCommand(TMPlayerRemoteControlCommands aCommand);
+	
+private:
+	void HandleMusicStateChangeL(TInt aMPlayerState);
+	void HandleTrackChangeL(const TDesC& aTrack);
+	void HandlePlaybackPositionChangeL(TTimeIntervalSeconds aPlaybackPosition);
 	
 private: // from MMobblerMusicApp
 	HBufC* NameL();
@@ -46,26 +61,19 @@ private: // from MMobblerMusicApp
 	const TDesC& Album();
 	TTimeIntervalSeconds Duration();
 	
-	static TMobblerMusicAppObserverState ConvertState(TMPlayerRemoteControlState aState);
-	static TMobblerMusicAppObserverCommand ConvertCommand(TMPlayerRemoteControlCommands aCommand);
-	
-private: // from MMPlayerCommandObserver
+private:
 	void CommandReceived(TMPlayerRemoteControlCommands aCmd);
-		
-private: // from MMPlayerPlaybackObserver
 	void PlayerStateChanged(TMPlayerRemoteControlState aState);
 	void TrackInfoChanged(const TDesC& aTitle, const TDesC& aArtist);
-	void PlaylistChanged();
-	void PlaybackPositionChanged(TInt aPosition);
-	void EqualizerPresetChanged(TInt aPresetNameKey); 
-	void PlaybackModeChanged(TBool aRandom, TMPlayerRepeatMode aRepeat); 
-	void PlayerUidChanged(TInt aPlayerUid );   
-    void VolumeChanged(TInt aVolume); 
 	
 private:
-	MMPlayerRemoteControl* iEngine;
+	CMobblerMusicAppStateListener* iMusicAppStateListener;
+	CMobblerTrackListener* iTrackListener;
+	
+	TBuf<255> iTitle;
+	TBuf<255> iArtist;
+	
 	MMobblerMusicAppObserver* iObserver;
-	TApaAppCaption iName;
 	};
 
-#endif // __MUSICAPPOBSERVER_H__
+#endif // __MOBBLERMUSICAPP30_H__
