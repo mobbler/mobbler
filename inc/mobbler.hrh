@@ -74,6 +74,7 @@ enum TMobblerSettingItemListViewCommands
 	EMobblerCommandPlaylists,
 	EMobblerCommandUserEvents,
 	EMobblerCommandArtistEvents,
+	EMobblerCommandArtistBio,
 
 	EMobblerCommandTagTopArtists,
 	

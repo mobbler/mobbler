@@ -1,5 +1,5 @@
 /*
-mobbler.mmh
+mobblerbrowserview.h
 
 Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
 Copyright (C) 2009  Michael Coffey
@@ -21,17 +21,38 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-// uncomment this to use a beta build
-//MACRO BETA_BUILD
+#ifndef __MOBBLERBROWSERVIEW_H_
+#define __MOBBLERBROWSERVIEW_H_
 
-// uncomment this to build a version with protected UIDs for Symbian Signing
-//#define SYMBIAN_SIGNED
+#include <aknview.h>
 
-#ifdef SYMBIAN_SIGNED
-MACRO __SYMBIAN_SIGNED__
-CAPABILITY	NetworkServices ReadUserData SwEvent WriteDeviceData
-#else
-CAPABILITY	NetworkServices ReadUserData
-#endif
+class CMobblerBrowserControl;
+
+class CMobblerBrowserView : public CAknView
+	{
+public:
+	static CMobblerBrowserView* NewL();
+	~CMobblerBrowserView();
+
+	TUid Id() const;
+	void HandleCommandL(TInt aCommand);
+
+private:
+	CMobblerBrowserView();
+	void ConstructL();
+
+	void DynInitMenuPaneL(TInt aResourceId, CEikMenuPane* aMenuPane);
+
+	void DoActivateL(const TVwsViewId& aPrevViewId, TUid aCustomMessageId, const TDesC8& aCustomMessage);
+	void DoDeactivate();
+	void HandleStatusPaneSizeChange();
+
+	void SetMenuItemTextL(CEikMenuPane* aMenuPane, TInt aResourceId, TInt aCommandId);
+
+private:
+	CMobblerBrowserControl* iBrowserControl;
+	};
+
+#endif //__MOBBLERBROWSERVIEW_H_
 
 // End of file

@@ -54,6 +54,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "mobbler_strings.rsg.h"
 #include "mobblerappui.h"
 #include "mobblerbitmapcollection.h"
+#include "mobblerbrowserview.h"
 #include "mobblerliterals.h"
 #include "mobblerlogging.h"
 #include "mobblermusiclistener.h"
@@ -175,7 +176,8 @@ void CMobblerAppUi::ConstructL()
 	iAlarmTimer = CMobblerSleepTimer::NewL(EPriorityLow, *this);
 	
 	iWebServicesView = CMobblerWebServicesView::NewL();
-	
+	iBrowserView = CMobblerBrowserView::NewL();
+
 	iLastFmConnection->SetModeL(iSettingView->Mode());
 	iLastFmConnection->LoadCurrentTrackL();
 	
@@ -195,6 +197,7 @@ void CMobblerAppUi::ConstructL()
 		}
 	
 	AddViewL(iWebServicesView);
+	AddViewL(iBrowserView);
 	AddViewL(iSettingView);
 	AddViewL(iStatusView);
 	ActivateLocalViewL(iStatusView->Id());
@@ -832,6 +835,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 				CleanupStack::PopAndDestroy(menuText);
 				
 				// Add the other menu items
+				items->AppendL(iResourceReader->ResourceL(R_MOBBLER_VIEW_ARTIST_BIO));
 				items->AppendL(iResourceReader->ResourceL(R_MOBBLER_SHARE_TRACK));
 				items->AppendL(iResourceReader->ResourceL(R_MOBBLER_SHARE_ARTIST));
 				items->AppendL(iResourceReader->ResourceL(R_MOBBLER_PLAYLIST_ADD_TRACK));
@@ -863,6 +867,11 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 							{
 							case EPlusOptionVisitLastFm:
 								HandleCommandL(EMobblerCommandVisitWebPage);
+								break;
+							case EPlusOptionViewArtistBio:
+								{
+								ActivateLocalViewL(iBrowserView->Id(), TUid::Uid(EMobblerCommandArtistBio), currentTrack->Artist().String8());
+								}
 								break;
 							case EPlusOptionShareTrack:
 							case EPlusOptionShareArtist:
