@@ -50,7 +50,7 @@ RESOURCE EIK_APP_INFO
 RESOURCE LOCALISABLE_APP_INFO r_localisable_app_info
 	{
 	short_caption = STR_mobbler_mobbler;
-	caption_and_icon = 
+	caption_and_icon =
 	CAPTION_AND_ICON_INFO
 		{
 		caption = STR_mobbler_mobbler;
@@ -69,7 +69,7 @@ RESOURCE AVKON_VIEW r_mobbler_setting_item_list_view
 	cba = R_AVKON_SOFTKEYS_OK_CANCEL;
 	toolbar = 0;
 	}
-	
+
 RESOURCE AVKON_VIEW r_mobbler_status_view
 	{
 	cba = R_AVKON_SOFTKEYS_OPTIONS_BACK;
@@ -83,6 +83,14 @@ RESOURCE AVKON_VIEW r_mobbler_webservices_view
 	menubar = r_mobbler_webservices_options_menu;
 	toolbar = 0;
 	}
+
+RESOURCE AVKON_VIEW r_mobbler_browser_view
+    {
+    cba = R_AVKON_SOFTKEYS_BACK;
+    toolbar = 0;
+    }
+
+
 
 RESOURCE MENU_BAR r_mobbler_webservices_options_menu
 	{
@@ -146,16 +154,11 @@ RESOURCE MENU_PANE r_mobbler_webservices_menu_pane
 			},
 		MENU_ITEM
 			{
-			command = EMobblerCommandMaps;
-			cascade = r_mobbler_map_submenu_pane;
-			},
-		MENU_ITEM
-			{
 			command = EAknSoftkeyExit;
 			}
 		};
 	}
-	
+
 RESOURCE MENU_PANE r_mobbler_shout_submenu_pane
 	{
 	items =
@@ -170,7 +173,7 @@ RESOURCE MENU_PANE r_mobbler_shout_submenu_pane
 			}
 		};
 	}
-	
+
 RESOURCE MENU_PANE r_mobbler_webservices_radio_submenu_pane
 	{
 	items =
@@ -188,8 +191,8 @@ RESOURCE MENU_PANE r_mobbler_webservices_radio_submenu_pane
 			command = EMobblerCommandRadioLoved;
 			}
 		};
-	}	
-	
+	}
+
 RESOURCE MENU_PANE r_mobbler_attendance_submenu_pane
 	{
 	items =
@@ -207,7 +210,7 @@ RESOURCE MENU_PANE r_mobbler_attendance_submenu_pane
 			command = EMobblerCommandAttendanceNo;
 			}
 		};
-	}	
+	}
 
 RESOURCE MENU_PANE r_mobbler_share_submenu_pane
 	{
@@ -226,7 +229,7 @@ RESOURCE MENU_PANE r_mobbler_share_submenu_pane
 			command = EMobblerCommandEventShare;
 			}
 		};
-	}	
+	}
 
 RESOURCE MENU_BAR r_mobbler_status_options_menu
 	{
@@ -238,7 +241,7 @@ RESOURCE MENU_BAR r_mobbler_status_options_menu
 			}
 		};
 	}
-	
+
 RESOURCE MENU_PANE r_mobbler_status_menu_pane
 	{
 	items =
@@ -405,21 +408,6 @@ RESOURCE MENU_PANE r_mobbler_view_submenu_pane
 		};
 	}
 
-RESOURCE MENU_PANE r_mobbler_map_submenu_pane
-	{
-	items =
-		{
-		MENU_ITEM
-			{
-			command = EMobblerCommandVisitMap;
-			},
-		MENU_ITEM
-			{
-			command = EMobblerCommandFoursquare;
-			}
-		};
-	}
-	
 RESOURCE MENU_PANE r_radio_submenu_pane
 	{
 	items =
@@ -500,10 +488,6 @@ RESOURCE MENU_PANE r_mobbler_tools_submenu_pane
 		MENU_ITEM
 			{
 			command = EMobblerCommandLanguagePatches;
-			},
-		MENU_ITEM
-			{
-			command = EMobblerCommandQrCode;
 			}
 		};
 	}
@@ -524,7 +508,7 @@ RESOURCE DIALOG r_mobbler_text_query_dialog
 				control = EDWIN
 					{
 					flags= EEikEdwinNoHorizScrolling | EEikEdwinResizable;
-					maxlength = KMobblerMaxQueryDialogLength;
+					maxlength = EMobblerMaxQueryDialogLength;
 					width = 4;
 					lines = 1;
 					};
@@ -532,7 +516,7 @@ RESOURCE DIALOG r_mobbler_text_query_dialog
 			}
 		};
 	}
-	
+
 RESOURCE STATUS_PANE_APP_MODEL r_mobbler_status_pane
 	{
 	panes =
@@ -545,12 +529,12 @@ RESOURCE STATUS_PANE_APP_MODEL r_mobbler_status_pane
 			}
 		};
 	}
-	
+
 RESOURCE TITLE_PANE r_mobbler_title_resource
 	{
 	txt = STR_mobbler_mobbler;
 	}
-	
+
 RESOURCE AVKON_SETTING_ITEM_LIST r_mobbler_setting_item_list
 	{
 	title = "";
@@ -564,7 +548,7 @@ RESOURCE AVKON_SETTING_PAGE r_mobbler_binary_setting_page
 
 RESOURCE POPUP_SETTING_LIST r_mobbler_popup_binary_setting_list
 	{
-	// no definitions required - values obtained from 
+	// no definitions required - values obtained from
 	// associated_resource of owning AVKON_SETTING_ITEM_LIST
 	}
 
@@ -582,20 +566,12 @@ RESOURCE AVKON_SETTING_PAGE r_mobbler_setting_page_username
 
 RESOURCE EDWIN r_mobbler_setting_page_resource_id_username
 	{
-	maxlength = KMobblerMaxUsernameLength;
+	maxlength = 30;
 	default_case = EAknEditorLowerCase;
 	allowed_case_modes = EAknEditorAllCaseModes;
 	numeric_keymap = EAknEditorStandardNumberModeKeymap;
 	default_input_mode = EAknEditorTextInputMode;
-	allowed_input_modes = EAknEditorTextInputMode | 
-						  EAknEditorNumericInputMode | 
-						  EAknEditorSecretAlphaInputMode | 
-						  EAknEditorKatakanaInputMode |
-						  EAknEditorFullWidthTextInputMode | 
-						  EAknEditorFullWidthNumericInputMode | 
-						  EAknEditorFullWidthKatakanaInputMode | 
-						  EAknEditorHiraganaKanjiInputMode | 
-						  EAknEditorHalfWidthTextInputMode;
+	allowed_input_modes = EAknEditorTextInputMode | EAknEditorNumericInputMode | EAknEditorSecretAlphaInputMode | EAknEditorKatakanaInputMode | EAknEditorFullWidthTextInputMode | EAknEditorFullWidthNumericInputMode | EAknEditorFullWidthKatakanaInputMode | EAknEditorHiraganaKanjiInputMode | EAknEditorHalfWidthTextInputMode;
 	}
 
 RESOURCE AVKON_SETTING_PAGE r_mobbler_setting_page_password
@@ -604,10 +580,10 @@ RESOURCE AVKON_SETTING_PAGE r_mobbler_setting_page_password
 	type = EEikCtSecretEd;
 	editor_resource_id = r_mobbler_setting_page_resource_id_password;
 	}
-	
+
 RESOURCE SECRETED r_mobbler_setting_page_resource_id_password
 	{
-	num_letters = KMobblerMaxPasswordLength;
+	num_letters = 30;
 	}
 
 RESOURCE ARRAY r_mobbler_binary_texts
@@ -694,9 +670,9 @@ RESOURCE AVKON_SETTING_PAGE r_mobbler_integer_setting_page_sleep_minutes
 
 RESOURCE AVKON_INTEGER_EDWIN r_mobbler_integer_edwin_sleep_minutes
 	{
-	min = 0;
+	min = 1;
 	max = 999; // 16 hours and 39 minutes
-	}  
+	}
 
 RESOURCE DIALOG r_mobbler_wait_dialog
 	{
@@ -708,8 +684,8 @@ RESOURCE DIALOG r_mobbler_wait_dialog
 			{
 			type = EAknCtNote;
 			id = EMobblerWait;
-			control= AVKON_NOTE 
-				{ 
+			control= AVKON_NOTE
+				{
 				layout = EWaitLayout;
 				animation = R_QGN_GRAF_WAIT_BAR_ANIM;
 				};
@@ -765,15 +741,7 @@ RESOURCE EDWIN r_mobbler_setting_page_text_edwin
 	allowed_case_modes = EAknEditorAllCaseModes;
 	numeric_keymap = EAknEditorStandardNumberModeKeymap;
 	default_input_mode = EAknEditorTextInputMode;
-	allowed_input_modes = EAknEditorTextInputMode | 
-						  EAknEditorNumericInputMode | 
-						  EAknEditorSecretAlphaInputMode | 
-						  EAknEditorKatakanaInputMode | 
-						  EAknEditorFullWidthTextInputMode | 
-						  EAknEditorFullWidthNumericInputMode | 
-						  EAknEditorFullWidthKatakanaInputMode | 
-						  EAknEditorHiraganaKanjiInputMode | 
-						  EAknEditorHalfWidthTextInputMode;
+	allowed_input_modes = EAknEditorTextInputMode | EAknEditorNumericInputMode | EAknEditorSecretAlphaInputMode | EAknEditorKatakanaInputMode | EAknEditorFullWidthTextInputMode | EAknEditorFullWidthNumericInputMode | EAknEditorFullWidthKatakanaInputMode | EAknEditorHiraganaKanjiInputMode | EAknEditorHalfWidthTextInputMode;
 	}
 
 RESOURCE DIALOG r_mobbler_downloading_dialog
@@ -805,7 +773,7 @@ RESOURCE DIALOG r_mobbler_yes_no_query_dialog
 			{
 			type = EAknCtQuery;
 			id = EMobblerQuery;
-			
+
 			control = AVKON_CONFIRMATION_QUERY
 				{
 				layout = EConfirmationQueryLayout;
@@ -825,7 +793,7 @@ RESOURCE DIALOG r_mobbler_ok_cancel_query_dialog
 			{
 			type = EAknCtQuery;
 			id = EMobblerQuery;
-			
+
 			control = AVKON_CONFIRMATION_QUERY
 				{
 				layout = EConfirmationQueryLayout;
@@ -872,63 +840,11 @@ RESOURCE DIALOG r_mobbler_get_latest_language_dialog
 			{
 			type = EAknCtQuery;
 			id = EMobblerGetLatestLanguageNote;
-			
+
 			control = AVKON_CONFIRMATION_QUERY
 				{
 				layout = EConfirmationQueryLayout;
 				animation = R_QGN_NOTE_ERROR_ANIM;
-				};
-			}
-		};
-	}
-
-RESOURCE DIALOG r_mobbler_username_password_query_dialog
-	{
-	flags = EGeneralQueryFlags;
-//	buttons = R_AVKON_SOFTKEYS_OK_CANCEL;
-	buttons = R_AVKON_SOFTKEYS_OK_EMPTY;
-	items =
-		{
-		DLG_LINE
-			{
-			type = EAknCtMultilineQuery;
-			id = EMultilineFirstLine;
-			control = AVKON_DATA_QUERY
-				{
-				layout = EMultiDataFirstEdwin;
-				control = EDWIN
-					{
-					flags = EEikEdwinNoHorizScrolling | EEikEdwinResizable;
-					width = 25;
-					lines = 1;
-					maxlength = KMobblerMaxUsernameLength;
-					default_case = EAknEditorLowerCase;
-					allowed_case_modes = EAknEditorAllCaseModes;
-					numeric_keymap = EAknEditorStandardNumberModeKeymap;
-					default_input_mode = EAknEditorTextInputMode;
-					allowed_input_modes = EAknEditorTextInputMode | 
-										  EAknEditorNumericInputMode | 
-										  EAknEditorSecretAlphaInputMode | 
-										  EAknEditorKatakanaInputMode |
-										  EAknEditorFullWidthTextInputMode | 
-										  EAknEditorFullWidthNumericInputMode | 
-										  EAknEditorFullWidthKatakanaInputMode | 
-										  EAknEditorHiraganaKanjiInputMode | 
-										  EAknEditorHalfWidthTextInputMode;
-					};
-				};
-			},
-		DLG_LINE
-			{
-			type = EAknCtMultilineQuery;
-			id = EMultilineSecondLine;
-			control = AVKON_DATA_QUERY
-				{
-				layout = EMultiDataSecondSecEd;
-				control = SECRETED
-					{
-					num_letters = KMobblerMaxPasswordLength;
-					};
 				};
 			}
 		};

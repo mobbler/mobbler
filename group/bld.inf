@@ -21,18 +21,19 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
+
+
 PRJ_MMPFILES
 // application icon makefile
 gnumakefile icons.mk
-
+PRJ_MMPFILES
 // projects
 mobbler.mmp
-..\musicappobserver\group\musicappobserver.mmp
-..\mobblermusicapp30\group\mobblermusicapp30.mmp
-..\musicappobservermpx\group\musicappobservermpx.mmp
-..\touchfeedback\group\mobblertouchfeedback.mmp
+
+//..\musicappobservermpx\group\musicappobservermpx.mmp
+//..\touchfeedback\group\mobblertouchfeedback.mmp
 ..\contentlisting\group\mobblercontentlisting.mmp
-..\gestureobserver\group\gestureobserver3x.mmp
+//..\gestureobserver\group\gestureobserver3x.mmp
 ..\destinations\group\mobblerdestinations.mmp
 
 // In 5th edition, the sensor framework now requires SymbianSigned (ReadDeviceData)
@@ -40,24 +41,23 @@ mobbler.mmp
 
 PRJ_EXPORTS
 // music player ecom plugin interface
-..\inc\mobblermusicapp.h				mobbler\mobblermusicapp.h
+..\inc\mobblermusicapp.h	mobbler\mobblermusicapp.h
 ..\inc\mobblertouchfeedbackinterface.h	mobbler\mobblertouchfeedbackinterface.h
 ..\inc\mobblercontentlistinginterface.h	mobbler\mobblercontentlistinginterface.h
-..\inc\mobblergesturesinterface.h		mobbler\mobblergesturesinterface.h
+..\inc\mobblergesturesinterface.h	mobbler\mobblergesturesinterface.h
 ..\inc\mobblerdestinationsinterface.h	mobbler\mobblerdestinationsinterface.h
 
 // mobbler_gfx
 ..\gfx\icon_track.png						z:\resource\apps\mobbler\icon_track.png
 ..\gfx\scrobble.png							z:\resource\apps\mobbler\scrobble.png
-..\gfx\lastfm_badges\lastfm_red_small.png	z:\resource\apps\mobbler\lastfm.png
-..\gfx\cover_small.gif						z:\resource\apps\mobbler\default_album.gif
-..\gfx\default_artist_small.png				z:\resource\apps\mobbler\default_artist.png
-..\gfx\office-calendar.png					z:\resource\apps\mobbler\default_event.png
-..\gfx\default_album_small.png				z:\resource\apps\mobbler\default_playlist.png
-..\gfx\default_tag_small.png				z:\resource\apps\mobbler\default_tag.png
-..\gfx\audio-x-generic.png					z:\resource\apps\mobbler\default_track.png
-..\gfx\default_user_small.png				z:\resource\apps\mobbler\default_user.png
-..\gfx\preferences-desktop-multimedia.png	z:\resource\apps\mobbler\icon_alarm.png
-..\gfx\qrcode.png							z:\resource\apps\mobbler\Mobbler.png
+..\gfx\lastfm_badges\lastfm_red_small.png					z:\resource\apps\mobbler\lastfm.png
+..\gfx\cover_small.gif										z:\resource\apps\mobbler\default_album.gif
+..\gfx\default_artist_small.png								z:\resource\apps\mobbler\default_artist.png
+..\gfx\office-calendar.png									z:\resource\apps\mobbler\default_event.png
+..\gfx\default_album_small.png								z:\resource\apps\mobbler\default_playlist.png
+..\gfx\default_tag_small.png								z:\resource\apps\mobbler\default_tag.png
+..\gfx\audio-x-generic.png									z:\resource\apps\mobbler\default_track.png
+..\gfx\default_user_small.png								z:\resource\apps\mobbler\default_user.png
+..\gfx\preferences-desktop-multimedia.png					z:\resource\apps\mobbler\icon_alarm.png
 
 // End of file

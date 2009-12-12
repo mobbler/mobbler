@@ -31,7 +31,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <DocumentHandler.h>
 #include <EscapeUtils.h>
 #include <s32file.h>
-#include <sendomfragment.h>
+
 
 #ifdef __SYMBIAN_SIGNED__
 #include <aknswallpaperutils.h>
@@ -54,7 +54,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "mobbler_strings.rsg.h"
 #include "mobblerappui.h"
 #include "mobblerbitmapcollection.h"
-#include "mobblerliterals.h"
+#include "mobblerbrowserview.h"
 #include "mobblerlogging.h"
 #include "mobblermusiclistener.h"
 #include "mobblerparser.h"
@@ -82,7 +82,6 @@ const TUid KDestinationImplUid = {0xA000BEB6};
 const TUid KMobblerGesturePlugin5xUid = {0xA000B6C2};
 #endif
 
-_LIT(KSpace, " ");
 
 CMobblerSystemCloseGlobalQuery* CMobblerSystemCloseGlobalQuery::NewL()
 	{
@@ -133,8 +132,8 @@ void CMobblerAppUi::ConstructL()
 	iResourceReader = CMobblerResourceReader::NewL();
 	iBitmapCollection = CMobblerBitmapCollection::NewL();
 	
-	iVolumeUpCallBack = TCallBack(CMobblerAppUi::VolumeUpCallBack, this);
-	iVolumeDownCallBack = TCallBack(CMobblerAppUi::VolumeDownCallBack, this);
+	iVolumeUpCallBack = TCallBack(CMobblerAppUi::VolumeUpCallBackL, this);
+	iVolumeDownCallBack = TCallBack(CMobblerAppUi::VolumeDownCallBackL, this);
 	
 	iInterfaceSelector = CRemConInterfaceSelector::NewL();
 	iCoreTarget = CRemConCoreApiTarget::NewL(*iInterfaceSelector, *this);
@@ -155,11 +154,7 @@ void CMobblerAppUi::ConstructL()
 	iStatusView = CMobblerStatusView::NewL();
 	
 	iLastFmConnection = CMobblerLastFmConnection::NewL(*this, iSettingView->Username(), iSettingView->Password(), iSettingView->IapId(), iSettingView->BitRate());
-	iRadioPlayer = CMobblerRadioPlayer::NewL(*iLastFmConnection, 
-											 iSettingView->BufferSize(), 
-											 iSettingView->EqualizerIndex(), 
-											 iSettingView->Volume(), 
-											 iSettingView->BitRate());
+	iRadioPlayer = CMobblerRadioPlayer::NewL(*iLastFmConnection, iSettingView->BufferSize(), iSettingView->EqualizerIndex(), iSettingView->Volume(), iSettingView->BitRate());
 	iMusicListener = CMobblerMusicAppListener::NewL(*iLastFmConnection);
 	
 	RProcess().SetPriority(EPriorityHigh);
@@ -175,7 +170,8 @@ void CMobblerAppUi::ConstructL()
 	iAlarmTimer = CMobblerSleepTimer::NewL(EPriorityLow, *this);
 	
 	iWebServicesView = CMobblerWebServicesView::NewL();
-	
+	iBrowserView = CMobblerBrowserView::NewL();
+
 	iLastFmConnection->SetModeL(iSettingView->Mode());
 	iLastFmConnection->LoadCurrentTrackL();
 	
@@ -195,6 +191,7 @@ void CMobblerAppUi::ConstructL()
 		}
 	
 	AddViewL(iWebServicesView);
+	AddViewL(iBrowserView);
 	AddViewL(iSettingView);
 	AddViewL(iStatusView);
 	ActivateLocalViewL(iStatusView->Id());
@@ -219,29 +216,31 @@ CMobblerAppUi::~CMobblerAppUi()
 		REComSession::DestroyedImplementation(iDestinationsDtorUid);
 		}
 	
+	delete iPreviousRadioArtist;
+	delete iPreviousRadioTag;
+	delete iPreviousRadioUser;
+	delete iPreviousRadioPlaylistId;
+	delete iMusicListener;
+	delete iRadioPlayer;
+	delete iLastFmConnection;
+	delete iMobblerDownload;
+	delete iInterfaceSelector;
+	delete iVolumeUpTimer;
+	delete iVolumeDownTimer;
+	
 #if !defined(__SYMBIAN_SIGNED__) && !defined(__WINS__)
 	delete iBrowserLauncher;
 #endif
-	delete iAlarmTimer;
-	delete iBitmapCollection;
-	delete iCheckForUpdatesObserver;
-	delete iDocHandler;
-//	delete iFetchLyricsObserver;
-	delete iInterfaceSelector;
-	delete iLastFmConnection;
-	delete iMobblerDownload;
-	delete iMusicListener;
-	delete iPreviousRadioArtist;
-	delete iPreviousRadioPlaylistId;
-	delete iPreviousRadioTag;
-	delete iPreviousRadioUser;
-	delete iRadioPlayer;
 	delete iResourceReader;
 	delete iSleepTimer;
-	delete iSystemCloseGlobalQuery;
-	delete iVolumeDownTimer;
-	delete iVolumeUpTimer;
+	delete iAlarmTimer;
+	delete iBitmapCollection;
+	
 	delete iWebServicesHelper;
+	
+	delete iCheckForUpdatesObserver;
+	
+	delete iSystemCloseGlobalQuery;
 	}
 
 TBool CMobblerAppUi::AccelerometerGesturesAvailable() const
@@ -249,7 +248,7 @@ TBool CMobblerAppUi::AccelerometerGesturesAvailable() const
 	return (iGesturePlugin != NULL);
 	}
 
-TInt CMobblerAppUi::VolumeUpCallBack(TAny *aSelf)
+TInt CMobblerAppUi::VolumeUpCallBackL(TAny *aSelf)
 	{
 	CMobblerAppUi* self(static_cast<CMobblerAppUi*>(aSelf));
 	
@@ -263,7 +262,7 @@ TInt CMobblerAppUi::VolumeUpCallBack(TAny *aSelf)
 	return KErrNone;
 	}
 
-TInt CMobblerAppUi::VolumeDownCallBack(TAny *aSelf)
+TInt CMobblerAppUi::VolumeDownCallBackL(TAny *aSelf)
 	{
 	CMobblerAppUi* self(static_cast<CMobblerAppUi*>(aSelf));
 	
@@ -296,7 +295,7 @@ void CMobblerAppUi::MrccatoCommand(TRemConCoreApiOperationId aOperationId, TRemC
 			{
 			if (aButtonAct == ERemConCoreApiButtonClick)
 				{
-				iRadioPlayer->StopL();
+				iRadioPlayer->Stop();
 				}
 			iCoreTarget->StopResponse(status, KErrNone);
 			User::WaitForRequest(status);
@@ -390,13 +389,9 @@ void CMobblerAppUi::MrccatoCommand(TRemConCoreApiOperationId aOperationId, TRemC
 		}
 	}
 
-void CMobblerAppUi::SetDetailsL(const TDesC& aUsername, const TDesC& aPassword, TBool aAndSaveToSettings)
+void CMobblerAppUi::SetDetailsL(const TDesC& aUsername, const TDesC& aPassword)
 	{
 	iLastFmConnection->SetDetailsL(aUsername, aPassword);
-	if (aAndSaveToSettings)
-		{
-		iSettingView->SetDetailsL(aUsername, aPassword);
-		}
 	}
 
 void CMobblerAppUi::SetIapIDL(TUint32 aIapId)
@@ -411,7 +406,7 @@ void CMobblerAppUi::SetBufferSize(TTimeIntervalSeconds aBufferSize)
 
 void CMobblerAppUi::SetBitRateL(TInt aBitRate)
 	{
-	iLastFmConnection->SetBitRate(aBitRate);
+	iLastFmConnection->SetBitRateL(aBitRate);
 	iRadioPlayer->SetBitRateL(aBitRate);
 	}
 
@@ -476,7 +471,7 @@ CMobblerDestinationsInterface* CMobblerAppUi::Destinations() const
 	return iDestinations;
 	}
 
-HBufC* CMobblerAppUi::MusicAppNameL() const
+const TDesC& CMobblerAppUi::MusicAppNameL() const
 	{
 	return iMusicListener->MusicAppNameL();
 	}
@@ -492,10 +487,24 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 	const CMobblerTrack* const currentTrack(CurrentTrack());
 	const CMobblerTrack* const currentRadioTrack(iRadioPlayer->CurrentTrack());
 	
-	TBuf<KMobblerMaxQueryDialogLength> tag;
-	TBuf<KMobblerMaxQueryDialogLength> artist;
-	TBuf<KMobblerMaxQueryDialogLength> user;
-	
+	TBuf<EMobblerMaxQueryDialogLength> tag;
+	TBuf<EMobblerMaxQueryDialogLength> artist;
+	TBuf<EMobblerMaxQueryDialogLength> user;
+
+	// Don't bother going online to Last.fm if no user details entered
+	if (aCommand >= EMobblerCommandOnline)
+		{
+		if (BaflUtils::FileExists(CCoeEnv::Static()->FsSession(), KSettingsFile)
+			== EFalse)
+			{
+			CAknInformationNote* note(new (ELeave) CAknInformationNote(EFalse));
+			note->ExecuteLD(iResourceReader->ResourceL(R_MOBBLER_NOTE_NO_DETAILS));
+
+			// bail from the function
+			return;
+			}
+		}
+
 	switch (aCommand)
 		{
 		case EAknSoftkeyExit:
@@ -509,7 +518,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 			task.SendToBackground();
 			/// Check if scrobblable first and save queue
 			iLastFmConnection->TrackStoppedL(currentTrack);
-			iRadioPlayer->StopL();
+			iRadioPlayer->Stop();
 			Exit();
 			break;
 		case EAknSoftkeyBack:
@@ -535,7 +544,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 		case EMobblerCommandUserTopTags:		// intentional fall-through
 		case EMobblerCommandRecentTracks:		// intentional fall-through
 		case EMobblerCommandUserShoutbox:		// intentional fall-through
-			
+		
 			if (iLastFmConnection->Mode() != CMobblerLastFmConnection::EOnline && GoOnlineL())
 				{
 				iLastFmConnection->SetModeL(CMobblerLastFmConnection::EOnline);
@@ -548,14 +557,14 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 				ActivateLocalViewL(iWebServicesView->Id(), TUid::Uid(aCommand), username->String8());
 				CleanupStack::PopAndDestroy(username);
 				}
-			
+				
 			break;
 		case EMobblerCommandSearchTrack:
 		case EMobblerCommandSearchAlbum:
 		case EMobblerCommandSearchArtist:
 		case EMobblerCommandSearchTag:
 			{
-			TBuf<KMobblerMaxQueryDialogLength> search;
+			TBuf<EMobblerMaxQueryDialogLength> search;
 			CAknTextQueryDialog* userDialog(new(ELeave) CAknTextQueryDialog(search));
 			userDialog->PrepareLC(R_MOBBLER_TEXT_QUERY_DIALOG);
 			TInt resourceId;
@@ -596,20 +605,6 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 			iLastFmConnection->CheckForUpdateL(*iCheckForUpdatesObserver);
 			}
 			break;
-/*		case EMobblerCommandFetchLyrics:
-			{
-			if (currentTrack)
-				{
-				delete iFetchLyricsObserver;
-				iFetchLyricsObserver = CMobblerFlatDataObserverHelper::NewL(
-											*iLastFmConnection, *this, ETrue);
-				iLastFmConnection->FetchLyricsL(currentTrack->Artist().String8(), 
-												currentTrack->Title().String8(), 
-												*iFetchLyricsObserver);
-				}
-			}
-			break;
-*/
 		case EMobblerCommandEditSettings:
 			ActivateLocalViewL(iSettingView->Id(), 
 								TUid::Uid(CMobblerSettingItemListView::ENormalSettings), 
@@ -832,6 +827,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 				CleanupStack::PopAndDestroy(menuText);
 				
 				// Add the other menu items
+				items->AppendL(iResourceReader->ResourceL(R_MOBBLER_VIEW_ARTIST_BIO));
 				items->AppendL(iResourceReader->ResourceL(R_MOBBLER_SHARE_TRACK));
 				items->AppendL(iResourceReader->ResourceL(R_MOBBLER_SHARE_ARTIST));
 				items->AppendL(iResourceReader->ResourceL(R_MOBBLER_PLAYLIST_ADD_TRACK));
@@ -863,6 +859,11 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 							{
 							case EPlusOptionVisitLastFm:
 								HandleCommandL(EMobblerCommandVisitWebPage);
+								break;
+							case EPlusOptionViewArtistBio:
+								{
+								ActivateLocalViewL(iBrowserView->Id(), TUid::Uid(EMobblerCommandArtistBio), currentTrack->Artist().String8());
+								}
 								break;
 							case EPlusOptionShareTrack:
 							case EPlusOptionShareArtist:
@@ -956,13 +957,13 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 				CTextListBoxModel* model(list->Model());
 				model->SetItemTextArray(items);
 				model->SetOwnershipType(ELbmOwnsItemArray);
-				CleanupStack::Pop(items);
+				CleanupStack::Pop();
 				
 				popupList->SetTitleL(iResourceReader->ResourceL(R_MOBBLER_VISIT_LASTFM));
 				
 				list->SetCurrentItemIndex(1);
 				TInt popupOk(popupList->ExecuteLD());
-				CleanupStack::Pop(); // popupList->ExecuteLD()
+				CleanupStack::Pop();
 				
 				if (popupOk)
 					{
@@ -1000,7 +1001,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 #ifdef __SYMBIAN_SIGNED__
 		case EMobblerCommandSetAsWallpaper:
 			{
-			TInt error(SetAlbumArtAsWallpaper());
+			TInt error(SetAlbumArtAsWallpaperL());
 			TInt resourceId(R_MOBBLER_NOTE_WALLPAPER_SET);
 			if (error != KErrNone)
 				{
@@ -1060,10 +1061,6 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 		case EMobblerCommandLanguagePatches:
 			_LIT(KLanguagePatchesUrl, "http://code.google.com/p/mobbler/downloads/list?can=2&q=Type-Language&sort=summary&colspec=Filename+Uploaded");
 			OpenWebBrowserL(KLanguagePatchesUrl);
-			break;
-		case EMobblerCommandQrCode:
-			_LIT(KQrCodeFile, "C:Mobbler.png");
-			LaunchFileEmbeddedL(KQrCodeFile);
 			break;
 		default:
 			if (aCommand >= EMobblerCommandEqualizerDefault && 
@@ -1159,7 +1156,7 @@ TBool CMobblerAppUi::RadioStartableL() const
 		// Tell the user that there was an error connecting
 		CAknResourceNoteDialog *note(new (ELeave) CAknInformationNote(EFalse));
 		note->ExecuteLD(iResourceReader->ResourceL(R_MOBBLER_NOTE_STOP_MUSIC_PLAYER));
-		
+
 		return EFalse;
 		}
 	else
@@ -1206,9 +1203,9 @@ void CMobblerAppUi::HandleStatusPaneSizeChange()
 
 void CMobblerAppUi::DataL(CMobblerFlatDataObserverHelper* aObserver, const TDesC8& aData, CMobblerLastFmConnection::TTransactionError aTransactionError)
 	{
-	if (aTransactionError == CMobblerLastFmConnection::ETransactionErrorNone)
+	if (aObserver == iCheckForUpdatesObserver)
 		{
-		if (aObserver == iCheckForUpdatesObserver)
+		if (aTransactionError == CMobblerLastFmConnection::ETransactionErrorNone)
 			{
 			// we have just sucessfully checked for updates
 			// so don't do it again for another week
@@ -1218,7 +1215,7 @@ void CMobblerAppUi::DataL(CMobblerFlatDataObserverHelper* aObserver, const TDesC
 			iSettingView->SetNextUpdateCheckL(now);
 			
 			TVersion version;
-			TBuf8<KMaxMobblerTextSize> location;
+			TBuf8<255> location;
 			TInt error(CMobblerParser::ParseUpdateResponseL(aData, version, location));
 			
 			if (error == KErrNone)
@@ -1233,7 +1230,7 @@ void CMobblerAppUi::DataL(CMobblerFlatDataObserverHelper* aObserver, const TDesC
 					 version.iBuild > KVersion.iBuild))
 					{
 					CAknQueryDialog* dlg(CAknQueryDialog::NewL());
-					TBool yes(dlg->ExecuteLD(R_MOBBLER_YES_NO_QUERY_DIALOG, iResourceReader->ResourceL(R_MOBBLER_UPDATE)));
+					TBool yes( dlg->ExecuteLD(R_MOBBLER_YES_NO_QUERY_DIALOG, iResourceReader->ResourceL(R_MOBBLER_UPDATE)));
 					
 					if (yes)
 						{
@@ -1247,63 +1244,6 @@ void CMobblerAppUi::DataL(CMobblerFlatDataObserverHelper* aObserver, const TDesC
 					}
 				}
 			}
-/*		else if (aObserver == iFetchLyricsObserver)
-			{
-			DUMPDATA(aData, _L("lyricsdata.txt"));
-			_LIT(KLyricsFilename, "c:\\mobblerlyrics.txt");
-			//_LIT8(KElementStart, "start");
-			//_LIT8(KElementSg, "sq");
-			_LIT8(KElementTx, "tx");
-			_LIT8(KElement200, "200");
-			_LIT8(KElement300, "300");
-			
-			RFileWriteStream file;
-			CleanupClosePushL(file);
-			file.Replace(CCoeEnv::Static()->FsSession(), KLyricsFilename, EFileWrite);
-			
-			// Create the XML reader and DOM fragement and associate them with each other
-			CSenXmlReader* xmlReader(CSenXmlReader::NewL());
-			CleanupStack::PushL(xmlReader);
-			CSenDomFragment* domFragment(CSenDomFragment::NewL());
-			CleanupStack::PushL(domFragment);
-			xmlReader->SetContentHandler(*domFragment);
-			domFragment->SetReader(*xmlReader);
-			
-			xmlReader->ParseL(aData);
-			
-			// Get the error code
-			const TDesC8* statusText(domFragment->AsElement().AttrValue(KElementStatus));
-			
-			if (statusText && (statusText->CompareF(KElement200) == 0))
-				{
-				LOG(_L8("200 - ok"));
-				const TDesC8* lyricsText(domFragment->AsElement().AttrValue(KElementTx));
-				file.WriteL(*lyricsText);
-				}
-			else if (statusText && (statusText->CompareF(KElement300) == 0))
-				{
-				LOG(_L8("300 - TESTING LIMITED"));
-				const TDesC8* lyricsText(domFragment->AsElement().AttrValue(KElementTx));
-				file.WriteL(*lyricsText);
-				}
-			else if (statusText)
-				{
-				LOG(_L8("statusText"));
-				file.WriteL(*statusText);
-				}
-			else
-				{
-				// error!
-				LOG(_L8("error!"));
-				file.WriteL(aData);
-				}
-			CleanupStack::PopAndDestroy(2);
-			
-			CleanupStack::PopAndDestroy(&file);
-			
-			LaunchFileEmbeddedL(KLyricsFilename);
-			}
-*/
 		}
 	}
 
@@ -1354,12 +1294,12 @@ void CMobblerAppUi::HandleCommsErrorL(TInt aStatusCode, const TDesC8& aStatus)
 	{
 	// iStatusView->DrawDeferred();
 	
-	HBufC* noteText(HBufC::NewLC(KMaxMobblerTextSize));
+	HBufC* noteText(HBufC::NewLC(255));
 
 	noteText->Des().Append(iResourceReader->ResourceL(R_MOBBLER_NOTE_COMMS_ERROR));
-	noteText->Des().Append(KSpace);
+	noteText->Des().Append(_L(" "));
 	noteText->Des().AppendNum(aStatusCode);
-	noteText->Des().Append(KSpace);
+	noteText->Des().Append(_L(" "));
 	
 	HBufC* status(HBufC::NewLC(aStatus.Length()));
 	status->Des().Copy(aStatus);
@@ -1389,11 +1329,11 @@ void CMobblerAppUi::HandleTrackNowPlayingL(const CMobblerTrackBase& /*aTrack*/)
 
 #ifdef __SYMBIAN_SIGNED__
 	iWallpaperSet = EFalse;
-	SetAlbumArtAsWallpaper(ETrue);
+	SetAlbumArtAsWallpaperL(ETrue);
 #endif
 	}
 
-void CMobblerAppUi::HandleTrackSubmitted(const CMobblerTrackBase& /*aTrack*/)
+void CMobblerAppUi::HandleTrackSubmittedL(const CMobblerTrackBase& /*aTrack*/)
 	{
 	iStatusView->DrawDeferred();
 	++iTracksSubmitted;
@@ -1501,7 +1441,7 @@ void CMobblerAppUi::LoadRadioStationsL()
 			iPreviousRadioStation = EMobblerCommandRadioPersonal;
 			}
 		
-		TBuf<KMaxMobblerTextSize> radio;
+		TBuf<255> radio;
 		if (readStream.ReadInt8L())
 			{
 			readStream >> radio;
@@ -1638,14 +1578,6 @@ void CMobblerAppUi::SetSleepTimerL(const TInt aMinutes)
 #endif
 	iTimeToSleep.UniversalTime();
 	iTimeToSleep += delay;
-	
-	if (sleepMinutes == 0)
-		{
-		 // Use a one second delay
-		TTimeIntervalSeconds oneSecond(1);
-		iTimeToSleep += oneSecond;
-		}
-	
 	iSleepTimer->AtUTC(iTimeToSleep);
 
 #ifdef _DEBUG
@@ -1791,7 +1723,7 @@ void CMobblerAppUi::SleepL()
 	// Do this for all actions, it gives Mobbler a chance to scrobble
 	// the newly stopped song to Last.fm whilst displaying the dialog
 	iLastFmConnection->TrackStoppedL(CurrentTrack());
-	iRadioPlayer->StopL();
+	iRadioPlayer->Stop();
 	
 #ifdef _DEBUG
 	CEikonEnv::Static()->InfoMsg(_L("Sleep!"));
@@ -1926,16 +1858,15 @@ void CMobblerAppUi::HandleSingleShakeL(TMobblerShakeGestureDirection aDirection)
 
 void CMobblerAppUi::LaunchFileEmbeddedL(const TDesC& aFilename)
 	{
-	if (!iDocHandler)
-		{
-		iDocHandler = CDocumentHandler::NewL(CEikonEnv::Static()->Process());
-		}
+	CDocumentHandler* docHandler(CDocumentHandler::NewL(CEikonEnv::Static()->Process()));
 	
 	// Set the exit observer so HandleServerAppExit will be called
-	iDocHandler->SetExitObserver(this);
+	docHandler->SetExitObserver(this);
 	
 	TDataType emptyDataType = TDataType();
-	iDocHandler->OpenFileEmbeddedL(aFilename, emptyDataType);
+	docHandler->OpenFileEmbeddedL(aFilename, emptyDataType);
+	
+	delete docHandler;
 	}
  
 void CMobblerAppUi::HandleServerAppExit(TInt aReason)
@@ -1947,14 +1878,14 @@ void CMobblerAppUi::HandleServerAppExit(TInt aReason)
 void CMobblerAppUi::GoToLastFmL(TInt aCommand, const TDesC8& aEventId)
 	{
 	CMobblerTrack* currentTrack(CurrentTrack());
-	TBuf<KMaxMobblerTextSize> url(MobblerUtility::LocalLastFmDomainL());
+	TBuf<255> url(MobblerUtility::LocalLastFmDomainL());
 
 	if (aCommand == EMobblerCommandEventWebPage)
 		{
 		_LIT(KEventSlash, "event/");
 		
 		url.Append(KEventSlash);
-		TBuf<KMaxMobblerTextSize> eventId;
+		TBuf<255> eventId;
 		eventId.Copy(aEventId);
 		url.Append(eventId);
 		
@@ -1966,7 +1897,6 @@ void CMobblerAppUi::GoToLastFmL(TInt aCommand, const TDesC8& aEventId)
 		_LIT(KSlash, "/");
 		_LIT(KUnderscoreSlash, "_/");
 		_LIT(KPlusEvents, "+events");
-		_LIT(KPlus, "+");
 		
 		url.Append(KMusicSlash);
 		url.Append(currentTrack->Artist().String());
@@ -1991,73 +1921,20 @@ void CMobblerAppUi::GoToLastFmL(TInt aCommand, const TDesC8& aEventId)
 			}
 		
 		// Replace space with '+' in the artist name for the URL
-		TInt position(url.Find(KSpace));
+		TInt position(url.Find(_L(" ")));
 		while (position != KErrNotFound)
 			{
-			url.Replace(position, 1, KPlus);
-			position = url.Find(KSpace);
+			url.Replace(position, 1, _L("+"));
+			position = url.Find(_L(" "));
 			}
 		
 		OpenWebBrowserL(url);
 		}
 	}
 
-void CMobblerAppUi::GoToMapL(const TDesC8& aName, const TDesC8& aLatitude, const TDesC8& aLongitude)
-	{
-	_LIT(KMapKmlFilename, "c:\\mobblermap.kml");
-	
-	_LIT8(KMapKmlFormat,	"<kml xmlns=\"http://earth.google.com/kml/2.0\">\r\n"
-							"\t<Placemark>\r\n "
-							"\t\t<name>%S</name>\r\n"
-							"\t\t<description>Created by Mobbler</description>\r\n" 
-							"\t\t<Point>\r\n "
-							"\t\t\t<coordinates>%S,%S</coordinates>\r\n"
-							"\t\t</Point>\r\n"
-							"\t</Placemark>\r\n"
-							"</kml>\r\n");
-	
-	HBufC8* kmlFileContents(HBufC8::NewLC(KMapKmlFormat().Length() + aName.Length() + aLongitude.Length() + aLatitude.Length()));
-	
-	kmlFileContents->Des().Format(KMapKmlFormat, &aName, &aLongitude, &aLatitude);
-	
-	RFile file;
-	CleanupClosePushL(file);
-	file.Replace(CCoeEnv::Static()->FsSession(), KMapKmlFilename, EFileWrite);
-	file.Write(*kmlFileContents);
-	CleanupStack::PopAndDestroy(&file);
-	
-	CleanupStack::PopAndDestroy(kmlFileContents);
-	
-	CDocumentHandler* docHandler(CDocumentHandler::NewL(CEikonEnv::Static()->Process()));
-	CleanupStack::PushL(docHandler);
-	TDataType emptyDataType = TDataType();
-	TInt error(docHandler->OpenFileEmbeddedL(KMapKmlFilename, emptyDataType));
-	CleanupStack::PopAndDestroy(docHandler);
-	
-	if (error != KErrNone)
-		{
-		_LIT(KMapURLFormat, "http://maptwits.com/displaymap.php?lat=%S&long=%S");
-		
-		CMobblerString* longitude(CMobblerString::NewL(aLongitude));
-		CleanupStack::PushL(longitude);
-		CMobblerString* latitude(CMobblerString::NewL(aLatitude));
-		CleanupStack::PushL(latitude);
-		CMobblerString* name(CMobblerString::NewL(aName));
-		CleanupStack::PushL(name);
-		
-		HBufC* url(HBufC::NewLC(KMapURLFormat().Length() + longitude->String().Length() + latitude->String().Length()));
-		
-		url->Des().Format(KMapURLFormat, &latitude->String(), &longitude->String());
-		
-		OpenWebBrowserL(*url);
-		
-		CleanupStack::PopAndDestroy(4);
-		}
-	}
-
 void CMobblerAppUi::OpenWebBrowserL(const TDesC& aUrl)
 	{
-	TBuf<KMaxMobblerTextSize> url(aUrl);
+	TBuf<255> url(aUrl);
 	
 	// Convert to UTF-8
 	HBufC8* utf8(EscapeUtils::ConvertFromUnicodeToUtf8L(url));
@@ -2069,6 +1946,7 @@ void CMobblerAppUi::OpenWebBrowserL(const TDesC& aUrl)
 	CleanupStack::PushL(encode);
 	
 #ifdef __SYMBIAN_SIGNED__
+	RApaLsSession apaLsSession;
 	const TUid KBrowserUid = {0x10008D39};
 	TApaTaskList taskList(CEikonEnv::Static()->WsSession());
 	TApaTask task(taskList.FindApp(KBrowserUid));
@@ -2082,15 +1960,13 @@ void CMobblerAppUi::OpenWebBrowserL(const TDesC& aUrl)
 		}
 	else
 		{
-		RApaLsSession apaLsSession;
-		CleanupClosePushL(apaLsSession);
 		if(!apaLsSession.Handle())
 			{
 			User::LeaveIfError(apaLsSession.Connect());
 			}
 		TThreadId thread;
 		User::LeaveIfError(apaLsSession.StartDocument(*encode, KBrowserUid, thread));
-		CleanupStack::PopAndDestroy(&apaLsSession);
+		apaLsSession.Close();
 		}
 #else // !__SYMBIAN_SIGNED__
 #ifndef __WINS__
@@ -2148,7 +2024,7 @@ void CMobblerAppUi::HandleWsEventL(const TWsEvent &aEvent, CCoeControl *aDestina
 	}
 
 #ifdef __SYMBIAN_SIGNED__
-TInt CMobblerAppUi::SetAlbumArtAsWallpaper(TBool aAutomatically)
+TInt CMobblerAppUi::SetAlbumArtAsWallpaperL(TBool aAutomatically)
 	{
 	TInt error(KErrUnknown);
 	_LIT(KWallpaperFile, "C:\\System\\Data\\Mobbler\\wallpaperimage.mbm");
@@ -2178,15 +2054,5 @@ TInt CMobblerAppUi::SetAlbumArtAsWallpaper(TBool aAutomatically)
 	return error;
 	}
 #endif
-
-TBool CMobblerAppUi::DetailsNeeded()
-	{
-	if ((iSettingView->Username().Compare(iResourceReader->ResourceL(R_MOBBLER_USERNAME)) == 0) &&
-		(iSettingView->Password().Compare(_L("password")) == 0))
-		{
-		return ETrue;
-		}
-	return EFalse;
-	}
 
 // End of file
