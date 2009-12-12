@@ -1,5 +1,5 @@
 /*
-mobblerliterals.h
+mobblerbrowserview.h
 
 Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
 Copyright (C) 2009  Michael Coffey
@@ -21,37 +21,38 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-#ifndef __MOBBLERLITERALS_H__
-#define __MOBBLERLITERALS_H__
+#ifndef __MOBBLERBROWSERVIEW_H_
+#define __MOBBLERBROWSERVIEW_H_
 
-// XML elements
-_LIT8(KElementAlbum, "album");
-_LIT8(KElementImage, "image");
-_LIT8(KElementDescription, "description");
-_LIT8(KElementError, "error");
-_LIT8(KElementFriends, "friends");
-_LIT8(KElementId, "id");
-_LIT8(KElementLarge, "large");
-_LIT8(KElementName, "name");
-_LIT8(KElementPlaylists, "playlists");
-_LIT8(KElementSize, "size");
-_LIT8(KElementStatus, "status");
-_LIT8(KElementTitle, "title");
-_LIT8(KElementVenue, "venue");
+#include <aknview.h>
 
-// Web service call parameters
-_LIT8(KAlbum, "album");
-_LIT8(KArtist, "artist");
-_LIT8(KGetPlaylists, "getplaylists");
-_LIT8(KGetFriends, "getfriends");
-_LIT8(KSearch, "search");
-_LIT8(KTag, "tag");
-_LIT8(KUser, "user");
+class CMobblerBrowserControl;
 
-// Others
-_LIT8(KOk, "ok");
-_LIT8(KNumeralOne, "1");
+class CMobblerBrowserView : public CAknView
+	{
+public:
+	static CMobblerBrowserView* NewL();
+	~CMobblerBrowserView();
 
-#endif // __MOBBLERLITERALS_H__
+	TUid Id() const;
+	void HandleCommandL(TInt aCommand);
+
+private:
+	CMobblerBrowserView();
+	void ConstructL();
+
+	void DynInitMenuPaneL(TInt aResourceId, CEikMenuPane* aMenuPane);
+
+	void DoActivateL(const TVwsViewId& aPrevViewId, TUid aCustomMessageId, const TDesC8& aCustomMessage);
+	void DoDeactivate();
+	void HandleStatusPaneSizeChange();
+
+	void SetMenuItemTextL(CEikMenuPane* aMenuPane, TInt aResourceId, TInt aCommandId);
+
+private:
+	CMobblerBrowserControl* iBrowserControl;
+	};
+
+#endif //__MOBBLERBROWSERVIEW_H_
 
 // End of file
