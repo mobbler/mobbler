@@ -28,7 +28,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 class CAknNavigationControlContainer;
 class CAknNavigationDecorator;
-class CBrCtlInterface;
 class CMobblerAppUi;
 class CMobblerListControl;
 
@@ -66,7 +65,6 @@ private: // from CCoeControl
 private:
 	CMobblerAppUi& iAppUi;
 	RPointerArray<CMobblerListControl> iControls;
-	CBrCtlInterface* iBrCtlInterface;
 	
 	CAknNavigationControlContainer *iNaviContainer;
 	CAknNavigationDecorator* iNaviLabelDecorator;

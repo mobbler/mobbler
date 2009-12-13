@@ -186,17 +186,9 @@ void CMobblerContacts::HandleContactViewEvent(const CContactViewBase& aView, con
 	// wait until both the views are ready and then build the lists 
 	if (iNumViews == 2 && !iListBuilt)
 		{
-		//TODO: temp added trap
-		TRAPD(err, BuildListL());
+		BuildListL();
 		CActiveScheduler::Stop();
-		if (err)
-			{
-			iListBuilt = EFalse;
-			}
-		else
-			{
-			iListBuilt = ETrue;
-			}
+		iListBuilt = ETrue;
 		}
 	}
 

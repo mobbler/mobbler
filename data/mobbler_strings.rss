@@ -338,6 +338,5 @@ RESOURCE STRING r_mobbler_qr_code					{ text = STR_mobbler_qr_code; }
 RESOURCE STRING r_mobbler_visit_map					{ text = STR_mobbler_visit_map; }
 RESOURCE STRING r_mobbler_foursquare				{ text = STR_mobbler_foursquare; }
 RESOURCE STRING r_mobbler_map						{ text = STR_mobbler_map; }
-RESOURCE STRING r_mobbler_view_artist_bio		{ text = STR_mobbler_view_artist_bio; }
 
 // End of file

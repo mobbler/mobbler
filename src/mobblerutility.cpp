@@ -21,13 +21,6 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-#include "mobblerutility.h"
-
-#ifndef __WINS__  //s - TODO: see if this section is needed
-#include "mobblerappui.h"
-#include "mobblerstring.h"
-#endif //s
-
 #include <bautils.h>
 #include <coemain.h>
 #include <hash.h>
@@ -226,47 +219,5 @@ TBuf<30> MobblerUtility::LocalLastFmDomainL()
 	
 	return url;
 	}
-
-void MobblerUtility::StripUnwantedTagsFromHtml(TDes8& aHtml)
-	{
-	_LIT8(KAnchorStart, "<a");
-
-	TInt pos(KErrNotFound);
-	while ((pos = aHtml.Find(KAnchorStart)) != KErrNotFound)
-		{
-		TPtrC8 ptrFromPos = aHtml.MidTPtr(pos);
-		TInt endBracketPos = ptrFromPos.Locate('>');
-		if (endBracketPos == KErrNotFound)
-			{
-			break; // Html not well-formed, just stop
-			}
-		aHtml.Delete(pos, endBracketPos + 1);
-		}
-
-	_LIT8(KAnchorEnd, "</a>");
-	while ((pos = aHtml.Find(KAnchorEnd)) != KErrNotFound)
-		{
-		aHtml.Delete(pos, KAnchorEnd().Length());
-		}
-
-	_LIT8(KBandMemberTag, "[bandmember");
-	while ((pos = aHtml.Find(KBandMemberTag)) != KErrNotFound)
-		{
-		TPtrC8 ptrFromPos = aHtml.MidTPtr(pos);
-		TInt endBracketPos = ptrFromPos.Locate(']');
-		if (endBracketPos == KErrNotFound)
-			{
-			break; // Tag not well-formed, just stop
-			}
-		aHtml.Delete(pos, endBracketPos + 1);
-		}
-
-	_LIT8(KBandMemberEndTag, "[/bandmember]");
-	while ((pos = aHtml.Find(KBandMemberEndTag)) != KErrNotFound)
-		{
-		aHtml.Delete(pos, KBandMemberEndTag().Length());
-		}
-	}
-
 
 // End of file
