@@ -171,7 +171,7 @@ void CMobblerContacts::BuildListL()
 		}
 	}
 
-void CMobblerContacts::HandleContactViewEventL(const CContactViewBase& aView, const TContactViewEvent& aEvent)
+void CMobblerContacts::HandleContactViewEvent(const CContactViewBase& aView, const TContactViewEvent& aEvent)
 	{
 	if (&aView == iRemoteView && aEvent.iEventType == TContactViewEvent::EReady)
 		{
