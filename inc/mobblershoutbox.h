@@ -24,11 +24,13 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #ifndef __MOBBLERSHOUTBOX_H__
 #define __MOBBLERSHOUTBOX_H__
 
+#include "mobblerdataobserver.h"
 #include "mobblerlistcontrol.h"
 
 class CMobblerAppUi;
+class CMobblerFlatDataObserverHelper;
 
-class CMobblerShoutbox : public CMobblerListControl
+class CMobblerShoutbox : public CMobblerListControl, public MMobblerFlatDataObserverHelper
 	{
 public:
 	CMobblerShoutbox(CMobblerAppUi& aAppUi, CMobblerWebServicesControl& aWebServicesControl);
@@ -43,10 +45,16 @@ public:
 	HBufC* ShoutAtTextOwnerLC();
 	HBufC* ShoutAtTextUserLC();
 	
-private:
-	HBufC* ShoutAtTextLC(const TDesC8& aName);
+private: // from MMobblerFlatDataObserverHelper
+	void DataL(CMobblerFlatDataObserverHelper* aObserver, const TDesC8& aData, CMobblerLastFmConnection::TTransactionError aTransactionError);
 
 private:
+	HBufC* ShoutAtTextLC(const TDesC8& aName);
+	
+	void RequestImageL(TInt aIndex) const;
+
+private:
+	mutable RPointerArray<CMobblerFlatDataObserverHelper> iHelpers;
 	};
 
 #endif // __MOBBLERSHOUTBOX_H__
