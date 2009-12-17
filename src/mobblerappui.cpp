@@ -175,7 +175,7 @@ void CMobblerAppUi::ConstructL()
 	iAlarmTimer = CMobblerSleepTimer::NewL(EPriorityLow, *this);
 	
 	iWebServicesView = CMobblerWebServicesView::NewL();
-	
+
 	iLastFmConnection->SetModeL(iSettingView->Mode());
 	iLastFmConnection->LoadCurrentTrackL();
 	
@@ -189,10 +189,7 @@ void CMobblerAppUi::ConstructL()
 	// Attempt to load gesture plug-in
 	iGesturePlugin = NULL;
 	TRAP_IGNORE(LoadGesturesPluginL());
-	if (iGesturePlugin && iSettingView->AccelerometerGestures())
-		{
-		SetAccelerometerGesturesL(ETrue);
-		}
+	UpdateAccelerometerGesturesL();
 	
 	AddViewL(iWebServicesView);
 	AddViewL(iSettingView);
@@ -415,9 +412,12 @@ void CMobblerAppUi::SetBitRateL(TInt aBitRate)
 	iRadioPlayer->SetBitRateL(aBitRate);
 	}
 
-void CMobblerAppUi::SetAccelerometerGesturesL(TBool aAccelerometerGestures)
+void CMobblerAppUi::UpdateAccelerometerGesturesL()
 	{
-	if (iGesturePlugin && aAccelerometerGestures)
+	// If the radio is playing and the setting is on
+	if (iGesturePlugin && 
+		iRadioPlayer->CurrentTrack() && 
+		iSettingView->AccelerometerGestures())
 		{
 		iGesturePlugin->ObserveGesturesL(*this);
 		}
@@ -1083,7 +1083,10 @@ void CMobblerAppUi::RadioStartL(TInt aRadioStation,
 								TBool aSaveStations)
 	{
 	iPreviousRadioStation = aRadioStation;
-
+	
+	// Turn on gesture plug-in
+	UpdateAccelerometerGesturesL();
+	
 	if (aSaveStations)
 		{
 		switch (iPreviousRadioStation)
