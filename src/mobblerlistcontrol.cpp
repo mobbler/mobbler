@@ -503,11 +503,16 @@ void CMobblerListControl::RequestImagesL() const
 			if (!iList[i]->ImageRequested())
 				{
 				// Ihe item has not had an image requested so ask for it now
-				iAppUi.LastFmConnection().RequestImageL(iList[i], iList[i]->ImageLocation());
+				RequestImageL(i);
 				iList[i]->SetImageRequested(ETrue);
 				}
 			}
 		}
+	}
+
+void CMobblerListControl::RequestImageL(TInt aIndex) const
+	{
+	iAppUi.LastFmConnection().RequestImageL(iList[aIndex], iList[aIndex]->ImageLocation());
 	}
 
 CMobblerListControl::TState CMobblerListControl::State() const
