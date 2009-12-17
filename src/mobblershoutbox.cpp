@@ -24,7 +24,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <aknmessagequerydialog.h>
 #include <aknquerydialog.h>
 #include <sendomfragment.h>
-#include <sennamespace.h> 
 #include <senxmlutils.h> 
 
 #include "mobbler.hrh"
@@ -215,8 +214,8 @@ void CMobblerShoutbox::ParseL(const TDesC8& aXml)
 void CMobblerShoutbox::RequestImageL(TInt aIndex) const
 	{
 	// do user.getInfo for this user
-	// when we recive that we can fetch the actual image
-	CMobblerFlatDataObserverHelper* helper = CMobblerFlatDataObserverHelper::NewL(const_cast<CMobblerShoutbox*>(this)->iAppUi.LastFmConnection(), *const_cast<CMobblerShoutbox*>(this), EFalse);
+	// when we receive that we can fetch the actual image
+	CMobblerFlatDataObserverHelper* helper(CMobblerFlatDataObserverHelper::NewL(const_cast<CMobblerShoutbox*>(this)->iAppUi.LastFmConnection(), *const_cast<CMobblerShoutbox*>(this), EFalse));
 	CleanupStack::PushL(helper);
 	iHelpers.AppendL(helper);
 	CleanupStack::Pop(helper);
@@ -224,40 +223,43 @@ void CMobblerShoutbox::RequestImageL(TInt aIndex) const
 	iAppUi.LastFmConnection().WebServicesCallL(_L8("user"), _L8("getInfo"), iList[aIndex]->Title()->String8(), *helper);
 	}
 
-void CMobblerShoutbox::DataL(CMobblerFlatDataObserverHelper* aObserver, const TDesC8& aData, CMobblerLastFmConnection::TTransactionError aTransactionError)
+void CMobblerShoutbox::DataL(CMobblerFlatDataObserverHelper* /*aObserver*/, const TDesC8& aData, CMobblerLastFmConnection::TTransactionError aTransactionError)
 	{
-	DUMPDATA(aData, _L("usergetinfo.xml"));
-	
-	// Create the XML reader and DOM fragment and associate them with each other
-	CSenXmlReader* xmlReader(CSenXmlReader::NewL());
-	CleanupStack::PushL(xmlReader);
-	CSenDomFragment* domFragment(CSenDomFragment::NewL());
-	CleanupStack::PushL(domFragment);
-	xmlReader->SetContentHandler(*domFragment);
-	domFragment->SetReader(*xmlReader);
-	
-	// Parse the XML into the DOM fragment
-	xmlReader->ParseL(aData);
-	
-	TPtrC8 name = domFragment->AsElement().Element(_L8("user"))->Element(_L8("name"))->Content();
-	TPtrC8 imageLocation = domFragment->AsElement().Element(_L8("user"))->Element(_L8("image"))->Content();
-	
-	// find the user in the list and add it
-	const TInt KCount(iList.Count());
-	for (TInt i(0); i < KCount; ++i)
+	if (aTransactionError == CMobblerLastFmConnection::ETransactionErrorNone)
 		{
-		if (name.CompareF(iList[i]->Title()->String8()) == 0)
+		DUMPDATA(aData, _L("usergetinfo.xml"));
+		
+		// Create the XML reader and DOM fragment and associate them with each other
+		CSenXmlReader* xmlReader(CSenXmlReader::NewL());
+		CleanupStack::PushL(xmlReader);
+		CSenDomFragment* domFragment(CSenDomFragment::NewL());
+		CleanupStack::PushL(domFragment);
+		xmlReader->SetContentHandler(*domFragment);
+		domFragment->SetReader(*xmlReader);
+		
+		// Parse the XML into the DOM fragment
+		xmlReader->ParseL(aData);
+		
+		TPtrC8 name(domFragment->AsElement().Element(_L8("user"))->Element(_L8("name"))->Content());
+		TPtrC8 imageLocation(domFragment->AsElement().Element(_L8("user"))->Element(_L8("image"))->Content());
+		
+		// find the user in the list and add it
+		const TInt KCount(iList.Count());
+		for (TInt i(0); i < KCount; ++i)
 			{
-			if (iList[i]->ImageLocation().CompareF(KNullDesC8) == 0)
+			if (name.CompareF(iList[i]->Title()->String8()) == 0)
 				{
-				iList[i]->SetImageLocationL(imageLocation);
-			    iAppUi.LastFmConnection().RequestImageL(iList[i], imageLocation);
-				break;
+				if (iList[i]->ImageLocation().CompareF(KNullDesC8) == 0)
+					{
+					iList[i]->SetImageLocationL(imageLocation);
+					iAppUi.LastFmConnection().RequestImageL(iList[i], imageLocation);
+					break;
+					}
 				}
 			}
+		
+		CleanupStack::PopAndDestroy(2, xmlReader);
 		}
-	
-	CleanupStack::PopAndDestroy(2, xmlReader);
 	}
 
 // End of file
