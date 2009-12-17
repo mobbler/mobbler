@@ -158,7 +158,7 @@ public:
 					 TBool aAndSaveToSettings = EFalse);
 	void SetIapIDL(TUint32 aIapID);
 	void SetBufferSize(TTimeIntervalSeconds aBufferSize);
-	void SetAccelerometerGesturesL(TBool aAccelerometerGestures);
+	void UpdateAccelerometerGesturesL();
 	TBool AccelerometerGesturesAvailable() const;
 	void SetSleepTimerL(const TInt aMinutes);
 	void SetAlarmTimerL(const TTime aTime);
@@ -255,7 +255,7 @@ private:
 	CMobblerSettingItemListView* iSettingView;
 	CMobblerStatusView* iStatusView;
 	CMobblerWebServicesView* iWebServicesView;
-	
+
 	// The application engine classes
 	CMobblerLastFmConnection* iLastFmConnection;
 	CMobblerRadioPlayer* iRadioPlayer;
