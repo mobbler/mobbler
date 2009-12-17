@@ -78,6 +78,8 @@ protected:
 	
 	void UpdateIconArrayL();
 	
+	virtual void RequestImageL(TInt aIndex) const;
+	
 private: // from CCoeControl
 	void Draw(const TRect& aRect) const;
 	CCoeControl* ComponentControl(TInt /*aIndex*/) const;
