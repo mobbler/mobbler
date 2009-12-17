@@ -169,8 +169,8 @@ void CMobblerAlbumArtTransition::DrawAlbumArtL(const CMobblerBitmap* aCurrentAlb
 	else
 		{
 		// The album art is transitioning so draw it
-		CMobblerBitmap* left = iAlbumArt[0];
-		CMobblerBitmap* right = iAlbumArt.Count() > 1 ? iAlbumArt[1] : iAlbumArt[0];
+		CMobblerBitmap* left(iAlbumArt[0]);
+		CMobblerBitmap* right(iAlbumArt.Count() > 1 ? iAlbumArt[1] : iAlbumArt[0]);
 		
 		switch (iSlide)
 			{
