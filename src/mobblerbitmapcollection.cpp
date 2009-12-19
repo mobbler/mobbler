@@ -115,6 +115,16 @@ CMobblerBitmapCollection::CMobblerBitmapCollection()
 
 void CMobblerBitmapCollection::ConstructL()
 	{
+	// load the list box default images because if we
+	// populate the list box before the image decodes
+	// the phone will hang.
+	BitmapL(*this, EBitmapDefaultAlbumImage);
+	BitmapL(*this, EBitmapDefaultArtistImage);
+	BitmapL(*this, EBitmapDefaultEventImage);
+	BitmapL(*this, EBitmapDefaultUserImage);
+	BitmapL(*this, EBitmapDefaultPlaylistImage);
+	BitmapL(*this, EBitmapDefaultTagImage);
+	BitmapL(*this, EBitmapDefaultTrackImage);
 	}
 
 CMobblerBitmapCollection::~CMobblerBitmapCollection()
@@ -228,6 +238,14 @@ void CMobblerBitmapCollection::Cancel(CMobblerBitmap* aBitmap) const
 			break;
 			}
 		}
+	}
+
+void CMobblerBitmapCollection::BitmapLoadedL(const CMobblerBitmap* /*aMobblerBitmap*/)
+	{
+	}
+
+void CMobblerBitmapCollection::BitmapResizedL(const CMobblerBitmap* /*aMobblerBitmap*/)
+	{
 	}
 
 // End of file
