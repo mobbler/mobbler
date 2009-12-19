@@ -172,6 +172,7 @@ void CMobblerStatusView::DynInitMenuPaneL(TInt aResourceId, CEikMenuPane* aMenuP
 			{
 			SetMenuItemTextL(aMenuPane, R_MOBBLER_ENABLE_SCROBBLING,	EMobblerCommandToggleScrobbling);
 			}
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_VIEW_SCROBBLE_LOG,		EMobblerCommandViewScrobbleLog);
 #ifdef __SYMBIAN_SIGNED__
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_SET_AS_WALLPAPER,			EMobblerCommandSetAsWallpaper); // TODO only if album art available
 #endif

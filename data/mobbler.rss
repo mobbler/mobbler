@@ -151,6 +151,10 @@ RESOURCE MENU_PANE r_mobbler_webservices_menu_pane
 			},
 		MENU_ITEM
 			{
+			command = EMobblerCommandScrobbleLogRemove;
+			},
+		MENU_ITEM
+			{
 			command = EAknSoftkeyExit;
 			}
 		};
@@ -471,6 +475,10 @@ RESOURCE MENU_PANE r_mobbler_tools_submenu_pane
 	{
 	items =
 		{
+		MENU_ITEM
+			{
+			command = EMobblerCommandViewScrobbleLog;
+			},
 		MENU_ITEM
 			{
 			command = EMobblerCommandCheckForUpdates;
