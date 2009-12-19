@@ -40,31 +40,35 @@
 [0x1028315F], 0, 0, 0, {"Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID", "Series60ProductID"}
 
 ; The Mobbler application
-"$(EPOCROOT)epoc32\release\$(PLATFORM)\$(TARGET)\mobbler.exe"-"!:\sys\bin\mobbler.exe"
+"$(EPOCROOT)epoc32\release\$(PLATFORM)\$(TARGET)\mobbler_0xA0007648.exe"-"!:\sys\bin\mobbler_0xA0007648.exe"
+
+; The Mobbler music app observer for 3.0 phones
+"$(EPOCROOT)epoc32\release\$(PLATFORM)\$(TARGET)\mobblermusicapp30_0xA0007CAE.dll"-"!:\sys\bin\mobblermusicapp30_0xA0007CAE.dll"
+"$(EPOCROOT)epoc32\data\z\resource\plugins\mobblermusicapp30_0xA0007CAE.rsc"-"!:\resource\plugins\mobblermusicapp30_0xA0007CAE.rsc"
 
 ; The Mobbler music app observer
-"$(EPOCROOT)epoc32\release\$(PLATFORM)\$(TARGET)\musicappobserver.dll"-"!:\sys\bin\musicappobserver.dll"
-"$(EPOCROOT)epoc32\data\z\resource\plugins\musicappobserver.rsc"-"!:\resource\plugins\musicappobserver.rsc"
+"$(EPOCROOT)epoc32\release\$(PLATFORM)\$(TARGET)\musicappobserver_0xA0007CAB.dll"-"!:\sys\bin\musicappobserver_0xA0007CAB.dll"
+"$(EPOCROOT)epoc32\data\z\resource\plugins\musicappobserver_0xA0007CAB.rsc"-"!:\resource\plugins\musicappobserver_0xA0007CAB.rsc"
 
 ; The Mobbler mpx music app observer
-"$(EPOCROOT)epoc32\release\$(PLATFORM)\$(TARGET)\musicappobservermpx.dll"-"!:\sys\bin\musicappobservermpx.dll"
-"$(EPOCROOT)epoc32\data\z\resource\plugins\musicappobservermpx.rsc"-"!:\resource\plugins\musicappobservermpx.rsc"
+"$(EPOCROOT)epoc32\release\$(PLATFORM)\$(TARGET)\musicappobservermpx_0xA000D9F4.dll"-"!:\sys\bin\musicappobservermpx_0xA000D9F4.dll"
+"$(EPOCROOT)epoc32\data\z\resource\plugins\musicappobservermpx_0xA000D9F4.rsc"-"!:\resource\plugins\musicappobservermpx_0xA000D9F4.rsc"
 
 ; 5th edition touch feedback
-"$(EPOCROOT)epoc32\release\$(PLATFORM)\$(TARGET)\mobblertouchfeedback.dll"-"!:\sys\bin\mobblertouchfeedback.dll"
-"$(EPOCROOT)epoc32\data\z\resource\plugins\mobblertouchfeedback.rsc"-"!:\resource\plugins\mobblertouchfeedback.rsc"
+"$(EPOCROOT)epoc32\release\$(PLATFORM)\$(TARGET)\mobblertouchfeedback_0xA000B6CB.dll"-"!:\sys\bin\mobblertouchfeedback_0xA000B6CB.dll"
+"$(EPOCROOT)epoc32\data\z\resource\plugins\mobblertouchfeedback_0xA000B6CB.rsc"-"!:\resource\plugins\mobblertouchfeedback_0xA000B6CB.rsc"
 
 ; Content listing plugin
-"$(EPOCROOT)\epoc32\release\$(PLATFORM)\$(TARGET)\mobblercontentlisting.dll"-"!:\sys\bin\mobblercontentlisting.dll"
-"$(EPOCROOT)\epoc32\data\z\resource\plugins\mobblercontentlisting.rsc"-"!:\resource\plugins\mobblercontentlisting.rsc"
+"$(EPOCROOT)\epoc32\release\$(PLATFORM)\$(TARGET)\mobblercontentlisting_0xA000BEB1.dll"-"!:\sys\bin\mobblercontentlisting_0xA000BEB1.dll"
+"$(EPOCROOT)\epoc32\data\z\resource\plugins\mobblercontentlisting_0xA000BEB1.rsc"-"!:\resource\plugins\mobblercontentlisting_0xA000BEB1.rsc"
 
 ; Gesture plugin (uses sensor framework)
-"$(EPOCROOT)epoc32\release\$(PLATFORM)\$(TARGET)\gestureobserver3x.dll"-"!:\sys\bin\gestureobserver3x.dll"
-"$(EPOCROOT)epoc32\data\z\resource\plugins\gestureobserver3x.rsc"-"!:\resource\plugins\gestureobserver3x.rsc"
+"$(EPOCROOT)epoc32\release\$(PLATFORM)\$(TARGET)\gestureobserver3x_0xA000B6CE.dll"-"!:\sys\bin\gestureobserver3x_0xA000B6CE.dll"
+"$(EPOCROOT)epoc32\data\z\resource\plugins\gestureobserver3x_0xA000B6CE.rsc"-"!:\resource\plugins\gestureobserver3x_0xA000B6CE.rsc"
 
 ; Destinations (uses cmmanager.lib (3.2 onwards))
-"$(EPOCROOT)epoc32\release\$(PLATFORM)\$(TARGET)\mobblerdestinations.dll"-"!:\sys\bin\mobblerdestinations.dll"
-"$(EPOCROOT)epoc32\data\z\resource\plugins\mobblerdestinations.rsc"-"!:\resource\plugins\mobblerdestinations.rsc"
+"$(EPOCROOT)epoc32\release\$(PLATFORM)\$(TARGET)\mobblerdestinations_0xA000BEB4.dll"-"!:\sys\bin\mobblerdestinations_0xA000BEB4.dll"
+"$(EPOCROOT)epoc32\data\z\resource\plugins\mobblerdestinations_0xA000BEB4.rsc"-"!:\resource\plugins\mobblerdestinations_0xA000BEB4.rsc"
 
 ; Graphics
 "$(EPOCROOT)epoc32\data\z\resource\apps\mobbler\scrobble.png"-		"!:\resource\apps\mobbler\scrobble.png"
@@ -152,7 +156,7 @@
 }-"!:\resource\apps\mobbler_strings.rsc"
 
 ; The application registration file
-"$(EPOCROOT)epoc32\data\z\private\10003a3f\apps\mobbler_reg.r01"-"!:\private\10003a3f\import\apps\mobbler_reg.rsc"
+"$(EPOCROOT)epoc32\data\z\private\10003a3f\apps\mobbler_reg_0xA0007648.r01"-"!:\private\10003a3f\import\apps\mobbler_reg_0xA0007648.rsc"
 
 ; Backup and restore
 ".\backup_registration.xml"-"!:\private\A0007648\backup_registration.xml"
