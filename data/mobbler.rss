@@ -59,7 +59,7 @@ RESOURCE LOCALISABLE_APP_INFO r_localisable_app_info
 #ifdef __SYMBIAN_SIGNED__
 		icon_file = "\\resource\\apps\\mobbler_0x2002655A.mif";
 #else
-		icon_file = "\\resource\\apps\\mobbler.mif";
+		icon_file = "\\resource\\apps\\mobbler_0xA0007648.mif";
 #endif
 		};
 	}
