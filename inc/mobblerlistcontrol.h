@@ -78,8 +78,6 @@ protected:
 	
 	void UpdateIconArrayL();
 	
-	virtual void RequestImageL(TInt aIndex) const;
-	
 private: // from CCoeControl
 	void Draw(const TRect& aRect) const;
 	CCoeControl* ComponentControl(TInt /*aIndex*/) const;
@@ -94,10 +92,9 @@ private: // from MMobblerBitmapObserver
 	
 	void RequestImagesL() const;
 	
-protected:
+private:
 	void DataL(const TDesC8& aData, CMobblerLastFmConnection::TTransactionError aTransactionError);
 	
-private:
 	void HandleScrollEventL(CEikScrollBar* aScrollBar, TEikScrollEvent aEventType);
 	void HandleListBoxEventL(CEikListBox* aListBox, TListBoxEvent aEventType);
 	

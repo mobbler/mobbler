@@ -80,7 +80,6 @@ CMobblerListControl* CMobblerListControl::CreateListL(CMobblerAppUi& aAppUi,
 		case EMobblerCommandPlaylistFetchUser:
 		case EMobblerCommandPlaylistFetchAlbum:
 		case EMobblerCommandSearchTrack:
-		case EMobblerCommandViewScrobbleLog:
 			self = new(ELeave) CMobblerTrackList(aAppUi, aWebServicesControl);
 			break;
 		case EMobblerCommandPlaylists:
@@ -224,10 +223,6 @@ HBufC* CMobblerListControl::NameL() const
 		case EMobblerCommandSimilarTracks:
 			format.Set(iAppUi.ResourceReader().ResourceL(R_MOBBLER_FORMAT_SIMILAR_TRACKS));
 			text.Set(iText2->String());
-			break;
-		case EMobblerCommandViewScrobbleLog:
-			format.Set(_L("%S"));
-			text.Set(iAppUi.ResourceReader().ResourceL(R_MOBBLER_SCROBBLE_LOG));
 			break;
 		case EMobblerCommandPlaylistFetchUser:
 		case EMobblerCommandPlaylistFetchAlbum:
@@ -508,16 +503,11 @@ void CMobblerListControl::RequestImagesL() const
 			if (!iList[i]->ImageRequested())
 				{
 				// Ihe item has not had an image requested so ask for it now
-				RequestImageL(i);
+				iAppUi.LastFmConnection().RequestImageL(iList[i], iList[i]->ImageLocation());
 				iList[i]->SetImageRequested(ETrue);
 				}
 			}
 		}
-	}
-
-void CMobblerListControl::RequestImageL(TInt aIndex) const
-	{
-	iAppUi.LastFmConnection().RequestImageL(iList[aIndex], iList[aIndex]->ImageLocation());
 	}
 
 CMobblerListControl::TState CMobblerListControl::State() const

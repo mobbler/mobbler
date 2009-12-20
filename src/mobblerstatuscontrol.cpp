@@ -981,11 +981,8 @@ TKeyResponse CMobblerStatusControl::OfferKeyEventL(const TKeyEvent& aKeyEvent, T
 	switch (aKeyEvent.iCode)
 		{
 		case EKeyRightArrow: // skip to the next track
-			if (iAppUi.RadioPlayer().CurrentTrack() && !iAlbumArtTransition->IsActive())
+			if (iAppUi.RadioPlayer().CurrentTrack())
 				{
-				// Only call skip track if we are playing a radio track
-				// and we are not in the middle of an album art transition
-				
 				iAppUi.RadioPlayer().SkipTrackL();
 				}
 			response = EKeyWasConsumed;
@@ -1131,11 +1128,8 @@ void CMobblerStatusControl::HandlePointerEventL(const TPointerEvent& aPointerEve
 				event.iCode = EKeyRightArrow;
 			else if (iRectAlbumArt.Contains(aPointerEvent.iPosition))
 				{
-				if (iAppUi.RadioPlayer().CurrentTrack() && !iAlbumArtTransition->IsActive())
+				if (iAppUi.RadioPlayer().CurrentTrack())
 					{
-					// There is a radio track playing and it's album art is loaded.
-					// The album art is also not already transitioning.
-					
 					// Record the location that they put their finger down
 					iFingerDownPosition = aPointerEvent.iPosition;
 					iFingerNowPosition = aPointerEvent.iPosition;

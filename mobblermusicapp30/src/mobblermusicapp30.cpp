@@ -69,14 +69,12 @@ CMobblerMusicAppObserver30::CMobblerMusicAppObserver30(TAny* aObserver)
 void CMobblerMusicAppObserver30::ConstructL()
 	{
 	iMusicAppStateListener = CMobblerMusicAppStateListener::NewL(*this);
-	iPlaybackPositionListener = CMobblerPlaybackPositionListener::NewL(*this);
 	iTrackListener = CMobblerTrackListener::NewL(*this);
 	}
 
 CMobblerMusicAppObserver30::~CMobblerMusicAppObserver30()
 	{
 	delete iMusicAppStateListener;
-	delete iPlaybackPositionListener;
 	delete iTrackListener;
 	}
 

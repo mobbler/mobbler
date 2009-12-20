@@ -45,15 +45,9 @@ public:
 private:
 	void DataL(CMobblerFlatDataObserverHelper* aObserver, const TDesC8& aData, CMobblerLastFmConnection::TTransactionError aTransactionError);
 	
-	static TInt ViewScrobbleLogCallBackL(TAny* aPtr);
-	
 private:
 	CMobblerWebServicesHelper* iWebServicesHelper;
 	CMobblerFlatDataObserverHelper* iAlbumInfoObserver;
-	
-	// callback for viewing scrobble log
-	CAsyncCallBack* iAsyncCallBack;
-	TCallBack iCallBack;
 	};
 
 #endif // __MOBBLERTRACKLIST_H__

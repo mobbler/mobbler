@@ -50,8 +50,6 @@ public:
 	
 	void FingerUpL(TInt aPosition, TSlide aSlide);
 	
-	TBool IsActive() const;
-	
 private:
 	CMobblerAlbumArtTransition(CMobblerStatusControl& aStatusControl);
 	void ConstructL();

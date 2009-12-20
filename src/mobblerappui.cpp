@@ -589,11 +589,6 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 				}
 			}
 			break;
-		case EMobblerCommandViewScrobbleLog:
-			{
-			ActivateLocalViewL(iWebServicesView->Id(), TUid::Uid(aCommand), KNullDesC8);
-			}
-			break;
 		case EMobblerCommandCheckForUpdates:
 			{
 			delete iCheckForUpdatesObserver;

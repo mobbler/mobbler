@@ -2266,30 +2266,6 @@ void CMobblerLastFmConnection::ScrobbleHandshakeL()
 	CleanupStack::PopAndDestroy(2, authToken);
 	}
 
-TInt CMobblerLastFmConnection::ScrobbleLogCount() const
-	{
-	return iTrackQueue.Count();
-	}
-
-const CMobblerTrackBase& CMobblerLastFmConnection::ScrobbleLogItem(TInt aIndex) const
-	{
-	return *iTrackQueue[aIndex];
-	}
-
-void CMobblerLastFmConnection::RemoveScrobbleLogItemL(TInt aIndex)
-	{
-	if (iTrackQueue.Count() > aIndex)
-		{
-		iObserver.HandleTrackDequeued(*iTrackQueue[aIndex]);
-		
-		delete iTrackQueue[aIndex];
-		iTrackQueue.Remove(aIndex);
-		
-		// make sure this track is removed from the file
-		SaveTrackQueueL();
-		}
-	}
-
 void CMobblerLastFmConnection::LoadTrackQueueL()
 	{
 	iTrackQueue.ResetAndDestroy();

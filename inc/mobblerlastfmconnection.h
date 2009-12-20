@@ -121,11 +121,6 @@ public:
 	
 	TLastFmMemberType MemberType() const;
 	
-	// Scrobbler log access
-	TInt ScrobbleLogCount() const;
-	const CMobblerTrackBase& ScrobbleLogItem(TInt aIndex) const;
-	void RemoveScrobbleLogItemL(TInt aIndex);
-	
 	// state observers
 	void AddStateChangeObserverL(MMobblerConnectionStateObserver* aObserver);
 	void RemoveStateChangeObserver(MMobblerConnectionStateObserver* aObserver);

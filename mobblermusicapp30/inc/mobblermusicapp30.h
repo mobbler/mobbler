@@ -68,7 +68,6 @@ private:
 	
 private:
 	CMobblerMusicAppStateListener* iMusicAppStateListener;
-	CMobblerPlaybackPositionListener* iPlaybackPositionListener;
 	CMobblerTrackListener* iTrackListener;
 	
 	TBuf<255> iTitle;

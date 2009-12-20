@@ -26,9 +26,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <e32base.h>
 
-#include "mobblerbitmap.h"
+class CMobblerBitmap;
+class MMobblerBitmapObserver;
 
-class CMobblerBitmapCollection : public CBase, public MMobblerBitmapObserver
+class CMobblerBitmapCollection : public CBase
 	{
 public:
 	enum TBitmapID
@@ -87,10 +88,6 @@ public:
 private:
 	CMobblerBitmapCollection();
 	void ConstructL();
-	
-private: // from MMobblerBitmapObserver
-	void BitmapLoadedL(const CMobblerBitmap* aMobblerBitmap);
-	void BitmapResizedL(const CMobblerBitmap* aMobblerBitmap);
 	
 private:
 	mutable RPointerArray<CBitmapCollectionItem> iBitmaps;
