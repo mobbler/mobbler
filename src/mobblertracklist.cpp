@@ -112,8 +112,11 @@ CMobblerListControl* CMobblerTrackList::HandleListCommandL(TInt aCommand)
 	
 	if (iType == EMobblerCommandViewScrobbleLog)
 		{
-		artist.Set(iAppUi.LastFmConnection().ScrobbleLogItem(iListBox->CurrentItemIndex()).Artist().String8());
-		title.Set(iAppUi.LastFmConnection().ScrobbleLogItem(iListBox->CurrentItemIndex()).Title().String8());
+		if (iAppUi.LastFmConnection().ScrobbleLogCount() > iListBox->CurrentItemIndex())
+			{
+			artist.Set(iAppUi.LastFmConnection().ScrobbleLogItem(iListBox->CurrentItemIndex()).Artist().String8());
+			title.Set(iAppUi.LastFmConnection().ScrobbleLogItem(iListBox->CurrentItemIndex()).Title().String8());
+			}
 		}
 	else
 		{
