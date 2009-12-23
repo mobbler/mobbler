@@ -112,7 +112,8 @@ CMobblerListControl* CMobblerTrackList::HandleListCommandL(TInt aCommand)
 	
 	if (iType == EMobblerCommandViewScrobbleLog)
 		{
-		if (iAppUi.LastFmConnection().ScrobbleLogCount() > iListBox->CurrentItemIndex())
+		if (iAppUi.LastFmConnection().ScrobbleLogCount() > iListBox->CurrentItemIndex()
+				&& iAppUi.LastFmConnection().ScrobbleLogCount() > 0)
 			{
 			artist.Set(iAppUi.LastFmConnection().ScrobbleLogItem(iListBox->CurrentItemIndex()).Artist().String8());
 			title.Set(iAppUi.LastFmConnection().ScrobbleLogItem(iListBox->CurrentItemIndex()).Title().String8());
