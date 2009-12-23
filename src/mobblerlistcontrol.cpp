@@ -226,7 +226,8 @@ HBufC* CMobblerListControl::NameL() const
 			text.Set(iText2->String());
 			break;
 		case EMobblerCommandViewScrobbleLog:
-			format.Set(_L("%S"));
+			_LIT(KFormat, "%S");
+			format.Set(KFormat);
 			text.Set(iAppUi.ResourceReader().ResourceL(R_MOBBLER_SCROBBLE_LOG));
 			break;
 		case EMobblerCommandPlaylistFetchUser:

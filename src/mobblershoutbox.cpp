@@ -220,7 +220,7 @@ void CMobblerShoutbox::RequestImageL(TInt aIndex) const
 	iHelpers.AppendL(helper);
 	CleanupStack::Pop(helper);
 	
-	iAppUi.LastFmConnection().WebServicesCallL(_L8("user"), _L8("getInfo"), iList[aIndex]->Title()->String8(), *helper);
+	iAppUi.LastFmConnection().WebServicesCallL(KUser, KGetInfo, iList[aIndex]->Title()->String8(), *helper);
 	}
 
 void CMobblerShoutbox::DataL(CMobblerFlatDataObserverHelper* /*aObserver*/, const TDesC8& aData, CMobblerLastFmConnection::TTransactionError aTransactionError)
@@ -240,8 +240,8 @@ void CMobblerShoutbox::DataL(CMobblerFlatDataObserverHelper* /*aObserver*/, cons
 		// Parse the XML into the DOM fragment
 		xmlReader->ParseL(aData);
 		
-		TPtrC8 name(domFragment->AsElement().Element(_L8("user"))->Element(_L8("name"))->Content());
-		TPtrC8 imageLocation(domFragment->AsElement().Element(_L8("user"))->Element(_L8("image"))->Content());
+		TPtrC8 name(domFragment->AsElement().Element(KUser)->Element(KElementName)->Content());
+		TPtrC8 imageLocation(domFragment->AsElement().Element(KUser)->Element(KElementImage)->Content());
 		
 		// find the user in the list and add it
 		const TInt KCount(iList.Count());

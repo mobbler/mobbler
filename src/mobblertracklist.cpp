@@ -34,7 +34,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "mobblerstring.h"
 #include "mobblertrack.h"
 #include "mobblertracklist.h"
-#include "mobblerwebservicescontrol.h"
 #include "mobblerwebserviceshelper.h"
 
 _LIT8(KGetTopTracks, "gettoptracks");

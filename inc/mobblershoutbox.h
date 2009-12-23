@@ -24,11 +24,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #ifndef __MOBBLERSHOUTBOX_H__
 #define __MOBBLERSHOUTBOX_H__
 
-#include "mobblerdataobserver.h"
 #include "mobblerlistcontrol.h"
 
 class CMobblerAppUi;
-class CMobblerFlatDataObserverHelper;
 
 class CMobblerShoutbox : public CMobblerListControl, public MMobblerFlatDataObserverHelper
 	{
