@@ -49,6 +49,5 @@ RESOURCE APP_REGISTRATION_INFO
 
 	embeddability = KAppNotEmbeddable;
 	newfile = KAppDoesNotSupportNewFile;
-	group_name = "music";
 	}
 
