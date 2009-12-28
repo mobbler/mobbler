@@ -36,6 +36,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "mobblerresourcereader.h"
 #include "mobblerstatuscontrol.h"
 #include "mobblerstatusview.h"
+#include "mobblerutility.h"
 
 CMobblerStatusView* CMobblerStatusView::NewL()
 	{
@@ -196,18 +197,25 @@ void CMobblerStatusView::DynInitMenuPaneL(TInt aResourceId, CEikMenuPane* aMenuP
 			aMenuPane->SetItemDimmed(EMobblerCommandOffline, ETrue);
 			}
 		
-		MMdaAudioOutputStreamCallback* dummyCallback(NULL);
-		CMdaAudioOutputStream* tempStream(CMdaAudioOutputStream::NewL(*dummyCallback));
-		CAudioEqualizerUtility* tempEqualizer(NULL);
-		TRAP_IGNORE(tempEqualizer = CAudioEqualizerUtility::NewL(*tempStream));
-		if (!tempEqualizer)
+		if (MobblerUtility::EqualizerSupported())
+			{
+			MMdaAudioOutputStreamCallback* dummyCallback(NULL);
+			CMdaAudioOutputStream* tempStream(CMdaAudioOutputStream::NewL(*dummyCallback));
+			CAudioEqualizerUtility* tempEqualizer(NULL);
+			TRAP_IGNORE(tempEqualizer = CAudioEqualizerUtility::NewL(*tempStream));
+			if (!tempEqualizer)
+				{
+				aMenuPane->SetItemDimmed(EMobblerCommandEqualizer, ETrue);
+				}
+			
+			tempStream->Stop();
+			delete tempEqualizer;
+			delete tempStream;
+			}
+		else
 			{
 			aMenuPane->SetItemDimmed(EMobblerCommandEqualizer, ETrue);
 			}
-		
-		tempStream->Stop();
-		delete tempEqualizer;
-		delete tempStream;
 		
 		aMenuPane->SetItemDimmed(EMobblerCommandResumeRadio, 
 					!static_cast<CMobblerAppUi*>(AppUi())->RadioResumable());
