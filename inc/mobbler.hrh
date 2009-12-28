@@ -51,6 +51,8 @@ enum TMobblerSettingItemListViewCommands
 	EMobblerCommandLanguagePatches,
 	EMobblerCommandQrCode,
 	
+	EMobblerCommandOfflineLast,
+	
 	EMobblerCommandEqualizer = 0x7000,
 	EMobblerCommandEqualizerDefault,
 	EMobblerCommandEqualizerMaximum = 0x7FFF,
