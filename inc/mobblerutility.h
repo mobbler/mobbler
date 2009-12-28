@@ -29,6 +29,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 class MobblerUtility
 	{
 public:
+	static TBool EqualizerSupported();
+	
 	static HBufC8* MD5LC(const TDesC8& aSource);
 	static HBufC8* URLEncodeLC(const TDesC8& aString);
 	
