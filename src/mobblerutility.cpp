@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <bautils.h>
 #include <coemain.h>
+#include <hal.h>
 #include <hash.h>
 
 #include "mobblerutility.h"
@@ -55,6 +56,16 @@ _LIT(KTurkishUrl,		"http://m.lastfm.com.tr/");
 
 _LIT8(KFormat1, "%02x");
 _LIT8(KFormat2, "%%%2x");
+
+const TInt KNokiaE52MachineUid(0x20014DCC);
+const TInt KNokiaE72MachineUid(0x20014DD0);
+
+TBool MobblerUtility::EqualizerSupported()
+	{
+	TInt machineUid = 0;
+	TInt error(HAL::Get(HALData::EMachineUid, machineUid));
+	return (error == KErrNone) && !(machineUid == KNokiaE52MachineUid || machineUid == KNokiaE72MachineUid);
+	}
 
 HBufC8* MobblerUtility::MD5LC(const TDesC8& aSource)
 	{
