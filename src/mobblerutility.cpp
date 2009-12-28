@@ -62,7 +62,7 @@ const TInt KNokiaE72MachineUid(0x20014DD0);
 
 TBool MobblerUtility::EqualizerSupported()
 	{
-	TInt machineUid = 0;
+	TInt machineUid(0);
 	TInt error(HAL::Get(HALData::EMachineUid, machineUid));
 	return (error == KErrNone) && !(machineUid == KNokiaE52MachineUid || machineUid == KNokiaE72MachineUid);
 	}
