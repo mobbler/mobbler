@@ -38,7 +38,7 @@ Protected - Unprotected - Purpose
 0x2002655E - !0xA0007CAB - music app observer 3.1 dll 
 0x2002655F - !0xA0007CAC - music app observer 3.1 implementation
 0x20026560 - !0xA0007CAD - ?
-0x20026561 - !0xA0007CAE - music app observer 3.0 dll
+0x20026561 - !0xA0007CAE - (DON'T USE)
 0x20026562 - !0xA0007CAF - music app observer 3.0 implementation
 0x20026563 - 0xA000B6CB - touch feedback dll
 0x20026564 - 0xA000B6CC - touch feedback interface
@@ -64,7 +64,7 @@ Protected - Unprotected - Purpose
 0x20027114 - 0xA000D9F4 - mpx music app observer dll
 0x20027115 - 0xA000D9F5 - mpx music app observer implementation
 0x20027116 - 0xA000D9F6 - music app observer interface
-0x20027117 - 0xA000D9F7 - unused
+0x20027117 - 0xA000D9F7 - music app observer 3.0 dll
 0x20027118 - 0xA000D9F8 - unused
 0x20027119 - 0xA000D9F9 - unused
 0x2002711A - 0xA000D9FA - unused
