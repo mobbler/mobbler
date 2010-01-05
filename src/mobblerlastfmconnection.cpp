@@ -138,9 +138,9 @@ _LIT8(KNumeralZero, "0");
 _LIT8(KNumeralTwo, "2");
 _LIT8(KAdjustPhp, "/adjust.php");
 _LIT8(KTwoDotZero, "2.0");
-_LIT8(KNumber64, "64");
+_LIT8(KNumber64, "64"); 
 _LIT8(KNumber128, "128");
-_LIT8(KXspfDotPhp, "xspf.php");
+_LIT8(KXspfDotPhp, "/xspf.php");
 _LIT8(KMobbler, "mobbler");
 
 _LIT8(KLowerA8, "a");
