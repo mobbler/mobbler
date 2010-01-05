@@ -47,8 +47,8 @@
 "$(EPOCROOT)epoc32\data\z\resource\plugins\musicappobserver_0xA0007CAB.rsc"-"!:\resource\plugins\musicappobserver_0xA0007CAB.rsc"
 
 ; The Mobbler 3.0 music app observer
-"$(EPOCROOT)epoc32\release\$(PLATFORM)\$(TARGET)\mobblermusicapp30_0xA0007CAE.dll"-"!:\sys\bin\mobblermusicapp30_0xA0007CAE.dll"
-"$(EPOCROOT)epoc32\data\z\resource\plugins\mobblermusicapp30_0xA0007CAE.rsc"-"!:\resource\plugins\mobblermusicapp30_0xA0007CAE.rsc"
+"$(EPOCROOT)epoc32\release\$(PLATFORM)\$(TARGET)\mobblermusicapp30_0xA000D9F7.dll"-"!:\sys\bin\mobblermusicapp30_0xA000D9F7.dll"
+"$(EPOCROOT)epoc32\data\z\resource\plugins\mobblermusicapp30_0xA000D9F7.rsc"-"!:\resource\plugins\mobblermusicapp30_0xA000D9F7.rsc"
 
 
 ; The Mobbler mpx music app observer
