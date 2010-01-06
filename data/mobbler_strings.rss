@@ -342,4 +342,12 @@ RESOURCE STRING r_mobbler_view_scrobble_log			{ text = STR_mobbler_view_scrobble
 RESOURCE STRING r_mobbler_scrobble_log				{ text = STR_mobbler_scrobble_log; }
 RESOURCE STRING r_mobbler_scrobble_log_remove			{ text = STR_mobbler_scrobble_log_remove; }
 
+RESOURCE STRING r_mobbler_tag					{ text = STR_mobbler_tag; }
+RESOURCE STRING r_mobbler_track_add_tag			{ text = STR_mobbler_track_add_tag; }
+RESOURCE STRING r_mobbler_track_remove_tag		{ text = STR_mobbler_track_remove_tag; }
+RESOURCE STRING r_mobbler_album_add_tag			{ text = STR_mobbler_album_add_tag; }
+RESOURCE STRING r_mobbler_album_remove_tag		{ text = STR_mobbler_album_remove_tag; }
+RESOURCE STRING r_mobbler_artist_add_tag		{ text = STR_mobbler_artist_add_tag; }
+RESOURCE STRING r_mobbler_artist_remove_tag		{ text = STR_mobbler_artist_remove_tag; }
+
 // End of file
