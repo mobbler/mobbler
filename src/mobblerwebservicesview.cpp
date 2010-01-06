@@ -106,6 +106,7 @@ void CMobblerWebServicesView::DynInitMenuPaneL(TInt aResourceId, CEikMenuPane* a
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_PLAYLIST_ADD_TRACK,	EMobblerCommandPlaylistAddTrack);
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_MAP,					EMobblerCommandMaps);
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_SCROBBLE_LOG_REMOVE,	EMobblerCommandScrobbleLogRemove);
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_TAG,					EMobblerCommandTag);
 		}
 	else if (aResourceId == R_MOBBLER_WEBSERVICES_RADIO_SUBMENU_PANE)
 		{
@@ -150,6 +151,15 @@ void CMobblerWebServicesView::DynInitMenuPaneL(TInt aResourceId, CEikMenuPane* a
 		{
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_VISIT_MAP,			EMobblerCommandVisitMap);
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_FOURSQUARE,			EMobblerCommandFoursquare);
+		}
+	else if (aResourceId == R_MOBBLER_TAG_SUBMENU_PANE)
+		{
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_TRACK_ADD_TAG,			EMobblerCommandTrackAddTag);
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_TRACK_REMOVE_TAG,			EMobblerCommandTrackRemoveTag);
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_ALBUM_ADD_TAG,			EMobblerCommandAlbumAddTag);
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_ALBUM_REMOVE_TAG,			EMobblerCommandAlbumRemoveTag);
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_ARTIST_ADD_TAG,			EMobblerCommandArtistAddTag);
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_ARTIST_REMOVE_TAG,		EMobblerCommandArtistRemoveTag);
 		}
 	
 	// Now the menu text is set, dimming logic is next

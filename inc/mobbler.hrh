@@ -122,6 +122,14 @@ enum TMobblerSettingItemListViewCommands
 	EMobblerCommandArtistShare,
 	EMobblerCommandEventShare,
 	
+	EMobblerCommandTag,
+	EMobblerCommandTrackAddTag,
+	EMobblerCommandTrackRemoveTag,
+	EMobblerCommandArtistAddTag,
+	EMobblerCommandArtistRemoveTag,
+	EMobblerCommandAlbumAddTag,
+	EMobblerCommandAlbumRemoveTag,
+	
 	EMobblerCommandRadioStart,
 	EMobblerCommandResumeRadio,
 	EMobblerCommandRadioEnumFirst = 0x9000,

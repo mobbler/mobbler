@@ -47,6 +47,8 @@ private:
 	
 	static TInt ViewScrobbleLogCallBackL(TAny* aPtr);
 	
+	void GetArtistAndTitleName(TPtrC8& aArtist, TPtrC8& aTitle);
+	
 private:
 	CMobblerWebServicesHelper* iWebServicesHelper;
 	CMobblerFlatDataObserverHelper* iAlbumInfoObserver;
@@ -54,6 +56,11 @@ private:
 	// callback for viewing scrobble log
 	CAsyncCallBack* iAsyncCallBack;
 	TCallBack iCallBack;
+	
+	CMobblerFlatDataObserverHelper* iTrackTagAddHelper;
+	CMobblerFlatDataObserverHelper* iTrackTagRemoveHelper;
+	
+	CMobblerFlatDataObserverHelper* iTrackTagsHelper;
 	};
 
 #endif // __MOBBLERTRACKLIST_H__

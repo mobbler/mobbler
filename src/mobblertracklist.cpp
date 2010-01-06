@@ -21,16 +21,20 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
+#include <aknquerydialog.h>
 #include <sendomfragment.h>
 #include <senxmlutils.h> 
 
 #include "mobbler.hrh"
+#include "mobbler.rsg.h"
+#include "mobbler_strings.rsg.h"
 #include "mobblerappui.h"
 #include "mobblerbitmapcollection.h"
 #include "mobblerlastfmconnection.h"
 #include "mobblerlistitem.h"
 #include "mobblerliterals.h"
 #include "mobblerparser.h"
+#include "mobblerresourcereader.h"
 #include "mobblerstring.h"
 #include "mobblertrack.h"
 #include "mobblertracklist.h"
@@ -102,6 +106,35 @@ CMobblerTrackList::~CMobblerTrackList()
 	delete iWebServicesHelper;
 	}
 
+void CMobblerTrackList::GetArtistAndTitleName(TPtrC8& aArtist, TPtrC8& aTitle)
+	{
+	if (iType == EMobblerCommandViewScrobbleLog)
+		{
+		if (iAppUi.LastFmConnection().ScrobbleLogCount() > iListBox->CurrentItemIndex()
+				&& iAppUi.LastFmConnection().ScrobbleLogCount() > 0)
+			{
+			aArtist.Set(iAppUi.LastFmConnection().ScrobbleLogItem(iListBox->CurrentItemIndex()).Artist().String8());
+			aTitle.Set(iAppUi.LastFmConnection().ScrobbleLogItem(iListBox->CurrentItemIndex()).Title().String8());
+			}
+		}
+	else
+		{
+		if (iList.Count() > 0)
+			{
+			aTitle.Set(iList[iListBox->CurrentItemIndex()]->Title()->String8());
+			
+			if (iType == EMobblerCommandArtistTopTracks)
+				{
+				aArtist.Set(iText1->String8());
+				}
+			else
+				{
+				aArtist.Set(iList[iListBox->CurrentItemIndex()]->Description()->String8());
+				}
+			}
+		}
+	}
+
 CMobblerListControl* CMobblerTrackList::HandleListCommandL(TInt aCommand)
 	{
 	CMobblerListControl* list(NULL);
@@ -109,36 +142,42 @@ CMobblerListControl* CMobblerTrackList::HandleListCommandL(TInt aCommand)
 	TPtrC8 artist(KNullDesC8);
 	TPtrC8 title(KNullDesC8);
 	
-	if (iType == EMobblerCommandViewScrobbleLog)
-		{
-		if (iAppUi.LastFmConnection().ScrobbleLogCount() > iListBox->CurrentItemIndex()
-				&& iAppUi.LastFmConnection().ScrobbleLogCount() > 0)
-			{
-			artist.Set(iAppUi.LastFmConnection().ScrobbleLogItem(iListBox->CurrentItemIndex()).Artist().String8());
-			title.Set(iAppUi.LastFmConnection().ScrobbleLogItem(iListBox->CurrentItemIndex()).Title().String8());
-			}
-		}
-	else
-		{
-		if (iList.Count() > 0)
-			{
-			title.Set(iList[iListBox->CurrentItemIndex()]->Title()->String8());
-			
-			if (iType == EMobblerCommandArtistTopTracks)
-				{
-				artist.Set(iText1->String8());
-				}
-			else
-				{
-				artist.Set(iList[iListBox->CurrentItemIndex()]->Description()->String8());
-				}
-			}
-		}
+	GetArtistAndTitleName(artist, title);
 		
 	switch(aCommand)
 		{
 		case EMobblerCommandTrackLove:
 			iAppUi.LastFmConnection().TrackLoveL(artist, title);
+			break;
+		case EMobblerCommandTrackAddTag:
+			{
+			TBuf<KMobblerMaxQueryDialogLength> tag;
+			
+			CAknTextQueryDialog* tagDialog(new(ELeave) CAknTextQueryDialog(tag));
+			tagDialog->PrepareLC(R_MOBBLER_TEXT_QUERY_DIALOG);
+			tagDialog->SetPromptL(iAppUi.ResourceReader().ResourceL(R_MOBBLER_TRACK_ADD_TAG));
+			tagDialog->SetPredictiveTextInputPermitted(ETrue);
+			
+			if (tagDialog->RunLD())
+				{
+				CMobblerString* tagString(CMobblerString::NewL(tag));
+				CleanupStack::PushL(tagString);
+				
+				delete iTrackTagAddHelper;
+				iTrackTagAddHelper = CMobblerFlatDataObserverHelper::NewL(iAppUi.LastFmConnection(), *this, ETrue);
+				iAppUi.LastFmConnection().TrackAddTagL(title, artist, tagString->String8(), *iTrackTagAddHelper);
+				
+				CleanupStack::PopAndDestroy(tagString);
+				}
+			}
+			break;
+		case EMobblerCommandTrackRemoveTag:
+			{
+			// fetch the user's tags for this track
+			delete iTrackTagsHelper;
+			iTrackTagsHelper = CMobblerFlatDataObserverHelper::NewL(iAppUi.LastFmConnection(), *this, ETrue);
+			iAppUi.LastFmConnection().TrackGetTagsL(title, artist, *iTrackTagsHelper);
+			}
 			break;
 		case EMobblerCommandTrackShare:
 		case EMobblerCommandArtistShare:
@@ -197,6 +236,10 @@ void CMobblerTrackList::SupportedCommandsL(RArray<TInt>& aCommands)
 	aCommands.AppendL(EMobblerCommandTrackShare);
 	aCommands.AppendL(EMobblerCommandArtistShare);
 	
+	aCommands.AppendL(EMobblerCommandTag);
+	aCommands.AppendL(EMobblerCommandTrackAddTag);
+	aCommands.AppendL(EMobblerCommandTrackRemoveTag);
+	
 	aCommands.AppendL(EMobblerCommandPlaylistAddTrack);
 	
 	if (iType == EMobblerCommandViewScrobbleLog)
@@ -209,24 +252,68 @@ void CMobblerTrackList::DataL(CMobblerFlatDataObserverHelper* aObserver, const T
 	{
 	if (aTransactionError == CMobblerLastFmConnection::ETransactionErrorNone)
 		{
+		// Create the XML reader and DOM fragment and associate them with each other
+		CSenXmlReader* xmlReader(CSenXmlReader::NewL());
+		CleanupStack::PushL(xmlReader);
+		CSenDomFragment* domFragment(CSenDomFragment::NewL());
+		CleanupStack::PushL(domFragment);
+		xmlReader->SetContentHandler(*domFragment);
+		domFragment->SetReader(*xmlReader);
+		
+		// Parse the XML into the DOM fragment
+		xmlReader->ParseL(aData);
+			
 		if (aObserver == iAlbumInfoObserver)
-			{
-			// Create the XML reader and DOM fragment and associate them with each other
-			CSenXmlReader* xmlReader(CSenXmlReader::NewL());
-			CleanupStack::PushL(xmlReader);
-			CSenDomFragment* domFragment(CSenDomFragment::NewL());
-			CleanupStack::PushL(domFragment);
-			xmlReader->SetContentHandler(*domFragment);
-			domFragment->SetReader(*xmlReader);
-			
-			// Parse the XML into the DOM fragment
-			xmlReader->ParseL(aData);
-			
+			{	
 			iAppUi.LastFmConnection().PlaylistFetchAlbumL(domFragment->AsElement().Element(KElementAlbum)->Element(KElementId)->Content(), *this);
-			
-			CleanupStack::PopAndDestroy(2);
 			}
+		else if (aObserver == iTrackTagsHelper)
+			{
+			RPointerArray<CSenElement>& tags(domFragment->AsElement().Element(_L8("tags"))->ElementsL());
+			
+			const TInt KTagCount(tags.Count());
+			
+			CDesCArray* textArray(new(ELeave) CDesCArrayFlat(KTagCount));
+			CleanupStack::PushL(textArray);
+			
+			for (TInt i(0) ; i < KTagCount ; ++i)
+				{
+				CMobblerString* tagName(CMobblerString::NewL(tags[i]->Element(_L8("name"))->Content()));
+				CleanupStack::PushL(tagName);
+				textArray->AppendL(tagName->String());
+				CleanupStack::PopAndDestroy(tagName);
+				}
+			
+			TInt index;
+			CAknListQueryDialog* tagRemoveDialog = new(ELeave) CAknListQueryDialog(&index);
+			tagRemoveDialog->PrepareLC(R_MOBBLER_TAG_REMOVE_QUERY);
+			tagRemoveDialog->SetItemTextArray(textArray); 
+			tagRemoveDialog->SetOwnershipType(ELbmDoesNotOwnItemArray); 
+		 
+			if (tagRemoveDialog->RunLD())
+				{
+				// remove the tag!!!
+				
+				TPtrC8 artist(KNullDesC8);
+				TPtrC8 title(KNullDesC8);
+					
+				GetArtistAndTitleName(artist, title);
+				
+				CMobblerString* tagName(CMobblerString::NewL((*textArray)[index]));
+				CleanupStack::PushL(tagName);
+				
+				iTrackTagAddHelper = CMobblerFlatDataObserverHelper::NewL(iAppUi.LastFmConnection(), *this, ETrue);
+				iAppUi.LastFmConnection().TrackRemoveTagL(title, artist, tagName->String8(), *iTrackTagAddHelper);
+				
+				CleanupStack::PopAndDestroy(tagName);
+				}
+			
+			CleanupStack::Pop(textArray);
+			}
+		
+		CleanupStack::PopAndDestroy(2);
 		}
+
 	else
 		{
 		// TODO
