@@ -32,7 +32,7 @@ public:
 	static CMobblerStatusView* NewL();
 	~CMobblerStatusView();
 	
-	void DisplayPlusMenu();
+	void DisplayPlusMenuL();
 	
 	TUid Id() const;
 	void HandleCommandL(TInt aCommand);

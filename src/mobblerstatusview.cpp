@@ -114,7 +114,7 @@ void CMobblerStatusView::SetMenuItemTextL(CEikMenuPane* aMenuPane,
 	CleanupStack::PopAndDestroy(menuText);
 	}
 
-void CMobblerStatusView::DisplayPlusMenu()
+void CMobblerStatusView::DisplayPlusMenuL()
 	{
 	iDisplayPlusMenu = ETrue;
 	MenuBar()->TryDisplayMenuBarL();
