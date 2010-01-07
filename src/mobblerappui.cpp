@@ -801,120 +801,55 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 			
 			break;
 		case EMobblerCommandPlus:
-			
 			if (currentTrack)
 				{
-				CAknSinglePopupMenuStyleListBox* list(new(ELeave) CAknSinglePopupMenuStyleListBox);
-				CleanupStack::PushL(list);
-				
-				CAknPopupList* popup(CAknPopupList::NewL(list, R_AVKON_SOFTKEYS_OK_CANCEL, AknPopupLayouts::EMenuWindow));
-				CleanupStack::PushL(popup);
-				
-				list->ConstructL(popup, CEikListBox::ELeftDownInViewRect);
-				
-				popup->SetTitleL(iResourceReader->ResourceL(R_MOBBLER_CURRENT_TRACK));
-				
-				list->CreateScrollBarFrameL(ETrue);
-				list->ScrollBarFrame()->SetScrollBarVisibilityL(CEikScrollBarFrame::EOff, CEikScrollBarFrame::EAuto);
-				
-				CDesCArrayFlat* items(new(ELeave) CDesCArrayFlat(11));
-				CleanupStack::PushL(items);
-				
-				// Add the first menu item and append the shortcut key 
-				HBufC* menuText(iResourceReader->ResourceL(R_MOBBLER_VISIT_LASTFM_MENU).AllocLC());
-				const TInt KTextLimit(CEikMenuPaneItem::SData::ENominalTextLength);
-				_LIT(KShortcut0, " (0)");
-				TBuf<KTextLimit> newText(menuText->Left(KTextLimit - KShortcut0().Length()));
-				newText.Append(KShortcut0);
-				CleanupStack::PopAndDestroy(menuText);
-				menuText = newText.AllocLC();
-				items->AppendL(*menuText);
-				CleanupStack::PopAndDestroy(menuText);
-				
-				// Add the other menu items
-				items->AppendL(iResourceReader->ResourceL(R_MOBBLER_SHARE_TRACK));
-				items->AppendL(iResourceReader->ResourceL(R_MOBBLER_SHARE_ARTIST));
-				items->AppendL(iResourceReader->ResourceL(R_MOBBLER_PLAYLIST_ADD_TRACK));
-				items->AppendL(iResourceReader->ResourceL(R_MOBBLER_SIMILAR_ARTISTS));
-				items->AppendL(iResourceReader->ResourceL(R_MOBBLER_SIMILAR_TRACKS));
-				items->AppendL(iResourceReader->ResourceL(R_MOBBLER_EVENTS));
-				items->AppendL(iResourceReader->ResourceL(R_MOBBLER_ARTIST_SHOUTBOX));
-				items->AppendL(iResourceReader->ResourceL(R_MOBBLER_TOP_ALBUMS));
-				items->AppendL(iResourceReader->ResourceL(R_MOBBLER_TOP_TRACKS));
-				items->AppendL(iResourceReader->ResourceL(R_MOBBLER_TOP_TAGS));
-				
-				CleanupStack::Pop(items);
-				
-				list->Model()->SetItemTextArray(items);
-				list->Model()->SetOwnershipType(ELbmOwnsItemArray);
-				
-				CleanupStack::Pop(popup);
-				
-				if (popup->ExecuteLD())
-					{
-					if (iLastFmConnection->Mode() != CMobblerLastFmConnection::EOnline && GoOnlineL())
-						{
-						iLastFmConnection->SetModeL(CMobblerLastFmConnection::EOnline);
-						}
-					
-					if (iLastFmConnection->Mode() == CMobblerLastFmConnection::EOnline)
-						{
-						switch (list->CurrentItemIndex())
-							{
-							case EPlusOptionVisitLastFm:
-								HandleCommandL(EMobblerCommandVisitWebPage);
-								break;
-							case EPlusOptionShareTrack:
-							case EPlusOptionShareArtist:
-							case EPlusOptionPlaylistAddTrack:
-								{
-								if (CurrentTrack())
-									{
-									delete iWebServicesHelper;
-									iWebServicesHelper = CMobblerWebServicesHelper::NewL(*this);
-									switch (list->CurrentItemIndex())
-										{
-										case EPlusOptionShareTrack: iWebServicesHelper->TrackShareL(*CurrentTrack()); break;
-										case EPlusOptionShareArtist: iWebServicesHelper->ArtistShareL(*CurrentTrack()); break;
-										case EPlusOptionPlaylistAddTrack: iWebServicesHelper->PlaylistAddL(*CurrentTrack()); break;
-										}
-									}
-								else
-									{
-									// TODO: display an error
-									}
-								}
-								break;
-							case EPlusOptionSimilarArtists:
-								ActivateLocalViewL(iWebServicesView->Id(), TUid::Uid(EMobblerCommandSimilarArtists), currentTrack->Artist().String8());
-								break;
-							case EPlusOptionSimilarTracks:
-								ActivateLocalViewL(iWebServicesView->Id(), TUid::Uid(EMobblerCommandSimilarTracks), currentTrack->MbTrackId().String8());
-								break;
-							case EPlusOptionEvents:
-								ActivateLocalViewL(iWebServicesView->Id(), TUid::Uid(EMobblerCommandArtistEvents), currentTrack->Artist().String8());
-								break;
-							case EPlusOptionArtistShoutbox:
-								ActivateLocalViewL(iWebServicesView->Id(), TUid::Uid(EMobblerCommandArtistShoutbox), currentTrack->Artist().String8());
-								break;
-							case EPlusOptionTopAlbums:
-								ActivateLocalViewL(iWebServicesView->Id(), TUid::Uid(EMobblerCommandArtistTopAlbums), currentTrack->Artist().String8());
-								break;
-							case EPlusOptionTopTracks:
-								ActivateLocalViewL(iWebServicesView->Id(), TUid::Uid(EMobblerCommandArtistTopTracks), currentTrack->Artist().String8());
-								break;
-							case EPlusOptionTopTags:
-								ActivateLocalViewL(iWebServicesView->Id(), TUid::Uid(EMobblerCommandArtistTopTags), currentTrack->Artist().String8());
-								break;
-							default:
-								break;
-							}
-						}
-					}
-				
-				CleanupStack::PopAndDestroy(list);
+				iStatusView->DisplayPlusMenu();
 				}
-			
+			break;
+		case EMobblerCommandPlusVisitLastFm:
+			HandleCommandL(EMobblerCommandVisitWebPage);
+			break;
+		case EMobblerCommandPlusShareTrack:
+		case EMobblerCommandPlusShareArtist:
+		case EMobblerCommandPlusPlaylistAddTrack:
+			{
+			if (CurrentTrack())
+				{
+				delete iWebServicesHelper;
+				iWebServicesHelper = CMobblerWebServicesHelper::NewL(*this);
+				switch (aCommand)
+					{
+					case EMobblerCommandPlusShareTrack: iWebServicesHelper->TrackShareL(*CurrentTrack()); break;
+					case EMobblerCommandPlusShareArtist: iWebServicesHelper->ArtistShareL(*CurrentTrack()); break;
+					case EMobblerCommandPlusPlaylistAddTrack: iWebServicesHelper->PlaylistAddL(*CurrentTrack()); break;
+					}
+				}
+			else
+				{
+				// TODO: display an error
+				}
+			}
+			break;
+		case EMobblerCommandPlusSimilarArtists:
+			ActivateLocalViewL(iWebServicesView->Id(), TUid::Uid(EMobblerCommandSimilarArtists), currentTrack->Artist().String8());
+			break;
+		case EMobblerCommandPlusSimilarTracks:
+			ActivateLocalViewL(iWebServicesView->Id(), TUid::Uid(EMobblerCommandSimilarTracks), currentTrack->MbTrackId().String8());
+			break;
+		case EMobblerCommandPlusEvents:
+			ActivateLocalViewL(iWebServicesView->Id(), TUid::Uid(EMobblerCommandArtistEvents), currentTrack->Artist().String8());
+			break;
+		case EMobblerCommandPlusArtistShoutbox:
+			ActivateLocalViewL(iWebServicesView->Id(), TUid::Uid(EMobblerCommandArtistShoutbox), currentTrack->Artist().String8());
+			break;
+		case EMobblerCommandPlusTopAlbums:
+			ActivateLocalViewL(iWebServicesView->Id(), TUid::Uid(EMobblerCommandArtistTopAlbums), currentTrack->Artist().String8());
+			break;
+		case EMobblerCommandPlusTopTracks:
+			ActivateLocalViewL(iWebServicesView->Id(), TUid::Uid(EMobblerCommandArtistTopTracks), currentTrack->Artist().String8());
+			break;
+		case EMobblerCommandPlusTopTags:
+			ActivateLocalViewL(iWebServicesView->Id(), TUid::Uid(EMobblerCommandArtistTopTags), currentTrack->Artist().String8());
 			break;
 		case EMobblerCommandVisitWebPage:
 			{

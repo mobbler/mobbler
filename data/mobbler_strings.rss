@@ -347,4 +347,7 @@ RESOURCE STRING r_mobbler_album_remove_tag		{ text = STR_mobbler_album_remove_ta
 RESOURCE STRING r_mobbler_artist_add_tag		{ text = STR_mobbler_artist_add_tag; }
 RESOURCE STRING r_mobbler_artist_remove_tag		{ text = STR_mobbler_artist_remove_tag; }
 
+RESOURCE STRING r_mobbler_similar				{ text = STR_mobbler_similar; }
+RESOURCE STRING r_mobbler_top					{ text = STR_mobbler_top; }
+
 // End of file

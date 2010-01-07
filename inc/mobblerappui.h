@@ -117,22 +117,6 @@ public:
 		EAlwaysWhenOnline
 		};
 
-private:
-	enum TPlusOptions
-		{
-		EPlusOptionVisitLastFm,
-		EPlusOptionShareTrack,
-		EPlusOptionShareArtist,
-		EPlusOptionPlaylistAddTrack,
-		EPlusOptionSimilarArtists,
-		EPlusOptionSimilarTracks,
-		EPlusOptionEvents,
-		EPlusOptionArtistShoutbox,
-		EPlusOptionTopAlbums,
-		EPlusOptionTopTracks,
-		EPlusOptionTopTags
-		};
-
 public:
 	void ConstructL();
 	CMobblerAppUi();
