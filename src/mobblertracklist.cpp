@@ -51,6 +51,8 @@ CMobblerTrackList::CMobblerTrackList(CMobblerAppUi& aAppUi, CMobblerWebServicesC
 void CMobblerTrackList::ConstructL()
 	{
 	iDefaultImage = iAppUi.BitmapCollection().BitmapL(*this, CMobblerBitmapCollection::EBitmapDefaultTrackImage);
+	
+	iWebServicesHelper = CMobblerWebServicesHelper::NewL(iAppUi);
 
 	switch (iType)
 		{
@@ -151,32 +153,16 @@ CMobblerListControl* CMobblerTrackList::HandleListCommandL(TInt aCommand)
 			break;
 		case EMobblerCommandTrackAddTag:
 			{
-			TBuf<KMobblerMaxQueryDialogLength> tag;
-			
-			CAknTextQueryDialog* tagDialog(new(ELeave) CAknTextQueryDialog(tag));
-			tagDialog->PrepareLC(R_MOBBLER_TEXT_QUERY_DIALOG);
-			tagDialog->SetPromptL(iAppUi.ResourceReader().ResourceL(R_MOBBLER_TRACK_ADD_TAG));
-			tagDialog->SetPredictiveTextInputPermitted(ETrue);
-			
-			if (tagDialog->RunLD())
-				{
-				CMobblerString* tagString(CMobblerString::NewL(tag));
-				CleanupStack::PushL(tagString);
-				
-				delete iTrackTagAddHelper;
-				iTrackTagAddHelper = CMobblerFlatDataObserverHelper::NewL(iAppUi.LastFmConnection(), *this, ETrue);
-				iAppUi.LastFmConnection().TrackAddTagL(title, artist, tagString->String8(), *iTrackTagAddHelper);
-				
-				CleanupStack::PopAndDestroy(tagString);
-				}
+			CMobblerTrack* track(CMobblerTrack::NewL(artist, title, KNullDesC8, KNullDesC8, KNullDesC8, KNullDesC8, 0, KNullDesC8));
+			iWebServicesHelper->TrackAddTagL(*track);
+			track->Release();
 			}
 			break;
 		case EMobblerCommandTrackRemoveTag:
 			{
-			// fetch the user's tags for this track
-			delete iTrackTagsHelper;
-			iTrackTagsHelper = CMobblerFlatDataObserverHelper::NewL(iAppUi.LastFmConnection(), *this, ETrue);
-			iAppUi.LastFmConnection().TrackGetTagsL(title, artist, *iTrackTagsHelper);
+			CMobblerTrack* track(CMobblerTrack::NewL(artist, title, KNullDesC8, KNullDesC8, KNullDesC8, KNullDesC8, 0, KNullDesC8));
+			iWebServicesHelper->TrackRemoveTagL(*track);
+			track->Release();
 			}
 			break;
 		case EMobblerCommandTrackShare:
@@ -184,9 +170,6 @@ CMobblerListControl* CMobblerTrackList::HandleListCommandL(TInt aCommand)
 		case EMobblerCommandPlaylistAddTrack:
 			{
 			CMobblerTrack* track(CMobblerTrack::NewL(artist, title, KNullDesC8, KNullDesC8, KNullDesC8, KNullDesC8, 0, KNullDesC8));
-			
-			delete iWebServicesHelper;
-			iWebServicesHelper = CMobblerWebServicesHelper::NewL(iAppUi);
 			
 			switch (aCommand)
 				{
@@ -266,49 +249,6 @@ void CMobblerTrackList::DataL(CMobblerFlatDataObserverHelper* aObserver, const T
 		if (aObserver == iAlbumInfoObserver)
 			{	
 			iAppUi.LastFmConnection().PlaylistFetchAlbumL(domFragment->AsElement().Element(KElementAlbum)->Element(KElementId)->Content(), *this);
-			}
-		else if (aObserver == iTrackTagsHelper)
-			{
-			RPointerArray<CSenElement>& tags(domFragment->AsElement().Element(_L8("tags"))->ElementsL());
-			
-			const TInt KTagCount(tags.Count());
-			
-			CDesCArray* textArray(new(ELeave) CDesCArrayFlat(KTagCount));
-			CleanupStack::PushL(textArray);
-			
-			for (TInt i(0) ; i < KTagCount ; ++i)
-				{
-				CMobblerString* tagName(CMobblerString::NewL(tags[i]->Element(_L8("name"))->Content()));
-				CleanupStack::PushL(tagName);
-				textArray->AppendL(tagName->String());
-				CleanupStack::PopAndDestroy(tagName);
-				}
-			
-			TInt index;
-			CAknListQueryDialog* tagRemoveDialog = new(ELeave) CAknListQueryDialog(&index);
-			tagRemoveDialog->PrepareLC(R_MOBBLER_TAG_REMOVE_QUERY);
-			tagRemoveDialog->SetItemTextArray(textArray); 
-			tagRemoveDialog->SetOwnershipType(ELbmDoesNotOwnItemArray); 
-		 
-			if (tagRemoveDialog->RunLD())
-				{
-				// remove the tag!!!
-				
-				TPtrC8 artist(KNullDesC8);
-				TPtrC8 title(KNullDesC8);
-					
-				GetArtistAndTitleName(artist, title);
-				
-				CMobblerString* tagName(CMobblerString::NewL((*textArray)[index]));
-				CleanupStack::PushL(tagName);
-				
-				iTrackTagAddHelper = CMobblerFlatDataObserverHelper::NewL(iAppUi.LastFmConnection(), *this, ETrue);
-				iAppUi.LastFmConnection().TrackRemoveTagL(title, artist, tagName->String8(), *iTrackTagAddHelper);
-				
-				CleanupStack::PopAndDestroy(tagName);
-				}
-			
-			CleanupStack::Pop(textArray);
 			}
 		
 		CleanupStack::PopAndDestroy(2);

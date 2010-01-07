@@ -56,11 +56,6 @@ private:
 	// callback for viewing scrobble log
 	CAsyncCallBack* iAsyncCallBack;
 	TCallBack iCallBack;
-	
-	CMobblerFlatDataObserverHelper* iTrackTagAddHelper;
-	CMobblerFlatDataObserverHelper* iTrackTagRemoveHelper;
-	
-	CMobblerFlatDataObserverHelper* iTrackTagsHelper;
 	};
 
 #endif // __MOBBLERTRACKLIST_H__

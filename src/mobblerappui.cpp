@@ -130,6 +130,8 @@ void CMobblerSystemCloseGlobalQuery::DoCancel()
 
 void CMobblerAppUi::ConstructL()
 	{
+	iWebServicesHelper = CMobblerWebServicesHelper::NewL(*this);
+	
 	iResourceReader = CMobblerResourceReader::NewL();
 	iBitmapCollection = CMobblerBitmapCollection::NewL();
 	
@@ -820,8 +822,6 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 			{
 			if (CurrentTrack())
 				{
-				delete iWebServicesHelper;
-				iWebServicesHelper = CMobblerWebServicesHelper::NewL(*this);
 				switch (aCommand)
 					{
 					case EMobblerCommandPlusShareTrack: iWebServicesHelper->TrackShareL(*CurrentTrack()); break;
@@ -855,6 +855,42 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 			break;
 		case EMobblerCommandPlusTopTags:
 			ActivateLocalViewL(iWebServicesView->Id(), TUid::Uid(EMobblerCommandArtistTopTags), currentTrack->Artist().String8());
+			break;
+		case EMobblerCommandTrackAddTag:
+			if (CurrentTrack())
+				{
+				iWebServicesHelper->TrackAddTagL(*CurrentTrack());
+				}
+			break;
+		case EMobblerCommandTrackRemoveTag:
+			if (CurrentTrack())
+				{
+				iWebServicesHelper->TrackRemoveTagL(*CurrentTrack());
+				}
+			break;
+		case EMobblerCommandAlbumAddTag:
+			if (CurrentTrack())
+				{
+				iWebServicesHelper->AlbumAddTagL(*CurrentTrack());
+				}
+			break;
+		case EMobblerCommandAlbumRemoveTag:
+			if (CurrentTrack())
+				{
+				iWebServicesHelper->AlbumRemoveTagL(*CurrentTrack());
+				}
+			break;
+		case EMobblerCommandArtistAddTag:
+			if (CurrentTrack())
+				{
+				iWebServicesHelper->ArtistAddTagL(*CurrentTrack());
+				}
+			break;
+		case EMobblerCommandArtistRemoveTag:
+			if (CurrentTrack())
+				{
+				iWebServicesHelper->ArtistRemoveTagL(*CurrentTrack());
+				}
 			break;
 		case EMobblerCommandVisitWebPage:
 			{
