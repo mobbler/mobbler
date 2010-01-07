@@ -805,7 +805,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 		case EMobblerCommandPlus:
 			if (currentTrack)
 				{
-				iStatusView->DisplayPlusMenu();
+				iStatusView->DisplayPlusMenuL();
 				}
 			break;
 		case EMobblerCommandPlusVisitLastFm:
