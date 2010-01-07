@@ -38,6 +38,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "mobblerstatusview.h"
 #include "mobblerutility.h"
 
+_LIT(KShortcut0, " (0)");
+_LIT(KShortcut5, " (5)");
+_LIT(KShortcut8, " (8)");
+
 CMobblerStatusView* CMobblerStatusView::NewL()
 	{
 	CMobblerStatusView* self(new(ELeave) CMobblerStatusView);
@@ -78,23 +82,26 @@ void CMobblerStatusView::SetMenuItemTextL(CEikMenuPane* aMenuPane,
 
 	const TInt KTextLimit(CEikMenuPaneItem::SData::ENominalTextLength);
 
+	TPtrC shortcut(KNullDesC);
+	
 	// Shortcut keys
-	if (aCommandId == EMobblerCommandToggleScrobbling)
+	if (aCommandId == EMobblerCommandPlusVisitLastFm)
 		{
-		_LIT(KShortcut5, " (5)");
-		TBuf<KTextLimit> newText(menuText->Left(KTextLimit - KShortcut5().Length()));
-		newText.Append(KShortcut5);
-		CleanupStack::PopAndDestroy(menuText);
-		menuText = newText.AllocLC();
+		shortcut.Set(KShortcut0);
+		}
+	else if (aCommandId == EMobblerCommandToggleScrobbling)
+		{
+		shortcut.Set(KShortcut5);
 		}
 	else if (aCommandId == EMobblerCommandEditSettings)
 		{
-		_LIT(KShortcut8, " (8)");
-		TBuf<KTextLimit> newText(menuText->Left(KTextLimit - KShortcut8().Length()));
-		newText.Append(KShortcut8);
-		CleanupStack::PopAndDestroy(menuText);
-		menuText = newText.AllocLC();
+		shortcut.Set(KShortcut8);
 		}
+	
+	TBuf<KTextLimit> newText(menuText->Left(KTextLimit - shortcut.Length()));
+	newText.Append(KShortcut0);
+	CleanupStack::PopAndDestroy(menuText);
+	menuText = newText.AllocLC();
 
 	if (menuText->Length() > KTextLimit)
 		{
@@ -105,6 +112,12 @@ void CMobblerStatusView::SetMenuItemTextL(CEikMenuPane* aMenuPane,
 
 	aMenuPane->SetItemTextL(aCommandId, *menuText);
 	CleanupStack::PopAndDestroy(menuText);
+	}
+
+void CMobblerStatusView::DisplayPlusMenu()
+	{
+	iDisplayPlusMenu = ETrue;
+	MenuBar()->TryDisplayMenuBarL();
 	}
 
 void CMobblerStatusView::DynInitMenuPaneL(TInt aResourceId, CEikMenuPane* aMenuPane)
@@ -123,6 +136,31 @@ void CMobblerStatusView::DynInitMenuPaneL(TInt aResourceId, CEikMenuPane* aMenuP
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_SETTINGS,			EMobblerCommandEditSettings);
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_ABOUT,			EMobblerCommandAbout);
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_EXIT,				EAknSoftkeyExit);
+		
+		// the plus menu commands
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_VISIT_LASTFM_MENU,	EMobblerCommandPlusVisitLastFm);
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_SHARE,				EMobblerCommandPlusShare);
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_SIMILAR,				EMobblerCommandPlusSimilar);
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_TOP,					EMobblerCommandPlusTop);
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_PLAYLIST_ADD_TRACK,	EMobblerCommandPlusPlaylistAddTrack);
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_EVENTS,				EMobblerCommandPlusEvents);
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_ARTIST_SHOUTBOX,		EMobblerCommandPlusArtistShoutbox);
+		}
+	else if(aResourceId == R_MOBBLER_PLUS_SHARE_SUBMENU_PANE)
+		{
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_SHARE_TRACK,			EMobblerCommandPlusShareTrack);
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_SHARE_ARTIST,			EMobblerCommandPlusShareArtist);
+		}
+	else if(aResourceId == R_MOBBLER_PLUS_SIMILAR_SUBMENU_PANE)
+		{
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_SIMILAR_ARTISTS,		EMobblerCommandPlusSimilarArtists);
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_SIMILAR_TRACKS,		EMobblerCommandPlusSimilarTracks);
+		}
+	else if(aResourceId == R_MOBBLER_PLUS_TOP_SUBMENU_PANE)
+		{
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_TOP_ALBUMS,			EMobblerCommandPlusTopAlbums);
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_TOP_TRACKS,			EMobblerCommandPlusTopTracks);
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_TOP_TAGS,				EMobblerCommandPlusTopTags);
 		}
 	else if(aResourceId == R_RADIO_SUBMENU_PANE)
 		{
@@ -187,39 +225,68 @@ void CMobblerStatusView::DynInitMenuPaneL(TInt aResourceId, CEikMenuPane* aMenuP
 	// Now the menu text is set, dimming logic is next
 	if (aResourceId == R_MOBBLER_STATUS_MENU_PANE)
 		{
-		if (static_cast<CMobblerAppUi*>(AppUi())->Mode() == CMobblerLastFmConnection::EOnline ||
-				static_cast<CMobblerAppUi*>(AppUi())->State() == CMobblerLastFmConnection::EConnecting ||
-				static_cast<CMobblerAppUi*>(AppUi())->State() == CMobblerLastFmConnection::EHandshaking)
+		if (iDisplayPlusMenu)
 			{
+			iDisplayPlusMenu = EFalse;
+			
+			// hide everything that isn't a plus menu command
+			aMenuPane->SetItemDimmed(EMobblerCommandRadio, ETrue);
+			aMenuPane->SetItemDimmed(EMobblerCommandResumeRadio, ETrue);
 			aMenuPane->SetItemDimmed(EMobblerCommandOnline, ETrue);
+			aMenuPane->SetItemDimmed(EMobblerCommandOffline, ETrue);
+			aMenuPane->SetItemDimmed(EMobblerCommandView, ETrue);
+			aMenuPane->SetItemDimmed(EMobblerCommandSearch, ETrue);
+			aMenuPane->SetItemDimmed(EMobblerCommandEqualizer, ETrue);
+			aMenuPane->SetItemDimmed(EMobblerCommandTools, ETrue);
+			aMenuPane->SetItemDimmed(EMobblerCommandEditSettings, ETrue);
+			aMenuPane->SetItemDimmed(EMobblerCommandAbout, ETrue);
+			aMenuPane->SetItemDimmed(EAknSoftkeyExit, ETrue);
 			}
 		else
 			{
-			aMenuPane->SetItemDimmed(EMobblerCommandOffline, ETrue);
-			}
-		
-		if (MobblerUtility::EqualizerSupported())
-			{
-			MMdaAudioOutputStreamCallback* dummyCallback(NULL);
-			CMdaAudioOutputStream* tempStream(CMdaAudioOutputStream::NewL(*dummyCallback));
-			CAudioEqualizerUtility* tempEqualizer(NULL);
-			TRAP_IGNORE(tempEqualizer = CAudioEqualizerUtility::NewL(*tempStream));
-			if (!tempEqualizer)
+			// hide the plus menu commands
+			aMenuPane->SetItemDimmed(EMobblerCommandPlusShare, ETrue);
+			aMenuPane->SetItemDimmed(EMobblerCommandPlusSimilar, ETrue);
+			aMenuPane->SetItemDimmed(EMobblerCommandPlusTop, ETrue);
+			aMenuPane->SetItemDimmed(EMobblerCommandPlusPlaylistAddTrack, ETrue);
+			aMenuPane->SetItemDimmed(EMobblerCommandPlusEvents, ETrue);
+			aMenuPane->SetItemDimmed(EMobblerCommandPlusArtistShoutbox, ETrue);
+			aMenuPane->SetItemDimmed(EMobblerCommandPlusVisitLastFm, ETrue);
+			
+			if (static_cast<CMobblerAppUi*>(AppUi())->Mode() == CMobblerLastFmConnection::EOnline ||
+					static_cast<CMobblerAppUi*>(AppUi())->State() == CMobblerLastFmConnection::EConnecting ||
+					static_cast<CMobblerAppUi*>(AppUi())->State() == CMobblerLastFmConnection::EHandshaking)
+				{
+				aMenuPane->SetItemDimmed(EMobblerCommandOnline, ETrue);
+				}
+			else
+				{
+				aMenuPane->SetItemDimmed(EMobblerCommandOffline, ETrue);
+				}
+			
+			if (MobblerUtility::EqualizerSupported())
+				{
+				MMdaAudioOutputStreamCallback* dummyCallback(NULL);
+				CMdaAudioOutputStream* tempStream(CMdaAudioOutputStream::NewL(*dummyCallback));
+				CAudioEqualizerUtility* tempEqualizer(NULL);
+				TRAP_IGNORE(tempEqualizer = CAudioEqualizerUtility::NewL(*tempStream));
+				if (!tempEqualizer)
+					{
+					aMenuPane->SetItemDimmed(EMobblerCommandEqualizer, ETrue);
+					}
+				
+				tempStream->Stop();
+				delete tempEqualizer;
+				delete tempStream;
+				}
+			else
 				{
 				aMenuPane->SetItemDimmed(EMobblerCommandEqualizer, ETrue);
 				}
 			
-			tempStream->Stop();
-			delete tempEqualizer;
-			delete tempStream;
+			aMenuPane->SetItemDimmed(EMobblerCommandResumeRadio, 
+						!static_cast<CMobblerAppUi*>(AppUi())->RadioResumable());
 			}
-		else
-			{
-			aMenuPane->SetItemDimmed(EMobblerCommandEqualizer, ETrue);
-			}
-		
-		aMenuPane->SetItemDimmed(EMobblerCommandResumeRadio, 
-					!static_cast<CMobblerAppUi*>(AppUi())->RadioResumable());
 		}
 	else if (aResourceId == R_MOBBLER_EQUALIZER_SUBMENU_PANE)
 		{
