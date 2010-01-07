@@ -130,6 +130,26 @@ enum TMobblerSettingItemListViewCommands
 	EMobblerCommandAlbumAddTag,
 	EMobblerCommandAlbumRemoveTag,
 	
+	// plus menu commands
+	EMobblerCommandPlusVisitLastFm,
+	EMobblerCommandPlusEvents,
+	EMobblerCommandPlusArtistShoutbox,
+	EMobblerCommandPlusPlaylistAddTrack,
+	
+	EMobblerCommandPlusShare,
+	EMobblerCommandPlusShareTrack,
+	EMobblerCommandPlusShareArtist,
+	
+	EMobblerCommandPlusSimilar,
+	EMobblerCommandPlusSimilarArtists,
+	EMobblerCommandPlusSimilarTracks,
+	
+	EMobblerCommandPlusTop,
+	EMobblerCommandPlusTopAlbums,
+	EMobblerCommandPlusTopTracks,
+	EMobblerCommandPlusTopTags,
+	
+	// radio commands
 	EMobblerCommandRadioStart,
 	EMobblerCommandResumeRadio,
 	EMobblerCommandRadioEnumFirst = 0x9000,
