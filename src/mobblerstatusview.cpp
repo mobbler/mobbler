@@ -99,7 +99,7 @@ void CMobblerStatusView::SetMenuItemTextL(CEikMenuPane* aMenuPane,
 		}
 	
 	TBuf<KTextLimit> newText(menuText->Left(KTextLimit - shortcut.Length()));
-	newText.Append(KShortcut0);
+	newText.Append(shortcut);
 	CleanupStack::PopAndDestroy(menuText);
 	menuText = newText.AllocLC();
 
@@ -145,6 +145,7 @@ void CMobblerStatusView::DynInitMenuPaneL(TInt aResourceId, CEikMenuPane* aMenuP
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_PLAYLIST_ADD_TRACK,	EMobblerCommandPlusPlaylistAddTrack);
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_EVENTS,				EMobblerCommandPlusEvents);
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_ARTIST_SHOUTBOX,		EMobblerCommandPlusArtistShoutbox);
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_TAG,					EMobblerCommandPlusTag);
 		}
 	else if(aResourceId == R_MOBBLER_PLUS_SHARE_SUBMENU_PANE)
 		{
@@ -161,6 +162,15 @@ void CMobblerStatusView::DynInitMenuPaneL(TInt aResourceId, CEikMenuPane* aMenuP
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_TOP_ALBUMS,			EMobblerCommandPlusTopAlbums);
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_TOP_TRACKS,			EMobblerCommandPlusTopTracks);
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_TOP_TAGS,				EMobblerCommandPlusTopTags);
+		}
+	else if(aResourceId == R_MOBBLER_TAG_SUBMENU_PANE)
+		{
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_TRACK_ADD_TAG,			EMobblerCommandTrackAddTag);
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_TRACK_REMOVE_TAG,			EMobblerCommandTrackRemoveTag);
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_ALBUM_ADD_TAG,			EMobblerCommandAlbumAddTag);
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_ALBUM_REMOVE_TAG,			EMobblerCommandAlbumRemoveTag);
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_ARTIST_ADD_TAG,			EMobblerCommandArtistAddTag);
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_ARTIST_REMOVE_TAG,		EMobblerCommandArtistRemoveTag);
 		}
 	else if(aResourceId == R_RADIO_SUBMENU_PANE)
 		{
@@ -252,6 +262,7 @@ void CMobblerStatusView::DynInitMenuPaneL(TInt aResourceId, CEikMenuPane* aMenuP
 			aMenuPane->SetItemDimmed(EMobblerCommandPlusEvents, ETrue);
 			aMenuPane->SetItemDimmed(EMobblerCommandPlusArtistShoutbox, ETrue);
 			aMenuPane->SetItemDimmed(EMobblerCommandPlusVisitLastFm, ETrue);
+			aMenuPane->SetItemDimmed(EMobblerCommandPlusTag, ETrue);
 			
 			if (static_cast<CMobblerAppUi*>(AppUi())->Mode() == CMobblerLastFmConnection::EOnline ||
 					static_cast<CMobblerAppUi*>(AppUi())->State() == CMobblerLastFmConnection::EConnecting ||

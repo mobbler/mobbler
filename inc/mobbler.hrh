@@ -136,6 +136,8 @@ enum TMobblerSettingItemListViewCommands
 	EMobblerCommandPlusArtistShoutbox,
 	EMobblerCommandPlusPlaylistAddTrack,
 	
+	EMobblerCommandPlusTag,
+	
 	EMobblerCommandPlusShare,
 	EMobblerCommandPlusShareTrack,
 	EMobblerCommandPlusShareArtist,
