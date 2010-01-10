@@ -592,7 +592,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 				}
 			}
 			break;
-		case EMobblerCommandViewScrobbleLog:
+		case EMobblerCommandScrobbleLog:
 			{
 			ActivateLocalViewL(iWebServicesView->Id(), TUid::Uid(aCommand), KNullDesC8);
 			}
@@ -2026,7 +2026,7 @@ void CMobblerAppUi::GoToLastFmL(TInt aCommand, const TDesC8& aEventId)
 
 void CMobblerAppUi::GoToMapL(const TDesC8& aName, const TDesC8& aLatitude, const TDesC8& aLongitude)
 	{
-	_LIT(KMapKmlFilename, "c:\\mobblermap.kml");
+	_LIT(KMapKmlFilename, "C:\\System\\Data\\Mobbler\\map.kml");
 	
 	_LIT8(KMapKmlFormat,	"<kml xmlns=\"http://earth.google.com/kml/2.0\">\r\n"
 							"\t<Placemark>\r\n "

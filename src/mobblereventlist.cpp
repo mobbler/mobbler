@@ -216,7 +216,7 @@ void CMobblerEventList::DataL(CMobblerFlatDataObserverHelper* aObserver, const T
 			}
 		else if (aObserver == iFoursquareHelper)
 			{
-			_LIT(KMapKmlFilename, "c:\\mobblermap.kml");
+			_LIT(KMapKmlFilename, "C:\\System\\Data\\Mobbler\\map.kml");
 			
 			_LIT8(KMapKmlStartFormat,		"<kml xmlns=\"http://earth.google.com/kml/2.0\">\r\n");	
 			

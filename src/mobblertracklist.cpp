@@ -88,7 +88,7 @@ void CMobblerTrackList::ConstructL()
 		case EMobblerCommandSearchTrack:
 			iAppUi.LastFmConnection().WebServicesCallL(KTrack, KSearch, iText1->String8(), *this);
 			break;
-		case EMobblerCommandViewScrobbleLog:
+		case EMobblerCommandScrobbleLog:
 			{
 			iAsyncCallBack = new(ELeave) CAsyncCallBack(CActive::EPriorityStandard);
 			iCallBack = TCallBack(CMobblerTrackList::ViewScrobbleLogCallBackL, this);
@@ -110,7 +110,7 @@ CMobblerTrackList::~CMobblerTrackList()
 
 void CMobblerTrackList::GetArtistAndTitleName(TPtrC8& aArtist, TPtrC8& aTitle)
 	{
-	if (iType == EMobblerCommandViewScrobbleLog)
+	if (iType == EMobblerCommandScrobbleLog)
 		{
 		if (iAppUi.LastFmConnection().ScrobbleLogCount() > iListBox->CurrentItemIndex()
 				&& iAppUi.LastFmConnection().ScrobbleLogCount() > 0)
@@ -225,7 +225,7 @@ void CMobblerTrackList::SupportedCommandsL(RArray<TInt>& aCommands)
 	
 	aCommands.AppendL(EMobblerCommandPlaylistAddTrack);
 	
-	if (iType == EMobblerCommandViewScrobbleLog)
+	if (iType == EMobblerCommandScrobbleLog)
 		{
 		aCommands.AppendL(EMobblerCommandScrobbleLogRemove);
 		}
@@ -263,6 +263,7 @@ void CMobblerTrackList::DataL(CMobblerFlatDataObserverHelper* aObserver, const T
 TInt CMobblerTrackList::ViewScrobbleLogCallBackL(TAny* aPtr)
 	{
 	static_cast<CMobblerTrackList*>(aPtr)->CMobblerListControl::DataL(KNullDesC8, CMobblerLastFmConnection::ETransactionErrorNone);
+	return KErrNone;
 	}
 
 void CMobblerTrackList::ParseL(const TDesC8& aXML)
@@ -288,12 +289,12 @@ void CMobblerTrackList::ParseL(const TDesC8& aXML)
 		case EMobblerCommandSearchTrack:
 			CMobblerParser::ParseSearchTrackL(aXML, *this, iList);
 			break;
-		case EMobblerCommandViewScrobbleLog:
+		case EMobblerCommandScrobbleLog:
 			{
 			const TInt KScrobbleLogCount(iAppUi.LastFmConnection().ScrobbleLogCount());
-			for (TInt i(0) ; i < KScrobbleLogCount ; ++i)
+			for (TInt i(0); i < KScrobbleLogCount; ++i)
 				{
-				// Add an item to the list box			
+				// Add an item to the list box
 				CMobblerListItem* item(CMobblerListItem::NewL(*this,
 																iAppUi.LastFmConnection().ScrobbleLogItem(i).Title().String8(),
 																iAppUi.LastFmConnection().ScrobbleLogItem(i).Artist().String8(),
