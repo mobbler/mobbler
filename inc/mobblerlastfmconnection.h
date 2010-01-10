@@ -121,6 +121,11 @@ public:
 	
 	TLastFmMemberType MemberType() const;
 	
+	// Scrobbler log access
+	TInt ScrobbleLogCount() const;
+	const CMobblerTrackBase& ScrobbleLogItem(TInt aIndex) const;
+	void RemoveScrobbleLogItemL(TInt aIndex);
+	
 	// state observers
 	void AddStateChangeObserverL(MMobblerConnectionStateObserver* aObserver);
 	void RemoveStateChangeObserver(MMobblerConnectionStateObserver* aObserver);
@@ -188,7 +193,7 @@ public:
 	void PlaylistAddTrackL(const TDesC8& aPlaylistId, const TDesC8& aArtist, const TDesC8& aTrack, MMobblerFlatDataObserver& aObserver);
 	
 	void FoursquareL(const TDesC8& aLongitude, const TDesC8& aLatitude, MMobblerFlatDataObserver& aObserver);
-//	void FetchLyricsL(const TDesC8& aArtist, const TDesC8& aTitle, MMobblerFlatDataObserver& aObserver);
+	void FetchLyricsL(const TDesC8& aArtist, const TDesC8& aTitle, MMobblerFlatDataObserver& aObserver);
 	
 	TBool ExportQueueToLogFileL();
 	

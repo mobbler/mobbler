@@ -289,7 +289,7 @@ private:
 	
 	CMobblerWebServicesHelper* iWebServicesHelper;
 	CMobblerFlatDataObserverHelper* iCheckForUpdatesObserver;
-//	CMobblerFlatDataObserverHelper* iFetchLyricsObserver;
+	CMobblerFlatDataObserverHelper* iFetchLyricsObserver;
 	
 	CMobblerDestinationsInterface* iDestinations;
 	TUid iDestinationsDtorUid;

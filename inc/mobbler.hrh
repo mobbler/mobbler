@@ -35,6 +35,8 @@ enum TMobblerSettingItemListViewCommands
 	EMobblerCommandAbout,
 	
 	EMobblerCommandTools,
+	EMobblerCommandViewScrobbleLog,
+	EMobblerCommandScrobbleLogRemove,
 	
 	EMobblerCommandPlus,
 	
@@ -149,6 +151,8 @@ enum TMobblerSettingItemListViewCommands
 	EMobblerCommandPlusTopTracks,
 	EMobblerCommandPlusTopTags,
 	
+	EMobblerCommandPlusLyrics,
+	
 	// radio commands
 	EMobblerCommandRadioStart,
 	EMobblerCommandResumeRadio,
@@ -166,7 +170,6 @@ enum TMobblerSettingItemListViewCommands
 	EMobblerCommandRadioEnumLast = 0xA000,
 	
 	EMobblerCommandCheckForUpdates,
-//	EMobblerCommandFetchLyrics,
 	EMobblerCommandVisitWebPage,
 	EMobblerCommandTrackWebPage,
 	EMobblerCommandArtistWebPage,

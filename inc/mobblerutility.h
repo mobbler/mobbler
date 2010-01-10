@@ -36,6 +36,9 @@ public:
 	
 	static TBuf8<2> LanguageL();
 	static TBuf<30> LocalLastFmDomainL();
+
+	static void FixLyricsSpecialCharacters(TDes8& aText);
+	static void FixLyricsLineBreaks(TDes8& aText);
 	};
 
 #endif // __MOBBLERUTILITY_H__
