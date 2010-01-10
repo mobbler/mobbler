@@ -26,6 +26,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <hal.h>
 #include <hash.h>
 
+#include "mobblerlogging.h"
 #include "mobblerutility.h"
 
 _LIT8(KChineseLangCode, "cn");
@@ -229,6 +230,82 @@ TBuf<30> MobblerUtility::LocalLastFmDomainL()
 	CleanupStack::PopAndDestroy(&downgradePath);
 	
 	return url;
+	}
+
+void MobblerUtility::FixLyricsSpecialCharacters(TDes8& aText)
+	{
+	// Lyricsfly: "Because our database varies with many html format encodings 
+	// including international characters, we recommend that you replace all 
+	// quotes, ampersands and all other special and international characters 
+	// with "%". Simply put; if the character is not [A-Z a-z 0-9] or space, 
+	// just substitute "%" for it to get most out of your results."
+	
+	_LIT8(KSubstitute, "%");
+	
+	for (TInt i(0); i < aText.Length(); ++i)
+		{
+		TChar ch(aText[i]);
+
+		if (ch.IsDigit() || ch.IsSpace())
+			{
+			// Do nothing
+			}
+		else
+			{
+			// Do nothing if [A-Za-z]
+			ch.LowerCase();
+			switch (ch)
+				{
+				case 'a':
+				case 'b':
+				case 'c':
+				case 'd':
+				case 'e':
+				case 'f':
+				case 'g':
+				case 'h':
+				case 'i':
+				case 'j':
+				case 'k':
+				case 'l':
+				case 'm':
+				case 'n':
+				case 'o':
+				case 'p':
+				case 'q':
+				case 'r':
+				case 's':
+				case 't':
+				case 'u':
+				case 'v':
+				case 'w':
+				case 'x':
+				case 'y':
+				case 'z':
+					// Do nothing
+					break;
+				default:
+					// Replace with %
+					LOG(_L8("Replace with %"));
+					aText.Delete(i, 1);
+					aText.Insert(i, KSubstitute);
+					break;
+				}
+			}
+		}
+	}
+
+void MobblerUtility::FixLyricsLineBreaks(TDes8& aText)
+	{
+	_LIT8(KBrTag1, "[br]");
+	_LIT8(KBrTag2, "\r\n");
+	
+	TInt pos(KErrNotFound);
+	while ((pos = aText.Find(KBrTag1)) != KErrNotFound)
+		{
+		aText.Delete(pos, KBrTag1().Length());
+		aText.Insert(pos, KBrTag2);
+		}
 	}
 
 // End of file

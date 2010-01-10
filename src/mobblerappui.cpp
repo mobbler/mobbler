@@ -32,6 +32,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <EscapeUtils.h>
 #include <s32file.h>
 #include <sendomfragment.h>
+#include <senxmlutils.h>
 
 #ifdef __SYMBIAN_SIGNED__
 #include <aknswallpaperutils.h>
@@ -225,7 +226,7 @@ CMobblerAppUi::~CMobblerAppUi()
 	delete iBitmapCollection;
 	delete iCheckForUpdatesObserver;
 	delete iDocHandler;
-//	delete iFetchLyricsObserver;
+	delete iFetchLyricsObserver;
 	delete iInterfaceSelector;
 	delete iLastFmConnection;
 	delete iMobblerDownload;
@@ -603,20 +604,6 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 			iLastFmConnection->CheckForUpdateL(*iCheckForUpdatesObserver);
 			}
 			break;
-/*		case EMobblerCommandFetchLyrics:
-			{
-			if (currentTrack)
-				{
-				delete iFetchLyricsObserver;
-				iFetchLyricsObserver = CMobblerFlatDataObserverHelper::NewL(
-											*iLastFmConnection, *this, ETrue);
-				iLastFmConnection->FetchLyricsL(currentTrack->Artist().String8(), 
-												currentTrack->Title().String8(), 
-												*iFetchLyricsObserver);
-				}
-			}
-			break;
-*/
 		case EMobblerCommandEditSettings:
 			ActivateLocalViewL(iSettingView->Id(), 
 								TUid::Uid(CMobblerSettingItemListView::ENormalSettings), 
@@ -856,7 +843,20 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 		case EMobblerCommandPlusTopTags:
 			ActivateLocalViewL(iWebServicesView->Id(), TUid::Uid(EMobblerCommandArtistTopTags), currentTrack->Artist().String8());
 			break;
-		case EMobblerCommandTrackAddTag:
+		case EMobblerCommandPlusLyrics:
+			{
+			if (currentTrack)
+				{
+				delete iFetchLyricsObserver;
+				iFetchLyricsObserver = CMobblerFlatDataObserverHelper::NewL(
+											*iLastFmConnection, *this, ETrue);
+				iLastFmConnection->FetchLyricsL(currentTrack->Artist().String8(), 
+												currentTrack->Title().String8(), 
+												*iFetchLyricsObserver);
+				}
+			}
+			break;
+			case EMobblerCommandTrackAddTag:
 			if (CurrentTrack())
 				{
 				iWebServicesHelper->TrackAddTagL(*CurrentTrack());
@@ -1226,15 +1226,19 @@ void CMobblerAppUi::DataL(CMobblerFlatDataObserverHelper* aObserver, const TDesC
 					}
 				}
 			}
-/*		else if (aObserver == iFetchLyricsObserver)
+		else if (aObserver == iFetchLyricsObserver)
 			{
 			DUMPDATA(aData, _L("lyricsdata.txt"));
-			_LIT(KLyricsFilename, "c:\\mobblerlyrics.txt");
-			//_LIT8(KElementStart, "start");
-			//_LIT8(KElementSg, "sq");
+			_LIT(KLyricsFilename, "C:\\System\\Data\\Mobbler\\lyrics.txt");
+			_LIT8(KElementSg, "sg");
 			_LIT8(KElementTx, "tx");
 			_LIT8(KElement200, "200");
+			_LIT8(KElement204, "204");
 			_LIT8(KElement300, "300");
+			_LIT8(KElement400, "400");
+			_LIT8(KElement401, "401");
+			_LIT8(KElement402, "402");
+			_LIT8(KElement406, "406");
 			
 			RFileWriteStream file;
 			CleanupClosePushL(file);
@@ -1250,39 +1254,78 @@ void CMobblerAppUi::DataL(CMobblerFlatDataObserverHelper* aObserver, const TDesC
 			
 			xmlReader->ParseL(aData);
 			
-			// Get the error code
-			const TDesC8* statusText(domFragment->AsElement().AttrValue(KElementStatus));
+			// Get the status error code
+			TPtrC8 statusPtrC(domFragment->AsElement().Element(KElementStatus)->Content());
+			TBool success(ETrue);
 			
-			if (statusText && (statusText->CompareF(KElement200) == 0))
+			if ((statusPtrC.CompareF(KElement200) == 0) || 
+				(statusPtrC.CompareF(KElement300) == 0))
 				{
-				LOG(_L8("200 - ok"));
-				const TDesC8* lyricsText(domFragment->AsElement().AttrValue(KElementTx));
-				file.WriteL(*lyricsText);
-				}
-			else if (statusText && (statusText->CompareF(KElement300) == 0))
-				{
-				LOG(_L8("300 - TESTING LIMITED"));
-				const TDesC8* lyricsText(domFragment->AsElement().AttrValue(KElementTx));
-				file.WriteL(*lyricsText);
-				}
-			else if (statusText)
-				{
-				LOG(_L8("statusText"));
-				file.WriteL(*statusText);
+				TPtrC8 lyricsPtrC(domFragment->AsElement().Element(KElementSg)->Element(KElementTx)->Content());
+				
+				HBufC8* lyricsBuf(HBufC8::NewLC(lyricsPtrC.Length()));
+				SenXmlUtils::DecodeHttpCharactersL(lyricsPtrC, lyricsBuf);
+				
+				TPtr8 lyricsPtr(lyricsBuf->Des());
+				MobblerUtility::FixLyricsLineBreaks(lyricsPtr);
+				file.WriteL(lyricsPtr);
+				CleanupStack::PopAndDestroy(lyricsBuf);
 				}
 			else
 				{
-				// error!
-				LOG(_L8("error!"));
-				file.WriteL(aData);
+				CAknResourceNoteDialog *note(new (ELeave) CAknInformationNote(EFalse));
+				note->ExecuteLD(iResourceReader->ResourceL(R_MOBBLER_LYRICS_NOT_FOUND));
+				success = EFalse;
+				
+//				TPtrC8 songPtrC(domFragment->AsElement().Element(KElementSg)->Content());
+//				file.WriteL(songPtrC);
 				}
-			CleanupStack::PopAndDestroy(2);
 			
+#ifdef _DEBUG
+			if (statusPtrC.CompareF(KElement200) == 0)
+				{
+				LOG(_L8("200 - ok"));
+				//LOG(_L8("    Results are returned. All parameters checked ok."));
+				}
+			else if (statusPtrC.CompareF(KElement204) == 0)
+				{
+				LOG(_L8("204 - NO CONTENT"));
+				//LOG(_L8("   Parameter query returned no results. All parameters checked ok."));
+				}
+			else if (statusPtrC.CompareF(KElement300) == 0)
+				{
+				LOG(_L8("300 - TESTING LIMITED"));
+				//LOG(_L8("    Temporary access. Limited content. All parameters checked ok."));
+				}
+			else if (statusPtrC.CompareF(KElement400) == 0)
+				{
+				LOG(_L8("400 - MISSING KEY"));
+				//LOG(_L8("   Parameter “i” missing. Authorization failed."));
+				}
+			else if (statusPtrC.CompareF(KElement401) == 0)
+				{
+				LOG(_L8("401 – UNAUTHORIZED"));
+				//LOG(_L8("   Parameter “i” invalid. Authorization failed."));
+				}
+			else if (statusPtrC.CompareF(KElement402) == 0)
+				{
+				LOG(_L8("402 - LIMITED TIME"));
+				//LOG(_L8("    This response is returned only if you query too soon. Limit query requests. Time of delay is shown in <delay> tag in milliseconds."));
+				}
+			else if (statusPtrC.CompareF(KElement406) == 0)
+				{
+				LOG(_L8("406 - QUERY TOO SHORT"));
+				//LOG(_L8("    Query request string is too short. All other parameters checked ok."));
+				}
+#endif // _DEBUG
+
+			CleanupStack::PopAndDestroy(2); // xmlReader & domFragment
 			CleanupStack::PopAndDestroy(&file);
-			
-			LaunchFileEmbeddedL(KLyricsFilename);
+			if (success)
+				{
+				LaunchFileEmbeddedL(KLyricsFilename);
+				}
 			}
-*/
 		}
 	}
 
