@@ -968,7 +968,7 @@ void CMobblerLastFmConnection::FetchLyricsL(const TDesC8& aArtist,
 
 	// Using the weekly user ID key from http://www.lyricsfly.com/api/#doc 
 	// until we get a permanent key. Make sure the weekly key is correct.
-	_LIT8(KLyricsflyFormat, "http://lyricsfly.com/api/api.php?i=80f126a4797c9fe8f-temporary.API.access&a=%S&t=%S");
+	_LIT8(KLyricsflyFormat, "http://lyricsfly.com/api/api.php?i=1c0736f65ac693cbd-temporary.API.access&a=%S&t=%S");
 	
 	HBufC8* artistEncoded(MobblerUtility::URLEncodeLC(artistPtr));
 	HBufC8* titleEncoded(MobblerUtility::URLEncodeLC(titlePtr));
