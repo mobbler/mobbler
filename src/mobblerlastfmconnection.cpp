@@ -80,6 +80,13 @@ _LIT8(KRadioStationRecommended, "lastfm://user/%S/recommended");
 _LIT8(KLatesverFileLocation, "http://www.mobbler.co.uk/latestver.xml");
 #endif
 
+#ifdef PERMANENT_LYRICSFLY_ID_KEY
+#include "mobblerlyricsflyidkey.h"
+#else
+// Update with the weekly user ID key from http://www.lyricsfly.com/api/#doc
+_LIT8(KLyricsflyIdKey, "1c0736f65ac693cbd-temporary.API.access");
+#endif
+
 // The file name to store the queue of listened tracks
 _LIT(KTracksFile, "c:track_queue.dat");
 _LIT(KCurrentTrackFile, "c:current_track.dat");
@@ -965,19 +972,18 @@ void CMobblerLastFmConnection::FetchLyricsL(const TDesC8& aArtist,
 	LOG2(artistPtr, titlePtr);
 
 	// 2. URL encode artist and title
-
-	// Using the weekly user ID key from http://www.lyricsfly.com/api/#doc 
-	// until we get a permanent key. Make sure the weekly key is correct.
-	_LIT8(KLyricsflyFormat, "http://lyricsfly.com/api/api.php?i=1c0736f65ac693cbd-temporary.API.access&a=%S&t=%S");
+	_LIT8(KLyricsflyFormat, "http://lyricsfly.com/api/api.php?i=%S&a=%S&t=%S");
 	
 	HBufC8* artistEncoded(MobblerUtility::URLEncodeLC(artistPtr));
 	HBufC8* titleEncoded(MobblerUtility::URLEncodeLC(titlePtr));
 	
 	HBufC8* uriBuf(HBufC8::NewLC(KLyricsflyFormat().Length() + 
+								 KLyricsflyIdKey().Length() +
 								 artistEncoded->Length() + 
 								 titleEncoded->Length()));
 	
-	uriBuf->Des().Format(KLyricsflyFormat, artistEncoded, titleEncoded);
+	uriBuf->Des().Format(KLyricsflyFormat, &KLyricsflyIdKey, 
+							artistEncoded, titleEncoded);
 	LOG(*uriBuf);
 	
 	TUriParser8 uriParser;
