@@ -1230,8 +1230,8 @@ void CMobblerAppUi::DataL(CMobblerFlatDataObserverHelper* aObserver, const TDesC
 			{
 			DUMPDATA(aData, _L("lyricsdata.txt"));
 			_LIT(KLyricsFilename, "C:\\System\\Data\\Mobbler\\lyrics.txt");
-			_LIT8(KElementSg, "sg");
-			_LIT8(KElementTx, "tx");
+			_LIT8(KElementSg, "sg"); // song
+			_LIT8(KElementTx, "tx"); // lyrics text
 			_LIT8(KElement200, "200");
 			_LIT8(KElement204, "204");
 			_LIT8(KElement300, "300");
@@ -1270,6 +1270,27 @@ void CMobblerAppUi::DataL(CMobblerFlatDataObserverHelper* aObserver, const TDesC
 				MobblerUtility::FixLyricsLineBreaks(lyricsPtr);
 				file.WriteL(lyricsPtr);
 				CleanupStack::PopAndDestroy(lyricsBuf);
+				
+#ifdef PERMANENT_LYRICSFLY_ID_KEY
+				// Only link back to corrections with the permanent ID key.
+				// Temporary keys don't return correct checksums to prevent abuse.
+				_LIT8(KElementCs, "cs"); // checksum (for link back)
+				_LIT8(KElementId, "id"); // song ID (for link back)
+				_LIT8(KLinkBackFormat, "Make corrections:\r\nhttp://lyricsfly.com/search/correction.php?%S&id=%S");
+				
+				TPtrC8 checkSumPtrC(domFragment->AsElement().Element(KElementSg)->Element(KElementCs)->Content());
+				TPtrC8 idPtrC(domFragment->AsElement().Element(KElementSg)->Element(KElementId)->Content());
+				
+				HBufC8* linkBackBuf(HBufC8::NewLC(KLinkBackFormat().Length() + 
+												  checkSumPtrC.Length() + 
+												  idPtrC.Length()));
+				
+				linkBackBuf->Des().Format(KLinkBackFormat, &checkSumPtrC, &idPtrC);
+				LOG(*linkBackBuf);
+				
+				file.WriteL(*linkBackBuf);
+				CleanupStack::PopAndDestroy(linkBackBuf);
+#endif
 				}
 			else
 				{
