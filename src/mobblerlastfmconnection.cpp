@@ -253,11 +253,11 @@ void CMobblerLastFmConnection::DoSetModeL(TMode aMode)
 		}
 	}
 
-void CMobblerLastFmConnection::SetIapIdL(TUint32 iIapId)
+void CMobblerLastFmConnection::SetIapIdL(TUint32 aIapId)
 	{
-	if (iIapId != iIapId)
+	if (aIapId != iIapId)
 		{
-		iIapId = iIapId;
+		iIapId = aIapId;
 		
 		if (((iMode == EOnline || iState == EHandshaking) && iCurrentIapId != iIapId)
 				|| iState == EConnecting)
