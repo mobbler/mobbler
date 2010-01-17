@@ -71,6 +71,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "mobblerwebservicesview.h"
 
 _LIT(KRadioFile, "C:radiostations.dat");
+_LIT(KSearchFile, "C:searchterms.dat");
 
 // Gesture interface
 #ifdef __SYMBIAN_SIGNED__
@@ -235,6 +236,10 @@ CMobblerAppUi::~CMobblerAppUi()
 	delete iPreviousRadioPlaylistId;
 	delete iPreviousRadioTag;
 	delete iPreviousRadioUser;
+	delete iPreviousSearchTrack;
+	delete iPreviousSearchAlbum;
+	delete iPreviousSearchArtist;
+	delete iPreviousSearchTag;
 	delete iRadioPlayer;
 	delete iResourceReader;
 	delete iSleepTimer;
@@ -558,33 +563,75 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 		case EMobblerCommandSearchArtist:
 		case EMobblerCommandSearchTag:
 			{
+			LoadSearchTermsL();
 			TBuf<KMobblerMaxQueryDialogLength> search;
-			CAknTextQueryDialog* userDialog(new(ELeave) CAknTextQueryDialog(search));
-			userDialog->PrepareLC(R_MOBBLER_TEXT_QUERY_DIALOG);
 			TInt resourceId;
 			switch (aCommand)
 				{
 				case EMobblerCommandSearchTrack:
 					resourceId = R_MOBBLER_SEARCH_TRACK_PROMPT;
+					if (iPreviousSearchTrack)
+						{
+						search = iPreviousSearchTrack->String();
+						}
 					break;
 				case EMobblerCommandSearchAlbum:
 					resourceId = R_MOBBLER_SEARCH_ALBUM_PROMPT;
+					if (iPreviousSearchAlbum)
+						{
+						search = iPreviousSearchAlbum->String();
+						}
 					break;
 				case EMobblerCommandSearchArtist:
 					resourceId = R_MOBBLER_RADIO_ENTER_ARTIST;
+					if (iPreviousSearchArtist)
+						{
+						search = iPreviousSearchArtist->String();
+						}
 					break;
 				case EMobblerCommandSearchTag:
 					resourceId = R_MOBBLER_RADIO_ENTER_TAG;
+					if (iPreviousSearchTag)
+						{
+						search = iPreviousSearchTag->String();
+						}
 					break;
 				default:
 					resourceId = R_MOBBLER_SEARCH;
 					break;
 				}
+			CAknTextQueryDialog* userDialog(new(ELeave) CAknTextQueryDialog(search));
+			userDialog->PrepareLC(R_MOBBLER_TEXT_QUERY_DIALOG);
 			userDialog->SetPromptL(iResourceReader->ResourceL(resourceId));
 			userDialog->SetPredictiveTextInputPermitted(ETrue);
 
 			if (userDialog->RunLD())
 				{
+				// Save the search term
+				switch (aCommand)
+					{
+					case EMobblerCommandSearchTrack:
+						delete iPreviousSearchTrack;
+						iPreviousSearchTrack = CMobblerString::NewL(search);
+						break;
+					case EMobblerCommandSearchAlbum:
+						delete iPreviousSearchAlbum;
+						iPreviousSearchAlbum = CMobblerString::NewL(search);
+						break;
+					case EMobblerCommandSearchArtist:
+						delete iPreviousSearchArtist;
+						iPreviousSearchArtist = CMobblerString::NewL(search);
+						break;
+					case EMobblerCommandSearchTag:
+						delete iPreviousSearchTag;
+						iPreviousSearchTag = CMobblerString::NewL(search);
+						break;
+					default:
+						break;
+					}
+				SaveSearchTermsL();
+				
+				// Do the search
 				CMobblerString* searchString(CMobblerString::NewL(search));
 				CleanupStack::PushL(searchString);
 				ActivateLocalViewL(iWebServicesView->Id(), TUid::Uid(aCommand), searchString->String8());
@@ -677,7 +724,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 				break;
 				}
 
-			// ask the user for the artist name	
+			// ask the user for the artist name
 			if (iPreviousRadioArtist)
 				{
 				artist = iPreviousRadioArtist->String();
@@ -1228,17 +1275,12 @@ void CMobblerAppUi::DataL(CMobblerFlatDataObserverHelper* aObserver, const TDesC
 			}
 		else if (aObserver == iFetchLyricsObserver)
 			{
-			DUMPDATA(aData, _L("lyricsdata.txt"));
+			DUMPDATA(aData, _L("lyrics.xml"));
 			_LIT(KLyricsFilename, "C:\\System\\Data\\Mobbler\\lyrics.txt");
 			_LIT8(KElementSg, "sg"); // song
 			_LIT8(KElementTx, "tx"); // lyrics text
 			_LIT8(KElement200, "200");
-			_LIT8(KElement204, "204");
 			_LIT8(KElement300, "300");
-			_LIT8(KElement400, "400");
-			_LIT8(KElement401, "401");
-			_LIT8(KElement402, "402");
-			_LIT8(KElement406, "406");
 			
 			RFileWriteStream file;
 			CleanupClosePushL(file);
@@ -1303,6 +1345,11 @@ void CMobblerAppUi::DataL(CMobblerFlatDataObserverHelper* aObserver, const TDesC
 				}
 			
 #ifdef _DEBUG
+			_LIT8(KElement204, "204");
+			_LIT8(KElement400, "400");
+			_LIT8(KElement401, "401");
+			_LIT8(KElement402, "402");
+			_LIT8(KElement406, "406");
 			if (statusPtrC.CompareF(KElement200) == 0)
 				{
 				LOG(_L8("200 - ok"));
@@ -1616,7 +1663,7 @@ void CMobblerAppUi::SaveRadioStationsL()
 			{
 			writeStream.WriteInt8L(EFalse);
 			}
-
+		
 		if (iPreviousRadioUser)
 			{
 			writeStream.WriteInt8L(ETrue);
@@ -1639,7 +1686,109 @@ void CMobblerAppUi::SaveRadioStationsL()
 		
 		CleanupStack::PopAndDestroy(&writeStream);
 		}
+	
+	CleanupStack::PopAndDestroy(&file);
+	}
 
+void CMobblerAppUi::LoadSearchTermsL()
+	{
+	RFile file;
+	CleanupClosePushL(file);
+	TInt openError(file.Open(CCoeEnv::Static()->FsSession(), KSearchFile, EFileRead));
+	
+	if (openError == KErrNone)
+		{
+		RFileReadStream readStream(file);
+		CleanupClosePushL(readStream);
+		
+		TBuf<KMaxMobblerTextSize> search;
+		if (readStream.ReadInt8L())
+			{
+			readStream >> search;
+			delete iPreviousSearchTrack;
+			iPreviousSearchTrack = CMobblerString::NewL(search);
+			}
+		if (readStream.ReadInt8L())
+			{
+			readStream >> search;
+			delete iPreviousSearchAlbum;
+			iPreviousSearchAlbum = CMobblerString::NewL(search);
+			}
+		if (readStream.ReadInt8L())
+			{
+			readStream >> search;
+			delete iPreviousSearchArtist;
+			iPreviousSearchArtist = CMobblerString::NewL(search);
+			}
+		if (readStream.ReadInt8L())
+			{
+			readStream >> search;
+			delete iPreviousSearchTag;
+			iPreviousSearchTag = CMobblerString::NewL(search);
+			}
+		
+		CleanupStack::PopAndDestroy(&readStream);
+		}
+	
+	CleanupStack::PopAndDestroy(&file);
+	}
+
+void CMobblerAppUi::SaveSearchTermsL()
+	{
+	CCoeEnv::Static()->FsSession().MkDirAll(KSearchFile);
+	
+	RFile file;
+	CleanupClosePushL(file);
+	TInt replaceError(file.Replace(CCoeEnv::Static()->FsSession(), KSearchFile, EFileWrite));
+	
+	if (replaceError == KErrNone)
+		{
+		RFileWriteStream writeStream(file);
+		CleanupClosePushL(writeStream);
+		
+		if (iPreviousSearchTrack)
+			{
+			writeStream.WriteInt8L(ETrue);
+			writeStream << iPreviousSearchTrack->String();
+			}
+		else
+			{
+			writeStream.WriteInt8L(EFalse);
+			}
+		
+		if (iPreviousSearchAlbum)
+			{
+			writeStream.WriteInt8L(ETrue);
+			writeStream << iPreviousSearchAlbum->String();
+			}
+		else
+			{
+			writeStream.WriteInt8L(EFalse);
+			}
+		
+		if (iPreviousSearchArtist)
+			{
+			writeStream.WriteInt8L(ETrue);
+			writeStream << iPreviousSearchArtist->String();
+			}
+		else
+			{
+			writeStream.WriteInt8L(EFalse);
+			}
+		
+		if (iPreviousSearchTag)
+			{
+			writeStream.WriteInt8L(ETrue);
+			writeStream << iPreviousSearchTag->String();
+			}
+		else
+			{
+			writeStream.WriteInt8L(EFalse);
+			}
+		
+		CleanupStack::PopAndDestroy(&writeStream);
+		}
+	
 	CleanupStack::PopAndDestroy(&file);
 	}
 
