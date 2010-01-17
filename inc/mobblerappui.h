@@ -203,6 +203,8 @@ private:
 	
 	void LoadRadioStationsL();
 	void SaveRadioStationsL();
+	void LoadSearchTermsL();
+	void SaveSearchTermsL();
 	void SleepL();
 	TBool RadioStartableL() const;
 	
@@ -269,6 +271,10 @@ private:
 	CMobblerString* iPreviousRadioTag;
 	CMobblerString* iPreviousRadioUser;
 	CMobblerString* iPreviousRadioPlaylistId;
+	CMobblerString* iPreviousSearchTrack;
+	CMobblerString* iPreviousSearchAlbum;
+	CMobblerString* iPreviousSearchArtist;
+	CMobblerString* iPreviousSearchTag;
 	
 	CMobblerBitmapCollection* iBitmapCollection;
 	
