@@ -1284,7 +1284,9 @@ void CMobblerAppUi::DataL(CMobblerFlatDataObserverHelper* aObserver, const TDesC
 			
 			RFileWriteStream file;
 			CleanupClosePushL(file);
-			file.Replace(CCoeEnv::Static()->FsSession(), KLyricsFilename, EFileWrite);
+			TPtrC lyricsPath(KLyricsFilename().Left(23)); /* C:\\System\\Data\Mobbler\\ */
+			BaflUtils::EnsurePathExistsL(CCoeEnv::Static()->FsSession(), lyricsPath);
+			User::LeaveIfError(file.Replace(CCoeEnv::Static()->FsSession(), KLyricsFilename, EFileWrite));
 			
 			// Create the XML reader and DOM fragement and associate them with each other
 			CSenXmlReader* xmlReader(CSenXmlReader::NewL());
