@@ -59,6 +59,8 @@ void CMobblerFlatDataObserverHelper::ConstructL(TBool aShowWaitDialog)
 
 CMobblerFlatDataObserverHelper::~CMobblerFlatDataObserverHelper()
 	{
+	iConnection.CancelTransaction(this);
+	
 	if(iWaitDialog)
 		{
 		iWaitDialog->ProcessFinishedL(); 
