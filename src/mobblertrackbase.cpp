@@ -187,6 +187,11 @@ TBool CMobblerTrackBase::Love() const
 	return iLove;
 	}
 
+void CMobblerTrackBase::SetTrackLength(TTimeIntervalSeconds aTrackLength)
+	{
+	iTrackLength = aTrackLength;
+	}
+
 TTimeIntervalSeconds CMobblerTrackBase::TrackLength() const
 	{
 	return iTrackLength.Int() == 0 ? 1 : iTrackLength;
