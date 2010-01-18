@@ -50,11 +50,6 @@ private: // from MMobblerMusicApp
 	const TDesC& Album();
 	TTimeIntervalSeconds Duration();
 	
-	TBool ControlsSupported();
-	void PlayL();
-	void StopL();
-	void SkipL();
-	
 private:
 	void HandlePlaybackMessage(CMPXMessage* aMessage, TInt aError);
 	

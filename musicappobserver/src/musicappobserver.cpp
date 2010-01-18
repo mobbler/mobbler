@@ -256,24 +256,4 @@ TMobblerMusicAppObserverCommand CMobblerMusicAppObserver::ConvertCommand(TMPlaye
 	return command;
 	}
 
-TBool CMobblerMusicAppObserver::ControlsSupported()
-	{
-	return EFalse;
-	}
-
-void CMobblerMusicAppObserver::PlayL()
-	{
-	
-	}
-
-void CMobblerMusicAppObserver::StopL()
-	{
-	
-	}
-
-void CMobblerMusicAppObserver::SkipL()
-	{
-	
-	}
-
 // End of file

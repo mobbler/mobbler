@@ -222,10 +222,7 @@ void CMobblerRadioPlayer::HandleAudioPositionChangeL()
 			{
 			// There is more in the playlist so start fetching the next track
 			iNextAudioControl = CMobblerAudioControl::NewL(*this,  *(*iPlaylist)[1], iPreBufferSize, iVolume, iEqualizerIndex, iBitRate);
-			if ((*iPlaylist)[0]->LocalFile().Length() == 0)
-				{
-				iLastFmConnection.RequestMp3L(*iNextAudioControl, (*iPlaylist)[0 + 1]->Mp3Location());
-				}
+			iLastFmConnection.RequestMp3L(*iNextAudioControl, (*iPlaylist)[0 + 1]->Mp3Location());
 			DoChangeStateL(EPlaying);
 			}
 		}
@@ -483,11 +480,7 @@ void CMobblerRadioPlayer::SkipTrackL()
 				{
 				// Create the next audio control and request the mp3
 				iCurrentAudioControl = CMobblerAudioControl::NewL(*this, *(*iPlaylist)[0], iPreBufferSize, iVolume, iEqualizerIndex, iBitRate);
-				if ((*iPlaylist)[0]->LocalFile().Length() == 0)
-					{
-					// this mp3 is not local so download it
-					iLastFmConnection.RequestMp3L(*iCurrentAudioControl, (*iPlaylist)[0]->Mp3Location());
-					}
+				iLastFmConnection.RequestMp3L(*iCurrentAudioControl, (*iPlaylist)[0]->Mp3Location());
 				DoChangeStateL(EPlaying);
 				}
 			

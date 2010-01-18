@@ -90,15 +90,9 @@ CMobblerAudioThread::~CMobblerAudioThread()
 		{
 		iStream->Stop();
 		}
-	else if (iPlayer)
-		{
-		iPlayer->Stop();
-		}
 	
 	delete iEqualizer;
 	delete iStream;
-	delete iPlayer;
-	delete iPeriodic;
 	
 	iBuffer.ResetAndDestroy();
 	}
@@ -138,25 +132,12 @@ void CMobblerAudioThread::RunL()
 			break;
 		case ECmdSetCurrent:
 			{
-			if (iShared.iTrack->LocalFile().Length() > 0)
+			iStream = CMdaAudioOutputStream::NewL(*this);
+			iStream->Open(&iShared.iAudioDataSettings);
+			
+			if (MobblerUtility::EqualizerSupported())
 				{
-				// it is a local track so just play it
-				iPlayer = CMdaAudioPlayerUtility::NewFilePlayerL(iShared.iTrack->LocalFile(), *this);
-				
-				if (MobblerUtility::EqualizerSupported())
-					{
-					TRAP_IGNORE(iEqualizer = CAudioEqualizerUtility::NewL(*iPlayer));
-					}
-				}
-			else
-				{
-				iStream = CMdaAudioOutputStream::NewL(*this);
-				iStream->Open(&iShared.iAudioDataSettings);
-				
-				if (MobblerUtility::EqualizerSupported())
-					{
-					TRAP_IGNORE(iEqualizer = CAudioEqualizerUtility::NewL(*iStream));
-					}
+				TRAP_IGNORE(iEqualizer = CAudioEqualizerUtility::NewL(*iStream));
 				}
 			}
 			break;
@@ -204,10 +185,6 @@ void CMobblerAudioThread::SetVolume()
 	if (iStream)
 		{
 		iStream->SetVolume(iShared.iAudioDataSettings.iVolume);
-		}
-	else if (iPlayer)
-		{
-		iPlayer->SetVolume(iShared.iAudioDataSettings.iVolume);
 		}
 	}
 
@@ -259,7 +236,7 @@ void CMobblerAudioThread::FillBufferL(TBool aDataAdded)
 		if (aDataAdded)
 			{
 			// we are already playing so add the last
-			// piece of the buffer to the stream
+			//piece of the buffer to the stream
 			iStream->WriteL(*iBuffer[iBuffer.Count() - 1]);
 			}
 		}
@@ -322,50 +299,6 @@ void CMobblerAudioThread::MaoscOpenComplete(TInt /*aError*/)
 
 void CMobblerAudioThread::MaoscPlayComplete(TInt /*aError*/)
 	{
-	}
-
-TInt CMobblerAudioThread::UpdatePlayerPosition(TAny* aRef)
-	{
-	TTimeIntervalMicroSeconds playerPosition;
-	TInt error(static_cast<CMobblerAudioThread*>(aRef)->iPlayer->GetPosition(playerPosition));
-	if (error == KErrNone)
-		{
-		static_cast<CMobblerAudioThread*>(aRef)->iShared.iTrack->SetPlaybackPosition(playerPosition.Int64() / 1000000);
-		}
-	
-	return KErrNone;
-	}
-
-void CMobblerAudioThread::MapcInitComplete(TInt aError, const TTimeIntervalMicroSeconds& aDuration)
-	{
-	if (aError == KErrNone)
-		{
-		iShared.iTrack->SetTrackLength(aDuration.Int64() / 1000000);
-		iPlayer->SetVolume(iShared.iAudioDataSettings.iVolume);
-		iShared.iMaxVolume = iPlayer->MaxVolume();
-		iPlayer->Play();
-		
-		iPeriodic = CPeriodic::NewL(CActive::EPriorityStandard);
-		iCallBack = TCallBack(UpdatePlayerPosition, this);
-		iPeriodic->Start(1000000, 1000000, iCallBack);
-		}
-	else
-		{
-		if (!iActiveSchedulerStopped)
-			{
-			iActiveSchedulerStopped = ETrue;
-			CActiveScheduler::Stop();
-			}
-		}
-	}
-
-void CMobblerAudioThread::MapcPlayComplete(TInt aError)
-	{
-	if (!iActiveSchedulerStopped)
-		{
-		iActiveSchedulerStopped = ETrue;
-		CActiveScheduler::Stop();
-		}
 	}
 
 // End of file

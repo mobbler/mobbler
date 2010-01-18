@@ -32,64 +32,30 @@ class CMobblerContentListing : public CMobblerContentListingInterface,
 							   public MCLFOperationObserver
 	{
 public:
-	enum TState
-		{
-		EMobblerClfModelOutdated,
-		EMobblerClfModelRefreshing,
-		EMobblerClfModelReady,
-		EMobblerClfModelError,
-		EMobblerClfModelClosing
-		};
-	
-	struct TSharedData
-		{
-	    MCLFContentListingEngine* iClfEngine;
-	    MCLFItemListModel* iClfModel;
-	    MCLFSortingStyle* iSortingStyle;
-	    MCLFSortingStyle* iSecSortingStyle;
-	    
-	    MCLFOperationObserver* iObserver;
-	    
-	    TState iState;
-		};
-	
-	struct TMobblerContentListingOperation
-		{
-		HBufC* iArtist;
-		HBufC* iTitle;
-		MMobblerContentListingObserver* iObserver;
-		};
-	
-public:
 	static CMobblerContentListing* NewL();
 	~CMobblerContentListing();
 	
 private:
-	void RunL();
-	void DoCancel();
-	
-private:
 	CMobblerContentListing();
 	void ConstructL();
-	
-	void DoFindLocalTrackL();
-	
-	void RefreshL();
+	void FindAndSetAlbumNameL();
 
 private: // from CMobblerContentListingInterface
-	void FindLocalTrackL(const TDesC& aArtist, const TDesC& aTitle, MMobblerContentListingObserver* aObserver);
-	void CancelFindLocalTrack(MMobblerContentListingObserver* aObserver);
+	void SetObserver(MMobblerContentListingObserver& aObserver);
+	void FindAndSetAlbumNameL(const TDesC& aArtist, const TDesC& aTitle);
 
 protected: // from MCLFOperationObserver
-	void HandleOperationEventL(TCLFOperationEvent aOperationEvent, TInt aError);
+	void HandleOperationEventL(TCLFOperationEvent aOperationEvent,
+							   TInt aError);
 
 private:
-	TBool iThreadCreated;
-	RThread iThread;
-	
-	TSharedData iSharedData;
+    MCLFContentListingEngine* iClfEngine;
+    MCLFItemListModel* iClfModel;
+	TBool iClfModelReady;
+	HBufC* iArtist;
+	HBufC* iTitle;
 
-	RArray<TMobblerContentListingOperation> iOperations;
+	MMobblerContentListingObserver* iObserver;
 	};
 
 #endif // __MOBBLERCONTENTLISTING_H__

@@ -49,7 +49,6 @@ public:
 	TInt TrackNumber() const;
 	void SetTrackNumber(const TInt aTrackNumber);
 	
-	void SetTrackLength(TTimeIntervalSeconds aTrackLength);
 	TTimeIntervalSeconds TrackLength() const;
 	
 	void SetStartTimeUTC(const TTime& aStartTimeUTC);

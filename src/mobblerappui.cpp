@@ -50,8 +50,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #endif // __SYMBIAN_SIGNED__
 
-#include <mobbler/mobblercontentlistinginterface.h>
-
 #include "mobbler.hrh"
 #include "mobbler.rsg.h"
 #include "mobbler_strings.rsg.h"
@@ -80,12 +78,10 @@ _LIT(KSearchFile, "C:searchterms.dat");
 const TUid KGesturesInterfaceUid = {0x20026567};
 const TUid KDestinationImplUid = {0x20026621};
 const TUid KMobblerGesturePlugin5xUid = {0x2002656A};
-const TUid KContentListingImplUid = {0x2002661E};
 #else
 const TUid KGesturesInterfaceUid = {0xA000B6CF};
 const TUid KDestinationImplUid = {0xA000BEB6};
 const TUid KMobblerGesturePlugin5xUid = {0xA000B6C2};
-const TUid KContentListingImplUid = {0xA000BEB3};
 #endif
 
 _LIT(KSpace, " ");
@@ -170,8 +166,6 @@ void CMobblerAppUi::ConstructL()
 											 iSettingView->BitRate());
 	iMusicListener = CMobblerMusicAppListener::NewL(*iLastFmConnection);
 	
-	TRAP_IGNORE(iContentListing = static_cast<CMobblerContentListingInterface*>(REComSession::CreateImplementationL(KContentListingImplUid, iContentListingDtorUid)));
-	
 	RProcess().SetPriority(EPriorityHigh);
 	
 #if !defined(__SYMBIAN_SIGNED__) && !defined(__WINS__)
@@ -253,12 +247,6 @@ CMobblerAppUi::~CMobblerAppUi()
 	delete iVolumeDownTimer;
 	delete iVolumeUpTimer;
 	delete iWebServicesHelper;
-	
-	if (iContentListing)
-		{
-		delete iContentListing;
-		REComSession::DestroyedImplementation(iContentListingDtorUid);
-		}
 	}
 
 TBool CMobblerAppUi::AccelerometerGesturesAvailable() const
@@ -494,11 +482,6 @@ CMobblerSettingItemListView& CMobblerAppUi::SettingView() const
 CMobblerDestinationsInterface* CMobblerAppUi::Destinations() const
 	{
 	return iDestinations;
-	}
-
-CMobblerContentListingInterface* CMobblerAppUi::ContentListing() const
-	{
-	return iContentListing;
 	}
 
 HBufC* CMobblerAppUi::MusicAppNameL() const
@@ -1301,7 +1284,9 @@ void CMobblerAppUi::DataL(CMobblerFlatDataObserverHelper* aObserver, const TDesC
 			
 			RFileWriteStream file;
 			CleanupClosePushL(file);
-			file.Replace(CCoeEnv::Static()->FsSession(), KLyricsFilename, EFileWrite);
+			TPtrC lyricsPath(KLyricsFilename().Left(23)); /* C:\\System\\Data\Mobbler\\ */
+			BaflUtils::EnsurePathExistsL(CCoeEnv::Static()->FsSession(), lyricsPath);
+			User::LeaveIfError(file.Replace(CCoeEnv::Static()->FsSession(), KLyricsFilename, EFileWrite));
 			
 			// Create the XML reader and DOM fragement and associate them with each other
 			CSenXmlReader* xmlReader(CSenXmlReader::NewL());
@@ -2067,20 +2052,32 @@ void CMobblerAppUi::LoadGesturesPluginL()
 	
 	TUid dtorIdKey;
 	CMobblerGesturesInterface* mobblerGestures(NULL);
-
-	TRAPD(error, mobblerGestures = static_cast<CMobblerGesturesInterface*>(REComSession::CreateImplementationL(KMobblerGesturePlugin5xUid, dtorIdKey)));
 	
-	if (error == KErrNone)
+	// Search for the preferred plug-in implementation
+	TBool fifthEditionPluginLoaded(EFalse);
+	for (TInt i(0); i < KImplCount; ++i)
 		{
-		iGesturePlugin = mobblerGestures;
-		iGesturePluginDtorUid = dtorIdKey;
+		TUid currentImplUid(implInfoPtrArray[i]->ImplementationUid());	
+		if (currentImplUid == KMobblerGesturePlugin5xUid)
+			{
+			// Found it, attempt to load it
+			TRAPD(error, mobblerGestures = static_cast<CMobblerGesturesInterface*>(REComSession::CreateImplementationL(currentImplUid, dtorIdKey)));
+			if (error == KErrNone)
+				{
+				fifthEditionPluginLoaded = ETrue;
+				iGesturePlugin = mobblerGestures;
+				iGesturePluginDtorUid = dtorIdKey;
+				}
+			else
+				{
+				REComSession::DestroyedImplementation(dtorIdKey);
+				}
+			}
 		}
-	else
+	
+	// If we didn't load the preferred plug-in, try all other plug-ins
+	if (! fifthEditionPluginLoaded)
 		{
-		REComSession::DestroyedImplementation(dtorIdKey);
-		
-		// We didn't load the preferred plug-in, try all other plug-ins
-
 		for (TInt i(0); i < KImplCount; ++i)
 			{
 			TUid currentImplUid(implInfoPtrArray[i]->ImplementationUid());

@@ -27,8 +27,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <sendomfragment.h>
 #include <senxmlutils.h>
 
-#include <mobbler/mobblercontentlistinginterface.h>
-
 #include "mobblerappui.h"
 #include "mobblerliterals.h"
 #include "mobblerlogging.h"
@@ -75,7 +73,9 @@ CMobblerTrack* CMobblerTrack::NewL(const TDesC8& aArtist,
 	}
 
 CMobblerTrack::CMobblerTrack(TTimeIntervalSeconds aTrackLength)
-	: CMobblerTrackBase(aTrackLength)
+	: CMobblerTrackBase(aTrackLength),
+	  iTriedButCouldntFindAlbumArt(EFalse),
+	  iUsingArtistImage(EFalse)
 	{
 	Open();
 	}
@@ -93,45 +93,21 @@ void CMobblerTrack::ConstructL(const TDesC8& aArtist,
 	iMbTrackId = CMobblerString::NewL(aMbTrackId);
 	iMp3Location = aMp3Location.AllocL();
 	iImage = aImage.AllocL();
-	
-	if (static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->ContentListing()
-			&& aTitle.Length() != 0
-			&& aArtist.Length() != 0)
+
+	if (!iAlbumArt && Album().String().Length() != 0)
 		{
-		static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->ContentListing()->FindLocalTrackL(Artist().String(), Title().String(), this);
-		}
-	
-	if (aRadioAuth.Length() == 0)
-		{
-		// This is a music player track
-	
-		if (static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->LastFmConnection().Mode() == CMobblerLastFmConnection::EOnline)
-			{
-			// when in online mode fetch the track details so we
-			// can see if the track has been loved by this user
-			delete iTrackInfoHelper;
-			iTrackInfoHelper = CMobblerFlatDataObserverHelper::NewL(static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->LastFmConnection(), *this, EFalse);
-			static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->LastFmConnection().TrackGetInfoL(Title().String8(), Artist().String8(), aMbTrackId, *iTrackInfoHelper);	
-			}
+		// fetch the album info
+		LOG(_L8("0 FetchAlbumInfoL()"));
+		FetchAlbumInfoL();
 		}
 	}
 
 CMobblerTrack::~CMobblerTrack()
 	{
-	delete iTrackInfoHelper;
-	delete iAlbumInfoHelper;
-	delete iArtistInfoHelper;
-	
-	if (static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->ContentListing())
-		{
-		static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->ContentListing()->CancelFindLocalTrack(this);
-		}
-	
 	delete iMbTrackId;
 	delete iMp3Location;
 	iAlbumArt->Close();
 	delete iPath;
-	delete iLocalFile;
 	delete iImage;
 
 	static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->LastFmConnection().CancelTransaction(this);
@@ -172,156 +148,60 @@ TInt CMobblerTrack::Buffered() const
 	return (iDataSize == KErrNotFound) ? 0 : iBuffered;
 	}
 
-void CMobblerTrack::HandleFindLocalTrackCompleteL(TInt aTrackNumber, const TDesC& aAlbum, const TDesC& aLocalFile)
+void CMobblerTrack::SetAlbumL(const TDesC& aAlbum)
 	{
-	LOG(_L8("CMobblerTrack::HandleFindLocalTrackCompleteL"));
+	LOG(_L8("CMobblerTrack::SetAlbumL"));
 	LOG(aAlbum);
-	LOG(aLocalFile);
 	
+	SetAlbumBaseL(aAlbum);
+
 	TFileName fileName;
-	
-	if (aTrackNumber != KErrNotFound)
+	TBool found(EFalse);
+
+	// First check for %album%.jpg/gif/png
+	if ((!iAlbumArt || iUsingArtistImage)
+		&& iPath && Album().String().Length() > 0)
 		{
-		SetTrackNumber(aTrackNumber);
-		}
-	
-	if (aLocalFile.Length() > 0)
-		{
-		// This track was found on the phone!
-		
-		TParse parse;
-		parse.Set(aLocalFile, NULL, NULL);
-		
-		iLocalFile = aLocalFile.AllocL();
-		iPath = parse.DriveAndPath().AllocL();	
-
-#ifndef __WINS__
-		// First try reading album art from the ID3 tag
-		LOG(_L8("Searching for ID3"));
-		
-		CMetaDataUtility* metaDataUtility(CMetaDataUtility::NewL());
-		CleanupStack::PushL(metaDataUtility);
-
-		RArray<TMetaDataFieldId> wantedFields;
-		CleanupClosePushL(wantedFields);
-		wantedFields.AppendL(EMetaDataJpeg);
-
-		metaDataUtility->OpenFileL(aLocalFile, wantedFields);
-
-		if (metaDataUtility->MetaDataCount() > 0)
+		const TInt arraySize(sizeof(KArtExtensionArray) / sizeof(TPtrC));
+		for (TInt i(0); i < arraySize; ++i)
 			{
-			LOG(_L8("Found ID3 tags"));
-			const CMetaDataFieldContainer&  metaDataFieldContainer(metaDataUtility->MetaDataFieldsL());
-			
-			if (metaDataFieldContainer.Field(EMetaDataJpeg).Length() > 0)
-				{
-				LOG(_L8("Jpeg present"));
-				LOG(_L8("Found album art ID3"));
-				
-				iAlbumArt = CMobblerBitmap::NewL(*this, metaDataFieldContainer.Field8(EMetaDataJpeg));
-				}
-			}
-
-		CleanupStack::PopAndDestroy(2, metaDataUtility);
-#endif
-
-		// First check for %album%.jpg/gif/png
-		if (!iAlbumArt && Album().String().Length() > 0)
-			{
-			const TInt arraySize(sizeof(KArtExtensionArray) / sizeof(TPtrC));
-			for (TInt i(0); i < arraySize; ++i)
-				{
-				fileName.Copy(parse.DriveAndPath());
-				fileName.Append(Album().SafeFsString(fileName.Length() +
-								KArtExtensionArray[i].Length()));
-				fileName.Append(KArtExtensionArray[i]);
-
-				if (BaflUtils::FileExists(CCoeEnv::Static()->FsSession(), fileName))
-					{
-					LOG(_L8("Found %album%.jpg/gif/png"));
-					iAlbumArt = CMobblerBitmap::NewL(*this, fileName);
-					break;
-					}
-				}
-			}
-
-		// If not found, check for cover.jpg/gif/png, folder.jpg/gif/png
-		const TInt arraySize(sizeof(KArtFileArray) / sizeof(TPtrC));
-		for (TInt i(0); i < arraySize && !iAlbumArt ; ++i)
-			{
-			fileName.Copy(parse.DriveAndPath());
-			fileName.Append(KArtFileArray[i]);
+			fileName.Copy(*iPath);
+			fileName.Append(Album().SafeFsString(fileName.Length() +
+							KArtExtensionArray[i].Length()));
+			fileName.Append(KArtExtensionArray[i]);
 
 			if (BaflUtils::FileExists(CCoeEnv::Static()->FsSession(), fileName))
 				{
-				LOG(_L8("Found cover.jpg/gif/png, folder.jpg/gif/png"));
-				iAlbumArt = CMobblerBitmap::NewL(*this, fileName);
+				LOG(_L8("Found %album%.jpg/gif/png"));
+				found = ETrue;
+				iUsingArtistImage = EFalse;
 				break;
 				}
 			}
-		
-		if (aAlbum.Length() > 0)
-			{
-			// The album name is set in the id3 tag
-			
-			SetAlbumBaseL(aAlbum);
-		
-			// First check for %album%.jpg/gif/png
-			if (!iAlbumArt && iPath && Album().String().Length() > 0)
-				{
-				const TInt arraySize(sizeof(KArtExtensionArray) / sizeof(TPtrC));
-				for (TInt i(0); i < arraySize; ++i)
-					{
-					fileName.Copy(*iPath);
-					fileName.Append(Album().SafeFsString(fileName.Length() +
-									KArtExtensionArray[i].Length()));
-					fileName.Append(KArtExtensionArray[i]);
-		
-					if (BaflUtils::FileExists(CCoeEnv::Static()->FsSession(), fileName))
-						{
-						LOG(_L8("Found %album%.jpg/gif/png"));
-						iAlbumArt = CMobblerBitmap::NewL(*this, fileName);
-						break;
-						}
-					}
-				}
-			
-			// If still not found, check for %artist%.jpg/gif/png
-			if (!iAlbumArt && Artist().String().Length() > 0)
-				{
-				const TInt arraySize(sizeof(KArtExtensionArray) / sizeof(TPtrC));
-				for (TInt i(0); i < arraySize; ++i)
-					{
-					fileName.Copy(parse.DriveAndPath());
-					fileName.Append(Artist().SafeFsString(fileName.Length() +
-													KArtExtensionArray[i].Length()));
-					fileName.Append(KArtExtensionArray[i]);
+		}
 
-					if (BaflUtils::FileExists(CCoeEnv::Static()->FsSession(), fileName))
-						{
-						LOG(_L8("Found %artist%.jpg/gif/png"));
-						iAlbumArt = CMobblerBitmap::NewL(*this, fileName);
-						break;
-						}
-					}
-				}
-		
-			// Next check the artist image cache
-			if (!iAlbumArt && Artist().String().Length() > 0)
-				{
-				// Not found track's path, check for %artist%.jpg in the cache
-				fileName.Copy(KArtistImageCache);
-				fileName.Append(Artist().SafeFsString(fileName.Length() +
-													  KArtExtensionArray[0].Length()));
-				fileName.Append(KArtExtensionArray[0]);
-				if (BaflUtils::FileExists(CCoeEnv::Static()->FsSession(), fileName))
-					{
-					LOG(_L8("Found %artist%.jpg in cache"));
-					LOG(fileName);
-					iAlbumArt = CMobblerBitmap::NewL(*this, fileName);
-					}
-				}
+	// Next check the artist image cache
+	if (!found && !iAlbumArt && Artist().String().Length() > 0)
+		{
+		// Not found track's path, check for %artist%.jpg in the cache
+		fileName.Copy(KArtistImageCache);
+		fileName.Append(Artist().SafeFsString(fileName.Length() +
+											  KArtExtensionArray[0].Length()));
+		fileName.Append(KArtExtensionArray[0]);
+		if (BaflUtils::FileExists(CCoeEnv::Static()->FsSession(), fileName))
+			{
+			LOG(_L8("Found %artist%.jpg in cache"));
+			LOG(fileName);
+			found = ETrue;
+			iUsingArtistImage = ETrue;
 			}
+		}
+
+	if (found)
+		{
+		LOG(fileName);
+		iAlbumArt->Close();
+		iAlbumArt = CMobblerBitmap::NewL(*this, fileName);
 		}
 
 	// Check if there's something better online
@@ -345,14 +225,122 @@ void CMobblerTrack::BitmapResizedL(const CMobblerBitmap* /*aMobblerBitmap*/)
 	{
 	}
 
-const TDesC& CMobblerTrack::LocalFile() const
+void CMobblerTrack::SetPathL(const TDesC& aPath)
 	{
-	if (iLocalFile)
-		{
-		return *iLocalFile;
-		}
+	LOG(_L8("CMobblerTrack::SetPathL"));
+	LOG(aPath);
+
+	TParse parse;
+	parse.Set(aPath, NULL, NULL);
+	TFileName fileName;
+	TBool found(EFalse);
+
+	iPath = parse.DriveAndPath().AllocL();
 	
-	return KNullDesC;
+	HBufC8* albumArtFromId3(NULL);
+
+#ifndef __WINS__
+	// First try reading album art from the ID3 tag
+	LOG(_L8("Searching for ID3"));
+	
+	CMetaDataUtility* metaDataUtility(CMetaDataUtility::NewL());
+	CleanupStack::PushL(metaDataUtility);
+
+	RArray<TMetaDataFieldId> wantedFields;
+	CleanupClosePushL(wantedFields);
+	wantedFields.AppendL(EMetaDataJpeg);
+
+	metaDataUtility->OpenFileL(aPath, wantedFields);
+
+	if (metaDataUtility->MetaDataCount() > 0)
+		{
+		LOG(_L8("Found ID3 tags"));
+		const CMetaDataFieldContainer&  metaDataFieldContainer(metaDataUtility->MetaDataFieldsL());
+		albumArtFromId3 = HBufC8::NewL(metaDataFieldContainer.Field(EMetaDataJpeg).Length());
+		albumArtFromId3->Des().Copy(metaDataFieldContainer.Field(EMetaDataJpeg));
+		if (albumArtFromId3->Length() > 0)
+			{
+			LOG(_L8("Jpeg present"));
+			found = ETrue;
+			}
+		}
+
+	CleanupStack::PopAndDestroy(2, metaDataUtility);
+#endif
+
+	// First check for %album%.jpg/gif/png
+	if (Album().String().Length() > 0 && !found)
+		{
+		const TInt arraySize(sizeof(KArtExtensionArray) / sizeof(TPtrC));
+		for (TInt i(0); i < arraySize; ++i)
+			{
+			fileName.Copy(parse.DriveAndPath());
+			fileName.Append(Album().SafeFsString(fileName.Length() +
+							KArtExtensionArray[i].Length()));
+			fileName.Append(KArtExtensionArray[i]);
+
+			if (BaflUtils::FileExists(CCoeEnv::Static()->FsSession(), fileName))
+				{
+				LOG(_L8("Found %album%.jpg/gif/png"));
+				found = ETrue;
+				break;
+				}
+			}
+		}
+
+	// If not found, check for cover.jpg/gif/png, folder.jpg/gif/png
+	const TInt arraySize(sizeof(KArtFileArray) / sizeof(TPtrC));
+	for (TInt i(0); i < arraySize && !found; ++i)
+		{
+		fileName.Copy(parse.DriveAndPath());
+		fileName.Append(KArtFileArray[i]);
+
+		if (BaflUtils::FileExists(CCoeEnv::Static()->FsSession(), fileName))
+			{
+			LOG(_L8("Found cover.jpg/gif/png, folder.jpg/gif/png"));
+			found = ETrue;
+			break;
+			}
+		}
+
+	// If still not found, check for %artist%.jpg/gif/png
+	if (!found && Artist().String().Length() > 0)
+		{
+		const TInt arraySize(sizeof(KArtExtensionArray) / sizeof(TPtrC));
+		for (TInt i(0); i < arraySize; ++i)
+			{
+			fileName.Copy(parse.DriveAndPath());
+			fileName.Append(Artist().SafeFsString(fileName.Length() +
+											KArtExtensionArray[i].Length()));
+			fileName.Append(KArtExtensionArray[i]);
+
+			if (BaflUtils::FileExists(CCoeEnv::Static()->FsSession(), fileName))
+				{
+				LOG(_L8("Found %artist%.jpg/gif/png"));
+				found = ETrue;
+				iUsingArtistImage = ETrue;
+				break;
+				}
+			}
+		}
+
+	if (found)
+		{
+		if (albumArtFromId3 && albumArtFromId3->Length() > 0) // Found album art in ID3 tag
+			{
+			LOG(_L8("Found album art ID3"));
+			iAlbumArt->Close();
+			CleanupStack::PushL(albumArtFromId3);
+			iAlbumArt = CMobblerBitmap::NewL(*this, *albumArtFromId3);
+			CleanupStack::PopAndDestroy(albumArtFromId3);
+			}
+		else
+			{
+			LOG(fileName);
+			iAlbumArt->Close();
+			iAlbumArt = CMobblerBitmap::NewL(*this, fileName);
+			}
+		}
 	}
 
 const CMobblerBitmap* CMobblerTrack::AlbumArt() const
@@ -365,86 +353,105 @@ const CMobblerString& CMobblerTrack::MbTrackId() const
 	return *iMbTrackId;
 	}
 
-void CMobblerTrack::DataL(CMobblerFlatDataObserverHelper* aObserver, const TDesC8& aData, CMobblerLastFmConnection::TTransactionError aTransactionError)
+void CMobblerTrack::DataL(const TDesC8& aData, CMobblerLastFmConnection::TTransactionError aTransactionError)
 	{
-	if (aObserver == iTrackInfoHelper)
+	switch (iState)
 		{
-		if (aTransactionError == CMobblerLastFmConnection::ETransactionErrorNone)
+		case EFetchingAlbumInfo:
 			{
-			// find out if the track has been loved
-			// create the XML reader and DOM fragment and associate them with each other
-			CSenXmlReader* xmlReader(CSenXmlReader::NewL());
-			CleanupStack::PushL(xmlReader);
-			CSenDomFragment* domFragment(CSenDomFragment::NewL());
-			CleanupStack::PushL(domFragment);
-			xmlReader->SetContentHandler(*domFragment);
-			domFragment->SetReader(*xmlReader);
-	
-			// parse the XML into the DOM fragment
-			xmlReader->ParseL(aData);
-			
-			CSenElement* userlovedElement(domFragment->AsElement().Element(_L8("track"))->Element(_L8("userloved")));
-			
-			if (userlovedElement)
+			LOG(_L8("5 DataL album info fetched"));
+			DUMPDATA(aData, _L("albumgetinfo.xml"));
+
+			TBool found(EFalse);
+			if (aTransactionError == CMobblerLastFmConnection::ETransactionErrorNone)
 				{
-				SetLove(userlovedElement->Content().Compare(_L8("0")) != 0);
+				LOG(_L8("6 FetchImageL(album)"));
+				found = FetchImageL(aData);
 				}
-			
-			CleanupStack::PopAndDestroy(2);
-			}
-		
-		}
-	else if (aObserver == iAlbumInfoHelper)
-		{
-		LOG(_L8("5 DataL album info fetched"));
-		DUMPDATA(aData, _L("albumgetinfo.xml"));
 
-		TBool found(EFalse);
-		if (aTransactionError == CMobblerLastFmConnection::ETransactionErrorNone)
-			{
-			LOG(_L8("6 FetchImageL(album)"));
-			found = FetchImageL(aObserver, aData);
-			}
-
-		if (!found)
-			{
-			// we failed to fetch the album details
-			// so try to fetch the album art from the playlist
-			if (iImage->Length() > 0)
+			if (!found)
 				{
-				LOG(_L8("7 FetchImageL(album)"));
-				FetchImageL(EMobblerImageTypeAlbum, *iImage);
+				// we failed to fetch the album details
+				// so try to fetch the album art from the playlist
+				if (iImage->Length() > 0)
+					{
+					LOG(_L8("7 FetchImageL(album)"));
+					FetchImageL(EFetchingAlbumArt, *iImage);
+					}
+				else if (!iUsingArtistImage)
+					{
+					// Couldn't fetch album art, try artist image instead
+					iTriedButCouldntFindAlbumArt = ETrue;
+					LOG(_L8("8 FetchArtistInfoL()"));
+					FetchArtistInfoL();
+					}
+				}
+			break;
+			}
+
+		case EFetchingAlbumArt:
+			{
+			LOG(_L8("9 DataL album art fetched"));
+			if (aTransactionError == CMobblerLastFmConnection::ETransactionErrorNone)
+				{
+				SaveAlbumArtL(aData);
 				}
 			else
 				{
 				// Couldn't fetch album art, try artist image instead
-				LOG(_L8("8 FetchArtistInfoL()"));
+				LOG(_L8("10 FetchArtistInfoL()"));
+				iTriedButCouldntFindAlbumArt = ETrue;
 				FetchArtistInfoL();
 				}
+			break;
 			}
-		}
-	else if (aObserver == iArtistInfoHelper)
-		{
-		LOG(_L8("11 DataL artist info fetched"));
-		DUMPDATA(aData, _L("artistgetimage.xml"));
 
-		if (aTransactionError == CMobblerLastFmConnection::ETransactionErrorNone)
+		case EFetchingArtistInfo:
 			{
-			FetchImageL(aObserver, aData);
-			}
-		}
-	}
+			LOG(_L8("11 DataL artist info fetched"));
+			DUMPDATA(aData, _L("artistgetimage.xml"));
 
-void CMobblerTrack::DataL(const TDesC8& aData, CMobblerLastFmConnection::TTransactionError aTransactionError)
-	{
-	if (aTransactionError == CMobblerLastFmConnection::ETransactionErrorNone)
-		{
-		LOG(_L8("9 DataL album art fetched"));
-		SaveAlbumArtL(aData);
-		}
-	else
-		{
-		LOG(_L8("There was a transaction error while fetching the album art"));
+			if (iAlbumArt)
+				{
+				iState = ENone;
+				}
+			else if (!iTriedButCouldntFindAlbumArt && Album().String().Length() != 0)
+				{
+				// Just got artist info but there's now an album name, give up and try album art
+				LOG(_L8("12 FetchAlbumInfoL()"));
+				FetchAlbumInfoL();
+				}
+			else if (aTransactionError == CMobblerLastFmConnection::ETransactionErrorNone)
+				{
+				FetchImageL(aData);
+				}
+			break;
+			}
+
+		case EFetchingArtistImage:
+			{
+			LOG(_L8("13 DataL artist image fetched"));
+			if (iAlbumArt)
+				{
+				iState = ENone;
+				}
+			else if (aTransactionError == CMobblerLastFmConnection::ETransactionErrorNone)
+				{
+				SaveAlbumArtL(aData);
+
+				if (!iTriedButCouldntFindAlbumArt &&
+					Album().String().Length() != 0)
+					{
+					// Just got artist art but there's now an album name, try album image
+					LOG(_L8("14 FetchAlbumInfoL()"));
+					FetchAlbumInfoL();
+					}
+				}
+			break;
+			}
+
+		default:
+			break;
 		}
 	}
 
@@ -463,9 +470,8 @@ void CMobblerTrack::FetchAlbumInfoL()
 	{
 	if (OkToDownloadAlbumArt())
 		{
-		delete iAlbumInfoHelper;
-		iAlbumInfoHelper = CMobblerFlatDataObserverHelper::NewL(static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->LastFmConnection(), *this, EFalse);
-		static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->LastFmConnection().AlbumGetInfoL(Album().String8(), Artist().String8(), *iAlbumInfoHelper);
+		static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->LastFmConnection().AlbumGetInfoL(Album().String8(), Artist().String8(), *this);
+		iState = EFetchingAlbumInfo;
 		}
 	}
 
@@ -473,22 +479,21 @@ void CMobblerTrack::FetchArtistInfoL()
 	{
 	if (OkToDownloadAlbumArt())
 		{
-		delete iArtistInfoHelper;
-		iArtistInfoHelper = CMobblerFlatDataObserverHelper::NewL(static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->LastFmConnection(), *this, EFalse);
-		static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->LastFmConnection().ArtistGetImageL(Artist().String8(), *iArtistInfoHelper);
+		static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->LastFmConnection().ArtistGetImageL(Artist().String8(), *this);
+		iState = EFetchingArtistInfo;
 		}
 	}
 
-void CMobblerTrack::FetchImageL(TMobblerImageType aImageType, const TDesC8& aImageLocation)
+void CMobblerTrack::FetchImageL(TState aState, const TDesC8& aImageLocation)
 	{
 	if (OkToDownloadAlbumArt())
 		{
-		iImageType = aImageType;
 		static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->LastFmConnection().RequestImageL(this, aImageLocation);
+		iState = aState;
 		}
 	}
 
-TBool CMobblerTrack::FetchImageL(CMobblerFlatDataObserverHelper* aObserver, const TDesC8& aData)
+TBool CMobblerTrack::FetchImageL(const TDesC8& aData)
 	{
 	TBool found(EFalse);
 
@@ -506,7 +511,7 @@ TBool CMobblerTrack::FetchImageL(CMobblerFlatDataObserverHelper* aObserver, cons
 	RPointerArray<CSenElement> imageArray;
 	CleanupClosePushL(imageArray);
 
-	if (aObserver == iAlbumInfoHelper)
+	if (iState == EFetchingAlbumInfo)
 		{
 		User::LeaveIfError(domFragment->AsElement().Element(KElementAlbum)->ElementsL(imageArray, KElementImage));
 		}
@@ -533,22 +538,21 @@ TBool CMobblerTrack::FetchImageL(CMobblerFlatDataObserverHelper* aObserver, cons
 	const TInt KImageCount(imageArray.Count());
 	for (TInt i(0); i < KImageCount; ++i)
 		{
-		if ((aObserver == iAlbumInfoHelper &&
+		if ((iState == EFetchingAlbumInfo &&
 			 imageArray[i]->AttrValue(KElementSize)->Compare(KElementExtraLarge) == 0)
 				||
-			(aObserver == iArtistInfoHelper &&
+			(iState == EFetchingArtistInfo &&
 			 imageArray[i]->AttrValue(KElementName)->Compare(KElementLarge) == 0))
 			{
 			if (imageArray[i]->Content().Length() > 0)
 				{
 				found = ETrue;
-				aObserver == iAlbumInfoHelper ?
+				iState == EFetchingAlbumInfo ?
 					LOG(_L8("15 FetchImageL(album)")):
 					LOG(_L8("16 FetchImageL(artist)"));
-					
-				aObserver == iAlbumInfoHelper ?
-					FetchImageL(EMobblerImageTypeAlbum, imageArray[i]->Content()):
-					FetchImageL(EMobblerImageTypeArtist, imageArray[i]->Content());
+				iState == EFetchingAlbumInfo ?
+					FetchImageL(EFetchingAlbumArt, imageArray[i]->Content()):
+					FetchImageL(EFetchingArtistImage, imageArray[i]->Content());
 				}
 			break;
 			}
@@ -565,7 +569,7 @@ void CMobblerTrack::SaveAlbumArtL(const TDesC8& aData)
 	{
 	if ((iPath && iPath->Length() > 0)
 			||
-		(iImageType == EMobblerImageTypeArtist && IsMusicPlayerTrack()))
+		(iState == EFetchingArtistImage && IsMusicPlayerTrack()))
 		{
 		// try to save the album art in the album folder
 		LOG(_L8("SaveAlbumArtL()"));
@@ -583,7 +587,7 @@ void CMobblerTrack::SaveAlbumArtL(const TDesC8& aData)
 
 		TInt knownPathLength(albumArtFileName.Length() +
 							 KArtExtensionArray[0].Length());
-		if (iImageType == EMobblerImageTypeAlbum)
+		if (iState == EFetchingAlbumArt)
 			{
 			albumArtFileName.Append(Album().SafeFsString(knownPathLength));
 			}
@@ -612,11 +616,13 @@ void CMobblerTrack::SaveAlbumArtL(const TDesC8& aData)
 		}
 
 	iAlbumArt = CMobblerBitmap::NewL(*this, aData);
+	iState = ENone;
 	}
 
 void CMobblerTrack::DownloadAlbumArtL()
 	{
-	if (!iAlbumArt)
+	if ((!iAlbumArt || iUsingArtistImage)
+				&& iState == ENone)
 		{
 		if (Album().String().Length() != 0)
 			{
@@ -631,9 +637,9 @@ void CMobblerTrack::DownloadAlbumArtL()
 			{
 			// We don't know the album name, but there was album art in the playlist
 			LOG(_L8("3 FetchImageL(album)"));
-			FetchImageL(EMobblerImageTypeAlbum, *iImage);
+			FetchImageL(EFetchingAlbumArt, *iImage);
 			}
-		else
+		else if (!iUsingArtistImage)
 			{
 			 // No album art, let's try the artist image instead.
 			// Try to fetch the artist info. Once this is fetched

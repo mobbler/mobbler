@@ -184,7 +184,6 @@ public:
 	void AlbumAddTagL(const TDesC8& aAlbum, const TDesC8& aArtist, const TDesC8& aTag, MMobblerFlatDataObserver& aObserver);
 	void AlbumRemoveTagL(const TDesC8& aAlbum, const TDesC8& aArtist, const TDesC8& aTag, MMobblerFlatDataObserver& aObserver);
 	
-	void TrackGetInfoL(const TDesC8& aTrack, const TDesC8& aArtist, const TDesC8& aMbId, MMobblerFlatDataObserver& aObserver);
 	void AlbumGetInfoL(const TDesC8& aMbId, MMobblerFlatDataObserver& aObserver);
 	void AlbumGetInfoL(const TDesC8& aAlbum, const TDesC8& aArtist, MMobblerFlatDataObserver& aObserver);
 	

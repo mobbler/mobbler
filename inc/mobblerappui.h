@@ -79,7 +79,6 @@ class CMobblerString;
 class CMobblerTrack;
 class CMobblerWebServicesView;
 class CMobblerWebServicesHelper;
-class CMobblerContentListingInterface;
 
 
 class CMobblerSystemCloseGlobalQuery : public CActive
@@ -131,7 +130,6 @@ public:
 	CMobblerMusicAppListener& MusicListener() const;
 	CMobblerBitmapCollection& BitmapCollection() const;
 	CMobblerDestinationsInterface* Destinations() const;
-	CMobblerContentListingInterface* ContentListing() const;
 	
 	CMobblerSettingItemListView& SettingView() const;
 	HBufC* MusicAppNameL() const;
@@ -266,10 +264,6 @@ private:
 	CPeriodic* iVolumeDownTimer;
 	TCallBack iVolumeUpCallBack;
 	TCallBack iVolumeDownCallBack;
-	
-	// content listing framework
-	CMobblerContentListingInterface* iContentListing;
-	TUid iContentListingDtorUid;
 
 	TInt iPreviousRadioStation;
 	

@@ -638,11 +638,6 @@ void CMobblerStatusControl::Draw(const TRect& /*aRect*/) const
 		{
 		love = iAppUi.CurrentTrack()->Love();
 		
-		if (love)
-			{
-			loveDisabled = ETrue;
-			}
-		
 		if (iAppUi.CurrentTrack()->AlbumArt() && 
 			iAppUi.CurrentTrack()->AlbumArt()->Bitmap())
 			{
@@ -665,12 +660,8 @@ void CMobblerStatusControl::Draw(const TRect& /*aRect*/) const
 			{
 			// This is a music player track
 			banDisabled = ETrue;
-			
-			if (!iAppUi.MusicListener().ControlsSupported())
-				{
-				skipDisabled = ETrue;
-				playStopDisabled = ETrue;
-				}
+			skipDisabled = ETrue;
+			playStopDisabled = ETrue;
 			}
 		else
 			{
@@ -860,8 +851,7 @@ void CMobblerStatusControl::Draw(const TRect& /*aRect*/) const
 	BitBltMobblerBitmapL(iMobblerBitmapNext, iPointSkip, TRect(TPoint(0, 0), iMobblerBitmapNext->SizeInPixels()), skipDisabled);
 	
 	// Draw either play or stop depending on if the radio playing
-	if (iAppUi.RadioPlayer().State() == CMobblerRadioPlayer::EIdle
-			&& !(iAppUi.MusicListener().ControlsSupported() && iAppUi.MusicListener().CurrentTrack()) )
+	if (iAppUi.RadioPlayer().State() == CMobblerRadioPlayer::EIdle)
 		{
 		// The radio is idle so display the play button
 		BitBltMobblerBitmapL(iMobblerBitmapPlay, iPointPlayStop, TRect(TPoint(0, 0), iMobblerBitmapPlay->SizeInPixels()), playStopDisabled);
@@ -991,22 +981,13 @@ TKeyResponse CMobblerStatusControl::OfferKeyEventL(const TKeyEvent& aKeyEvent, T
 	switch (aKeyEvent.iCode)
 		{
 		case EKeyRightArrow: // skip to the next track
-			
-			if (!iAlbumArtTransition->IsActive())
+			if (iAppUi.RadioPlayer().CurrentTrack() && !iAlbumArtTransition->IsActive())
 				{
-				if (iAppUi.RadioPlayer().CurrentTrack() )
-					{
-					// Only call skip track if we are playing a radio track
-					// and we are not in the middle of an album art transition
-					
-					iAppUi.RadioPlayer().SkipTrackL();
-					}
-				else if (iAppUi.MusicListener().CurrentTrack() && iAppUi.MusicListener().ControlsSupported())
-					{
-					iAppUi.MusicListener().SkipL();
-					}
+				// Only call skip track if we are playing a radio track
+				// and we are not in the middle of an album art transition
+				
+				iAppUi.RadioPlayer().SkipTrackL();
 				}
-			
 			response = EKeyWasConsumed;
 			break;
 		case EKeyUpArrow: // love
@@ -1036,15 +1017,7 @@ TKeyResponse CMobblerStatusControl::OfferKeyEventL(const TKeyEvent& aKeyEvent, T
 				}
 			else
 				{
-				if (iAppUi.MusicListener().CurrentTrack() && iAppUi.MusicListener().ControlsSupported())
-					{
-					// there is a music player track playing so try to to stop it
-					iAppUi.MusicListener().StopL();
-					}
-				else
-					{
-					const_cast<CMobblerAppUi&>(iAppUi).HandleCommandL(EMobblerCommandResumeRadio);
-					}
+				const_cast<CMobblerAppUi&>(iAppUi).HandleCommandL(EMobblerCommandResumeRadio);
 				}
 			response = EKeyWasConsumed;
 			break;

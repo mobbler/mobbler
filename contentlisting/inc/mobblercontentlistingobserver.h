@@ -1,5 +1,5 @@
 /*
-mobblercontentlistinginterface.h
+mobblercontentlistingobserver.h
 
 Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
 Copyright (C) 2009  Michael Coffey
@@ -21,19 +21,17 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-#ifndef __MOBBLERCONTENTLISTINGINTERFACE_H__
-#define __MOBBLERCONTENTLISTINGINTERFACE_H__
+#ifndef __MOBBLERCONTENTLISTINGOBSERVER_H__
+#define __MOBBLERCONTENTLISTINGOBSERVER_H__
 
-class MMobblerContentListingObserver;
-
-class CMobblerContentListingInterface : public CBase
+class MMobblerContentListingObserver
 	{
 public:
-	virtual void SetObserver(MMobblerContentListingObserver& aObserver) = 0;
-	virtual void FindAndSetAlbumNameL(const TDesC& aArtist, 
-									  const TDesC& aTitle) = 0;
+	virtual void SetAlbumL(const TDesC& aAlbum) = 0;
+	virtual void SetTrackNumber(const TInt aTrackNumber) = 0;
+	virtual void SetPathL(const TDesC& aPath) = 0;
 	};
 
-#endif // __MOBBLERTOUCHFEEDBACKINTERFACE_H__
+#endif // __MOBBLERCONTENTLISTINGOBSERVER_H__
 
 // End of file

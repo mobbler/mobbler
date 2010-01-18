@@ -313,34 +313,4 @@ TTimeIntervalSeconds CMobblerMusicAppObserverMPX::Duration()
 	return iDuration;
 	}
 
-TBool CMobblerMusicAppObserverMPX::ControlsSupported()
-	{
-#ifndef __WINS__
-	return ETrue;
-#else
-	return EFalse;
-#endif
-	}
-
-void CMobblerMusicAppObserverMPX::PlayL()
-	{
-#ifndef __WINS__
-	iPlaybackUtility->CommandL(EPbCmdPlay);
-#endif
-	}
-
-void CMobblerMusicAppObserverMPX::StopL()
-	{
-#ifndef __WINS__
-	iPlaybackUtility->CommandL(EPbCmdStop);
-#endif
-	}
-
-void CMobblerMusicAppObserverMPX::SkipL()
-	{
-#ifndef __WINS__
-	iPlaybackUtility->CommandL(EPbCmdNext);
-#endif
-	}
-
 // End of file

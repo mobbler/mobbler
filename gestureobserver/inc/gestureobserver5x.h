@@ -30,20 +30,21 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <sensrvchannel.h> 
 #include <sensrvchannelconditionlistener.h>
 #include <sensrvchannelfinder.h> 
-#include <sensrvdatalistener.h>
 
 
 class CMobblerGestureObserver5x : public CMobblerGestureObserver,
-								  public MSensrvDataListener
+								  public MSensrvChannelConditionListener
 	{
 public:
 	~CMobblerGestureObserver5x();
 	static CMobblerGestureObserver* NewL();
 	
-private: // from MSensrvDataListener
-	void DataReceived(CSensrvChannel& aChannel, TInt aCount, TInt aDataLost);
-	void DataError(CSensrvChannel& aChannel, TSensrvErrorSeverity aError);
-	void GetDataListenerInterfaceL(TUid aInterfaceUid, TAny*& aInterface);
+public:
+	// MSensrvConditionListener
+	void ConditionMet( CSensrvChannel& aChannel, CSensrvChannelConditionSet& aChannelConditionSet, 
+    		TDesC8& aValue );
+	void ConditionError ( CSensrvChannel& aChannel, TSensrvErrorSeverity aError );
+	void GetChannelConditionListenerInterfaceL( TUid aInterfaceUid, TAny*& aInterface );
 	
 private:
 	// S60 5th edition implementation for template functions.
@@ -53,6 +54,8 @@ private:
 private:
 	CMobblerGestureObserver5x();
 	void ConstructL();
+
+	void SetupConditionSetL();
 	
 	TSensrvChannelInfo GetChannelL();
 	TInt Transform(TInt aValue);
