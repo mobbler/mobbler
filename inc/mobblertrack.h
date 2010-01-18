@@ -26,23 +26,28 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <e32base.h>
 
+#include <mobbler/mobblercontentlistinginterface.h>
+
 #include "mobblerbitmap.h"
 #include "mobblerdataobserver.h"
 #include "mobblertrackbase.h"
 
 class CMobblerString;
 
-class CMobblerTrack : public CMobblerTrackBase, public MMobblerBitmapObserver, public MMobblerFlatDataObserver
+class CMobblerTrack : public CMobblerTrackBase,
+						public MMobblerBitmapObserver,
+						public MMobblerFlatDataObserver,
+						public MMobblerFlatDataObserverHelper,
+						public MMobblerContentListingObserver
 	{
-private:
-	enum TState
+public:
+	enum TMobblerImageType
 		{
-		ENone,
-		EFetchingAlbumInfo,
-		EFetchingAlbumArt,
-		EFetchingArtistInfo,
-		EFetchingArtistImage
+		EMobblerImageTypeNull,
+		EMobblerImageTypeAlbum,
+		EMobblerImageTypeArtist
 		};
+	
 public:
 	static CMobblerTrack* NewL(const TDesC8& aArtist,
 								const TDesC8& aTitle,
@@ -57,7 +62,7 @@ public:
 	void Open();
 	void Release();
 	
-	void SetAlbumL(const TDesC& aAlbum);
+	//void SetAlbumL(const TDesC& aAlbum);
 	
 	const CMobblerString& MbTrackId() const;
 	
@@ -68,7 +73,9 @@ public:
 	void BufferAdded(TInt aBufferSize);
 	TInt Buffered() const;
 	
-	void SetPathL(const TDesC& aPath);
+	//void SetLocalFileL(const TDesC& aLocalFile);
+	const TDesC& LocalFile() const;
+	
 	const CMobblerBitmap* AlbumArt() const;
 
 	void DownloadAlbumArtL();
@@ -87,8 +94,8 @@ private:
 	
 	void FetchAlbumInfoL();
 	void FetchArtistInfoL();
-	TBool FetchImageL(const TDesC8& aData);
-	void FetchImageL(TState aState, const TDesC8& aImageLocation);
+	TBool FetchImageL(CMobblerFlatDataObserverHelper* aObserver, const TDesC8& aData);
+	void FetchImageL(TMobblerImageType aImageType, const TDesC8& aImageLocation);
 	void SaveAlbumArtL(const TDesC8& aData);
 	TBool OkToDownloadAlbumArt() const;
 	
@@ -96,8 +103,14 @@ private:
 	void BitmapLoadedL(const CMobblerBitmap* aMobblerBitmap);
 	void BitmapResizedL(const CMobblerBitmap* aMobblerBitmap);
 	
-private:
+private: // MMobblerFlatDataObserver
 	void DataL(const TDesC8& aData, CMobblerLastFmConnection::TTransactionError aTransactionError);
+	
+private: // from MMobblerFlatDataObserverHelper
+	void DataL(CMobblerFlatDataObserverHelper* aObserver, const TDesC8& aData, CMobblerLastFmConnection::TTransactionError aTransactionError);
+	
+private: // from MMobblerContentListingObserver
+	void HandleFindLocalTrackCompleteL(TInt aTrackNumber, const TDesC& aAlbum, const TDesC& aLocalFile);
 	
 private:
 	CMobblerString* iMbTrackId;
@@ -105,19 +118,22 @@ private:
 	// album art
 	HBufC8* iImage;
 	CMobblerBitmap* iAlbumArt;
-	TBool iTriedButCouldntFindAlbumArt;
-	TBool iUsingArtistImage;
 	
 	// mp3 location
 	HBufC8* iMp3Location;
 	HBufC* iPath;
+	HBufC* iLocalFile;
 	
 	TInt iRefCount;
 	
 	TInt iDataSize;
 	TInt iBuffered;
 	
-	TState iState;
+	TMobblerImageType iImageType;
+	
+	CMobblerFlatDataObserverHelper* iTrackInfoHelper;
+	CMobblerFlatDataObserverHelper* iAlbumInfoHelper;
+	CMobblerFlatDataObserverHelper* iArtistInfoHelper;
 	};
 	
 #endif // __MOBBLERTRACK_H__
