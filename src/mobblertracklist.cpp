@@ -263,6 +263,7 @@ void CMobblerTrackList::DataL(CMobblerFlatDataObserverHelper* aObserver, const T
 TInt CMobblerTrackList::ViewScrobbleLogCallBackL(TAny* aPtr)
 	{
 	static_cast<CMobblerTrackList*>(aPtr)->CMobblerListControl::DataL(KNullDesC8, CMobblerLastFmConnection::ETransactionErrorNone);
+	return KErrNone;
 	}
 
 void CMobblerTrackList::ParseL(const TDesC8& aXML)
