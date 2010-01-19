@@ -218,6 +218,8 @@ void CMobblerEventList::DataL(CMobblerFlatDataObserverHelper* aObserver, const T
 			{
 			_LIT(KMapKmlFilename, "C:\\System\\Data\\Mobbler\\map.kml");
 			
+			CCoeEnv::Static()->FsSession().MkDirAll(KMapKmlFilename);
+			
 			_LIT8(KMapKmlStartFormat,		"<kml xmlns=\"http://earth.google.com/kml/2.0\">\r\n");	
 			
 			_LIT8(KMapKmlPlacemarkFormat,	"\t<Placemark>\r\n"
