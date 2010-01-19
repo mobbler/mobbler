@@ -222,7 +222,7 @@ void CMobblerRadioPlayer::HandleAudioPositionChangeL()
 			{
 			// There is more in the playlist so start fetching the next track
 			iNextAudioControl = CMobblerAudioControl::NewL(*this,  *(*iPlaylist)[1], iPreBufferSize, iVolume, iEqualizerIndex, iBitRate);
-			if ((*iPlaylist)[0]->LocalFile().Length() == 0)
+			if ((*iPlaylist)[1]->LocalFile().Length() == 0)
 				{
 				iLastFmConnection.RequestMp3L(*iNextAudioControl, (*iPlaylist)[0 + 1]->Mp3Location());
 				}

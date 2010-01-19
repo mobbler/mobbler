@@ -340,6 +340,8 @@ void CMobblerAudioThread::MapcInitComplete(TInt aError, const TTimeIntervalMicro
 	{
 	if (aError == KErrNone)
 		{
+		iShared.iPlaying = ETrue;
+		iShared.iDownloadComplete = ETrue;
 		iShared.iTrack->SetTrackLength(aDuration.Int64() / 1000000);
 		iPlayer->SetVolume(iShared.iAudioDataSettings.iVolume);
 		iShared.iMaxVolume = iPlayer->MaxVolume();
