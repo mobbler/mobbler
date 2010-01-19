@@ -2191,6 +2191,8 @@ void CMobblerAppUi::GoToMapL(const TDesC8& aName, const TDesC8& aLatitude, const
 	{
 	_LIT(KMapKmlFilename, "C:\\System\\Data\\Mobbler\\map.kml");
 	
+	CCoeEnv::Static()->FsSession().MkDirAll(KMapKmlFilename);
+	
 	_LIT8(KMapKmlFormat,	"<kml xmlns=\"http://earth.google.com/kml/2.0\">\r\n"
 							"\t<Placemark>\r\n "
 							"\t\t<name>%S</name>\r\n"
