@@ -149,7 +149,7 @@ void CMobblerWebServicesHelper::TrackAddTagL(CMobblerTrack& aTrack)
 	
 	CAknTextQueryDialog* tagDialog(new(ELeave) CAknTextQueryDialog(tag));
 	tagDialog->PrepareLC(R_MOBBLER_TEXT_QUERY_DIALOG);
-	tagDialog->SetPromptL(iAppUi.ResourceReader().ResourceL(R_MOBBLER_TRACK_ADD_TAG));
+	tagDialog->SetPromptL(iAppUi.ResourceReader().ResourceL(R_MOBBLER_TRACK_ADD_TAG_PROMPT));
 	tagDialog->SetPredictiveTextInputPermitted(ETrue);
 	
 	if (tagDialog->RunLD())
@@ -182,7 +182,7 @@ void CMobblerWebServicesHelper::AlbumAddTagL(CMobblerTrack& aTrack)
 	
 	CAknTextQueryDialog* tagDialog(new(ELeave) CAknTextQueryDialog(tag));
 	tagDialog->PrepareLC(R_MOBBLER_TEXT_QUERY_DIALOG);
-	tagDialog->SetPromptL(iAppUi.ResourceReader().ResourceL(R_MOBBLER_ALBUM_ADD_TAG));
+	tagDialog->SetPromptL(iAppUi.ResourceReader().ResourceL(R_MOBBLER_ALBUM_ADD_TAG_PROMPT));
 	tagDialog->SetPredictiveTextInputPermitted(ETrue);
 	
 	if (tagDialog->RunLD())
@@ -215,7 +215,7 @@ void CMobblerWebServicesHelper::ArtistAddTagL(CMobblerTrack& aTrack)
 	
 	CAknTextQueryDialog* tagDialog(new(ELeave) CAknTextQueryDialog(tag));
 	tagDialog->PrepareLC(R_MOBBLER_TEXT_QUERY_DIALOG);
-	tagDialog->SetPromptL(iAppUi.ResourceReader().ResourceL(R_MOBBLER_ARTIST_ADD_TAG));
+	tagDialog->SetPromptL(iAppUi.ResourceReader().ResourceL(R_MOBBLER_ARTIST_ADD_TAG_PROMPT));
 	tagDialog->SetPredictiveTextInputPermitted(ETrue);
 	
 	if (tagDialog->RunLD())
