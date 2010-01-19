@@ -50,6 +50,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #endif // __SYMBIAN_SIGNED__
 
+#include <mobbler/mobblercontentlistinginterface.h>
+
 #include "mobbler.hrh"
 #include "mobbler.rsg.h"
 #include "mobbler_strings.rsg.h"
@@ -78,10 +80,12 @@ _LIT(KSearchFile, "C:searchterms.dat");
 const TUid KGesturesInterfaceUid = {0x20026567};
 const TUid KDestinationImplUid = {0x20026621};
 const TUid KMobblerGesturePlugin5xUid = {0x2002656A};
+const TUid KContentListingImplUid = {0x2002661E};
 #else
 const TUid KGesturesInterfaceUid = {0xA000B6CF};
 const TUid KDestinationImplUid = {0xA000BEB6};
 const TUid KMobblerGesturePlugin5xUid = {0xA000B6C2};
+const TUid KContentListingImplUid = {0xA000BEB3};
 #endif
 
 _LIT(KSpace, " ");
@@ -166,6 +170,8 @@ void CMobblerAppUi::ConstructL()
 											 iSettingView->BitRate());
 	iMusicListener = CMobblerMusicAppListener::NewL(*iLastFmConnection);
 	
+	TRAP_IGNORE(iContentListing = static_cast<CMobblerContentListingInterface*>(REComSession::CreateImplementationL(KContentListingImplUid, iContentListingDtorUid)));
+	
 	RProcess().SetPriority(EPriorityHigh);
 	
 #if !defined(__SYMBIAN_SIGNED__) && !defined(__WINS__)
@@ -247,6 +253,12 @@ CMobblerAppUi::~CMobblerAppUi()
 	delete iVolumeDownTimer;
 	delete iVolumeUpTimer;
 	delete iWebServicesHelper;
+	
+	if (iContentListing)
+		{
+		delete iContentListing;
+		REComSession::DestroyedImplementation(iContentListingDtorUid);
+		}
 	}
 
 TBool CMobblerAppUi::AccelerometerGesturesAvailable() const
@@ -482,6 +494,11 @@ CMobblerSettingItemListView& CMobblerAppUi::SettingView() const
 CMobblerDestinationsInterface* CMobblerAppUi::Destinations() const
 	{
 	return iDestinations;
+	}
+
+CMobblerContentListingInterface* CMobblerAppUi::ContentListing() const
+	{
+	return iContentListing;
 	}
 
 HBufC* CMobblerAppUi::MusicAppNameL() const
@@ -2052,32 +2069,20 @@ void CMobblerAppUi::LoadGesturesPluginL()
 	
 	TUid dtorIdKey;
 	CMobblerGesturesInterface* mobblerGestures(NULL);
+
+	TRAPD(error, mobblerGestures = static_cast<CMobblerGesturesInterface*>(REComSession::CreateImplementationL(KMobblerGesturePlugin5xUid, dtorIdKey)));
 	
-	// Search for the preferred plug-in implementation
-	TBool fifthEditionPluginLoaded(EFalse);
-	for (TInt i(0); i < KImplCount; ++i)
+	if (error == KErrNone)
 		{
-		TUid currentImplUid(implInfoPtrArray[i]->ImplementationUid());	
-		if (currentImplUid == KMobblerGesturePlugin5xUid)
-			{
-			// Found it, attempt to load it
-			TRAPD(error, mobblerGestures = static_cast<CMobblerGesturesInterface*>(REComSession::CreateImplementationL(currentImplUid, dtorIdKey)));
-			if (error == KErrNone)
-				{
-				fifthEditionPluginLoaded = ETrue;
-				iGesturePlugin = mobblerGestures;
-				iGesturePluginDtorUid = dtorIdKey;
-				}
-			else
-				{
-				REComSession::DestroyedImplementation(dtorIdKey);
-				}
-			}
+		iGesturePlugin = mobblerGestures;
+		iGesturePluginDtorUid = dtorIdKey;
 		}
-	
-	// If we didn't load the preferred plug-in, try all other plug-ins
-	if (! fifthEditionPluginLoaded)
+	else
 		{
+		REComSession::DestroyedImplementation(dtorIdKey);
+		
+		// We didn't load the preferred plug-in, try all other plug-ins
+
 		for (TInt i(0); i < KImplCount; ++i)
 			{
 			TUid currentImplUid(implInfoPtrArray[i]->ImplementationUid());
@@ -2125,17 +2130,8 @@ void CMobblerAppUi::LaunchFileEmbeddedL(const TDesC& aFilename)
 		iDocHandler = CDocumentHandler::NewL(CEikonEnv::Static()->Process());
 		}
 	
-	// Set the exit observer so HandleServerAppExit will be called
-	iDocHandler->SetExitObserver(this);
-	
 	TDataType emptyDataType = TDataType();
-	iDocHandler->OpenFileEmbeddedL(aFilename, emptyDataType);
-	}
- 
-void CMobblerAppUi::HandleServerAppExit(TInt aReason)
-	{
-	// Handle closing the handler application
-	MAknServerAppExitObserver::HandleServerAppExit(aReason);
+	iDocHandler->OpenFileL(aFilename, emptyDataType);
 	}
 
 void CMobblerAppUi::GoToLastFmL(TInt aCommand, const TDesC8& aEventId)

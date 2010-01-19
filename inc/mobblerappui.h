@@ -79,6 +79,7 @@ class CMobblerString;
 class CMobblerTrack;
 class CMobblerWebServicesView;
 class CMobblerWebServicesHelper;
+class CMobblerContentListingInterface;
 
 
 class CMobblerSystemCloseGlobalQuery : public CActive
@@ -106,8 +107,7 @@ class CMobblerAppUi : public CAknViewAppUi,
 						public MMobblerSleepTimerNotify,
 						public MRemConCoreApiTargetObserver,
 						public MMobblerFlatDataObserverHelper,
-						public MMobblerGestures,
-						public MAknServerAppExitObserver
+						public MMobblerGestures
 	{
 public:
 	enum TDownloadAlbumArt
@@ -130,6 +130,7 @@ public:
 	CMobblerMusicAppListener& MusicListener() const;
 	CMobblerBitmapCollection& BitmapCollection() const;
 	CMobblerDestinationsInterface* Destinations() const;
+	CMobblerContentListingInterface* ContentListing() const;
 	
 	CMobblerSettingItemListView& SettingView() const;
 	HBufC* MusicAppNameL() const;
@@ -228,10 +229,7 @@ private:
 	
 private:
 	void DataL(CMobblerFlatDataObserverHelper* aObserver, const TDesC8& aData, CMobblerLastFmConnection::TTransactionError aTransactionError);
-	
-private: // from MAknServerAppExitObserver
-	void HandleServerAppExit(TInt aReason);
- 
+
 private: // from MAknWsEventObserver
 	void HandleWsEventL(const TWsEvent &aEvent, CCoeControl *aDestination);
 	void HandleSystemEventL(const TWsEvent& aEvent);
@@ -264,6 +262,10 @@ private:
 	CPeriodic* iVolumeDownTimer;
 	TCallBack iVolumeUpCallBack;
 	TCallBack iVolumeDownCallBack;
+	
+	// content listing framework
+	CMobblerContentListingInterface* iContentListing;
+	TUid iContentListingDtorUid;
 
 	TInt iPreviousRadioStation;
 	
