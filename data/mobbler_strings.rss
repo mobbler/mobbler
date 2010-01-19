@@ -363,4 +363,10 @@ RESOURCE STRING r_mobbler_top					{ text = STR_mobbler_top; }
 RESOURCE STRING r_mobbler_lyrics				{ text = STR_mobbler_lyrics; }
 RESOURCE STRING r_mobbler_lyrics_not_found		{ text = STR_mobbler_lyrics_not_found; }
 
+RESOURCE STRING r_mobbler_track_add_tag_prompt			{ text = STR_mobbler_track_add_tag_prompt; }
+RESOURCE STRING r_mobbler_album_add_tag_prompt			{ text = STR_mobbler_album_add_tag_prompt; }
+RESOURCE STRING r_mobbler_artist_add_tag_prompt			{ text = STR_mobbler_artist_add_tag_prompt; }
+
+
+
 // End of file
