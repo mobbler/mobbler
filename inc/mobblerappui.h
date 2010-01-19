@@ -107,8 +107,7 @@ class CMobblerAppUi : public CAknViewAppUi,
 						public MMobblerSleepTimerNotify,
 						public MRemConCoreApiTargetObserver,
 						public MMobblerFlatDataObserverHelper,
-						public MMobblerGestures,
-						public MAknServerAppExitObserver
+						public MMobblerGestures
 	{
 public:
 	enum TDownloadAlbumArt
@@ -230,10 +229,7 @@ private:
 	
 private:
 	void DataL(CMobblerFlatDataObserverHelper* aObserver, const TDesC8& aData, CMobblerLastFmConnection::TTransactionError aTransactionError);
-	
-private: // from MAknServerAppExitObserver
-	void HandleServerAppExit(TInt aReason);
- 
+
 private: // from MAknWsEventObserver
 	void HandleWsEventL(const TWsEvent &aEvent, CCoeControl *aDestination);
 	void HandleSystemEventL(const TWsEvent& aEvent);
