@@ -2125,17 +2125,8 @@ void CMobblerAppUi::LaunchFileEmbeddedL(const TDesC& aFilename)
 		iDocHandler = CDocumentHandler::NewL(CEikonEnv::Static()->Process());
 		}
 	
-	// Set the exit observer so HandleServerAppExit will be called
-	iDocHandler->SetExitObserver(this);
-	
 	TDataType emptyDataType = TDataType();
-	iDocHandler->OpenFileEmbeddedL(aFilename, emptyDataType);
-	}
- 
-void CMobblerAppUi::HandleServerAppExit(TInt aReason)
-	{
-	// Handle closing the handler application
-	MAknServerAppExitObserver::HandleServerAppExit(aReason);
+	iDocHandler->OpenFileL(aFilename, emptyDataType);
 	}
 
 void CMobblerAppUi::GoToLastFmL(TInt aCommand, const TDesC8& aEventId)
