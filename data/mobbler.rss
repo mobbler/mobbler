@@ -175,19 +175,19 @@ RESOURCE MENU_PANE r_mobbler_tag_submenu_pane
 			},
 		MENU_ITEM
 			{
-			command = EMobblerCommandTrackRemoveTag;
-			},
-		MENU_ITEM
-			{
 			command = EMobblerCommandAlbumAddTag;
 			},
 		MENU_ITEM
 			{
-			command = EMobblerCommandAlbumRemoveTag;
+			command = EMobblerCommandArtistAddTag;
 			},
 		MENU_ITEM
 			{
-			command = EMobblerCommandArtistAddTag;
+			command = EMobblerCommandTrackRemoveTag;
+			},
+		MENU_ITEM
+			{
+			command = EMobblerCommandAlbumRemoveTag;
 			},
 		MENU_ITEM
 			{
