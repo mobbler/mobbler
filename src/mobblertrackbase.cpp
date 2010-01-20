@@ -130,7 +130,7 @@ void CMobblerTrackBase::ExternalizeL(RWriteStream& aWriteStream) const
 	aWriteStream << iAlbum->String8();
 	}
 
-void CMobblerTrackBase::SetAlbumBaseL(const TDesC& aAlbum)
+void CMobblerTrackBase::SetAlbumL(const TDesC& aAlbum)
 	{
 	delete iAlbum;
 	iAlbum = CMobblerString::NewL(aAlbum);

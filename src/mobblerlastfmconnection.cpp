@@ -172,8 +172,6 @@ _LIT8(KLowerT8, "t");
 _LIT8(KUpperL8, "L");
 _LIT8(KUpperP8, "P");
 
-_LIT(KBadSession, "BADSESSION");
-
 // Last.fm can accept up to this many track in one submission
 const TInt KMaxSubmitTracks(50);
 
@@ -2240,7 +2238,7 @@ void CMobblerLastFmConnection::TransactionResponseL(CMobblerTransaction* aTransa
 		else
 			{
 			CleanupStack::PushL(error);
-			if (error->Text() == KBadSession)
+			if (error->LastFmErrorCode() == CMobblerLastFmError::EBadSession)
 				{
 				// The session has become invalid so handshake again
 				AuthenticateL();
