@@ -42,7 +42,7 @@ public:
 	const CMobblerString& Album() const;
 	const TDesC8& RadioAuth() const;
 	
-	void SetAlbumBaseL(const TDesC& aAlbum);
+	void SetAlbumL(const TDesC& aAlbum);
 	
 	TBool IsMusicPlayerTrack() const;
 	

@@ -1445,7 +1445,7 @@ void CMobblerAppUi::HandleConnectCompleteL(TInt aError)
 		// See if there's better album art online
 		if (CurrentTrack())
 			{
-			CurrentTrack()->DownloadAlbumArtL();
+			CurrentTrack()->FindBetterImageL();
 			}
 		}
 	}
@@ -2130,7 +2130,7 @@ void CMobblerAppUi::LaunchFileEmbeddedL(const TDesC& aFilename)
 		}
 	
 	TDataType emptyDataType = TDataType();
-	iDocHandler->OpenFileL(aFilename, emptyDataType);
+	iDocHandler->OpenFileEmbeddedL(aFilename, emptyDataType);
 	}
 
 void CMobblerAppUi::GoToLastFmL(TInt aCommand, const TDesC8& aEventId)
@@ -2349,12 +2349,12 @@ TInt CMobblerAppUi::SetAlbumArtAsWallpaper(TBool aAutomatically)
 		LOG(_L8("Set as wallpaper"));
 		if (!iWallpaperSet &&
 			CurrentTrack() && 
-			CurrentTrack()->AlbumArt() && 
-			CurrentTrack()->AlbumArt()->Bitmap())
+			CurrentTrack()->Image() && 
+			CurrentTrack()->Image()->Bitmap())
 			{
 			// The current track has album art and it has finished loading
 			CCoeEnv::Static()->FsSession().MkDirAll(KWallpaperFile);
-			error = CurrentTrack()->AlbumArt()->Bitmap(ETrue)->Save(KWallpaperFile);
+			error = CurrentTrack()->Image()->Bitmap(ETrue)->Save(KWallpaperFile);
 			if (error == KErrNone)
 				{
 				error = AknsWallpaperUtils::SetIdleWallpaper(KWallpaperFile, NULL);

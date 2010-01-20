@@ -643,11 +643,11 @@ void CMobblerStatusControl::Draw(const TRect& /*aRect*/) const
 			loveDisabled = ETrue;
 			}
 		
-		if (iAppUi.CurrentTrack()->AlbumArt() && 
-			iAppUi.CurrentTrack()->AlbumArt()->Bitmap())
+		if (iAppUi.CurrentTrack()->Image() && 
+			iAppUi.CurrentTrack()->Image()->Bitmap())
 			{
 			// The current track has album art and it has finished loading
-			albumArt = iAppUi.CurrentTrack()->AlbumArt();
+			albumArt = iAppUi.CurrentTrack()->Image();
 			
 			if (iShowAlbumArtFullscreen)
 				{
@@ -676,10 +676,10 @@ void CMobblerStatusControl::Draw(const TRect& /*aRect*/) const
 			{
 			// This is a radio track
 			
-			if (iAppUi.RadioPlayer().NextTrack() && iAppUi.RadioPlayer().NextTrack()->AlbumArt() && iAppUi.RadioPlayer().NextTrack()->AlbumArt()->Bitmap())
+			if (iAppUi.RadioPlayer().NextTrack() && iAppUi.RadioPlayer().NextTrack()->Image() && iAppUi.RadioPlayer().NextTrack()->Image()->Bitmap())
 				{
 				// The next track has album art and it has finished loading
-				nextAlbumArt = iAppUi.RadioPlayer().NextTrack()->AlbumArt();
+				nextAlbumArt = iAppUi.RadioPlayer().NextTrack()->Image();
 				const_cast<CMobblerBitmap*>(nextAlbumArt)->ScaleL(rectAlbumArt.Size());
 				}
 			else
@@ -1100,18 +1100,18 @@ TKeyResponse CMobblerStatusControl::OfferKeyEventL(const TKeyEvent& aKeyEvent, T
 		case '9':
 			if (!IsFifthEdition() && // 3rd edition only
 				iAppUi.CurrentTrack() &&
-				iAppUi.CurrentTrack()->AlbumArt())
+				iAppUi.CurrentTrack()->Image())
 				{
 				iShowAlbumArtFullscreen = !iShowAlbumArtFullscreen;
 				
 				if (iShowAlbumArtFullscreen)
 					{
-					const_cast<CMobblerBitmap*>(iAppUi.CurrentTrack()->AlbumArt())->ScaleL(iRectAlbumArt.Size());
+					const_cast<CMobblerBitmap*>(iAppUi.CurrentTrack()->Image())->ScaleL(iRectAlbumArt.Size());
 					}
 				else
 					{
 					TInt albumArtDimension(Min(Size().iWidth, Size().iHeight));
-					const_cast<CMobblerBitmap*>(iAppUi.CurrentTrack()->AlbumArt())->ScaleL(TSize(albumArtDimension, albumArtDimension));
+					const_cast<CMobblerBitmap*>(iAppUi.CurrentTrack()->Image())->ScaleL(TSize(albumArtDimension, albumArtDimension));
 					}
 				DoChangePaneTextL();
 				DrawDeferred();
