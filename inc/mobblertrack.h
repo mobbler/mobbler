@@ -29,6 +29,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <mobbler/mobblercontentlistinginterface.h>
 
 #include "mobblerbitmap.h"
+#include "mobblerlastfmconnection.h"
 #include "mobblerdataobserver.h"
 #include "mobblertrackbase.h"
 
@@ -43,16 +44,17 @@ class CMobblerTrack : public CMobblerTrackBase,
 public:
 	enum TMobblerImageType
 		{
-		EMobblerImageTypeNull,
-		EMobblerImageTypeAlbum,
-		EMobblerImageTypeArtist
+		EMobblerImageTypeNone,
+		EMobblerImageTypeArtistRemote,
+		EMobblerImageTypeArtistLocal,
+		EMobblerImageTypeAlbumRemote,
+		EMobblerImageTypeAlbumLocal
 		};
 	
 public:
 	static CMobblerTrack* NewL(const TDesC8& aArtist,
 								const TDesC8& aTitle,
 								const TDesC8& aAlbum,
-								//const TDesC8& aMbAlbumId,
 								const TDesC8& aMbTrackId,
 								const TDesC8& aImage,
 								const TDesC8& aMp3Location,
@@ -61,8 +63,6 @@ public:
 	
 	void Open();
 	void Release();
-	
-	//void SetAlbumL(const TDesC& aAlbum);
 	
 	const CMobblerString& MbTrackId() const;
 	
@@ -73,12 +73,11 @@ public:
 	void BufferAdded(TInt aBufferSize);
 	TInt Buffered() const;
 	
-	//void SetLocalFileL(const TDesC& aLocalFile);
 	const TDesC& LocalFile() const;
+	TPtrC LocalFilePath() const;
 	
-	const CMobblerBitmap* AlbumArt() const;
-
-	void DownloadAlbumArtL();
+	void FindBetterImageL();
+	const CMobblerBitmap* Image() const;
 	
 private:
 	CMobblerTrack(TTimeIntervalSeconds aTrackLength);
@@ -99,6 +98,11 @@ private:
 	void SaveAlbumArtL(const TDesC8& aData);
 	TBool OkToDownloadAlbumArt() const;
 	
+	void FindLocalAlbumImageL();
+	void FindLocalArtistImageL();
+	
+	void DownloadAlbumImageL();
+	
 private:
 	void BitmapLoadedL(const CMobblerBitmap* aMobblerBitmap);
 	void BitmapResizedL(const CMobblerBitmap* aMobblerBitmap);
@@ -116,12 +120,11 @@ private:
 	CMobblerString* iMbTrackId;
 
 	// album art
-	HBufC8* iImage;
-	CMobblerBitmap* iAlbumArt;
+	HBufC8* iPlaylistImageLocation;
+	CMobblerBitmap* iImage;
 	
 	// mp3 location
 	HBufC8* iMp3Location;
-	HBufC* iPath;
 	HBufC* iLocalFile;
 	
 	TInt iRefCount;
