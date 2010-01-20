@@ -361,7 +361,7 @@ void CMobblerAudioThread::MapcInitComplete(TInt aError, const TTimeIntervalMicro
 		}
 	}
 
-void CMobblerAudioThread::MapcPlayComplete(TInt aError)
+void CMobblerAudioThread::MapcPlayComplete(TInt /*aError*/)
 	{
 	if (!iActiveSchedulerStopped)
 		{

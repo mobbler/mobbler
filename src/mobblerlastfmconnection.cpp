@@ -122,6 +122,7 @@ _LIT8(KFieldTitle, "title");
 _LIT8(KFieldUser, "user");
 _LIT8(KFieldUsername, "username");
 _LIT8(KQueryAuthGetMobileSession, "auth.getMobileSession");
+_LIT8(KQueryTrackGetInfo, "track.getinfo");
 _LIT8(KQueryAlbumGetInfo, "album.getinfo");
 _LIT8(KQueryArtistGetImages, "artist.getimages");
 _LIT8(KQueryArtistGetSimilar, "artist.getsimilar");
@@ -153,7 +154,6 @@ _LIT8(KQueryUserGetRecommendedArtists, "user.getrecommendedartists");
 _LIT8(KQueryUserGetRecommendedEvents, "user.getrecommendedevents");
 _LIT8(KShoutFormat, "%S.shout");
 
-_LIT8(KNumeralZero, "0");
 _LIT8(KNumeralTwo, "2");
 _LIT8(KAdjustPhp, "/adjust.php");
 _LIT8(KTwoDotZero, "2.0");
@@ -1301,6 +1301,41 @@ void CMobblerLastFmConnection::AlbumRemoveTagL(const TDesC8& aAlbum, const TDesC
 	AppendAndSubmitTransactionL(transaction);
 	}
 
+void CMobblerLastFmConnection::TrackGetInfoL(const TDesC8& aTrack, const TDesC8& aArtist, const TDesC8& aMbId, MMobblerFlatDataObserver& aObserver)
+	{
+	CUri8* uri(CUri8::NewL());
+	CleanupStack::PushL(uri);
+	
+	uri->SetComponentL(KScheme, EUriScheme);
+	uri->SetComponentL(KWebServicesHost, EUriHost);
+	uri->SetComponentL(KComponentTwoDotZero, EUriPath);
+	
+	CMobblerWebServicesQuery* query(CMobblerWebServicesQuery::NewLC(KQueryTrackGetInfo));
+	
+	query->AddFieldL(KFieldTrack, *MobblerUtility::URLEncodeLC(aTrack));
+	CleanupStack::PopAndDestroy(); // *MobblerUtility::URLEncodeLC(aArtist)
+	
+	query->AddFieldL(KFieldArtist, *MobblerUtility::URLEncodeLC(aArtist));
+	CleanupStack::PopAndDestroy(); // *MobblerUtility::URLEncodeLC(aAlbum)
+	
+	query->AddFieldL(KFieldUsername, iUsername->String8());
+	
+	if (aMbId.Length() > 0)
+		{
+		query->AddFieldL(KFieldMbid, aMbId);
+		}
+	
+	uri->SetComponentL(*query->GetQueryLC(), EUriQuery);
+	CleanupStack::PopAndDestroy(); // *query->GetQueryLC()
+	
+	CMobblerTransaction* transaction(CMobblerTransaction::NewL(*this, uri));
+	transaction->SetFlatDataObserver(&aObserver);
+	
+	CleanupStack::PopAndDestroy(query);
+	CleanupStack::Pop(uri);
+	
+	AppendAndSubmitTransactionL(transaction);
+	}
 
 void CMobblerLastFmConnection::AlbumGetInfoL(const TDesC8& aAlbum, const TDesC8& aArtist, MMobblerFlatDataObserver& aObserver)
 	{

@@ -79,6 +79,7 @@ class CMobblerString;
 class CMobblerTrack;
 class CMobblerWebServicesView;
 class CMobblerWebServicesHelper;
+class CMobblerContentListingInterface;
 
 
 class CMobblerSystemCloseGlobalQuery : public CActive
@@ -129,6 +130,7 @@ public:
 	CMobblerMusicAppListener& MusicListener() const;
 	CMobblerBitmapCollection& BitmapCollection() const;
 	CMobblerDestinationsInterface* Destinations() const;
+	CMobblerContentListingInterface* ContentListing() const;
 	
 	CMobblerSettingItemListView& SettingView() const;
 	HBufC* MusicAppNameL() const;
@@ -207,7 +209,7 @@ private:
 	void SleepL();
 	TBool RadioStartableL() const;
 	
-	void LaunchFileEmbeddedL(const TDesC& aFilename);
+	void LaunchFileL(const TDesC& aFilename);
 
 private: // from MMobblerSleepTimerNotify
 	void TimerExpiredL(TAny* aTimer, TInt aError);
@@ -260,6 +262,10 @@ private:
 	CPeriodic* iVolumeDownTimer;
 	TCallBack iVolumeUpCallBack;
 	TCallBack iVolumeDownCallBack;
+	
+	// content listing framework
+	CMobblerContentListingInterface* iContentListing;
+	TUid iContentListingDtorUid;
 
 	TInt iPreviousRadioStation;
 	
