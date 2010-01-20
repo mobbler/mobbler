@@ -27,8 +27,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <sendomfragment.h>
 #include <senxmlutils.h>
 
-#include <mobbler/mobblercontentlistinginterface.h>
-
 #include "mobblerappui.h"
 #include "mobblerliterals.h"
 #include "mobblerlogging.h"
@@ -57,6 +55,8 @@ _LIT(KArtistImageCache, "E:\\System\\Data\\Mobbler\\cache\\");
 _LIT8(KElementExtraLarge, "extralarge");
 _LIT8(KElementImages, "images");
 _LIT8(KElementSizes, "sizes");
+_LIT8(KElementTrack, "track");
+_LIT8(KElementUserLoved, "userloved");
 
 CMobblerTrack* CMobblerTrack::NewL(const TDesC8& aArtist,
 									const TDesC8& aTitle,
@@ -111,7 +111,7 @@ void CMobblerTrack::ConstructL(const TDesC8& aArtist,
 			// can see if the track has been loved by this user
 			delete iTrackInfoHelper;
 			iTrackInfoHelper = CMobblerFlatDataObserverHelper::NewL(static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->LastFmConnection(), *this, EFalse);
-			static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->LastFmConnection().TrackGetInfoL(Title().String8(), Artist().String8(), aMbTrackId, *iTrackInfoHelper);	
+			static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->LastFmConnection().TrackGetInfoL(Title().String8(), Artist().String8(), aMbTrackId, *iTrackInfoHelper);
 			}
 		}
 	}
@@ -193,7 +193,7 @@ void CMobblerTrack::HandleFindLocalTrackCompleteL(TInt aTrackNumber, const TDesC
 		parse.Set(aLocalFile, NULL, NULL);
 		
 		iLocalFile = aLocalFile.AllocL();
-		iPath = parse.DriveAndPath().AllocL();	
+		iPath = parse.DriveAndPath().AllocL();
 
 #ifndef __WINS__
 		// First try reading album art from the ID3 tag
@@ -218,7 +218,10 @@ void CMobblerTrack::HandleFindLocalTrackCompleteL(TInt aTrackNumber, const TDesC
 				LOG(_L8("Jpeg present"));
 				LOG(_L8("Found album art ID3"));
 				
-				iAlbumArt = CMobblerBitmap::NewL(*this, metaDataFieldContainer.Field8(EMetaDataJpeg));
+				HBufC8* albumArtFromId3(HBufC8::NewLC(metaDataFieldContainer.Field(EMetaDataJpeg).Length()));
+				albumArtFromId3->Des().Copy(metaDataFieldContainer.Field(EMetaDataJpeg));
+				iAlbumArt = CMobblerBitmap::NewL(*this, *albumArtFromId3);
+				CleanupStack::PopAndDestroy(albumArtFromId3);
 				}
 			}
 
@@ -379,15 +382,15 @@ void CMobblerTrack::DataL(CMobblerFlatDataObserverHelper* aObserver, const TDesC
 			CleanupStack::PushL(domFragment);
 			xmlReader->SetContentHandler(*domFragment);
 			domFragment->SetReader(*xmlReader);
-	
+			
 			// parse the XML into the DOM fragment
 			xmlReader->ParseL(aData);
 			
-			CSenElement* userlovedElement(domFragment->AsElement().Element(_L8("track"))->Element(_L8("userloved")));
+			CSenElement* userLovedElement(domFragment->AsElement().Element(KElementTrack)->Element(KElementUserLoved));
 			
-			if (userlovedElement)
+			if (userLovedElement)
 				{
-				SetLove(userlovedElement->Content().Compare(_L8("0")) != 0);
+				SetLove(userLovedElement->Content().Compare(KNumeralZero) != 0);
 				}
 			
 			CleanupStack::PopAndDestroy(2);

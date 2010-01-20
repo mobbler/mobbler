@@ -154,7 +154,6 @@ _LIT8(KQueryUserGetRecommendedArtists, "user.getrecommendedartists");
 _LIT8(KQueryUserGetRecommendedEvents, "user.getrecommendedevents");
 _LIT8(KShoutFormat, "%S.shout");
 
-_LIT8(KNumeralZero, "0");
 _LIT8(KNumeralTwo, "2");
 _LIT8(KAdjustPhp, "/adjust.php");
 _LIT8(KTwoDotZero, "2.0");

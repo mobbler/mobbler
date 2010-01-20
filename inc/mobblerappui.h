@@ -209,7 +209,7 @@ private:
 	void SleepL();
 	TBool RadioStartableL() const;
 	
-	void LaunchFileEmbeddedL(const TDesC& aFilename);
+	void LaunchFileL(const TDesC& aFilename);
 
 private: // from MMobblerSleepTimerNotify
 	void TimerExpiredL(TAny* aTimer, TInt aError);

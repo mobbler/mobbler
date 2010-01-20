@@ -521,7 +521,7 @@ CMobblerLastFmError* CMobblerParser::ParseRadioPlaylistL(const TDesC8& aXml, CMo
 				TPtrC8 identifier((*tracks)[i]->Element(KElementIdentifier)->Content());
 				TPtrC8 trackauth((*tracks)[i]->Element(KElementExtension)->Element(KElementTrackAuth)->Content());
 				
-				TBool loved((*tracks)[i]->Element(KElementExtension)->Element(KElementLoved)->Content().Compare(_L8("0")) != 0);
+				TBool loved((*tracks)[i]->Element(KElementExtension)->Element(KElementLoved)->Content().Compare(KNumeralZero) != 0);
 				
 				CMobblerTrack* track(CMobblerTrack::NewL(*creatorBuf, *titleBuf, *albumBuf, identifier, image, location, durationSeconds, trackauth));
 				CleanupStack::PushL(track);

@@ -1103,7 +1103,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 			break;
 		case EMobblerCommandQrCode:
 			_LIT(KQrCodeFile, "C:Mobbler.png");
-			LaunchFileEmbeddedL(KQrCodeFile);
+			LaunchFileL(KQrCodeFile);
 			break;
 		default:
 			if (aCommand >= EMobblerCommandEqualizerDefault && 
@@ -1409,7 +1409,7 @@ void CMobblerAppUi::DataL(CMobblerFlatDataObserverHelper* aObserver, const TDesC
 			CleanupStack::PopAndDestroy(&file);
 			if (success)
 				{
-				LaunchFileEmbeddedL(KLyricsFilename);
+				LaunchFileL(KLyricsFilename);
 				}
 			}
 		}
@@ -2122,7 +2122,7 @@ void CMobblerAppUi::HandleSingleShakeL(TMobblerShakeGestureDirection aDirection)
 		}
 	}
 
-void CMobblerAppUi::LaunchFileEmbeddedL(const TDesC& aFilename)
+void CMobblerAppUi::LaunchFileL(const TDesC& aFilename)
 	{
 	if (!iDocHandler)
 		{

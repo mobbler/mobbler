@@ -108,9 +108,13 @@ CMobblerMusicAppObserverMPX::~CMobblerMusicAppObserverMPX()
 #endif
 	}
 
+#ifdef __WINS__
+void CMobblerMusicAppObserverMPX::HandlePlaybackMessage(CMPXMessage* /*aMessage*/, TInt /*aError*/)
+	{
+	}
+#else
 void CMobblerMusicAppObserverMPX::HandlePlaybackMessage(CMPXMessage* aMessage, TInt aError)
 	{
-#ifndef __WINS__
 	TMPXMessageId id(aMessage->ValueTObjectL<TMPXMessageId>(KMPXMessageGeneralId));
 	 
 	if (KMPXMessageGeneral == id)
@@ -160,9 +164,8 @@ void CMobblerMusicAppObserverMPX::HandlePlaybackMessage(CMPXMessage* aMessage, T
 				}
 			}
 		}
-#endif
 	}
-
+#endif // __WINS__
 TMobblerMusicAppObserverState CMobblerMusicAppObserverMPX::MPlayerState(TMPXPlaybackState aState)
 	{
 	TMobblerMusicAppObserverState state(EPlayerNotRunning);
@@ -232,6 +235,7 @@ void CMobblerMusicAppObserverMPX::HandleSubPlayerNamesL(TUid /*aPlayer*/, const 
 	
 	}
 
+
 void CMobblerMusicAppObserverMPX::RequestMediaL()
 	{
 #ifndef __WINS__
@@ -249,9 +253,13 @@ void CMobblerMusicAppObserverMPX::RequestMediaL()
 #endif
 	}
 
+#ifdef __WINS__
+void CMobblerMusicAppObserverMPX::HandleMediaL(const CMPXMedia& /*aMedia*/, TInt /*aError*/)
+	{
+	}
+#else
 void CMobblerMusicAppObserverMPX::HandleMediaL(const CMPXMedia& aMedia, TInt aError)
 	{
-#ifndef __WINS__
 	if (KErrNone == aError)
 		{
 		delete iTitle;
@@ -271,8 +279,8 @@ void CMobblerMusicAppObserverMPX::HandleMediaL(const CMPXMedia& aMedia, TInt aEr
 		
 		iObserver->TrackInfoChangedL(*iTitle, *iArtist);
 		}
-#endif
 	}
+#endif // __ WINS__
 
 void CMobblerMusicAppObserverMPX::HandlePlaybackCommandComplete(CMPXCommand* /*aCommandResult*/, TInt /*aError*/)
 	{
