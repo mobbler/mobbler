@@ -58,7 +58,8 @@ public:
 								const TDesC8& aImage,
 								const TDesC8& aMp3Location,
 								TTimeIntervalSeconds aTrackLength,
-								const TDesC8& aRadioAuth);
+								const TDesC8& aRadioAuth,
+								TBool aLoved);
 	
 	void Open();
 	void Release();
@@ -79,7 +80,7 @@ public:
 	const CMobblerBitmap* Image() const;
 	
 private:
-	CMobblerTrack(TTimeIntervalSeconds aTrackLength);
+	CMobblerTrack(TTimeIntervalSeconds aTrackLength, TBool aLoved);
 	~CMobblerTrack();
 	
 	void ConstructL(const TDesC8& aArtist,
