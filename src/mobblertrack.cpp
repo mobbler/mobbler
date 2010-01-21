@@ -402,9 +402,14 @@ const TDesC& CMobblerTrack::LocalFile() const
 
 TPtrC CMobblerTrack::LocalFilePath() const
 	{
-	TParse parse;
-	parse.Set(*iLocalFile, NULL, NULL);
-	return parse.DriveAndPath();
+	if (iLocalFile)
+		{
+		TParse parse;
+		parse.Set(*iLocalFile, NULL, NULL);
+		return parse.DriveAndPath();
+		}
+	
+	return TPtrC(KNullDesC);
 	}
 
 const CMobblerBitmap* CMobblerTrack::Image() const
