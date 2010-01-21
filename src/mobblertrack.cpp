@@ -363,7 +363,21 @@ void CMobblerTrack::HandleFindLocalTrackCompleteL(TInt aTrackNumber, const TDesC
 		if (static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->LastFmConnection().Mode() == CMobblerLastFmConnection::EOnline)
 			{
 			// We're online so look try to find the album art online
-			DownloadAlbumImageL();
+			TBool downloading(DownloadAlbumImageL());
+			
+			if (!downloading)
+				{
+				// We were unable to start downloading an album image
+				// so see if we have local artist art
+				FindLocalArtistImageL();
+				
+				if (!iImage)
+					{
+					// We were unable to find a local artist image
+					// so start looking for one online
+					FetchArtistInfoL();
+					}
+				}
 			}
 		else
 			{
@@ -679,8 +693,10 @@ void CMobblerTrack::SaveAlbumArtL(const TDesC8& aData)
 	iImage = CMobblerBitmap::NewL(*this, aData);
 	}
 
-void CMobblerTrack::DownloadAlbumImageL()
+TBool CMobblerTrack::DownloadAlbumImageL()
 	{
+	TBool fetching(EFalse);
+	
 	if (Album().String().Length() != 0)
 		{
 		// There is an album name!
@@ -689,20 +705,17 @@ void CMobblerTrack::DownloadAlbumImageL()
 		// we will try to fetch the album art in the callback.
 		LOG(_L8("2 FetchAlbumInfoL()"));
 		FetchAlbumInfoL();
+		fetching = ETrue;
 		}
 	else if (iPlaylistImageLocation->Length() != 0)
 		{
 		// We don't know the album name, but there was album art in the playlist
 		LOG(_L8("3 FetchImageL(album)"));
 		FetchImageL(EMobblerImageTypeAlbumRemote, *iPlaylistImageLocation);
+		fetching = ETrue;
 		}
-	else if (iImageType != EMobblerImageTypeArtistLocal
-				&&iImageType != EMobblerImageTypeArtistRemote)
-		{
-		// This must be a music player track and we don't know the album name
-		// we also haven't already got an artist image so fetch a one
-		FetchArtistInfoL();
-		}
+	
+	return fetching;
 	}
 
 // End of file

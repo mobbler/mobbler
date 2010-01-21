@@ -101,7 +101,7 @@ private:
 	void FindLocalAlbumImageL();
 	void FindLocalArtistImageL();
 	
-	void DownloadAlbumImageL();
+	TBool DownloadAlbumImageL();
 	
 private:
 	void BitmapLoadedL(const CMobblerBitmap* aMobblerBitmap);
