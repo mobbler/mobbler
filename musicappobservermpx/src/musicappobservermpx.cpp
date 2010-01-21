@@ -100,6 +100,9 @@ void CMobblerMusicAppObserverMPX::ConstructL()
 
 CMobblerMusicAppObserverMPX::~CMobblerMusicAppObserverMPX()
 	{
+	delete iArtist;
+	delete iTitle;
+	
 #ifndef __WINS__
 	if (iPlaybackUtility)
 		{
