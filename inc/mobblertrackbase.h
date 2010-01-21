@@ -27,10 +27,20 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <e32base.h>
 #include <s32strm.h>
 
+#include "mobblerdataobserver.h"
+
 class CMobblerString;
 
-class CMobblerTrackBase : public CBase
+class CMobblerTrackBase : public CBase, public MMobblerFlatDataObserverHelper
 	{
+public:
+	enum TMobblerLove
+		{
+		ENoLove, // The user has not loved this track
+		ELove, // The user has loved this track, but we have not yet told Last.fm
+		ELoved // The user has loved this track and we have told Last.fm
+		};
+	
 public:
 	static CMobblerTrackBase* NewL(const CMobblerTrackBase& aTrack);
 	static CMobblerTrackBase* NewL(RReadStream& aReadStream);
@@ -55,8 +65,8 @@ public:
 	void SetStartTimeUTC(const TTime& aStartTimeUTC);
 	const TTime& StartTimeUTC() const;
 	
-	void SetLove(TBool aLove);
-	TBool Love() const;
+	void LoveTrackL();
+	TMobblerLove Love() const;
 	
 	TTimeIntervalSeconds ScrobbleDuration() const;
 	TTimeIntervalSeconds InitialPlaybackPosition() const;
@@ -76,12 +86,15 @@ public:
 	void ExternalizeL(RWriteStream& aWriteStream) const;
 	
 protected:
-	CMobblerTrackBase(TTimeIntervalSeconds iTrackLength);
+	CMobblerTrackBase(TTimeIntervalSeconds iTrackLength, TBool aLoved);
 	void BaseConstructL(const TDesC8& aTitle, const TDesC8& aArtist, const TDesC8& aAlbum, const TDesC8& aRadioAuth);
 	
 private:
 	CMobblerTrackBase();
 	void BaseConstructL(const CMobblerTrackBase& aTrack);
+	
+private: // from MMobblerFlatDataObserverHelper
+	void DataL(CMobblerFlatDataObserverHelper* aObserver, const TDesC8& aData, CMobblerLastFmConnection::TTransactionError aTransactionError);
 	
 private:
 	CMobblerString* iArtist;
@@ -96,7 +109,9 @@ private:
 	TTimeIntervalSeconds iTrackLength;
 	
 	HBufC8* iRadioAuth;
-	TBool iLove;
+	
+	CMobblerFlatDataObserverHelper* iLoveObserverHelper;
+	TMobblerLove iLove;
 
 	TTimeIntervalSeconds iTotalPlayed;
 	TTimeIntervalSeconds iInitialPlaybackPosition;

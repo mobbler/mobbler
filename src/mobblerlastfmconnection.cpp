@@ -668,7 +668,7 @@ void CMobblerLastFmConnection::CheckForUpdateL(MMobblerFlatDataObserver& aObserv
 	AppendAndSubmitTransactionL(transaction);
 	}
 
-void CMobblerLastFmConnection::TrackLoveL(const TDesC8& aArtist, const TDesC8& aTrack)
+void CMobblerLastFmConnection::TrackLoveL(const TDesC8& aArtist, const TDesC8& aTrack, MMobblerFlatDataObserver& aObserver)
 	{
 	CUri8* uri(CUri8::NewLC());
 	
@@ -681,6 +681,7 @@ void CMobblerLastFmConnection::TrackLoveL(const TDesC8& aArtist, const TDesC8& a
 	query->AddFieldL(KFieldArtist, aArtist);
 	
 	CMobblerTransaction* transaction(CMobblerTransaction::NewL(*this, ETrue, uri, query));
+	transaction->SetFlatDataObserver(&aObserver);
 	
 	CleanupStack::Pop(query);
 	CleanupStack::Pop(uri);
@@ -1993,10 +1994,13 @@ TBool CMobblerLastFmConnection::DoSubmitL()
 					}
 				
 				HBufC8* love(HBufC8::NewLC(1));
-				if (iTrackQueue[ii]->Love())
+				if (iTrackQueue[ii]->Love() != CMobblerTrack::ENoLove)
 					{
+					// The track has been loved so set this in the scrobble submission
 					love->Des().Append(KUpperL8);
-					TrackLoveL(iTrackQueue[ii]->Artist().String8(), iTrackQueue[ii]->Title().String8());
+					
+					// Make sure we also tell Last.fm in a web service call
+					iTrackQueue[ii]->LoveTrackL();
 					}
 				
 				submitForm->AddFieldL(r, *love);
