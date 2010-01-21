@@ -644,7 +644,7 @@ TBool CMobblerTrack::FetchImageL(CMobblerFlatDataObserverHelper* aObserver, cons
 				else
 					{
 					LOG(_L8("16 FetchImageL(artist)"));
-					FetchImageL(EMobblerImageTypeArtistRemote, imageArray[i]->Content())
+					FetchImageL(EMobblerImageTypeArtistRemote, imageArray[i]->Content());
 					}
 				}
 			break;
