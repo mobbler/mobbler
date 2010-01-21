@@ -180,7 +180,17 @@ void CMobblerTrack::FindBetterImageL()
 		// We currently have an artist image that we found locally
 		// or we don't have an image at all
 		// so try to find some album art online
-		DownloadAlbumImageL();
+		if (!DownloadAlbumImageL())
+			{
+			// We could not download an album image
+		
+			if (iImageType != EMobblerImageTypeArtistLocal)
+				{
+				// We haven't already got a local artist image
+				// so try to fetch one online
+				FetchArtistInfoL();
+				}
+			}
 		}
 	}
 
