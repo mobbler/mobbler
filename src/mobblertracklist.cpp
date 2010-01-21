@@ -106,6 +106,7 @@ CMobblerTrackList::~CMobblerTrackList()
 	delete iAsyncCallBack;
 	delete iAlbumInfoObserver;
 	delete iWebServicesHelper;
+	delete iLoveObserver;
 	}
 
 void CMobblerTrackList::GetArtistAndTitleName(TPtrC8& aArtist, TPtrC8& aTitle)
@@ -149,18 +150,20 @@ CMobblerListControl* CMobblerTrackList::HandleListCommandL(TInt aCommand)
 	switch(aCommand)
 		{
 		case EMobblerCommandTrackLove:
-			iAppUi.LastFmConnection().TrackLoveL(artist, title);
+			delete iLoveObserver;
+			iLoveObserver = CMobblerFlatDataObserverHelper::NewL(iAppUi.LastFmConnection(), *this, ETrue);
+			iAppUi.LastFmConnection().TrackLoveL(artist, title, *iLoveObserver);
 			break;
 		case EMobblerCommandTrackAddTag:
 			{
-			CMobblerTrack* track(CMobblerTrack::NewL(artist, title, KNullDesC8, KNullDesC8, KNullDesC8, KNullDesC8, 0, KNullDesC8));
+			CMobblerTrack* track(CMobblerTrack::NewL(artist, title, KNullDesC8, KNullDesC8, KNullDesC8, KNullDesC8, 0, KNullDesC8, EFalse));
 			iWebServicesHelper->TrackAddTagL(*track);
 			track->Release();
 			}
 			break;
 		case EMobblerCommandTrackRemoveTag:
 			{
-			CMobblerTrack* track(CMobblerTrack::NewL(artist, title, KNullDesC8, KNullDesC8, KNullDesC8, KNullDesC8, 0, KNullDesC8));
+			CMobblerTrack* track(CMobblerTrack::NewL(artist, title, KNullDesC8, KNullDesC8, KNullDesC8, KNullDesC8, 0, KNullDesC8, EFalse));
 			iWebServicesHelper->TrackRemoveTagL(*track);
 			track->Release();
 			}
@@ -169,7 +172,7 @@ CMobblerListControl* CMobblerTrackList::HandleListCommandL(TInt aCommand)
 		case EMobblerCommandArtistShare:
 		case EMobblerCommandPlaylistAddTrack:
 			{
-			CMobblerTrack* track(CMobblerTrack::NewL(artist, title, KNullDesC8, KNullDesC8, KNullDesC8, KNullDesC8, 0, KNullDesC8));
+			CMobblerTrack* track(CMobblerTrack::NewL(artist, title, KNullDesC8, KNullDesC8, KNullDesC8, KNullDesC8, 0, KNullDesC8, EFalse));
 			
 			switch (aCommand)
 				{
@@ -233,30 +236,37 @@ void CMobblerTrackList::SupportedCommandsL(RArray<TInt>& aCommands)
 
 void CMobblerTrackList::DataL(CMobblerFlatDataObserverHelper* aObserver, const TDesC8& aData, CMobblerLastFmConnection::TTransactionError aTransactionError)
 	{
-	if (aTransactionError == CMobblerLastFmConnection::ETransactionErrorNone)
+	if (aObserver == iAlbumInfoObserver)
 		{
-		// Create the XML reader and DOM fragment and associate them with each other
-		CSenXmlReader* xmlReader(CSenXmlReader::NewL());
-		CleanupStack::PushL(xmlReader);
-		CSenDomFragment* domFragment(CSenDomFragment::NewL());
-		CleanupStack::PushL(domFragment);
-		xmlReader->SetContentHandler(*domFragment);
-		domFragment->SetReader(*xmlReader);
-		
-		// Parse the XML into the DOM fragment
-		xmlReader->ParseL(aData);
+		if (aTransactionError == CMobblerLastFmConnection::ETransactionErrorNone)
+			{
+			// Create the XML reader and DOM fragment and associate them with each other
+			CSenXmlReader* xmlReader(CSenXmlReader::NewL());
+			CleanupStack::PushL(xmlReader);
+			CSenDomFragment* domFragment(CSenDomFragment::NewL());
+			CleanupStack::PushL(domFragment);
+			xmlReader->SetContentHandler(*domFragment);
+			domFragment->SetReader(*xmlReader);
 			
-		if (aObserver == iAlbumInfoObserver)
-			{	
-			iAppUi.LastFmConnection().PlaylistFetchAlbumL(domFragment->AsElement().Element(KElementAlbum)->Element(KElementId)->Content(), *this);
+			// Parse the XML into the DOM fragment
+			xmlReader->ParseL(aData);
+				
+			if (aObserver == iAlbumInfoObserver)
+				{	
+				iAppUi.LastFmConnection().PlaylistFetchAlbumL(domFragment->AsElement().Element(KElementAlbum)->Element(KElementId)->Content(), *this);
+				}
+			
+			CleanupStack::PopAndDestroy(2);
 			}
-		
-		CleanupStack::PopAndDestroy(2);
+	
+		else
+			{
+			// TODO
+			}
 		}
-
-	else
+	else if (aObserver == iLoveObserver)
 		{
-		// TODO
+		// Do Nothing
 		}
 	}
 
