@@ -67,6 +67,20 @@ CMobblerFlatDataObserverHelper::~CMobblerFlatDataObserverHelper()
 		}
 	}
 
+void CMobblerFlatDataObserverHelper::SetNotOwned()
+	{
+	if (iFinished)
+		{
+		// the transaction has already finished so just delete this now 
+		delete this;
+		}
+	else
+		{
+		// this will mean we don't call the observer and instead delete this
+		iNotOwned = ETrue;
+		}
+	}
+
 void CMobblerFlatDataObserverHelper::DialogDismissedL(TInt aButtonId)
 	{
 	iWaitDialog = NULL;
@@ -79,13 +93,22 @@ void CMobblerFlatDataObserverHelper::DialogDismissedL(TInt aButtonId)
 
 void CMobblerFlatDataObserverHelper::DataL(const TDesC8& aData, CMobblerLastFmConnection::TTransactionError aTransactionError)
 	{
+	iFinished = ETrue;
+	
 	if (iWaitDialog)
 		{
 		iWaitDialog->ProcessFinishedL(); 
 		iWaitDialog = NULL;
 		}
 	
-	iObserver.DataL(this, aData, aTransactionError);
+	if (iNotOwned)
+		{
+		delete this;
+		}
+	else
+		{
+		iObserver.DataL(this, aData, aTransactionError);
+		}
 	}
 
 // End of file

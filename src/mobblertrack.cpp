@@ -65,17 +65,18 @@ CMobblerTrack* CMobblerTrack::NewL(const TDesC8& aArtist,
 									const TDesC8& aImage,
 									const TDesC8& aMp3Location,
 									TTimeIntervalSeconds aTrackLength,
-									const TDesC8& aRadioAuth)
+									const TDesC8& aRadioAuth,
+									TBool aLoved)
 	{
-	CMobblerTrack* self(new(ELeave) CMobblerTrack(aTrackLength));
+	CMobblerTrack* self(new(ELeave) CMobblerTrack(aTrackLength, aLoved));
 	CleanupStack::PushL(self);
 	self->ConstructL(aArtist, aTitle, aAlbum, aMbTrackId, aImage, aMp3Location, aRadioAuth);
 	CleanupStack::Pop(self);
 	return self;
 	}
 
-CMobblerTrack::CMobblerTrack(TTimeIntervalSeconds aTrackLength)
-	: CMobblerTrackBase(aTrackLength)
+CMobblerTrack::CMobblerTrack(TTimeIntervalSeconds aTrackLength, TBool aLoved)
+	: CMobblerTrackBase(aTrackLength, aLoved)
 	{
 	Open();
 	}
@@ -458,7 +459,7 @@ void CMobblerTrack::DataL(CMobblerFlatDataObserverHelper* aObserver, const TDesC
 			
 			if (userLovedElement)
 				{
-				SetLove(userLovedElement->Content().Compare(KNumeralZero) != 0);
+				iLove = userLovedElement->Content().Compare(KNumeralZero) != 0 ? ELoved : ENoLove;
 				}
 			
 			CleanupStack::PopAndDestroy(2);
@@ -506,6 +507,11 @@ void CMobblerTrack::DataL(CMobblerFlatDataObserverHelper* aObserver, const TDesC
 			{
 			FetchImageL(aObserver, aData);
 			}
+		}
+	else
+		{
+		// check if it was the base class observer
+		CMobblerTrackBase::DataL(aObserver, aData, aTransactionError);
 		}
 	}
 

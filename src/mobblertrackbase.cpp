@@ -85,7 +85,11 @@ void CMobblerTrackBase::BaseConstructL(const CMobblerTrackBase& aTrack)
 
 CMobblerTrackBase::~CMobblerTrackBase()
 	{
-	delete iLoveObserverHelper;
+	if (iLoveObserverHelper)
+		{
+		iLoveObserverHelper->SetNotOwned();
+		}
+	
 	delete iArtist;
 	delete iTitle;
 	delete iAlbum;
@@ -112,7 +116,7 @@ void CMobblerTrackBase::InternalizeL(RReadStream& aReadStream)
 	CleanupStack::PopAndDestroy();
 	iTitle = CMobblerString::NewL(*HBufC8::NewLC(aReadStream, KMaxTInt));
 	CleanupStack::PopAndDestroy();
-	iLove = aReadStream.ReadInt8L();
+	iLove = static_cast<TMobblerLove>(aReadStream.ReadInt8L());
 	delete iRadioAuth;
 	iRadioAuth = HBufC8::NewL(aReadStream, KMaxTInt);
 	delete iAlbum;
@@ -179,7 +183,7 @@ const TDesC8& CMobblerTrackBase::RadioAuth() const
 	return *iRadioAuth;
 	}
 
-void CMobblerTrackBase::DataL(CMobblerFlatDataObserverHelper* aObserver, const TDesC8& aData, CMobblerLastFmConnection::TTransactionError aTransactionError);
+void CMobblerTrackBase::DataL(CMobblerFlatDataObserverHelper* aObserver, const TDesC8& aData, CMobblerLastFmConnection::TTransactionError aTransactionError)
 	{
 	if (aObserver == iLoveObserverHelper && aTransactionError == CMobblerLastFmConnection::ETransactionErrorNone)
 		{
@@ -196,11 +200,11 @@ void CMobblerTrackBase::LoveTrackL()
 		// we have not already told Last.fm about this so do it now
 		delete iLoveObserverHelper;
 		iLoveObserverHelper = CMobblerFlatDataObserverHelper::NewL(static_cast<CMobblerAppUi*>(CEikonEnv::Static()->AppUi())->LastFmConnection(), *this, EFalse);
-		static_cast<CMobblerAppUi*>(CEikonEnv::Static()->AppUi())->LastFmConnection().TrackLoveL(Artist().String8(), Title().String8());
+		static_cast<CMobblerAppUi*>(CEikonEnv::Static()->AppUi())->LastFmConnection().TrackLoveL(Artist().String8(), Title().String8(), *iLoveObserverHelper);
 		}
 	}
 
-TBool CMobblerTrackBase::Love() const
+CMobblerTrackBase::TMobblerLove CMobblerTrackBase::Love() const
 	{
 	return iLove;
 	}

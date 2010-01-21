@@ -37,7 +37,6 @@ class CMobblerString;
 class CMobblerTrack : public CMobblerTrackBase,
 						public MMobblerBitmapObserver,
 						public MMobblerFlatDataObserver,
-						public MMobblerFlatDataObserverHelper,
 						public MMobblerContentListingObserver
 	{
 private:
