@@ -696,10 +696,11 @@ void CMobblerTrack::DownloadAlbumImageL()
 		LOG(_L8("3 FetchImageL(album)"));
 		FetchImageL(EMobblerImageTypeAlbumRemote, *iPlaylistImageLocation);
 		}
-	else
+	else if (iImageType != EMobblerImageTypeArtistLocal
+				&&iImageType != EMobblerImageTypeArtistRemote)
 		{
-		// This must be a music player track and we didn't
-		// find the album name so fetch an artist image 
+		// This must be a music player track and we don't know the album name
+		// we also haven't already got an artist image so fetch a one
 		FetchArtistInfoL();
 		}
 	}
