@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
 #include <bautils.h> 
+#include <mobbler/mobblercontentlistinginterface.h>
 #include <utf.h>
 
 #include "mobblerappui.h"
@@ -33,8 +34,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #ifdef __SYMBIAN_SIGNED__
 const TUid KMobblerMusicAppInterfaceUid = {0x20027117};
+const TUid KContentListingImplUid = {0x2002661E};
 #else
 const TUid KMobblerMusicAppInterfaceUid = {0xA000D9F6};
+const TUid KContentListingImplUid = {0xA000BEB3};
 #endif
 
 CMobblerMusicAppListener* CMobblerMusicAppListener::NewL(CMobblerLastFmConnection& aSubmitter)
@@ -80,6 +83,12 @@ void CMobblerMusicAppListener::ConstructL()
 	
 	CleanupStack::PopAndDestroy(&implInfoPtrArray);
 	
+	TRAP_IGNORE(iMobblerContentListing = static_cast<CMobblerContentListingInterface*>(REComSession::CreateImplementationL(KContentListingImplUid, iDtorIdKey)));
+	if (iMobblerContentListing)
+		{
+		iMobblerContentListing->SetObserver(*this);
+		}
+	
 	iMusicPlayerState = EPlayerNotRunning;
 	
 	// check if there is a song playing when Mobbler is started
@@ -107,6 +116,12 @@ CMobblerMusicAppListener::~CMobblerMusicAppListener()
 	REComSession::FinalClose();
 	
 	delete iNowPlayingCallback;
+	
+	if (iMobblerContentListing)
+		{
+		delete iMobblerContentListing;
+		REComSession::DestroyedImplementation(iDtorIdKey);
+		}
 	
 	iObservers.Close();
 	}
@@ -273,13 +288,18 @@ void CMobblerMusicAppListener::NowPlayingL()
 				
 				if (trackAlbum.Length() == 0)
 					{
-					iCurrentTrack = CMobblerTrack::NewL(*artist, *title, KNullDesC8, /*KNullDesC8,*/ KNullDesC8, KNullDesC8, KNullDesC8, trackLength, KNullDesC8, EFalse);
+					iCurrentTrack = CMobblerTrack::NewL(*artist, *title, KNullDesC8, /*KNullDesC8,*/ KNullDesC8, KNullDesC8, KNullDesC8, trackLength, KNullDesC8);
+					
+					if (trackTitle.Length() != 0 && trackArtist.Length() != 0)
+						{
+						iMobblerContentListing->FindAndSetAlbumNameL(trackArtist, trackTitle);
+						}
 					}
 				else
 					{
 					HBufC8* album(CnvUtfConverter::ConvertFromUnicodeToUtf8L(trackAlbum));
 					CleanupStack::PushL(album);
-					iCurrentTrack = CMobblerTrack::NewL(*artist, *title, *album, /*KNullDesC8,*/ KNullDesC8, KNullDesC8, KNullDesC8, trackLength, KNullDesC8, EFalse);
+					iCurrentTrack = CMobblerTrack::NewL(*artist, *title, *album, /*KNullDesC8,*/ KNullDesC8, KNullDesC8, KNullDesC8, trackLength, KNullDesC8);
 					CleanupStack::PopAndDestroy(album);
 					}
 				CleanupStack::PopAndDestroy(2, artist); // artist, title
@@ -290,6 +310,30 @@ void CMobblerMusicAppListener::NowPlayingL()
 		}
 	
 	NotifyChangeL();
+	}
+
+void CMobblerMusicAppListener::SetAlbumL(const TDesC& aAlbum)
+	{
+	if (iCurrentTrack)
+		{
+		iCurrentTrack->SetAlbumL(aAlbum);
+		}
+	}
+
+void CMobblerMusicAppListener::SetPathL(const TDesC& aPath)
+	{
+	if (iCurrentTrack)
+		{
+		iCurrentTrack->SetPathL(aPath);
+		}
+	}
+
+void CMobblerMusicAppListener::SetTrackNumber(const TInt aTrackNumber)
+	{
+	if (iCurrentTrack)
+		{
+		iCurrentTrack->SetTrackNumber(aTrackNumber);
+		}
 	}
 
 void CMobblerMusicAppListener::PlayerStateChangedL(TMobblerMusicAppObserverState aState)
@@ -399,83 +443,6 @@ void CMobblerMusicAppListener::PlayerPositionL(TTimeIntervalSeconds aPlayerPosit
 TBool CMobblerMusicAppListener::IsPlaying() const
 	{
 	return (iCurrentTrack && iMusicPlayerState == EPlayerPlaying);
-	}
-
-TBool CMobblerMusicAppListener::ControlsSupported()
-	{
-	// find the first music app observer that is playing a track
-	TInt musicAppIndex(KErrNotFound);
-	const TInt KMusicAppCount(iMobblerMusicApps.Count());
-	for (TInt i(0) ; i < KMusicAppCount ; ++i)
-		{
-		if (iMobblerMusicApps[i]->PlayerState() == EPlayerPlaying)
-			{
-			musicAppIndex = i;
-			break;
-			}
-		}
-	
-	return musicAppIndex == KErrNotFound ? EFalse : iMobblerMusicApps[musicAppIndex]->ControlsSupported();
-	}
-
-void CMobblerMusicAppListener::PlayL()
-	{
-	// find the first music app observer that is playing a track
-	TInt musicAppIndex(KErrNotFound);
-	const TInt KMusicAppCount(iMobblerMusicApps.Count());
-	for (TInt i(0) ; i < KMusicAppCount ; ++i)
-		{
-		if (iMobblerMusicApps[i]->PlayerState() == EPlayerPlaying)
-			{
-			musicAppIndex = i;
-			break;
-			}
-		}
-	
-	if (musicAppIndex != KErrNotFound)
-		{
-		iMobblerMusicApps[musicAppIndex]->PlayL();
-		}
-	}
-
-void CMobblerMusicAppListener::StopL()
-	{
-	// find the first music app observer that is playing a track
-	TInt musicAppIndex(KErrNotFound);
-	const TInt KMusicAppCount(iMobblerMusicApps.Count());
-	for (TInt i(0) ; i < KMusicAppCount ; ++i)
-		{
-		if (iMobblerMusicApps[i]->PlayerState() == EPlayerPlaying)
-			{
-			musicAppIndex = i;
-			break;
-			}
-		}
-	
-	if (musicAppIndex != KErrNotFound)
-		{
-		iMobblerMusicApps[musicAppIndex]->StopL();
-		}
-	}
-
-void CMobblerMusicAppListener::SkipL()
-	{
-	// find the first music app observer that is playing a track
-	TInt musicAppIndex(KErrNotFound);
-	const TInt KMusicAppCount(iMobblerMusicApps.Count());
-	for (TInt i(0) ; i < KMusicAppCount ; ++i)
-		{
-		if (iMobblerMusicApps[i]->PlayerState() == EPlayerPlaying)
-			{
-			musicAppIndex = i;
-			break;
-			}
-		}
-	
-	if (musicAppIndex != KErrNotFound)
-		{
-		iMobblerMusicApps[musicAppIndex]->SkipL();
-		}
 	}
 
 // End of file

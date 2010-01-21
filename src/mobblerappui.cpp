@@ -50,13 +50,12 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #endif // __SYMBIAN_SIGNED__
 
-#include <mobbler/mobblercontentlistinginterface.h>
-
 #include "mobbler.hrh"
 #include "mobbler.rsg.h"
 #include "mobbler_strings.rsg.h"
 #include "mobblerappui.h"
 #include "mobblerbitmapcollection.h"
+#include "mobblerbrowserview.h"
 #include "mobblerliterals.h"
 #include "mobblerlogging.h"
 #include "mobblermusiclistener.h"
@@ -73,19 +72,16 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "mobblerwebservicesview.h"
 
 _LIT(KRadioFile, "C:radiostations.dat");
-_LIT(KSearchFile, "C:searchterms.dat");
 
 // Gesture interface
 #ifdef __SYMBIAN_SIGNED__
 const TUid KGesturesInterfaceUid = {0x20026567};
 const TUid KDestinationImplUid = {0x20026621};
 const TUid KMobblerGesturePlugin5xUid = {0x2002656A};
-const TUid KContentListingImplUid = {0x2002661E};
 #else
 const TUid KGesturesInterfaceUid = {0xA000B6CF};
 const TUid KDestinationImplUid = {0xA000BEB6};
 const TUid KMobblerGesturePlugin5xUid = {0xA000B6C2};
-const TUid KContentListingImplUid = {0xA000BEB3};
 #endif
 
 _LIT(KSpace, " ");
@@ -170,8 +166,6 @@ void CMobblerAppUi::ConstructL()
 											 iSettingView->BitRate());
 	iMusicListener = CMobblerMusicAppListener::NewL(*iLastFmConnection);
 	
-	TRAP_IGNORE(iContentListing = static_cast<CMobblerContentListingInterface*>(REComSession::CreateImplementationL(KContentListingImplUid, iContentListingDtorUid)));
-	
 	RProcess().SetPriority(EPriorityHigh);
 	
 #if !defined(__SYMBIAN_SIGNED__) && !defined(__WINS__)
@@ -185,6 +179,7 @@ void CMobblerAppUi::ConstructL()
 	iAlarmTimer = CMobblerSleepTimer::NewL(EPriorityLow, *this);
 	
 	iWebServicesView = CMobblerWebServicesView::NewL();
+	iBrowserView = CMobblerBrowserView::NewL();
 
 	iLastFmConnection->SetModeL(iSettingView->Mode());
 	iLastFmConnection->LoadCurrentTrackL();
@@ -202,6 +197,7 @@ void CMobblerAppUi::ConstructL()
 	UpdateAccelerometerGesturesL();
 	
 	AddViewL(iWebServicesView);
+	AddViewL(iBrowserView);
 	AddViewL(iSettingView);
 	AddViewL(iStatusView);
 	ActivateLocalViewL(iStatusView->Id());
@@ -242,10 +238,6 @@ CMobblerAppUi::~CMobblerAppUi()
 	delete iPreviousRadioPlaylistId;
 	delete iPreviousRadioTag;
 	delete iPreviousRadioUser;
-	delete iPreviousSearchTrack;
-	delete iPreviousSearchAlbum;
-	delete iPreviousSearchArtist;
-	delete iPreviousSearchTag;
 	delete iRadioPlayer;
 	delete iResourceReader;
 	delete iSleepTimer;
@@ -253,12 +245,6 @@ CMobblerAppUi::~CMobblerAppUi()
 	delete iVolumeDownTimer;
 	delete iVolumeUpTimer;
 	delete iWebServicesHelper;
-	
-	if (iContentListing)
-		{
-		delete iContentListing;
-		REComSession::DestroyedImplementation(iContentListingDtorUid);
-		}
 	}
 
 TBool CMobblerAppUi::AccelerometerGesturesAvailable() const
@@ -496,11 +482,6 @@ CMobblerDestinationsInterface* CMobblerAppUi::Destinations() const
 	return iDestinations;
 	}
 
-CMobblerContentListingInterface* CMobblerAppUi::ContentListing() const
-	{
-	return iContentListing;
-	}
-
 HBufC* CMobblerAppUi::MusicAppNameL() const
 	{
 	return iMusicListener->MusicAppNameL();
@@ -580,75 +561,33 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 		case EMobblerCommandSearchArtist:
 		case EMobblerCommandSearchTag:
 			{
-			LoadSearchTermsL();
 			TBuf<KMobblerMaxQueryDialogLength> search;
+			CAknTextQueryDialog* userDialog(new(ELeave) CAknTextQueryDialog(search));
+			userDialog->PrepareLC(R_MOBBLER_TEXT_QUERY_DIALOG);
 			TInt resourceId;
 			switch (aCommand)
 				{
 				case EMobblerCommandSearchTrack:
 					resourceId = R_MOBBLER_SEARCH_TRACK_PROMPT;
-					if (iPreviousSearchTrack)
-						{
-						search = iPreviousSearchTrack->String();
-						}
 					break;
 				case EMobblerCommandSearchAlbum:
 					resourceId = R_MOBBLER_SEARCH_ALBUM_PROMPT;
-					if (iPreviousSearchAlbum)
-						{
-						search = iPreviousSearchAlbum->String();
-						}
 					break;
 				case EMobblerCommandSearchArtist:
 					resourceId = R_MOBBLER_RADIO_ENTER_ARTIST;
-					if (iPreviousSearchArtist)
-						{
-						search = iPreviousSearchArtist->String();
-						}
 					break;
 				case EMobblerCommandSearchTag:
 					resourceId = R_MOBBLER_RADIO_ENTER_TAG;
-					if (iPreviousSearchTag)
-						{
-						search = iPreviousSearchTag->String();
-						}
 					break;
 				default:
 					resourceId = R_MOBBLER_SEARCH;
 					break;
 				}
-			CAknTextQueryDialog* userDialog(new(ELeave) CAknTextQueryDialog(search));
-			userDialog->PrepareLC(R_MOBBLER_TEXT_QUERY_DIALOG);
 			userDialog->SetPromptL(iResourceReader->ResourceL(resourceId));
 			userDialog->SetPredictiveTextInputPermitted(ETrue);
 
 			if (userDialog->RunLD())
 				{
-				// Save the search term
-				switch (aCommand)
-					{
-					case EMobblerCommandSearchTrack:
-						delete iPreviousSearchTrack;
-						iPreviousSearchTrack = CMobblerString::NewL(search);
-						break;
-					case EMobblerCommandSearchAlbum:
-						delete iPreviousSearchAlbum;
-						iPreviousSearchAlbum = CMobblerString::NewL(search);
-						break;
-					case EMobblerCommandSearchArtist:
-						delete iPreviousSearchArtist;
-						iPreviousSearchArtist = CMobblerString::NewL(search);
-						break;
-					case EMobblerCommandSearchTag:
-						delete iPreviousSearchTag;
-						iPreviousSearchTag = CMobblerString::NewL(search);
-						break;
-					default:
-						break;
-					}
-				SaveSearchTermsL();
-				
-				// Do the search
 				CMobblerString* searchString(CMobblerString::NewL(search));
 				CleanupStack::PushL(searchString);
 				ActivateLocalViewL(iWebServicesView->Id(), TUid::Uid(aCommand), searchString->String8());
@@ -656,7 +595,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 				}
 			}
 			break;
-		case EMobblerCommandScrobbleLog:
+		case EMobblerCommandViewScrobbleLog:
 			{
 			ActivateLocalViewL(iWebServicesView->Id(), TUid::Uid(aCommand), KNullDesC8);
 			}
@@ -741,7 +680,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 				break;
 				}
 
-			// ask the user for the artist name
+			// ask the user for the artist name	
 			if (iPreviousRadioArtist)
 				{
 				artist = iPreviousRadioArtist->String();
@@ -825,7 +764,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 			
 			if (currentTrack)
 				{
-				if (currentTrack->Love() == CMobblerTrack::ENoLove)
+				if (!currentTrack->Love())
 					{
 					// There is a current track and it is not already loved
 					CAknQueryDialog* dlg(CAknQueryDialog::NewL());
@@ -834,7 +773,8 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 					if (love)
 						{
 						// set love to true (if only it were this easy)
-						CurrentTrack()->LoveTrackL();
+						CurrentTrack()->SetLove(ETrue);
+						iLastFmConnection->TrackLoveL(currentTrack->Artist().String8(), currentTrack->Title().String8());
 						}
 					}
 				}
@@ -862,9 +802,13 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 				{
 				iStatusView->DisplayPlusMenuL();
 				}
+
 			break;
 		case EMobblerCommandPlusVisitLastFm:
-			HandleCommandL(EMobblerCommandVisitWebPage);
+			HandleCommandL(EMobblerCommandVisitWebPage);			
+			break;
+		case EMobblerCommandPlusViewArtistBio:
+			ActivateLocalViewL(iBrowserView->Id(), TUid::Uid(EMobblerCommandArtistBio), currentTrack->Artist().String8());
 			break;
 		case EMobblerCommandPlusShareTrack:
 		case EMobblerCommandPlusShareArtist:
@@ -1102,7 +1046,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 			break;
 		case EMobblerCommandQrCode:
 			_LIT(KQrCodeFile, "C:Mobbler.png");
-			LaunchFileL(KQrCodeFile);
+			LaunchFileEmbeddedL(KQrCodeFile);
 			break;
 		default:
 			if (aCommand >= EMobblerCommandEqualizerDefault && 
@@ -1291,17 +1235,21 @@ void CMobblerAppUi::DataL(CMobblerFlatDataObserverHelper* aObserver, const TDesC
 			}
 		else if (aObserver == iFetchLyricsObserver)
 			{
-			DUMPDATA(aData, _L("lyrics.xml"));
+			DUMPDATA(aData, _L("lyricsdata.txt"));
 			_LIT(KLyricsFilename, "C:\\System\\Data\\Mobbler\\lyrics.txt");
-			_LIT8(KElementSg, "sg"); // song
-			_LIT8(KElementTx, "tx"); // lyrics text
+			_LIT8(KElementSg, "sg");
+			_LIT8(KElementTx, "tx");
 			_LIT8(KElement200, "200");
+			_LIT8(KElement204, "204");
 			_LIT8(KElement300, "300");
+			_LIT8(KElement400, "400");
+			_LIT8(KElement401, "401");
+			_LIT8(KElement402, "402");
+			_LIT8(KElement406, "406");
 			
 			RFileWriteStream file;
 			CleanupClosePushL(file);
-			CCoeEnv::Static()->FsSession().MkDirAll(KLyricsFilename);
-			User::LeaveIfError(file.Replace(CCoeEnv::Static()->FsSession(), KLyricsFilename, EFileWrite));
+			file.Replace(CCoeEnv::Static()->FsSession(), KLyricsFilename, EFileWrite);
 			
 			// Create the XML reader and DOM fragement and associate them with each other
 			CSenXmlReader* xmlReader(CSenXmlReader::NewL());
@@ -1329,27 +1277,6 @@ void CMobblerAppUi::DataL(CMobblerFlatDataObserverHelper* aObserver, const TDesC
 				MobblerUtility::FixLyricsLineBreaks(lyricsPtr);
 				file.WriteL(lyricsPtr);
 				CleanupStack::PopAndDestroy(lyricsBuf);
-				
-#ifdef PERMANENT_LYRICSFLY_ID_KEY
-				// Only link back to corrections with the permanent ID key.
-				// Temporary keys don't return correct checksums to prevent abuse.
-				_LIT8(KElementCs, "cs"); // checksum (for link back)
-				_LIT8(KElementId, "id"); // song ID (for link back)
-				_LIT8(KLinkBackFormat, "Make corrections:\r\nhttp://lyricsfly.com/search/correction.php?%S&id=%S");
-				
-				TPtrC8 checkSumPtrC(domFragment->AsElement().Element(KElementSg)->Element(KElementCs)->Content());
-				TPtrC8 idPtrC(domFragment->AsElement().Element(KElementSg)->Element(KElementId)->Content());
-				
-				HBufC8* linkBackBuf(HBufC8::NewLC(KLinkBackFormat().Length() + 
-												  checkSumPtrC.Length() + 
-												  idPtrC.Length()));
-				
-				linkBackBuf->Des().Format(KLinkBackFormat, &checkSumPtrC, &idPtrC);
-				LOG(*linkBackBuf);
-				
-				file.WriteL(*linkBackBuf);
-				CleanupStack::PopAndDestroy(linkBackBuf);
-#endif
 				}
 			else
 				{
@@ -1362,11 +1289,6 @@ void CMobblerAppUi::DataL(CMobblerFlatDataObserverHelper* aObserver, const TDesC
 				}
 			
 #ifdef _DEBUG
-			_LIT8(KElement204, "204");
-			_LIT8(KElement400, "400");
-			_LIT8(KElement401, "401");
-			_LIT8(KElement402, "402");
-			_LIT8(KElement406, "406");
 			if (statusPtrC.CompareF(KElement200) == 0)
 				{
 				LOG(_L8("200 - ok"));
@@ -1408,7 +1330,7 @@ void CMobblerAppUi::DataL(CMobblerFlatDataObserverHelper* aObserver, const TDesC
 			CleanupStack::PopAndDestroy(&file);
 			if (success)
 				{
-				LaunchFileL(KLyricsFilename);
+				LaunchFileEmbeddedL(KLyricsFilename);
 				}
 			}
 		}
@@ -1444,7 +1366,7 @@ void CMobblerAppUi::HandleConnectCompleteL(TInt aError)
 		// See if there's better album art online
 		if (CurrentTrack())
 			{
-			CurrentTrack()->FindBetterImageL();
+			CurrentTrack()->DownloadAlbumArtL();
 			}
 		}
 	}
@@ -1680,7 +1602,7 @@ void CMobblerAppUi::SaveRadioStationsL()
 			{
 			writeStream.WriteInt8L(EFalse);
 			}
-		
+
 		if (iPreviousRadioUser)
 			{
 			writeStream.WriteInt8L(ETrue);
@@ -1703,109 +1625,7 @@ void CMobblerAppUi::SaveRadioStationsL()
 		
 		CleanupStack::PopAndDestroy(&writeStream);
 		}
-	
-	CleanupStack::PopAndDestroy(&file);
-	}
 
-void CMobblerAppUi::LoadSearchTermsL()
-	{
-	RFile file;
-	CleanupClosePushL(file);
-	TInt openError(file.Open(CCoeEnv::Static()->FsSession(), KSearchFile, EFileRead));
-	
-	if (openError == KErrNone)
-		{
-		RFileReadStream readStream(file);
-		CleanupClosePushL(readStream);
-		
-		TBuf<KMaxMobblerTextSize> search;
-		if (readStream.ReadInt8L())
-			{
-			readStream >> search;
-			delete iPreviousSearchTrack;
-			iPreviousSearchTrack = CMobblerString::NewL(search);
-			}
-		if (readStream.ReadInt8L())
-			{
-			readStream >> search;
-			delete iPreviousSearchAlbum;
-			iPreviousSearchAlbum = CMobblerString::NewL(search);
-			}
-		if (readStream.ReadInt8L())
-			{
-			readStream >> search;
-			delete iPreviousSearchArtist;
-			iPreviousSearchArtist = CMobblerString::NewL(search);
-			}
-		if (readStream.ReadInt8L())
-			{
-			readStream >> search;
-			delete iPreviousSearchTag;
-			iPreviousSearchTag = CMobblerString::NewL(search);
-			}
-		
-		CleanupStack::PopAndDestroy(&readStream);
-		}
-	
-	CleanupStack::PopAndDestroy(&file);
-	}
-
-void CMobblerAppUi::SaveSearchTermsL()
-	{
-	CCoeEnv::Static()->FsSession().MkDirAll(KSearchFile);
-	
-	RFile file;
-	CleanupClosePushL(file);
-	TInt replaceError(file.Replace(CCoeEnv::Static()->FsSession(), KSearchFile, EFileWrite));
-	
-	if (replaceError == KErrNone)
-		{
-		RFileWriteStream writeStream(file);
-		CleanupClosePushL(writeStream);
-		
-		if (iPreviousSearchTrack)
-			{
-			writeStream.WriteInt8L(ETrue);
-			writeStream << iPreviousSearchTrack->String();
-			}
-		else
-			{
-			writeStream.WriteInt8L(EFalse);
-			}
-		
-		if (iPreviousSearchAlbum)
-			{
-			writeStream.WriteInt8L(ETrue);
-			writeStream << iPreviousSearchAlbum->String();
-			}
-		else
-			{
-			writeStream.WriteInt8L(EFalse);
-			}
-		
-		if (iPreviousSearchArtist)
-			{
-			writeStream.WriteInt8L(ETrue);
-			writeStream << iPreviousSearchArtist->String();
-			}
-		else
-			{
-			writeStream.WriteInt8L(EFalse);
-			}
-		
-		if (iPreviousSearchTag)
-			{
-			writeStream.WriteInt8L(ETrue);
-			writeStream << iPreviousSearchTag->String();
-			}
-		else
-			{
-			writeStream.WriteInt8L(EFalse);
-			}
-		
-		CleanupStack::PopAndDestroy(&writeStream);
-		}
-	
 	CleanupStack::PopAndDestroy(&file);
 	}
 
@@ -2067,20 +1887,32 @@ void CMobblerAppUi::LoadGesturesPluginL()
 	
 	TUid dtorIdKey;
 	CMobblerGesturesInterface* mobblerGestures(NULL);
-
-	TRAPD(error, mobblerGestures = static_cast<CMobblerGesturesInterface*>(REComSession::CreateImplementationL(KMobblerGesturePlugin5xUid, dtorIdKey)));
 	
-	if (error == KErrNone)
+	// Search for the preferred plug-in implementation
+	TBool fifthEditionPluginLoaded(EFalse);
+	for (TInt i(0); i < KImplCount; ++i)
 		{
-		iGesturePlugin = mobblerGestures;
-		iGesturePluginDtorUid = dtorIdKey;
+		TUid currentImplUid(implInfoPtrArray[i]->ImplementationUid());	
+		if (currentImplUid == KMobblerGesturePlugin5xUid)
+			{
+			// Found it, attempt to load it
+			TRAPD(error, mobblerGestures = static_cast<CMobblerGesturesInterface*>(REComSession::CreateImplementationL(currentImplUid, dtorIdKey)));
+			if (error == KErrNone)
+				{
+				fifthEditionPluginLoaded = ETrue;
+				iGesturePlugin = mobblerGestures;
+				iGesturePluginDtorUid = dtorIdKey;
+				}
+			else
+				{
+				REComSession::DestroyedImplementation(dtorIdKey);
+				}
+			}
 		}
-	else
+	
+	// If we didn't load the preferred plug-in, try all other plug-ins
+	if (! fifthEditionPluginLoaded)
 		{
-		REComSession::DestroyedImplementation(dtorIdKey);
-		
-		// We didn't load the preferred plug-in, try all other plug-ins
-
 		for (TInt i(0); i < KImplCount; ++i)
 			{
 			TUid currentImplUid(implInfoPtrArray[i]->ImplementationUid());
@@ -2121,15 +1953,24 @@ void CMobblerAppUi::HandleSingleShakeL(TMobblerShakeGestureDirection aDirection)
 		}
 	}
 
-void CMobblerAppUi::LaunchFileL(const TDesC& aFilename)
+void CMobblerAppUi::LaunchFileEmbeddedL(const TDesC& aFilename)
 	{
 	if (!iDocHandler)
 		{
 		iDocHandler = CDocumentHandler::NewL(CEikonEnv::Static()->Process());
 		}
 	
+	// Set the exit observer so HandleServerAppExit will be called
+	iDocHandler->SetExitObserver(this);
+	
 	TDataType emptyDataType = TDataType();
 	iDocHandler->OpenFileEmbeddedL(aFilename, emptyDataType);
+	}
+ 
+void CMobblerAppUi::HandleServerAppExit(TInt aReason)
+	{
+	// Handle closing the handler application
+	MAknServerAppExitObserver::HandleServerAppExit(aReason);
 	}
 
 void CMobblerAppUi::GoToLastFmL(TInt aCommand, const TDesC8& aEventId)
@@ -2192,9 +2033,7 @@ void CMobblerAppUi::GoToLastFmL(TInt aCommand, const TDesC8& aEventId)
 
 void CMobblerAppUi::GoToMapL(const TDesC8& aName, const TDesC8& aLatitude, const TDesC8& aLongitude)
 	{
-	_LIT(KMapKmlFilename, "C:\\System\\Data\\Mobbler\\map.kml");
-	
-	CCoeEnv::Static()->FsSession().MkDirAll(KMapKmlFilename);
+	_LIT(KMapKmlFilename, "c:\\mobblermap.kml");
 	
 	_LIT8(KMapKmlFormat,	"<kml xmlns=\"http://earth.google.com/kml/2.0\">\r\n"
 							"\t<Placemark>\r\n "
@@ -2348,12 +2187,12 @@ TInt CMobblerAppUi::SetAlbumArtAsWallpaper(TBool aAutomatically)
 		LOG(_L8("Set as wallpaper"));
 		if (!iWallpaperSet &&
 			CurrentTrack() && 
-			CurrentTrack()->Image() && 
-			CurrentTrack()->Image()->Bitmap())
+			CurrentTrack()->AlbumArt() && 
+			CurrentTrack()->AlbumArt()->Bitmap())
 			{
 			// The current track has album art and it has finished loading
 			CCoeEnv::Static()->FsSession().MkDirAll(KWallpaperFile);
-			error = CurrentTrack()->Image()->Bitmap(ETrue)->Save(KWallpaperFile);
+			error = CurrentTrack()->AlbumArt()->Bitmap(ETrue)->Save(KWallpaperFile);
 			if (error == KErrNone)
 				{
 				error = AknsWallpaperUtils::SetIdleWallpaper(KWallpaperFile, NULL);
