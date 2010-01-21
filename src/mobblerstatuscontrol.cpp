@@ -632,13 +632,13 @@ void CMobblerStatusControl::Draw(const TRect& /*aRect*/) const
 	TBool playStopDisabled(EFalse);
 	TBool skipDisabled(EFalse);
 	TBool moreDisabled(EFalse);
-	TBool love(EFalse);
+	CMobblerTrack::TMobblerLove love(CMobblerTrack::ENoLove);
 	
 	if (iAppUi.CurrentTrack())
 		{
 		love = iAppUi.CurrentTrack()->Love();
 		
-		if (love)
+		if (love != CMobblerTrack::ENoLove)
 			{
 			loveDisabled = ETrue;
 			}
@@ -738,7 +738,7 @@ void CMobblerStatusControl::Draw(const TRect& /*aRect*/) const
 	iAlbumArtTransition->DrawAlbumArtL(albumArt, nextAlbumArt, rectAlbumArt, iFingerDownPosition.iX - iFingerNowPosition.iX);
 	
 	// If the track has been loved, draw the love icon in the bottom right corner
-	if (love)
+	if (love != CMobblerTrack::ENoLove)
 		{
 		BitBltMobblerBitmapL(iMobblerBitmapLove, 
 				TPoint(rectAlbumArt.iBr.iX - iMobblerBitmapLove->SizeInPixels().iWidth - 4, rectAlbumArt.iBr.iY - iMobblerBitmapLove->SizeInPixels().iHeight - 4),

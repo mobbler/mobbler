@@ -825,7 +825,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 			
 			if (currentTrack)
 				{
-				if (!currentTrack->Love())
+				if (currentTrack->Love() == CMobblerTrack::ENoLove)
 					{
 					// There is a current track and it is not already loved
 					CAknQueryDialog* dlg(CAknQueryDialog::NewL());
