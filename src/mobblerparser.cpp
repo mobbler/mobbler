@@ -523,7 +523,7 @@ CMobblerLastFmError* CMobblerParser::ParseRadioPlaylistL(const TDesC8& aXml, CMo
 				
 				TBool loved((*tracks)[i]->Element(KElementExtension)->Element(KElementLoved)->Content().Compare(KNumeralZero) != 0);
 				
-				CMobblerTrack* track(CMobblerTrack::NewL(*creatorBuf, *titleBuf, *albumBuf, identifier, image, location, durationSeconds, trackauth, ETrue));
+				CMobblerTrack* track(CMobblerTrack::NewL(*creatorBuf, *titleBuf, *albumBuf, identifier, image, location, durationSeconds, trackauth, loved));
 				CleanupStack::PushL(track);
 				
 				aPlaylist.AppendTrackL(track);
