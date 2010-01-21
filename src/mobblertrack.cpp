@@ -471,31 +471,41 @@ void CMobblerTrack::DataL(CMobblerFlatDataObserverHelper* aObserver, const TDesC
 		LOG(_L8("5 DataL album info fetched"));
 		DUMPDATA(aData, _L("albumgetinfo.xml"));
 
-		TBool found(EFalse);
 		if (aTransactionError == CMobblerLastFmConnection::ETransactionErrorNone)
 			{
 			LOG(_L8("6 FetchImageL(album)"));
-			found = FetchImageL(aObserver, aData);
-			}
 
-		if (!found)
-			{
-			// we failed to fetch the album details
-			// so try to fetch the album art from the playlist
-			if (iPlaylistImageLocation->Length() > 0)
+			if (!FetchImageL(aObserver, aData))
 				{
-				LOG(_L8("7 FetchImageL(album)"));
-				FetchImageL(EMobblerImageTypeAlbumRemote, *iPlaylistImageLocation);
-				}
-			else if (iImageType != EMobblerImageTypeArtistRemote
-					&& iImageType != EMobblerImageTypeArtistLocal)
-				{
-				// Couldn't fetch album art and we haven't already got
-				// an artist image so try to get an artist image instead
+				// We failed to get the album image from the album info
 			
-				LOG(_L8("8 FetchArtistInfoL()"));
-				FetchArtistInfoL();
+				if (iPlaylistImageLocation->Length() > 0)
+					{
+					// Try to fetch the album image from the playlist
+					LOG(_L8("7 FetchImageL(album)"));
+					FetchImageL(EMobblerImageTypeAlbumRemote, *iPlaylistImageLocation);
+					}
+				else if (iImageType != EMobblerImageTypeArtistRemote
+						&& iImageType != EMobblerImageTypeArtistLocal)
+					{
+					// Couldn't fetch album image and we haven't already got an artist image
+					
+					// check to see if we can find one locally
+					FindLocalArtistImageL();
+					
+					if (!iImage)
+						{
+						// we still can't find an image so look for it online
+						LOG(_L8("8 FetchArtistInfoL()"));
+						FetchArtistInfoL();
+						}
+					}
 				}
+			}
+		else
+			{
+			// There was a transaction error while fetching the album info
+			FindLocalAlbumImageL();
 			}
 		}
 	else if (aObserver == iArtistInfoHelper)
@@ -625,13 +635,17 @@ TBool CMobblerTrack::FetchImageL(CMobblerFlatDataObserverHelper* aObserver, cons
 			if (imageArray[i]->Content().Length() > 0)
 				{
 				found = ETrue;
-				aObserver == iAlbumInfoHelper ?
-					LOG(_L8("15 FetchImageL(album)")):
+				
+				if (aObserver == iAlbumInfoHelper)
+					{
+					LOG(_L8("15 FetchImageL(album)"));
+					FetchImageL(EMobblerImageTypeAlbumRemote, imageArray[i]->Content());
+					}
+				else
+					{
 					LOG(_L8("16 FetchImageL(artist)"));
-					
-				aObserver == iAlbumInfoHelper ?
-					FetchImageL(EMobblerImageTypeAlbumRemote, imageArray[i]->Content()):
-					FetchImageL(EMobblerImageTypeArtistRemote, imageArray[i]->Content());
+					FetchImageL(EMobblerImageTypeArtistRemote, imageArray[i]->Content())
+					}
 				}
 			break;
 			}
