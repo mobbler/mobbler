@@ -48,10 +48,12 @@ CMobblerTrackBase::CMobblerTrackBase()
 	}
 
 CMobblerTrackBase::CMobblerTrackBase(TTimeIntervalSeconds aTrackLength, TBool aLoved)
-	:iTrackNumber(KErrUnknown), iStartTimeUTC(Time::NullTTime()), 
-	iTrackLength(aTrackLength), iTotalPlayed(0), 
-	iInitialPlaybackPosition(KErrUnknown),
-	iLove(aLoved ? ELoved : ENoLove)
+	:iLove(aLoved ? ELoved : ENoLove),
+	iTrackNumber(KErrUnknown),
+	iStartTimeUTC(Time::NullTTime()), 
+	iTrackLength(aTrackLength),
+	iTotalPlayed(0), 
+	iInitialPlaybackPosition(KErrUnknown)
 	{
 	}
 
@@ -183,11 +185,11 @@ const TDesC8& CMobblerTrackBase::RadioAuth() const
 	return *iRadioAuth;
 	}
 
-void CMobblerTrackBase::DataL(CMobblerFlatDataObserverHelper* aObserver, const TDesC8& aData, CMobblerLastFmConnection::TTransactionError aTransactionError)
+void CMobblerTrackBase::DataL(CMobblerFlatDataObserverHelper* aObserver, const TDesC8& /*aData*/, CMobblerLastFmConnection::TTransactionError aTransactionError)
 	{
 	if (aObserver == iLoveObserverHelper && aTransactionError == CMobblerLastFmConnection::ETransactionErrorNone)
 		{
-		iLove == ELoved;
+		iLove = ELoved;
 		}
 	}
 
