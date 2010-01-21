@@ -834,8 +834,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 					if (love)
 						{
 						// set love to true (if only it were this easy)
-						CurrentTrack()->SetLove(ETrue);
-						iLastFmConnection->TrackLoveL(currentTrack->Artist().String8(), currentTrack->Title().String8());
+						CurrentTrack()->LoveTrackL();
 						}
 					}
 				}
