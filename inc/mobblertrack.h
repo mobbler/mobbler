@@ -29,7 +29,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <mobbler/mobblercontentlistinginterface.h>
 
 #include "mobblerbitmap.h"
-#include "mobblerlastfmconnection.h"
 #include "mobblerdataobserver.h"
 #include "mobblertrackbase.h"
 
@@ -41,7 +40,7 @@ class CMobblerTrack : public CMobblerTrackBase,
 						public MMobblerFlatDataObserverHelper,
 						public MMobblerContentListingObserver
 	{
-public:
+private:
 	enum TMobblerImageType
 		{
 		EMobblerImageTypeNone,
