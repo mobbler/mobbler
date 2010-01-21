@@ -93,8 +93,11 @@ private:
 	CMobblerTrackBase();
 	void BaseConstructL(const CMobblerTrackBase& aTrack);
 	
-private: // from MMobblerFlatDataObserverHelper
-	void DataL(CMobblerFlatDataObserverHelper* aObserver, const TDesC8& aData, CMobblerLastFmConnection::TTransactionError aTransactionError);
+protected: // from MMobblerFlatDataObserverHelper
+	virtual void DataL(CMobblerFlatDataObserverHelper* aObserver, const TDesC8& aData, CMobblerLastFmConnection::TTransactionError aTransactionError);
+	
+protected:
+	TMobblerLove iLove;
 	
 private:
 	CMobblerString* iArtist;
@@ -111,7 +114,6 @@ private:
 	HBufC8* iRadioAuth;
 	
 	CMobblerFlatDataObserverHelper* iLoveObserverHelper;
-	TMobblerLove iLove;
 
 	TTimeIntervalSeconds iTotalPlayed;
 	TTimeIntervalSeconds iInitialPlaybackPosition;

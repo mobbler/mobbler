@@ -27,8 +27,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <sendomfragment.h>
 #include <senxmlutils.h>
 
-#include <mobbler/mobblercontentlistinginterface.h>
-
 #include "mobblerappui.h"
 #include "mobblerliterals.h"
 #include "mobblerlogging.h"
@@ -57,6 +55,8 @@ _LIT(KArtistImageCache, "E:\\System\\Data\\Mobbler\\cache\\");
 _LIT8(KElementExtraLarge, "extralarge");
 _LIT8(KElementImages, "images");
 _LIT8(KElementSizes, "sizes");
+_LIT8(KElementTrack, "track");
+_LIT8(KElementUserLoved, "userloved");
 
 CMobblerTrack* CMobblerTrack::NewL(const TDesC8& aArtist,
 									const TDesC8& aTitle,
@@ -65,17 +65,18 @@ CMobblerTrack* CMobblerTrack::NewL(const TDesC8& aArtist,
 									const TDesC8& aImage,
 									const TDesC8& aMp3Location,
 									TTimeIntervalSeconds aTrackLength,
-									const TDesC8& aRadioAuth)
+									const TDesC8& aRadioAuth,
+									TBool aLoved)
 	{
-	CMobblerTrack* self(new(ELeave) CMobblerTrack(aTrackLength));
+	CMobblerTrack* self(new(ELeave) CMobblerTrack(aTrackLength, aLoved));
 	CleanupStack::PushL(self);
 	self->ConstructL(aArtist, aTitle, aAlbum, aMbTrackId, aImage, aMp3Location, aRadioAuth);
 	CleanupStack::Pop(self);
 	return self;
 	}
 
-CMobblerTrack::CMobblerTrack(TTimeIntervalSeconds aTrackLength)
-	: CMobblerTrackBase(aTrackLength)
+CMobblerTrack::CMobblerTrack(TTimeIntervalSeconds aTrackLength, TBool aLoved)
+	: CMobblerTrackBase(aTrackLength, aLoved)
 	{
 	Open();
 	}
@@ -111,7 +112,7 @@ void CMobblerTrack::ConstructL(const TDesC8& aArtist,
 			// can see if the track has been loved by this user
 			delete iTrackInfoHelper;
 			iTrackInfoHelper = CMobblerFlatDataObserverHelper::NewL(static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->LastFmConnection(), *this, EFalse);
-			static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->LastFmConnection().TrackGetInfoL(Title().String8(), Artist().String8(), aMbTrackId, *iTrackInfoHelper);	
+			static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->LastFmConnection().TrackGetInfoL(Title().String8(), Artist().String8(), aMbTrackId, *iTrackInfoHelper);
 			}
 		}
 	}
@@ -450,15 +451,15 @@ void CMobblerTrack::DataL(CMobblerFlatDataObserverHelper* aObserver, const TDesC
 			CleanupStack::PushL(domFragment);
 			xmlReader->SetContentHandler(*domFragment);
 			domFragment->SetReader(*xmlReader);
-	
+			
 			// parse the XML into the DOM fragment
 			xmlReader->ParseL(aData);
 			
-			CSenElement* userlovedElement(domFragment->AsElement().Element(_L8("track"))->Element(_L8("userloved")));
+			CSenElement* userLovedElement(domFragment->AsElement().Element(KElementTrack)->Element(KElementUserLoved));
 			
-			if (userlovedElement)
+			if (userLovedElement)
 				{
-				SetLove(userlovedElement->Content().Compare(_L8("0")) != 0);
+				iLove = userLovedElement->Content().Compare(KNumeralZero) != 0 ? ELoved : ENoLove;
 				}
 			
 			CleanupStack::PopAndDestroy(2);
@@ -506,6 +507,11 @@ void CMobblerTrack::DataL(CMobblerFlatDataObserverHelper* aObserver, const TDesC
 			{
 			FetchImageL(aObserver, aData);
 			}
+		}
+	else
+		{
+		// check if it was the base class observer
+		CMobblerTrackBase::DataL(aObserver, aData, aTransactionError);
 		}
 	}
 
