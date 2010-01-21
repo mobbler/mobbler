@@ -515,7 +515,7 @@ void CMobblerTrack::DataL(CMobblerFlatDataObserverHelper* aObserver, const TDesC
 		else
 			{
 			// There was a transaction error while fetching the album info
-			FindLocalAlbumImageL();
+			FindLocalArtistImageL();
 			}
 		}
 	else if (aObserver == iArtistInfoHelper)
