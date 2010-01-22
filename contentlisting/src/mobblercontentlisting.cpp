@@ -90,6 +90,8 @@ TInt CMobblerContentListing::CMobblerClfItem::CompareClfItem(const CMobblerClfIt
 
 void DoContentListingRefreshL(CMobblerContentListing::TSharedData* aSharedData)
 	{
+	TLinearOrder<CMobblerContentListing::CMobblerClfItem> order(CMobblerContentListing::CMobblerClfItem::CompareClfItem);
+	
 	do
 		{
 		// Create Content Listing Engine and a list model
@@ -125,10 +127,7 @@ void DoContentListingRefreshL(CMobblerContentListing::TSharedData* aSharedData)
 			clfItem.GetField(ECLFFieldIdFileNameAndPath, localFile);
 			
 			CMobblerContentListing::CMobblerClfItem* item(CMobblerContentListing::CMobblerClfItem::NewLC(title, album, artist, localFile));
-			
 			clfItem.GetField(ECLFFieldIdTrackNumber, item->iTrackNumber);
-			
-			TLinearOrder<CMobblerContentListing::CMobblerClfItem> order(CMobblerContentListing::CMobblerClfItem::CompareClfItem);
 			aSharedData->iClfItems.InsertInOrder(item, order);
 			CleanupStack::Pop(item);
 			}
@@ -285,14 +284,15 @@ void CMobblerContentListing::DoFindLocalTrackL()
 		// the list is sorted by track title and the by artist name
 		// so perform a binary search for 
 	
+		TLinearOrder<CMobblerContentListing::CMobblerClfItem> order(CMobblerContentListing::CMobblerClfItem::CompareClfItem);
 		TInt position(KErrNotFound);
-		
+				
 		const TInt KOperationCount(iOperations.Count());
 		
 		for (TInt i(0) ; i < KOperationCount ; ++i)
 			{
-			TLinearOrder<CMobblerContentListing::CMobblerClfItem> order(CMobblerContentListing::CMobblerClfItem::CompareClfItem);
-			TInt position(iSharedData.iClfItems.FindInOrder(iOperations[i], order));
+			TInt position = iSharedData.iClfItems.FindInOrder(iOperations[i], order);
+			
 			if (position != KErrNotFound)
 				{
 				iOperations[0]->iObserver->HandleFindLocalTrackCompleteL(iSharedData.iClfItems[position]->iTrackNumber,
