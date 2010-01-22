@@ -222,11 +222,7 @@ void CMobblerStatusView::DynInitMenuPaneL(TInt aResourceId, CEikMenuPane* aMenuP
 			{
 			SetMenuItemTextL(aMenuPane, R_MOBBLER_ENABLE_SCROBBLING,	EMobblerCommandToggleScrobbling);
 			}
-<<<<<<< HEAD
-		SetMenuItemTextL(aMenuPane, R_MOBBLER_VIEW_SCROBBLE_LOG,		EMobblerCommandViewScrobbleLog);
-=======
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_SCROBBLE_LOG,				EMobblerCommandScrobbleLog);
->>>>>>> * Spanish updated, thanks to Diego Mu?oz Callejo
 #ifdef __SYMBIAN_SIGNED__
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_SET_AS_WALLPAPER,			EMobblerCommandSetAsWallpaper); // TODO only if album art available
 #endif

@@ -271,11 +271,6 @@ rls_string STR_mobbler_qr_code "Kod QR"
 rls_string STR_mobbler_map "Mapy"
 rls_string STR_mobbler_visit_map "Miejsce wydarzenia"
 rls_string STR_mobbler_foursquare "Podpowiedzi Foursquare"
-<<<<<<< HEAD
-rls_string STR_mobbler_view_scrobble_log "Pokaż log"
-rls_string STR_mobbler_scrobble_log "Log"
-rls_string STR_mobbler_scrobble_log_remove "Usuń z pozycję"
-=======
 rls_string STR_mobbler_scrobble_log "Log"
 rls_string STR_mobbler_scrobble_log_remove "Usuń z pozycję"
 rls_string STR_mobbler_tag "Tag"
@@ -292,4 +287,3 @@ rls_string STR_mobbler_similar "Similar"
 rls_string STR_mobbler_top "Top"
 rls_string STR_mobbler_lyrics "Lyrics"
 rls_string STR_mobbler_lyrics_not_found "Lyrics not found"
->>>>>>> * Spanish updated, thanks to Diego Mu?oz Callejo

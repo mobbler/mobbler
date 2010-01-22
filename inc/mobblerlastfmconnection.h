@@ -200,7 +200,7 @@ public:
 
 	void ShoutL(const TDesC8& aClass, const TDesC8& aArgument, const TDesC8& aMessage);
 
-	void TrackLoveL(const TDesC8& aArtist, const TDesC8& aTrack);
+	void TrackLoveL(const TDesC8& aArtist, const TDesC8& aTrack, MMobblerFlatDataObserver& aObserver);
 	void TrackBanL(const TDesC8& aArtist, const TDesC8& aTrack);
 
 	void TrackShareL(const TDesC8& aRecipient, const TDesC8& aArtist, const TDesC8& aTrack, const TDesC8& aMessage, MMobblerFlatDataObserver& aObserver);
@@ -273,6 +273,7 @@ public:
 	void AlbumRemoveTagL(const TDesC8& aAlbum, const TDesC8& aArtist, const TDesC8& aTag, MMobblerFlatDataObserver& aObserver);
 <<<<<<< HEAD
 
+	void TrackGetInfoL(const TDesC8& aTrack, const TDesC8& aArtist, const TDesC8& aMbId, MMobblerFlatDataObserver& aObserver);
 	void AlbumGetInfoL(const TDesC8& aMbId, MMobblerFlatDataObserver& aObserver);
 	void AlbumGetInfoL(const TDesC8& aAlbum, const TDesC8& aArtist, MMobblerFlatDataObserver& aObserver);
 

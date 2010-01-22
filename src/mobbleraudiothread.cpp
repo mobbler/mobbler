@@ -90,11 +90,6 @@ CMobblerAudioThread::~CMobblerAudioThread()
 		{
 		iStream->Stop();
 		}
-<<<<<<< HEAD
-	
-	delete iEqualizer;
-	delete iStream;
-=======
 	else if (iPlayer)
 		{
 		iPlayer->Stop();
@@ -104,7 +99,6 @@ CMobblerAudioThread::~CMobblerAudioThread()
 	delete iStream;
 	delete iPlayer;
 	delete iPeriodic;
->>>>>>> * Spanish updated, thanks to Diego Mu?oz Callejo
 	
 	iBuffer.ResetAndDestroy();
 	}
@@ -144,14 +138,6 @@ void CMobblerAudioThread::RunL()
 			break;
 		case ECmdSetCurrent:
 			{
-<<<<<<< HEAD
-			iStream = CMdaAudioOutputStream::NewL(*this);
-			iStream->Open(&iShared.iAudioDataSettings);
-			
-			if (MobblerUtility::EqualizerSupported())
-				{
-				TRAP_IGNORE(iEqualizer = CAudioEqualizerUtility::NewL(*iStream));
-=======
 			if (iShared.iTrack->LocalFile().Length() > 0)
 				{
 				// it is a local track so just play it
@@ -171,7 +157,6 @@ void CMobblerAudioThread::RunL()
 					{
 					TRAP_IGNORE(iEqualizer = CAudioEqualizerUtility::NewL(*iStream));
 					}
->>>>>>> * Spanish updated, thanks to Diego Mu?oz Callejo
 				}
 			}
 			break;
@@ -220,13 +205,10 @@ void CMobblerAudioThread::SetVolume()
 		{
 		iStream->SetVolume(iShared.iAudioDataSettings.iVolume);
 		}
-<<<<<<< HEAD
-=======
 	else if (iPlayer)
 		{
 		iPlayer->SetVolume(iShared.iAudioDataSettings.iVolume);
 		}
->>>>>>> * Spanish updated, thanks to Diego Mu?oz Callejo
 	}
 
 void CMobblerAudioThread::SetEqualizerIndexL()
@@ -277,11 +259,7 @@ void CMobblerAudioThread::FillBufferL(TBool aDataAdded)
 		if (aDataAdded)
 			{
 			// we are already playing so add the last
-<<<<<<< HEAD
-			//piece of the buffer to the stream
-=======
 			// piece of the buffer to the stream
->>>>>>> * Spanish updated, thanks to Diego Mu?oz Callejo
 			iStream->WriteL(*iBuffer[iBuffer.Count() - 1]);
 			}
 		}
@@ -346,8 +324,6 @@ void CMobblerAudioThread::MaoscPlayComplete(TInt /*aError*/)
 	{
 	}
 
-<<<<<<< HEAD
-=======
 TInt CMobblerAudioThread::UpdatePlayerPosition(TAny* aRef)
 	{
 	TTimeIntervalMicroSeconds playerPosition;
@@ -394,5 +370,4 @@ void CMobblerAudioThread::MapcPlayComplete(TInt /*aError*/)
 		}
 	}
 
->>>>>>> * Spanish updated, thanks to Diego Mu?oz Callejo
 // End of file

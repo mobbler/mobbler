@@ -632,23 +632,12 @@ void CMobblerStatusControl::Draw(const TRect& /*aRect*/) const
 	TBool playStopDisabled(EFalse);
 	TBool skipDisabled(EFalse);
 	TBool moreDisabled(EFalse);
-<<<<<<< HEAD
-	TBool love(EFalse);
-=======
 	CMobblerTrack::TMobblerLove love(CMobblerTrack::ENoLove);
->>>>>>> * Spanish updated, thanks to Diego Mu?oz Callejo
 	
 	if (iAppUi.CurrentTrack())
 		{
 		love = iAppUi.CurrentTrack()->Love();
 		
-<<<<<<< HEAD
-		if (iAppUi.CurrentTrack()->AlbumArt() && 
-			iAppUi.CurrentTrack()->AlbumArt()->Bitmap())
-			{
-			// The current track has album art and it has finished loading
-			albumArt = iAppUi.CurrentTrack()->AlbumArt();
-=======
 		if (love != CMobblerTrack::ENoLove)
 			{
 			loveDisabled = ETrue;
@@ -659,7 +648,6 @@ void CMobblerStatusControl::Draw(const TRect& /*aRect*/) const
 			{
 			// The current track has album art and it has finished loading
 			albumArt = iAppUi.CurrentTrack()->Image();
->>>>>>> * Spanish updated, thanks to Diego Mu?oz Callejo
 			
 			if (iShowAlbumArtFullscreen)
 				{
@@ -677,33 +665,21 @@ void CMobblerStatusControl::Draw(const TRect& /*aRect*/) const
 			{
 			// This is a music player track
 			banDisabled = ETrue;
-<<<<<<< HEAD
-			skipDisabled = ETrue;
-			playStopDisabled = ETrue;
-=======
 			
 			if (!iAppUi.MusicListener().ControlsSupported())
 				{
 				skipDisabled = ETrue;
 				playStopDisabled = ETrue;
 				}
->>>>>>> * Spanish updated, thanks to Diego Mu?oz Callejo
 			}
 		else
 			{
 			// This is a radio track
 			
-<<<<<<< HEAD
-			if (iAppUi.RadioPlayer().NextTrack() && iAppUi.RadioPlayer().NextTrack()->AlbumArt() && iAppUi.RadioPlayer().NextTrack()->AlbumArt()->Bitmap())
-				{
-				// The next track has album art and it has finished loading
-				nextAlbumArt = iAppUi.RadioPlayer().NextTrack()->AlbumArt();
-=======
 			if (iAppUi.RadioPlayer().NextTrack() && iAppUi.RadioPlayer().NextTrack()->Image() && iAppUi.RadioPlayer().NextTrack()->Image()->Bitmap())
 				{
 				// The next track has album art and it has finished loading
 				nextAlbumArt = iAppUi.RadioPlayer().NextTrack()->Image();
->>>>>>> * Spanish updated, thanks to Diego Mu?oz Callejo
 				const_cast<CMobblerBitmap*>(nextAlbumArt)->ScaleL(rectAlbumArt.Size());
 				}
 			else
@@ -762,11 +738,7 @@ void CMobblerStatusControl::Draw(const TRect& /*aRect*/) const
 	iAlbumArtTransition->DrawAlbumArtL(albumArt, nextAlbumArt, rectAlbumArt, iFingerDownPosition.iX - iFingerNowPosition.iX);
 	
 	// If the track has been loved, draw the love icon in the bottom right corner
-<<<<<<< HEAD
-	if (love)
-=======
 	if (love != CMobblerTrack::ENoLove)
->>>>>>> * Spanish updated, thanks to Diego Mu?oz Callejo
 		{
 		BitBltMobblerBitmapL(iMobblerBitmapLove, 
 				TPoint(rectAlbumArt.iBr.iX - iMobblerBitmapLove->SizeInPixels().iWidth - 4, rectAlbumArt.iBr.iY - iMobblerBitmapLove->SizeInPixels().iHeight - 4),
@@ -888,12 +860,8 @@ void CMobblerStatusControl::Draw(const TRect& /*aRect*/) const
 	BitBltMobblerBitmapL(iMobblerBitmapNext, iPointSkip, TRect(TPoint(0, 0), iMobblerBitmapNext->SizeInPixels()), skipDisabled);
 	
 	// Draw either play or stop depending on if the radio playing
-<<<<<<< HEAD
-	if (iAppUi.RadioPlayer().State() == CMobblerRadioPlayer::EIdle)
-=======
 	if (iAppUi.RadioPlayer().State() == CMobblerRadioPlayer::EIdle
 			&& !(iAppUi.MusicListener().ControlsSupported() && iAppUi.MusicListener().CurrentTrack()) )
->>>>>>> * Spanish updated, thanks to Diego Mu?oz Callejo
 		{
 		// The radio is idle so display the play button
 		BitBltMobblerBitmapL(iMobblerBitmapPlay, iPointPlayStop, TRect(TPoint(0, 0), iMobblerBitmapPlay->SizeInPixels()), playStopDisabled);
@@ -1023,15 +991,6 @@ TKeyResponse CMobblerStatusControl::OfferKeyEventL(const TKeyEvent& aKeyEvent, T
 	switch (aKeyEvent.iCode)
 		{
 		case EKeyRightArrow: // skip to the next track
-<<<<<<< HEAD
-			if (iAppUi.RadioPlayer().CurrentTrack() && !iAlbumArtTransition->IsActive())
-				{
-				// Only call skip track if we are playing a radio track
-				// and we are not in the middle of an album art transition
-				
-				iAppUi.RadioPlayer().SkipTrackL();
-				}
-=======
 			
 			if (!iAlbumArtTransition->IsActive())
 				{
@@ -1048,7 +1007,6 @@ TKeyResponse CMobblerStatusControl::OfferKeyEventL(const TKeyEvent& aKeyEvent, T
 					}
 				}
 			
->>>>>>> * Spanish updated, thanks to Diego Mu?oz Callejo
 			response = EKeyWasConsumed;
 			break;
 		case EKeyUpArrow: // love
@@ -1078,9 +1036,6 @@ TKeyResponse CMobblerStatusControl::OfferKeyEventL(const TKeyEvent& aKeyEvent, T
 				}
 			else
 				{
-<<<<<<< HEAD
-				const_cast<CMobblerAppUi&>(iAppUi).HandleCommandL(EMobblerCommandResumeRadio);
-=======
 				if (iAppUi.MusicListener().CurrentTrack() && iAppUi.MusicListener().ControlsSupported())
 					{
 					// there is a music player track playing so try to to stop it
@@ -1090,7 +1045,6 @@ TKeyResponse CMobblerStatusControl::OfferKeyEventL(const TKeyEvent& aKeyEvent, T
 					{
 					const_cast<CMobblerAppUi&>(iAppUi).HandleCommandL(EMobblerCommandResumeRadio);
 					}
->>>>>>> * Spanish updated, thanks to Diego Mu?oz Callejo
 				}
 			response = EKeyWasConsumed;
 			break;
@@ -1146,30 +1100,18 @@ TKeyResponse CMobblerStatusControl::OfferKeyEventL(const TKeyEvent& aKeyEvent, T
 		case '9':
 			if (!IsFifthEdition() && // 3rd edition only
 				iAppUi.CurrentTrack() &&
-<<<<<<< HEAD
-				iAppUi.CurrentTrack()->AlbumArt())
-=======
 				iAppUi.CurrentTrack()->Image())
->>>>>>> * Spanish updated, thanks to Diego Mu?oz Callejo
 				{
 				iShowAlbumArtFullscreen = !iShowAlbumArtFullscreen;
 				
 				if (iShowAlbumArtFullscreen)
 					{
-<<<<<<< HEAD
-					const_cast<CMobblerBitmap*>(iAppUi.CurrentTrack()->AlbumArt())->ScaleL(iRectAlbumArt.Size());
-=======
 					const_cast<CMobblerBitmap*>(iAppUi.CurrentTrack()->Image())->ScaleL(iRectAlbumArt.Size());
->>>>>>> * Spanish updated, thanks to Diego Mu?oz Callejo
 					}
 				else
 					{
 					TInt albumArtDimension(Min(Size().iWidth, Size().iHeight));
-<<<<<<< HEAD
-					const_cast<CMobblerBitmap*>(iAppUi.CurrentTrack()->AlbumArt())->ScaleL(TSize(albumArtDimension, albumArtDimension));
-=======
 					const_cast<CMobblerBitmap*>(iAppUi.CurrentTrack()->Image())->ScaleL(TSize(albumArtDimension, albumArtDimension));
->>>>>>> * Spanish updated, thanks to Diego Mu?oz Callejo
 					}
 				DoChangePaneTextL();
 				DrawDeferred();

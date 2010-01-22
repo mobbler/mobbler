@@ -43,11 +43,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "mobblertrack.h"
 #include "mobblerwebserviceshelper.h"
 
-<<<<<<< HEAD
-=======
 _LIT8(KElementTags, "tags");
 
->>>>>>> * Spanish updated, thanks to Diego Mu?oz Callejo
 CMobblerWebServicesHelper* CMobblerWebServicesHelper::NewL(CMobblerAppUi& aAppUi)
 	{
 	CMobblerWebServicesHelper* self(new(ELeave) CMobblerWebServicesHelper(aAppUi));
@@ -154,11 +151,7 @@ void CMobblerWebServicesHelper::TrackAddTagL(CMobblerTrack& aTrack)
 	
 	CAknTextQueryDialog* tagDialog(new(ELeave) CAknTextQueryDialog(tag));
 	tagDialog->PrepareLC(R_MOBBLER_TEXT_QUERY_DIALOG);
-<<<<<<< HEAD
-	tagDialog->SetPromptL(iAppUi.ResourceReader().ResourceL(R_MOBBLER_TRACK_ADD_TAG));
-=======
 	tagDialog->SetPromptL(iAppUi.ResourceReader().ResourceL(R_MOBBLER_TRACK_ADD_TAG_PROMPT));
->>>>>>> * Spanish updated, thanks to Diego Mu?oz Callejo
 	tagDialog->SetPredictiveTextInputPermitted(ETrue);
 	
 	if (tagDialog->RunLD())
@@ -191,11 +184,7 @@ void CMobblerWebServicesHelper::AlbumAddTagL(CMobblerTrack& aTrack)
 	
 	CAknTextQueryDialog* tagDialog(new(ELeave) CAknTextQueryDialog(tag));
 	tagDialog->PrepareLC(R_MOBBLER_TEXT_QUERY_DIALOG);
-<<<<<<< HEAD
-	tagDialog->SetPromptL(iAppUi.ResourceReader().ResourceL(R_MOBBLER_ALBUM_ADD_TAG));
-=======
 	tagDialog->SetPromptL(iAppUi.ResourceReader().ResourceL(R_MOBBLER_ALBUM_ADD_TAG_PROMPT));
->>>>>>> * Spanish updated, thanks to Diego Mu?oz Callejo
 	tagDialog->SetPredictiveTextInputPermitted(ETrue);
 	
 	if (tagDialog->RunLD())
@@ -228,11 +217,7 @@ void CMobblerWebServicesHelper::ArtistAddTagL(CMobblerTrack& aTrack)
 	
 	CAknTextQueryDialog* tagDialog(new(ELeave) CAknTextQueryDialog(tag));
 	tagDialog->PrepareLC(R_MOBBLER_TEXT_QUERY_DIALOG);
-<<<<<<< HEAD
-	tagDialog->SetPromptL(iAppUi.ResourceReader().ResourceL(R_MOBBLER_ARTIST_ADD_TAG));
-=======
 	tagDialog->SetPromptL(iAppUi.ResourceReader().ResourceL(R_MOBBLER_ARTIST_ADD_TAG_PROMPT));
->>>>>>> * Spanish updated, thanks to Diego Mu?oz Callejo
 	tagDialog->SetPredictiveTextInputPermitted(ETrue);
 	
 	if (tagDialog->RunLD())
@@ -582,11 +567,7 @@ void CMobblerWebServicesHelper::DataL(CMobblerFlatDataObserverHelper* aObserver,
 				|| aObserver == iAlbumTagRemoveTagsHelper
 				|| aObserver == iArtistTagRemoveTagsHelper)
 			{
-<<<<<<< HEAD
-			RPointerArray<CSenElement>& tags(domFragment->AsElement().Element(_L8("tags"))->ElementsL());
-=======
 			RPointerArray<CSenElement>& tags(domFragment->AsElement().Element(KElementTags)->ElementsL());
->>>>>>> * Spanish updated, thanks to Diego Mu?oz Callejo
 			
 			const TInt KTagCount(tags.Count());
 			
@@ -597,11 +578,7 @@ void CMobblerWebServicesHelper::DataL(CMobblerFlatDataObserverHelper* aObserver,
 				
 				for (TInt i(0) ; i < KTagCount ; ++i)
 					{
-<<<<<<< HEAD
-					CMobblerString* tagName(CMobblerString::NewL(tags[i]->Element(_L8("name"))->Content()));
-=======
 					CMobblerString* tagName(CMobblerString::NewL(tags[i]->Element(KElementName)->Content()));
->>>>>>> * Spanish updated, thanks to Diego Mu?oz Callejo
 					CleanupStack::PushL(tagName);
 					textArray->AppendL(tagName->String());
 					CleanupStack::PopAndDestroy(tagName);

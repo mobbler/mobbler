@@ -50,11 +50,7 @@ RESOURCE EIK_APP_INFO
 RESOURCE LOCALISABLE_APP_INFO r_localisable_app_info
 	{
 	short_caption = STR_mobbler_mobbler;
-<<<<<<< HEAD
 	caption_and_icon =
-=======
-	caption_and_icon = 
->>>>>>> * Spanish updated, thanks to Diego Mu?oz Callejo
 	CAPTION_AND_ICON_INFO
 		{
 		caption = STR_mobbler_mobbler;
@@ -73,11 +69,7 @@ RESOURCE AVKON_VIEW r_mobbler_setting_item_list_view
 	cba = R_AVKON_SOFTKEYS_OK_CANCEL;
 	toolbar = 0;
 	}
-<<<<<<< HEAD
 
-=======
-	
->>>>>>> * Spanish updated, thanks to Diego Mu?oz Callejo
 RESOURCE AVKON_VIEW r_mobbler_status_view
 	{
 	cba = R_AVKON_SOFTKEYS_OPTIONS_BACK;
@@ -92,7 +84,6 @@ RESOURCE AVKON_VIEW r_mobbler_webservices_view
 	toolbar = 0;
 	}
 
-<<<<<<< HEAD
 RESOURCE AVKON_VIEW r_mobbler_browser_view
     {
     cba = R_AVKON_SOFTKEYS_BACK;
@@ -101,8 +92,6 @@ RESOURCE AVKON_VIEW r_mobbler_browser_view
 
 
 
-=======
->>>>>>> * Spanish updated, thanks to Diego Mu?oz Callejo
 RESOURCE MENU_BAR r_mobbler_webservices_options_menu
 	{
 	titles =
@@ -194,21 +183,6 @@ RESOURCE MENU_PANE r_mobbler_tag_submenu_pane
 			},
 		MENU_ITEM
 			{
-<<<<<<< HEAD
-			command = EMobblerCommandTrackRemoveTag;
-			},
-		MENU_ITEM
-			{
-			command = EMobblerCommandAlbumAddTag;
-			},
-		MENU_ITEM
-			{
-			command = EMobblerCommandAlbumRemoveTag;
-			},
-		MENU_ITEM
-			{
-			command = EMobblerCommandArtistAddTag;
-=======
 			command = EMobblerCommandAlbumAddTag;
 			},
 		MENU_ITEM
@@ -222,7 +196,6 @@ RESOURCE MENU_PANE r_mobbler_tag_submenu_pane
 		MENU_ITEM
 			{
 			command = EMobblerCommandAlbumRemoveTag;
->>>>>>> * Spanish updated, thanks to Diego Mu?oz Callejo
 			},
 		MENU_ITEM
 			{
@@ -246,11 +219,7 @@ RESOURCE MENU_PANE r_mobbler_shout_submenu_pane
 			}
 		};
 	}
-<<<<<<< HEAD
 
-=======
-	
->>>>>>> * Spanish updated, thanks to Diego Mu?oz Callejo
 RESOURCE MENU_PANE r_mobbler_webservices_radio_submenu_pane
 	{
 	items =
@@ -268,13 +237,8 @@ RESOURCE MENU_PANE r_mobbler_webservices_radio_submenu_pane
 			command = EMobblerCommandRadioLoved;
 			}
 		};
-<<<<<<< HEAD
 	}
 
-=======
-	}	
-	
->>>>>>> * Spanish updated, thanks to Diego Mu?oz Callejo
 RESOURCE MENU_PANE r_mobbler_attendance_submenu_pane
 	{
 	items =
@@ -292,11 +256,7 @@ RESOURCE MENU_PANE r_mobbler_attendance_submenu_pane
 			command = EMobblerCommandAttendanceNo;
 			}
 		};
-<<<<<<< HEAD
 	}
-=======
-	}	
->>>>>>> * Spanish updated, thanks to Diego Mu?oz Callejo
 
 RESOURCE MENU_PANE r_mobbler_share_submenu_pane
 	{
@@ -315,11 +275,7 @@ RESOURCE MENU_PANE r_mobbler_share_submenu_pane
 			command = EMobblerCommandEventShare;
 			}
 		};
-<<<<<<< HEAD
 	}
-=======
-	}	
->>>>>>> * Spanish updated, thanks to Diego Mu?oz Callejo
 
 RESOURCE MENU_BAR r_mobbler_status_options_menu
 	{
@@ -331,11 +287,7 @@ RESOURCE MENU_BAR r_mobbler_status_options_menu
 			}
 		};
 	}
-<<<<<<< HEAD
 
-=======
-	
->>>>>>> * Spanish updated, thanks to Diego Mu?oz Callejo
 RESOURCE MENU_PANE r_mobbler_status_menu_pane
 	{
 	items =
@@ -392,13 +344,10 @@ RESOURCE MENU_PANE r_mobbler_status_menu_pane
 			},
 		MENU_ITEM
 			{
-<<<<<<< HEAD
 			command = EMobblerCommandPlusViewArtistBio;
 			},
 		MENU_ITEM
 			{
-=======
->>>>>>> * Spanish updated, thanks to Diego Mu?oz Callejo
 			command = EMobblerCommandPlusShare;
 			cascade = r_mobbler_plus_share_submenu_pane;
 			},
@@ -413,13 +362,10 @@ RESOURCE MENU_PANE r_mobbler_status_menu_pane
 			},
 		MENU_ITEM
 			{
-<<<<<<< HEAD
-=======
 			command = EMobblerCommandPlusLyrics;
 			},
 		MENU_ITEM
 			{
->>>>>>> * Spanish updated, thanks to Diego Mu?oz Callejo
 			command = EMobblerCommandPlusSimilar;
 			cascade = r_mobbler_plus_similar_submenu_pane;
 			},
@@ -436,13 +382,6 @@ RESOURCE MENU_PANE r_mobbler_status_menu_pane
 			{
 			command = EMobblerCommandPlusArtistShoutbox;
 			},
-<<<<<<< HEAD
-		MENU_ITEM
-			{
-			command = EMobblerCommandPlusLyrics;
-			},
-=======
->>>>>>> * Spanish updated, thanks to Diego Mu?oz Callejo
 		// end of the plus option menu commands
 		MENU_ITEM
 			{
@@ -678,11 +617,7 @@ RESOURCE MENU_PANE r_mobbler_tools_submenu_pane
 		{
 		MENU_ITEM
 			{
-<<<<<<< HEAD
-			command = EMobblerCommandViewScrobbleLog;
-=======
 			command = EMobblerCommandScrobbleLog;
->>>>>>> * Spanish updated, thanks to Diego Mu?oz Callejo
 			},
 		MENU_ITEM
 			{
@@ -769,11 +704,7 @@ RESOURCE DIALOG r_mobbler_tag_remove_query
             }
         };
     }
-<<<<<<< HEAD
 
-=======
-	
->>>>>>> * Spanish updated, thanks to Diego Mu?oz Callejo
 RESOURCE STATUS_PANE_APP_MODEL r_mobbler_status_pane
 	{
 	panes =
@@ -786,20 +717,12 @@ RESOURCE STATUS_PANE_APP_MODEL r_mobbler_status_pane
 			}
 		};
 	}
-<<<<<<< HEAD
 
-=======
-	
->>>>>>> * Spanish updated, thanks to Diego Mu?oz Callejo
 RESOURCE TITLE_PANE r_mobbler_title_resource
 	{
 	txt = STR_mobbler_mobbler;
 	}
-<<<<<<< HEAD
 
-=======
-	
->>>>>>> * Spanish updated, thanks to Diego Mu?oz Callejo
 RESOURCE AVKON_SETTING_ITEM_LIST r_mobbler_setting_item_list
 	{
 	title = "";
@@ -813,11 +736,7 @@ RESOURCE AVKON_SETTING_PAGE r_mobbler_binary_setting_page
 
 RESOURCE POPUP_SETTING_LIST r_mobbler_popup_binary_setting_list
 	{
-<<<<<<< HEAD
 	// no definitions required - values obtained from
-=======
-	// no definitions required - values obtained from 
->>>>>>> * Spanish updated, thanks to Diego Mu?oz Callejo
 	// associated_resource of owning AVKON_SETTING_ITEM_LIST
 	}
 
@@ -857,11 +776,7 @@ RESOURCE AVKON_SETTING_PAGE r_mobbler_setting_page_password
 	type = EEikCtSecretEd;
 	editor_resource_id = r_mobbler_setting_page_resource_id_password;
 	}
-<<<<<<< HEAD
 
-=======
-	
->>>>>>> * Spanish updated, thanks to Diego Mu?oz Callejo
 RESOURCE SECRETED r_mobbler_setting_page_resource_id_password
 	{
 	num_letters = KMobblerMaxPasswordLength;
@@ -953,11 +868,7 @@ RESOURCE AVKON_INTEGER_EDWIN r_mobbler_integer_edwin_sleep_minutes
 	{
 	min = 0;
 	max = 999; // 16 hours and 39 minutes
-<<<<<<< HEAD
 	}
-=======
-	}  
->>>>>>> * Spanish updated, thanks to Diego Mu?oz Callejo
 
 RESOURCE DIALOG r_mobbler_wait_dialog
 	{
@@ -969,13 +880,8 @@ RESOURCE DIALOG r_mobbler_wait_dialog
 			{
 			type = EAknCtNote;
 			id = EMobblerWait;
-<<<<<<< HEAD
 			control= AVKON_NOTE
 				{
-=======
-			control= AVKON_NOTE 
-				{ 
->>>>>>> * Spanish updated, thanks to Diego Mu?oz Callejo
 				layout = EWaitLayout;
 				animation = R_QGN_GRAF_WAIT_BAR_ANIM;
 				};
@@ -1071,11 +977,7 @@ RESOURCE DIALOG r_mobbler_yes_no_query_dialog
 			{
 			type = EAknCtQuery;
 			id = EMobblerQuery;
-<<<<<<< HEAD
 
-=======
-			
->>>>>>> * Spanish updated, thanks to Diego Mu?oz Callejo
 			control = AVKON_CONFIRMATION_QUERY
 				{
 				layout = EConfirmationQueryLayout;
@@ -1095,11 +997,7 @@ RESOURCE DIALOG r_mobbler_ok_cancel_query_dialog
 			{
 			type = EAknCtQuery;
 			id = EMobblerQuery;
-<<<<<<< HEAD
 
-=======
-			
->>>>>>> * Spanish updated, thanks to Diego Mu?oz Callejo
 			control = AVKON_CONFIRMATION_QUERY
 				{
 				layout = EConfirmationQueryLayout;
@@ -1146,11 +1044,7 @@ RESOURCE DIALOG r_mobbler_get_latest_language_dialog
 			{
 			type = EAknCtQuery;
 			id = EMobblerGetLatestLanguageNote;
-<<<<<<< HEAD
 
-=======
-			
->>>>>>> * Spanish updated, thanks to Diego Mu?oz Callejo
 			control = AVKON_CONFIRMATION_QUERY
 				{
 				layout = EConfirmationQueryLayout;

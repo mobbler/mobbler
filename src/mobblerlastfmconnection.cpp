@@ -80,8 +80,6 @@ _LIT8(KRadioStationRecommended, "lastfm://user/%S/recommended");
 _LIT8(KLatesverFileLocation, "http://www.mobbler.co.uk/latestver.xml");
 #endif
 
-<<<<<<< HEAD
-=======
 #ifdef PERMANENT_LYRICSFLY_ID_KEY
 #include "mobblerlyricsflyidkey.h"
 #else
@@ -89,7 +87,6 @@ _LIT8(KLatesverFileLocation, "http://www.mobbler.co.uk/latestver.xml");
 _LIT8(KLyricsflyIdKey, "1c0736f65ac693cbd-temporary.API.access");
 #endif
 
->>>>>>> * Spanish updated, thanks to Diego Mu?oz Callejo
 // The file name to store the queue of listened tracks
 _LIT(KTracksFile, "c:track_queue.dat");
 _LIT(KCurrentTrackFile, "c:current_track.dat");
@@ -125,10 +122,7 @@ _LIT8(KFieldTitle, "title");
 _LIT8(KFieldUser, "user");
 _LIT8(KFieldUsername, "username");
 _LIT8(KQueryAuthGetMobileSession, "auth.getMobileSession");
-<<<<<<< HEAD
-=======
 _LIT8(KQueryTrackGetInfo, "track.getinfo");
->>>>>>> * Spanish updated, thanks to Diego Mu?oz Callejo
 _LIT8(KQueryAlbumGetInfo, "album.getinfo");
 _LIT8(KQueryArtistGetImages, "artist.getimages");
 _LIT8(KQueryArtistGetSimilar, "artist.getsimilar");
@@ -160,10 +154,6 @@ _LIT8(KQueryUserGetRecommendedArtists, "user.getrecommendedartists");
 _LIT8(KQueryUserGetRecommendedEvents, "user.getrecommendedevents");
 _LIT8(KShoutFormat, "%S.shout");
 
-<<<<<<< HEAD
-_LIT8(KNumeralZero, "0");
-=======
->>>>>>> * Spanish updated, thanks to Diego Mu?oz Callejo
 _LIT8(KNumeralTwo, "2");
 _LIT8(KAdjustPhp, "/adjust.php");
 _LIT8(KTwoDotZero, "2.0");
@@ -182,11 +172,6 @@ _LIT8(KLowerT8, "t");
 _LIT8(KUpperL8, "L");
 _LIT8(KUpperP8, "P");
 
-<<<<<<< HEAD
-_LIT(KBadSession, "BADSESSION");
-
-=======
->>>>>>> * Spanish updated, thanks to Diego Mu?oz Callejo
 // Last.fm can accept up to this many track in one submission
 const TInt KMaxSubmitTracks(50);
 
@@ -266,19 +251,11 @@ void CMobblerLastFmConnection::DoSetModeL(TMode aMode)
 		}
 	}
 
-<<<<<<< HEAD
-void CMobblerLastFmConnection::SetIapIdL(TUint32 iIapId)
-	{
-	if (iIapId != iIapId)
-		{
-		iIapId = iIapId;
-=======
 void CMobblerLastFmConnection::SetIapIdL(TUint32 aIapId)
 	{
 	if (aIapId != iIapId)
 		{
 		iIapId = aIapId;
->>>>>>> * Spanish updated, thanks to Diego Mu?oz Callejo
 		
 		if (((iMode == EOnline || iState == EHandshaking) && iCurrentIapId != iIapId)
 				|| iState == EConnecting)
@@ -691,11 +668,7 @@ void CMobblerLastFmConnection::CheckForUpdateL(MMobblerFlatDataObserver& aObserv
 	AppendAndSubmitTransactionL(transaction);
 	}
 
-<<<<<<< HEAD
-void CMobblerLastFmConnection::TrackLoveL(const TDesC8& aArtist, const TDesC8& aTrack)
-=======
 void CMobblerLastFmConnection::TrackLoveL(const TDesC8& aArtist, const TDesC8& aTrack, MMobblerFlatDataObserver& aObserver)
->>>>>>> * Spanish updated, thanks to Diego Mu?oz Callejo
 	{
 	CUri8* uri(CUri8::NewLC());
 	
@@ -708,10 +681,7 @@ void CMobblerLastFmConnection::TrackLoveL(const TDesC8& aArtist, const TDesC8& a
 	query->AddFieldL(KFieldArtist, aArtist);
 	
 	CMobblerTransaction* transaction(CMobblerTransaction::NewL(*this, ETrue, uri, query));
-<<<<<<< HEAD
-=======
 	transaction->SetFlatDataObserver(&aObserver);
->>>>>>> * Spanish updated, thanks to Diego Mu?oz Callejo
 	
 	CleanupStack::Pop(query);
 	CleanupStack::Pop(uri);
@@ -1001,32 +971,18 @@ void CMobblerLastFmConnection::FetchLyricsL(const TDesC8& aArtist,
 	LOG2(artistPtr, titlePtr);
 
 	// 2. URL encode artist and title
-<<<<<<< HEAD
-
-	// Using the weekly user ID key from http://www.lyricsfly.com/api/#doc 
-	// until we get a permanent key. Make sure the weekly key is correct.
-	_LIT8(KLyricsflyFormat, "http://lyricsfly.com/api/api.php?i=80f126a4797c9fe8f-temporary.API.access&a=%S&t=%S");
-=======
 	_LIT8(KLyricsflyFormat, "http://lyricsfly.com/api/api.php?i=%S&a=%S&t=%S");
->>>>>>> * Spanish updated, thanks to Diego Mu?oz Callejo
 	
 	HBufC8* artistEncoded(MobblerUtility::URLEncodeLC(artistPtr));
 	HBufC8* titleEncoded(MobblerUtility::URLEncodeLC(titlePtr));
 	
 	HBufC8* uriBuf(HBufC8::NewLC(KLyricsflyFormat().Length() + 
-<<<<<<< HEAD
-								 artistEncoded->Length() + 
-								 titleEncoded->Length()));
-	
-	uriBuf->Des().Format(KLyricsflyFormat, artistEncoded, titleEncoded);
-=======
 								 KLyricsflyIdKey().Length() +
 								 artistEncoded->Length() + 
 								 titleEncoded->Length()));
 	
 	uriBuf->Des().Format(KLyricsflyFormat, &KLyricsflyIdKey, 
 							artistEncoded, titleEncoded);
->>>>>>> * Spanish updated, thanks to Diego Mu?oz Callejo
 	LOG(*uriBuf);
 	
 	TUriParser8 uriParser;
@@ -1344,8 +1300,6 @@ void CMobblerLastFmConnection::AlbumRemoveTagL(const TDesC8& aAlbum, const TDesC
 	AppendAndSubmitTransactionL(transaction);
 	}
 
-<<<<<<< HEAD
-=======
 void CMobblerLastFmConnection::TrackGetInfoL(const TDesC8& aTrack, const TDesC8& aArtist, const TDesC8& aMbId, MMobblerFlatDataObserver& aObserver)
 	{
 	CUri8* uri(CUri8::NewL());
@@ -1381,7 +1335,6 @@ void CMobblerLastFmConnection::TrackGetInfoL(const TDesC8& aTrack, const TDesC8&
 	
 	AppendAndSubmitTransactionL(transaction);
 	}
->>>>>>> * Spanish updated, thanks to Diego Mu?oz Callejo
 
 void CMobblerLastFmConnection::AlbumGetInfoL(const TDesC8& aAlbum, const TDesC8& aArtist, MMobblerFlatDataObserver& aObserver)
 	{
@@ -2041,12 +1994,6 @@ TBool CMobblerLastFmConnection::DoSubmitL()
 					}
 				
 				HBufC8* love(HBufC8::NewLC(1));
-<<<<<<< HEAD
-				if (iTrackQueue[ii]->Love())
-					{
-					love->Des().Append(KUpperL8);
-					TrackLoveL(iTrackQueue[ii]->Artist().String8(), iTrackQueue[ii]->Title().String8());
-=======
 				if (iTrackQueue[ii]->Love() != CMobblerTrack::ENoLove)
 					{
 					// The track has been loved so set this in the scrobble submission
@@ -2054,7 +2001,6 @@ TBool CMobblerLastFmConnection::DoSubmitL()
 					
 					// Make sure we also tell Last.fm in a web service call
 					iTrackQueue[ii]->LoveTrackL();
->>>>>>> * Spanish updated, thanks to Diego Mu?oz Callejo
 					}
 				
 				submitForm->AddFieldL(r, *love);
@@ -2296,11 +2242,7 @@ void CMobblerLastFmConnection::TransactionResponseL(CMobblerTransaction* aTransa
 		else
 			{
 			CleanupStack::PushL(error);
-<<<<<<< HEAD
-			if (error->Text() == KBadSession)
-=======
 			if (error->LastFmErrorCode() == CMobblerLastFmError::EBadSession)
->>>>>>> * Spanish updated, thanks to Diego Mu?oz Callejo
 				{
 				// The session has become invalid so handshake again
 				AuthenticateL();
