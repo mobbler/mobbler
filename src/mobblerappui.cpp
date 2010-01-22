@@ -57,6 +57,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "mobbler_strings.rsg.h"
 #include "mobblerappui.h"
 #include "mobblerbitmapcollection.h"
+#include "mobblerbrowserview.h"
 #include "mobblerliterals.h"
 #include "mobblerlogging.h"
 #include "mobblermusiclistener.h"
@@ -185,6 +186,7 @@ void CMobblerAppUi::ConstructL()
 	iAlarmTimer = CMobblerSleepTimer::NewL(EPriorityLow, *this);
 	
 	iWebServicesView = CMobblerWebServicesView::NewL();
+	iBrowserView = CMobblerBrowserView::NewL();
 
 	iLastFmConnection->SetModeL(iSettingView->Mode());
 	iLastFmConnection->LoadCurrentTrackL();
@@ -202,6 +204,7 @@ void CMobblerAppUi::ConstructL()
 	UpdateAccelerometerGesturesL();
 	
 	AddViewL(iWebServicesView);
+	AddViewL(iBrowserView);
 	AddViewL(iSettingView);
 	AddViewL(iStatusView);
 	ActivateLocalViewL(iStatusView->Id());
@@ -862,9 +865,13 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 				{
 				iStatusView->DisplayPlusMenuL();
 				}
+
 			break;
 		case EMobblerCommandPlusVisitLastFm:
-			HandleCommandL(EMobblerCommandVisitWebPage);
+			HandleCommandL(EMobblerCommandVisitWebPage);			
+			break;
+		case EMobblerCommandPlusViewArtistBio:
+			ActivateLocalViewL(iBrowserView->Id(), TUid::Uid(EMobblerCommandArtistBio), currentTrack->Artist().String8());
 			break;
 		case EMobblerCommandPlusShareTrack:
 		case EMobblerCommandPlusShareArtist:
