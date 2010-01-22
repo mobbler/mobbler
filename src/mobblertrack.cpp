@@ -196,8 +196,6 @@ void CMobblerTrack::FindBetterImageL()
 
 void CMobblerTrack::FindLocalAlbumImageL()
 	{
-	TFileName fileName;
-	
 	if (iLocalFile && iLocalFile->Length() > 0)
 		{
 		// This track was found on the phone!
@@ -238,6 +236,7 @@ void CMobblerTrack::FindLocalAlbumImageL()
 #endif
 
 		// First check for %album%.jpg/gif/png
+		TFileName fileName;
 		if (!iImage && Album().String().Length() > 0)
 			{
 			const TInt arraySize(sizeof(KArtExtensionArray) / sizeof(TPtrC));
@@ -301,6 +300,7 @@ void CMobblerTrack::FindLocalAlbumImageL()
 
 void CMobblerTrack::FindLocalArtistImageL()
 	{
+	LOG(_L8("CMobblerTrack::FindLocalArtistImageL"));
 	TFileName fileName;
 	
 	// If still not found, check for %artist%.jpg/gif/png

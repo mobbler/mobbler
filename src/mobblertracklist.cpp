@@ -266,7 +266,7 @@ void CMobblerTrackList::DataL(CMobblerFlatDataObserverHelper* aObserver, const T
 		}
 	else if (aObserver == iLoveObserver)
 		{
-		// Do Nothing
+		// Do nothing
 		}
 	}
 
