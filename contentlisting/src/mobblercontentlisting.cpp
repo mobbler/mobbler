@@ -47,45 +47,100 @@ EXPORT_C const TImplementationProxy* ImplementationGroupProxy(TInt& aTableCount)
 	return ImplementationTable;
 	}
 
+CMobblerContentListing::CMobblerClfItem* CMobblerContentListing::CMobblerClfItem::NewLC(const TDesC& aTitle, const TDesC& aAlbum, const TDesC& aArtist, const TDesC& aLocalFile)
+	{
+	CMobblerClfItem* self(new(ELeave) CMobblerClfItem);
+	CleanupStack::PushL(self);
+	self->ConstructL(aTitle, aAlbum, aArtist, aLocalFile);
+	
+	return self;
+	}
+
+CMobblerContentListing::CMobblerClfItem::CMobblerClfItem()
+	{	
+	}
+
+void CMobblerContentListing::CMobblerClfItem::ConstructL(const TDesC& aTitle, const TDesC& aAlbum, const TDesC& aArtist, const TDesC& aLocalFile)
+	{
+	iTitle = aTitle.AllocL();
+	iAlbum = aAlbum.AllocL();
+	iArtist = aArtist.AllocL();
+	iLocalFile = aLocalFile.AllocL();
+	}
+
+CMobblerContentListing::CMobblerClfItem::~CMobblerClfItem()
+	{
+	delete iTitle;
+	delete iAlbum;
+	delete iArtist;
+	delete iLocalFile;
+	}	
+
+TInt CMobblerContentListing::CMobblerClfItem::CompareClfItem(const CMobblerClfItem& aLeft, const CMobblerClfItem& aRight)
+	{
+	TInt result(aLeft.iTitle->Compare(*aRight.iTitle));
+	
+	if (result == 0)
+		{
+		result = aLeft.iArtist->Compare(*aRight.iArtist);
+		}
+	
+	return result;
+	}
+
 void DoContentListingRefreshL(CMobblerContentListing::TSharedData* aSharedData)
 	{
-	// Create Content Listing Engine and a list model
-	aSharedData->iClfEngine = ContentListingFactory::NewContentListingEngineLC();
-	aSharedData->iClfModel = aSharedData->iClfEngine->CreateListModelLC(*aSharedData->iObserver);
-	
-	// Create an array for the desired media types
-	RArray<TInt> array;
-	CleanupClosePushL(array);
-	array.AppendL(ECLFMediaTypeMusic);
-	
-	// Set wanted media types array to the model
-	aSharedData->iClfModel->SetWantedMediaTypesL(array.Array());
-	CleanupStack::PopAndDestroy(&array);
-	
-	// set the sort order
-	aSharedData->iSortingStyle = ContentListingFactory::NewSortingStyleLC();
-	aSharedData->iSortingStyle->AddFieldL(ECLFFieldIdSongName);
-	aSharedData->iSortingStyle->SetSortingDataType(ECLFItemDataTypeDesC);
-	aSharedData->iSortingStyle->SetOrdering(ECLFOrderingAscending);
-	aSharedData->iSortingStyle->SetUndefinedItemPosition(ECLFSortingStyleUndefinedEnd);
-	aSharedData->iClfModel->SetSortingStyle(aSharedData->iSortingStyle);
-	
-	aSharedData->iSecSortingStyle = ContentListingFactory::NewSortingStyleLC();
-	aSharedData->iSecSortingStyle->AddFieldL(ECLFFieldIdArtist);
-	aSharedData->iSecSortingStyle->SetSortingDataType(ECLFItemDataTypeDesC);
-	aSharedData->iSecSortingStyle->SetOrdering(ECLFOrderingAscending);
-	aSharedData->iClfModel->AppendSecondarySortingStyleL(*aSharedData->iSecSortingStyle);
-	
 	do
 		{
-		aSharedData->iClfModel->RefreshL();
+		// Create Content Listing Engine and a list model
+		MCLFContentListingEngine* clfEngine = ContentListingFactory::NewContentListingEngineLC();
+		MCLFItemListModel* clfModel = clfEngine->CreateListModelLC(*aSharedData->iObserver);
+		
+		// Create an array for the desired media types
+		RArray<TInt> array;
+		CleanupClosePushL(array);
+		array.AppendL(ECLFMediaTypeMusic);
+		
+		// Set wanted media types array to the model
+		clfModel->SetWantedMediaTypesL(array.Array());
+		CleanupStack::PopAndDestroy(&array);
+	
+		clfModel->RefreshL();
 		CActiveScheduler::Start();
+		
+		// The clf has refreshed so get all the data out of it and sort it
+		const TInt KClfItemCount(clfModel->ItemCount());
+		for (TInt i(0) ; i < KClfItemCount ; ++i)
+			{
+			const MCLFItem& clfItem(clfModel->Item(i));
+			
+			TPtrC title(KNullDesC);
+			TPtrC album(KNullDesC);
+			TPtrC artist(KNullDesC);
+			TPtrC localFile(KNullDesC);
+			
+			clfItem.GetField(ECLFFieldIdSongName, title);
+			clfItem.GetField(ECLFFieldIdAlbum, album);
+			clfItem.GetField(ECLFFieldIdArtist, artist);
+			clfItem.GetField(ECLFFieldIdFileNameAndPath, localFile);
+			
+			CMobblerContentListing::CMobblerClfItem* item(CMobblerContentListing::CMobblerClfItem::NewLC(title, album, artist, localFile));
+			
+			clfItem.GetField(ECLFFieldIdTrackNumber, item->iTrackNumber);
+			
+			TLinearOrder<CMobblerContentListing::CMobblerClfItem> order(CMobblerContentListing::CMobblerClfItem::CompareClfItem);
+			aSharedData->iClfItems.InsertInOrder(item, order);
+			CleanupStack::Pop(item);
+			}
+			
+		CleanupStack::PopAndDestroy(2);
+		
 		RThread().Rendezvous(KErrNone);
 		RThread().Suspend();
+		
+		aSharedData->iClfItems.ResetAndDestroy();
 		}
 		while (aSharedData->iState == CMobblerContentListing::EMobblerClfModelRefreshing);
-	
-	CleanupStack::PopAndDestroy(4);
 	}
 
 TInt ThreadFunction(TAny* aRef)
@@ -160,10 +215,9 @@ void CMobblerContentListing::RunL()
 	
 			for (TInt i(iOperations.Count() - 1) ; i >= 0 ; --i)
 				{
-				iOperations[i].iObserver->HandleFindLocalTrackCompleteL(KErrNotFound, KNullDesC, KNullDesC);
+				iOperations[i]->iObserver->HandleFindLocalTrackCompleteL(KErrNotFound, KNullDesC, KNullDesC);
 				
-				delete iOperations[i].iArtist;
-				delete iOperations[i].iTitle;
+				delete iOperations[i];
 				iOperations.Remove(i);
 				}
 			}
@@ -188,26 +242,15 @@ CMobblerContentListing::~CMobblerContentListing()
 	iThread.Resume();
 	User::WaitForRequest(iStatus);
 	
-	const TInt KOperationCount(iOperations.Count());
-	for (TInt i(0) ; i < KOperationCount ; ++i)
-		{
-		delete iOperations[i].iArtist;
-		delete iOperations[i].iTitle;
-		}
-	
-	iOperations.Close();
+	iOperations.ResetAndDestroy();
 	}
 
 void CMobblerContentListing::FindLocalTrackL(const TDesC& aArtist, const TDesC& aTitle, MMobblerContentListingObserver* aObserver)
 	{
-	TMobblerContentListingOperation operation;
-	operation.iObserver = aObserver;
-	operation.iArtist = aArtist.AllocLC();
-	operation.iTitle  = aTitle.AllocLC();
-	
+	CMobblerContentListing::CMobblerClfItem* operation(CMobblerContentListing::CMobblerClfItem::NewLC(aTitle, KNullDesC, aArtist, KNullDesC));
+	operation->iObserver = aObserver;
 	iOperations.AppendL(operation);
-	
-	CleanupStack::Pop(2, operation.iArtist);
+	CleanupStack::Pop(operation);
 	
 	DoFindLocalTrackL();
 	}
@@ -217,10 +260,9 @@ void CMobblerContentListing::CancelFindLocalTrack(MMobblerContentListingObserver
 	const TInt KOperationCount(iOperations.Count());
 	for (TInt i(0) ; i < KOperationCount ; ++i)
 		{
-		if (iOperations[i].iObserver == aObserver)
+		if (iOperations[i]->iObserver == aObserver)
 			{
-			delete iOperations[i].iArtist;
-			delete iOperations[i].iTitle;
+			delete iOperations[i];
 			iOperations.Remove(i);
 			break;
 			}
@@ -236,87 +278,35 @@ void CMobblerContentListing::DoFindLocalTrackL()
 	else if (iSharedData.iState == EMobblerClfModelError)
 		{
 		// there was an error when we refreshed so just tell them that we couldn't find it
-		iOperations[0].iObserver->HandleFindLocalTrackCompleteL(KErrNotFound, KNullDesC, KNullDesC);
+		iOperations[0]->iObserver->HandleFindLocalTrackCompleteL(KErrNotFound, KNullDesC, KNullDesC);
 		}
 	else if (iSharedData.iState == EMobblerClfModelReady)
 		{
 		// the list is sorted by track title and the by artist name
 		// so perform a binary search for 
+	
+		TInt position(KErrNotFound);
 		
 		const TInt KOperationCount(iOperations.Count());
 		
 		for (TInt i(0) ; i < KOperationCount ; ++i)
 			{
-			TInt low(0);
-			TInt high(iSharedData.iClfModel->ItemCount() - 1);
-			
-			TBool found(EFalse);
-			TInt current(low + ((high - low) / 2));
-			
-			while (!found && low <= high)
+			TLinearOrder<CMobblerContentListing::CMobblerClfItem> order(CMobblerContentListing::CMobblerClfItem::CompareClfItem);
+			TInt position(iSharedData.iClfItems.FindInOrder(iOperations[i], order));
+			if (position != KErrNotFound)
 				{
-				current = low + ((high - low) / 2);
-				
-				TPtrC title(KNullDesC);
-				
-				if (iSharedData.iClfModel->Item(current).GetField(ECLFFieldIdSongName, title) == KErrNone)
-					{
-					TInt titleCompareResult(iOperations[0].iTitle->Compare(title));
-					
-					if (titleCompareResult < 0)
-						high = current - 1;
-					else if (titleCompareResult > 0)
-						low = current + 1;
-					else
-						{
-						// we have found the track title so now
-						// check that the artist is correct 
-						
-						TPtrC artist;
-						
-						if (iSharedData.iClfModel->Item(current).GetField(ECLFFieldIdArtist,  artist) == KErrNone)
-							{
-							TInt artistCompareResult(iOperations[0].iArtist->Compare(artist));
-							
-							if (artistCompareResult < 0)
-								high = current - 1;
-							else if (artistCompareResult > 0)
-								low = current + 1;
-							else
-								{
-								// it's the correct track and artist so fetch
-								// some other info and notify the observer
-								
-								TPtrC album(KNullDesC);
-								iSharedData.iClfModel->Item(current).GetField(ECLFFieldIdAlbum, album);
-								
-								TInt32 trackNumber(KErrNotFound);
-								iSharedData.iClfModel->Item(current).GetField(ECLFFieldIdTrackNumber, trackNumber);
-								
-								TPtrC localFile(KNullDesC);
-								iSharedData.iClfModel->Item(current).GetField(ECLFFieldIdFileNameAndPath, localFile);
-								
-								iOperations[0].iObserver->HandleFindLocalTrackCompleteL(trackNumber, album, localFile);
-								found = ETrue;
-								}
-							}
-						else
-							high = current - 1; // there was an error fetching the artist so assume it was blank
-						}
-					}
-				else
-					high = current - 1; // there was an error fetching the song name so assume it was blank
+				iOperations[0]->iObserver->HandleFindLocalTrackCompleteL(iSharedData.iClfItems[position]->iTrackNumber,
+						*iSharedData.iClfItems[position]->iAlbum,
+						*iSharedData.iClfItems[position]->iLocalFile);
 				}
-			
-			if (!found)
+			else
 				{
 				// Always set the album, even if we don't know it
 				// CMobblerTrack needs to know that we don't know it 
-				iOperations[0].iObserver->HandleFindLocalTrackCompleteL(KErrNotFound, KNullDesC, KNullDesC);
+				iOperations[0]->iObserver->HandleFindLocalTrackCompleteL(KErrNotFound, KNullDesC, KNullDesC);
 				}
 			
-			delete iOperations[0].iArtist;
-			delete iOperations[0].iTitle;
+			delete iOperations[0];
 			iOperations.Remove(0);
 			}
 		}

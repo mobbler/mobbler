@@ -41,23 +41,34 @@ public:
 		EMobblerClfModelClosing
 		};
 	
-	struct TSharedData
+	class CMobblerClfItem : public CBase
 		{
-	    MCLFContentListingEngine* iClfEngine;
-	    MCLFItemListModel* iClfModel;
-	    MCLFSortingStyle* iSortingStyle;
-	    MCLFSortingStyle* iSecSortingStyle;
-	    
-	    MCLFOperationObserver* iObserver;
-	    
-	    TState iState;
+	public:
+		static CMobblerClfItem* NewLC(const TDesC& aTitle, const TDesC& aAlbum, const TDesC& aArtist, const TDesC& aLocalFile);
+		~CMobblerClfItem();
+		
+		static TInt CompareClfItem(const CMobblerClfItem& aLeft, const CMobblerClfItem& aRight);
+		
+	private:
+		CMobblerClfItem();
+		void ConstructL(const TDesC& aTitle, const TDesC& aAlbum, const TDesC& aArtist, const TDesC& aLocalFile);
+		
+	public:
+		HBufC* iTitle;
+		HBufC* iAlbum;
+		HBufC* iArtist;
+		HBufC* iLocalFile;
+		TInt32 iTrackNumber;
+		
+		MMobblerContentListingObserver* iObserver;
 		};
 	
-	struct TMobblerContentListingOperation
+	struct TSharedData
 		{
-		HBufC* iArtist;
-		HBufC* iTitle;
-		MMobblerContentListingObserver* iObserver;
+	    MCLFOperationObserver* iObserver;
+	    RPointerArray<CMobblerClfItem> iClfItems;
+	    
+	    TState iState;
 		};
 	
 public:
@@ -89,7 +100,7 @@ private:
 	
 	TSharedData iSharedData;
 
-	RArray<TMobblerContentListingOperation> iOperations;
+	RPointerArray<CMobblerClfItem> iOperations;
 	};
 
 #endif // __MOBBLERCONTENTLISTING_H__
