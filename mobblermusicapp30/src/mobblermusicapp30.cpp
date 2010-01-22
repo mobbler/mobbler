@@ -231,4 +231,27 @@ TMobblerMusicAppObserverCommand CMobblerMusicAppObserver30::ConvertCommand(TMPla
 	return command;
 	}
 
+<<<<<<< HEAD
+=======
+TBool CMobblerMusicAppObserver30::ControlsSupported()
+	{
+	return EFalse;
+	}
+
+void CMobblerMusicAppObserver30::PlayL()
+	{
+	
+	}
+
+void CMobblerMusicAppObserver30::StopL()
+	{
+	
+	}
+
+void CMobblerMusicAppObserver30::SkipL()
+	{
+	
+	}
+
+>>>>>>> * Spanish updated, thanks to Diego Mu?oz Callejo
 // End of file

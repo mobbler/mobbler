@@ -79,14 +79,22 @@ CMobblerListControl* CMobblerAlbumList::HandleListCommandL(TInt aCommand)
 			break;
 		case EMobblerCommandAlbumAddTag:
 			{
+<<<<<<< HEAD
 			CMobblerTrack* track(CMobblerTrack::NewL(iList[iListBox->CurrentItemIndex()]->Description()->String8(), KNullDesC8, iList[iListBox->CurrentItemIndex()]->Title()->String8(), KNullDesC8, KNullDesC8, KNullDesC8, 0, KNullDesC8));
+=======
+			CMobblerTrack* track(CMobblerTrack::NewL(iList[iListBox->CurrentItemIndex()]->Description()->String8(), KNullDesC8, iList[iListBox->CurrentItemIndex()]->Title()->String8(), KNullDesC8, KNullDesC8, KNullDesC8, 0, KNullDesC8, EFalse));
+>>>>>>> * Spanish updated, thanks to Diego Mu?oz Callejo
 			iWebServicesHelper->AlbumAddTagL(*track);            
 			track->Release();
 			}
 			break;
 		case EMobblerCommandAlbumRemoveTag:
 			{
+<<<<<<< HEAD
 			CMobblerTrack* track(CMobblerTrack::NewL(iList[iListBox->CurrentItemIndex()]->Description()->String8(), KNullDesC8, iList[iListBox->CurrentItemIndex()]->Title()->String8(), KNullDesC8, KNullDesC8, KNullDesC8, 0, KNullDesC8));
+=======
+			CMobblerTrack* track(CMobblerTrack::NewL(iList[iListBox->CurrentItemIndex()]->Description()->String8(), KNullDesC8, iList[iListBox->CurrentItemIndex()]->Title()->String8(), KNullDesC8, KNullDesC8, KNullDesC8, 0, KNullDesC8, EFalse));
+>>>>>>> * Spanish updated, thanks to Diego Mu?oz Callejo
 			iWebServicesHelper->AlbumRemoveTagL(*track);            
 			track->Release();
 			}

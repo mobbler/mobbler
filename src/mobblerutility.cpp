@@ -21,6 +21,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
+<<<<<<< HEAD
 #include "mobblerutility.h"
 
 #ifndef __WINS__  //s - TODO: see if this section is needed
@@ -28,6 +29,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "mobblerstring.h"
 #endif //s
 
+=======
+>>>>>>> * Spanish updated, thanks to Diego Mu?oz Callejo
 #include <bautils.h>
 #include <coemain.h>
 #include <hal.h>
@@ -343,6 +346,7 @@ void MobblerUtility::FixLyricsLineBreaks(TDes8& aText)
 	DUMPDATA(aText, _L("lyrics2.txt"));
 	}
 
+<<<<<<< HEAD
 void MobblerUtility::StripUnwantedTagsFromHtml(TDes8& aHtml)
 	{
 	_LIT8(KAnchorStart, "<a");
@@ -387,4 +391,6 @@ void MobblerUtility::StripUnwantedTagsFromHtml(TDes8& aHtml)
 
 
 
+=======
+>>>>>>> * Spanish updated, thanks to Diego Mu?oz Callejo
 // End of file

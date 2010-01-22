@@ -21,6 +21,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
+<<<<<<< HEAD
 
 
 PRJ_MMPFILES
@@ -39,6 +40,22 @@ mobbler.mmp
 
 // In 5th edition, the sensor framework now requires SymbianSigned (ReadDeviceData)
 // ..\gestureobserver\group\gestureobserver5x.mmp
+=======
+PRJ_MMPFILES
+// application icon makefile
+gnumakefile icons.mk
+
+// projects
+mobbler.mmp
+..\mobblermusicapp30\group\mobblermusicapp30.mmp
+..\musicappobserver\group\musicappobserver.mmp
+..\musicappobservermpx\group\musicappobservermpx.mmp
+..\touchfeedback\group\mobblertouchfeedback.mmp
+..\contentlisting\group\mobblercontentlisting.mmp
+..\destinations\group\mobblerdestinations.mmp
+..\gestureobserver\group\gestureobserver3x.mmp
+..\gestureobserver\group\gestureobserver5x.mmp
+>>>>>>> * Spanish updated, thanks to Diego Mu?oz Callejo
 
 PRJ_EXPORTS
 // music player ecom plugin interface

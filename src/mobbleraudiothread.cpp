@@ -90,9 +90,21 @@ CMobblerAudioThread::~CMobblerAudioThread()
 		{
 		iStream->Stop();
 		}
+<<<<<<< HEAD
 	
 	delete iEqualizer;
 	delete iStream;
+=======
+	else if (iPlayer)
+		{
+		iPlayer->Stop();
+		}
+	
+	delete iEqualizer;
+	delete iStream;
+	delete iPlayer;
+	delete iPeriodic;
+>>>>>>> * Spanish updated, thanks to Diego Mu?oz Callejo
 	
 	iBuffer.ResetAndDestroy();
 	}
@@ -132,12 +144,34 @@ void CMobblerAudioThread::RunL()
 			break;
 		case ECmdSetCurrent:
 			{
+<<<<<<< HEAD
 			iStream = CMdaAudioOutputStream::NewL(*this);
 			iStream->Open(&iShared.iAudioDataSettings);
 			
 			if (MobblerUtility::EqualizerSupported())
 				{
 				TRAP_IGNORE(iEqualizer = CAudioEqualizerUtility::NewL(*iStream));
+=======
+			if (iShared.iTrack->LocalFile().Length() > 0)
+				{
+				// it is a local track so just play it
+				iPlayer = CMdaAudioPlayerUtility::NewFilePlayerL(iShared.iTrack->LocalFile(), *this);
+				
+				if (MobblerUtility::EqualizerSupported())
+					{
+					TRAP_IGNORE(iEqualizer = CAudioEqualizerUtility::NewL(*iPlayer));
+					}
+				}
+			else
+				{
+				iStream = CMdaAudioOutputStream::NewL(*this);
+				iStream->Open(&iShared.iAudioDataSettings);
+				
+				if (MobblerUtility::EqualizerSupported())
+					{
+					TRAP_IGNORE(iEqualizer = CAudioEqualizerUtility::NewL(*iStream));
+					}
+>>>>>>> * Spanish updated, thanks to Diego Mu?oz Callejo
 				}
 			}
 			break;
@@ -186,6 +220,13 @@ void CMobblerAudioThread::SetVolume()
 		{
 		iStream->SetVolume(iShared.iAudioDataSettings.iVolume);
 		}
+<<<<<<< HEAD
+=======
+	else if (iPlayer)
+		{
+		iPlayer->SetVolume(iShared.iAudioDataSettings.iVolume);
+		}
+>>>>>>> * Spanish updated, thanks to Diego Mu?oz Callejo
 	}
 
 void CMobblerAudioThread::SetEqualizerIndexL()
@@ -236,7 +277,11 @@ void CMobblerAudioThread::FillBufferL(TBool aDataAdded)
 		if (aDataAdded)
 			{
 			// we are already playing so add the last
+<<<<<<< HEAD
 			//piece of the buffer to the stream
+=======
+			// piece of the buffer to the stream
+>>>>>>> * Spanish updated, thanks to Diego Mu?oz Callejo
 			iStream->WriteL(*iBuffer[iBuffer.Count() - 1]);
 			}
 		}
@@ -301,4 +346,53 @@ void CMobblerAudioThread::MaoscPlayComplete(TInt /*aError*/)
 	{
 	}
 
+<<<<<<< HEAD
+=======
+TInt CMobblerAudioThread::UpdatePlayerPosition(TAny* aRef)
+	{
+	TTimeIntervalMicroSeconds playerPosition;
+	TInt error(static_cast<CMobblerAudioThread*>(aRef)->iPlayer->GetPosition(playerPosition));
+	if (error == KErrNone)
+		{
+		static_cast<CMobblerAudioThread*>(aRef)->iShared.iTrack->SetPlaybackPosition(playerPosition.Int64() / 1000000);
+		}
+	
+	return KErrNone;
+	}
+
+void CMobblerAudioThread::MapcInitComplete(TInt aError, const TTimeIntervalMicroSeconds& aDuration)
+	{
+	if (aError == KErrNone)
+		{
+		iShared.iPlaying = ETrue;
+		iShared.iDownloadComplete = ETrue;
+		iShared.iTrack->SetTrackLength(aDuration.Int64() / 1000000);
+		iPlayer->SetVolume(iShared.iAudioDataSettings.iVolume);
+		iShared.iMaxVolume = iPlayer->MaxVolume();
+		iPlayer->Play();
+		
+		iPeriodic = CPeriodic::NewL(CActive::EPriorityStandard);
+		iCallBack = TCallBack(UpdatePlayerPosition, this);
+		iPeriodic->Start(1000000, 1000000, iCallBack);
+		}
+	else
+		{
+		if (!iActiveSchedulerStopped)
+			{
+			iActiveSchedulerStopped = ETrue;
+			CActiveScheduler::Stop();
+			}
+		}
+	}
+
+void CMobblerAudioThread::MapcPlayComplete(TInt /*aError*/)
+	{
+	if (!iActiveSchedulerStopped)
+		{
+		iActiveSchedulerStopped = ETrue;
+		CActiveScheduler::Stop();
+		}
+	}
+
+>>>>>>> * Spanish updated, thanks to Diego Mu?oz Callejo
 // End of file

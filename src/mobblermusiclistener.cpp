@@ -22,7 +22,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
 #include <bautils.h> 
+<<<<<<< HEAD
 #include <mobbler/mobblercontentlistinginterface.h>
+=======
+>>>>>>> * Spanish updated, thanks to Diego Mu?oz Callejo
 #include <utf.h>
 
 #include "mobblerappui.h"
@@ -34,10 +37,15 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #ifdef __SYMBIAN_SIGNED__
 const TUid KMobblerMusicAppInterfaceUid = {0x20027117};
+<<<<<<< HEAD
 const TUid KContentListingImplUid = {0x2002661E};
 #else
 const TUid KMobblerMusicAppInterfaceUid = {0xA000D9F6};
 const TUid KContentListingImplUid = {0xA000BEB3};
+=======
+#else
+const TUid KMobblerMusicAppInterfaceUid = {0xA000D9F6};
+>>>>>>> * Spanish updated, thanks to Diego Mu?oz Callejo
 #endif
 
 CMobblerMusicAppListener* CMobblerMusicAppListener::NewL(CMobblerLastFmConnection& aSubmitter)
@@ -83,12 +91,15 @@ void CMobblerMusicAppListener::ConstructL()
 	
 	CleanupStack::PopAndDestroy(&implInfoPtrArray);
 	
+<<<<<<< HEAD
 	TRAP_IGNORE(iMobblerContentListing = static_cast<CMobblerContentListingInterface*>(REComSession::CreateImplementationL(KContentListingImplUid, iDtorIdKey)));
 	if (iMobblerContentListing)
 		{
 		iMobblerContentListing->SetObserver(*this);
 		}
 	
+=======
+>>>>>>> * Spanish updated, thanks to Diego Mu?oz Callejo
 	iMusicPlayerState = EPlayerNotRunning;
 	
 	// check if there is a song playing when Mobbler is started
@@ -117,12 +128,15 @@ CMobblerMusicAppListener::~CMobblerMusicAppListener()
 	
 	delete iNowPlayingCallback;
 	
+<<<<<<< HEAD
 	if (iMobblerContentListing)
 		{
 		delete iMobblerContentListing;
 		REComSession::DestroyedImplementation(iDtorIdKey);
 		}
 	
+=======
+>>>>>>> * Spanish updated, thanks to Diego Mu?oz Callejo
 	iObservers.Close();
 	}
 
@@ -288,18 +302,26 @@ void CMobblerMusicAppListener::NowPlayingL()
 				
 				if (trackAlbum.Length() == 0)
 					{
+<<<<<<< HEAD
 					iCurrentTrack = CMobblerTrack::NewL(*artist, *title, KNullDesC8, /*KNullDesC8,*/ KNullDesC8, KNullDesC8, KNullDesC8, trackLength, KNullDesC8);
 					
 					if (trackTitle.Length() != 0 && trackArtist.Length() != 0)
 						{
 						iMobblerContentListing->FindAndSetAlbumNameL(trackArtist, trackTitle);
 						}
+=======
+					iCurrentTrack = CMobblerTrack::NewL(*artist, *title, KNullDesC8, /*KNullDesC8,*/ KNullDesC8, KNullDesC8, KNullDesC8, trackLength, KNullDesC8, EFalse);
+>>>>>>> * Spanish updated, thanks to Diego Mu?oz Callejo
 					}
 				else
 					{
 					HBufC8* album(CnvUtfConverter::ConvertFromUnicodeToUtf8L(trackAlbum));
 					CleanupStack::PushL(album);
+<<<<<<< HEAD
 					iCurrentTrack = CMobblerTrack::NewL(*artist, *title, *album, /*KNullDesC8,*/ KNullDesC8, KNullDesC8, KNullDesC8, trackLength, KNullDesC8);
+=======
+					iCurrentTrack = CMobblerTrack::NewL(*artist, *title, *album, /*KNullDesC8,*/ KNullDesC8, KNullDesC8, KNullDesC8, trackLength, KNullDesC8, EFalse);
+>>>>>>> * Spanish updated, thanks to Diego Mu?oz Callejo
 					CleanupStack::PopAndDestroy(album);
 					}
 				CleanupStack::PopAndDestroy(2, artist); // artist, title
@@ -312,6 +334,7 @@ void CMobblerMusicAppListener::NowPlayingL()
 	NotifyChangeL();
 	}
 
+<<<<<<< HEAD
 void CMobblerMusicAppListener::SetAlbumL(const TDesC& aAlbum)
 	{
 	if (iCurrentTrack)
@@ -336,6 +359,8 @@ void CMobblerMusicAppListener::SetTrackNumber(const TInt aTrackNumber)
 		}
 	}
 
+=======
+>>>>>>> * Spanish updated, thanks to Diego Mu?oz Callejo
 void CMobblerMusicAppListener::PlayerStateChangedL(TMobblerMusicAppObserverState aState)
 	{
 	TMobblerMusicAppObserverState oldState(iMusicPlayerState);
@@ -445,4 +470,84 @@ TBool CMobblerMusicAppListener::IsPlaying() const
 	return (iCurrentTrack && iMusicPlayerState == EPlayerPlaying);
 	}
 
+<<<<<<< HEAD
+=======
+TBool CMobblerMusicAppListener::ControlsSupported()
+	{
+	// find the first music app observer that is playing a track
+	TInt musicAppIndex(KErrNotFound);
+	const TInt KMusicAppCount(iMobblerMusicApps.Count());
+	for (TInt i(0) ; i < KMusicAppCount ; ++i)
+		{
+		if (iMobblerMusicApps[i]->PlayerState() == EPlayerPlaying)
+			{
+			musicAppIndex = i;
+			break;
+			}
+		}
+	
+	return musicAppIndex == KErrNotFound ? EFalse : iMobblerMusicApps[musicAppIndex]->ControlsSupported();
+	}
+
+void CMobblerMusicAppListener::PlayL()
+	{
+	// find the first music app observer that is playing a track
+	TInt musicAppIndex(KErrNotFound);
+	const TInt KMusicAppCount(iMobblerMusicApps.Count());
+	for (TInt i(0) ; i < KMusicAppCount ; ++i)
+		{
+		if (iMobblerMusicApps[i]->PlayerState() == EPlayerPlaying)
+			{
+			musicAppIndex = i;
+			break;
+			}
+		}
+	
+	if (musicAppIndex != KErrNotFound)
+		{
+		iMobblerMusicApps[musicAppIndex]->PlayL();
+		}
+	}
+
+void CMobblerMusicAppListener::StopL()
+	{
+	// find the first music app observer that is playing a track
+	TInt musicAppIndex(KErrNotFound);
+	const TInt KMusicAppCount(iMobblerMusicApps.Count());
+	for (TInt i(0) ; i < KMusicAppCount ; ++i)
+		{
+		if (iMobblerMusicApps[i]->PlayerState() == EPlayerPlaying)
+			{
+			musicAppIndex = i;
+			break;
+			}
+		}
+	
+	if (musicAppIndex != KErrNotFound)
+		{
+		iMobblerMusicApps[musicAppIndex]->StopL();
+		}
+	}
+
+void CMobblerMusicAppListener::SkipL()
+	{
+	// find the first music app observer that is playing a track
+	TInt musicAppIndex(KErrNotFound);
+	const TInt KMusicAppCount(iMobblerMusicApps.Count());
+	for (TInt i(0) ; i < KMusicAppCount ; ++i)
+		{
+		if (iMobblerMusicApps[i]->PlayerState() == EPlayerPlaying)
+			{
+			musicAppIndex = i;
+			break;
+			}
+		}
+	
+	if (musicAppIndex != KErrNotFound)
+		{
+		iMobblerMusicApps[musicAppIndex]->SkipL();
+		}
+	}
+
+>>>>>>> * Spanish updated, thanks to Diego Mu?oz Callejo
 // End of file

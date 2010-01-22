@@ -35,7 +35,11 @@ enum TMobblerSettingItemListViewCommands
 	EMobblerCommandAbout,
 	
 	EMobblerCommandTools,
+<<<<<<< HEAD
 	EMobblerCommandViewScrobbleLog,
+=======
+	EMobblerCommandScrobbleLog,
+>>>>>>> * Spanish updated, thanks to Diego Mu?oz Callejo
 	EMobblerCommandScrobbleLogRemove,
 	
 	EMobblerCommandPlus,
@@ -78,7 +82,10 @@ enum TMobblerSettingItemListViewCommands
 	EMobblerCommandPlaylists,
 	EMobblerCommandUserEvents,
 	EMobblerCommandArtistEvents,
+<<<<<<< HEAD
 	EMobblerCommandArtistBio,
+=======
+>>>>>>> * Spanish updated, thanks to Diego Mu?oz Callejo
 
 	EMobblerCommandTagTopArtists,
 	
@@ -133,7 +140,10 @@ enum TMobblerSettingItemListViewCommands
 	
 	// plus menu commands
 	EMobblerCommandPlusVisitLastFm,
+<<<<<<< HEAD
 	EMobblerCommandPlusViewArtistBio,
+=======
+>>>>>>> * Spanish updated, thanks to Diego Mu?oz Callejo
 	EMobblerCommandPlusEvents,
 	EMobblerCommandPlusArtistShoutbox,
 	EMobblerCommandPlusPlaylistAddTrack,

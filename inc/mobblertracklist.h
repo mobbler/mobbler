@@ -52,6 +52,10 @@ private:
 private:
 	CMobblerWebServicesHelper* iWebServicesHelper;
 	CMobblerFlatDataObserverHelper* iAlbumInfoObserver;
+<<<<<<< HEAD
+=======
+	CMobblerFlatDataObserverHelper* iLoveObserver;
+>>>>>>> * Spanish updated, thanks to Diego Mu?oz Callejo
 	
 	// callback for viewing scrobble log
 	CAsyncCallBack* iAsyncCallBack;
