@@ -39,12 +39,6 @@ public:
 
 	static void FixLyricsSpecialCharacters(TDes8& aText);
 	static void FixLyricsLineBreaks(TDes8& aText);
-<<<<<<< HEAD
-	
-	static void StripUnwantedTagsFromHtml(TDes8& aHtml);
-
-=======
->>>>>>> * Spanish updated, thanks to Diego Mu?oz Callejo
 	};
 
 #endif // __MOBBLERUTILITY_H__
