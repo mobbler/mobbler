@@ -291,7 +291,7 @@ void CMobblerContentListing::DoFindLocalTrackL()
 		
 		for (TInt i(0) ; i < KOperationCount ; ++i)
 			{
-			position = iSharedData.iClfItems.FindInOrder(iOperations[i], order);
+			position = iSharedData.iClfItems.FindInOrder(iOperations[0], order);
 			
 			if (position != KErrNotFound)
 				{
