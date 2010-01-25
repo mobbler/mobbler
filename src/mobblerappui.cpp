@@ -57,7 +57,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "mobbler_strings.rsg.h"
 #include "mobblerappui.h"
 #include "mobblerbitmapcollection.h"
-#include "mobblerbrowserview.h"
 #include "mobblerliterals.h"
 #include "mobblerlogging.h"
 #include "mobblermusiclistener.h"
@@ -186,7 +185,6 @@ void CMobblerAppUi::ConstructL()
 	iAlarmTimer = CMobblerSleepTimer::NewL(EPriorityLow, *this);
 	
 	iWebServicesView = CMobblerWebServicesView::NewL();
-	iBrowserView = CMobblerBrowserView::NewL();
 
 	iLastFmConnection->SetModeL(iSettingView->Mode());
 	iLastFmConnection->LoadCurrentTrackL();
@@ -204,7 +202,6 @@ void CMobblerAppUi::ConstructL()
 	UpdateAccelerometerGesturesL();
 	
 	AddViewL(iWebServicesView);
-	AddViewL(iBrowserView);
 	AddViewL(iSettingView);
 	AddViewL(iStatusView);
 	ActivateLocalViewL(iStatusView->Id());
@@ -233,7 +230,6 @@ CMobblerAppUi::~CMobblerAppUi()
 	delete iBrowserLauncher;
 #endif
 	delete iAlarmTimer;
-	delete iArtistBiographyObserver;
 	delete iBitmapCollection;
 	delete iCheckForUpdatesObserver;
 	delete iDocHandler;
@@ -866,19 +862,9 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 				{
 				iStatusView->DisplayPlusMenuL();
 				}
-
 			break;
 		case EMobblerCommandPlusVisitLastFm:
-			HandleCommandL(EMobblerCommandVisitWebPage);			
-			break;
-		case EMobblerCommandPlusArtistBiography:
-			if (currentTrack)
-				{
-				delete iArtistBiographyObserver;
-				iArtistBiographyObserver = CMobblerFlatDataObserverHelper::NewL(
-											*iLastFmConnection, *this, ETrue);
-				iLastFmConnection->WebServicesCallL(KArtist, KGetInfo, CurrentTrack()->Artist().String8(), *iArtistBiographyObserver);
-				}
+			HandleCommandL(EMobblerCommandVisitWebPage);
 			break;
 		case EMobblerCommandPlusShareTrack:
 		case EMobblerCommandPlusShareArtist:
@@ -1349,7 +1335,7 @@ void CMobblerAppUi::DataL(CMobblerFlatDataObserverHelper* aObserver, const TDesC
 				// Temporary keys don't return correct checksums to prevent abuse.
 				_LIT8(KElementCs, "cs"); // checksum (for link back)
 				_LIT8(KElementId, "id"); // song ID (for link back)
-				_LIT8(KLinkBackFormat, "Make corrections:\r\nhttp://lyricsfly.com/search/correction.php?%S&id=%S\r\n");
+				_LIT8(KLinkBackFormat, "Make corrections:\r\nhttp://lyricsfly.com/search/correction.php?%S&id=%S");
 				
 				TPtrC8 checkSumPtrC(domFragment->AsElement().Element(KElementSg)->Element(KElementCs)->Content());
 				TPtrC8 idPtrC(domFragment->AsElement().Element(KElementSg)->Element(KElementId)->Content());
@@ -1424,12 +1410,8 @@ void CMobblerAppUi::DataL(CMobblerFlatDataObserverHelper* aObserver, const TDesC
 				{
 				LaunchFileL(KLyricsFilename);
 				}
-			} // else if (aObserver == iFetchLyricsObserver)
-		else if (aObserver == iArtistBiographyObserver)
-			{
-			ActivateLocalViewL(iBrowserView->Id(), TUid::Uid(EMobblerCommandPlusArtistBiography), aData);
 			}
-		} // 	if (aTransactionError == CMobblerLastFmConnection::ETransactionErrorNone)
+		}
 	}
 
 void CMobblerAppUi::HandleConnectCompleteL(TInt aError)

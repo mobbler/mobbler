@@ -297,7 +297,6 @@ private:
 	
 	CMobblerWebServicesHelper* iWebServicesHelper;
 	CMobblerFlatDataObserverHelper* iCheckForUpdatesObserver;
-	CMobblerFlatDataObserverHelper* iArtistBiographyObserver;
 	CMobblerFlatDataObserverHelper* iFetchLyricsObserver;
 	
 	CMobblerDestinationsInterface* iDestinations;
