@@ -419,7 +419,7 @@ void CMobblerStatusControl::SetPositions()
 	iMobblerBitmapBan->SetSize(iControlSize);
 	iMobblerBitmapMore->SetSize(iControlSize);
 	iMobblerBitmapLove->SetSize(iControlSize);
-	iMobblerBitmapHarddiskIcon->SetSize(TSize(iControlSize.iWidth / 2, iControlSize.iHeight / 2));
+	iMobblerBitmapHarddiskIcon->SetSize(iControlSize);
 	iMobblerBitmapPlay->SetSize(iControlSize);
 	iMobblerBitmapNext->SetSize(iControlSize);
 	iMobblerBitmapStop->SetSize(iControlSize);
