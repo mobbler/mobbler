@@ -39,6 +39,9 @@ public:
 
 	static void FixLyricsSpecialCharacters(TDes8& aText);
 	static void FixLyricsLineBreaks(TDes8& aText);
+	
+	static void StripUnwantedTagsFromHtmlL(HBufC8*& aHtml);
+
 	};
 
 #endif // __MOBBLERUTILITY_H__

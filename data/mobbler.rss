@@ -372,6 +372,10 @@ RESOURCE MENU_PANE r_mobbler_status_menu_pane
 			},
 		MENU_ITEM
 			{
+			command = EMobblerCommandPlusArtistBiography;
+			},
+		MENU_ITEM
+			{
 			command = EMobblerCommandPlusArtistShoutbox;
 			},
 		// end of the plus option menu commands
