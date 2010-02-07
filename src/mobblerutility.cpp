@@ -25,6 +25,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <coemain.h>
 #include <hal.h>
 #include <hash.h>
+#include <sendomfragment.h>
 
 #include "mobblerlogging.h"
 #include "mobblerutility.h"
@@ -300,8 +301,6 @@ void MobblerUtility::FixLyricsSpecialCharacters(TDes8& aText)
 
 void MobblerUtility::FixLyricsLineBreaks(TDes8& aText)
 	{
-	DUMPDATA(aText, _L("lyrics0.txt"));
-	
 	// First, remove all Windows newlines
 	_LIT8(KCRLF,"\x0D\x0A");
 
@@ -320,8 +319,6 @@ void MobblerUtility::FixLyricsLineBreaks(TDes8& aText)
 		aText.Delete(pos, KLF().Length());
 		}
 	
-	DUMPDATA(aText, _L("lyrics1.txt"));
-	
 	// Finally, replace [br] tags with newlines
 	_LIT8(KBrTag1, "[br]");
 	_LIT8(KBrTag2, "\r\n");
@@ -332,8 +329,91 @@ void MobblerUtility::FixLyricsLineBreaks(TDes8& aText)
 		aText.Delete(pos, KBrTag1().Length());
 		aText.Insert(pos, KBrTag2);
 		}
+	}
+
+void MobblerUtility::StripUnwantedTagsFromHtmlL(HBufC8*& aHtml)
+	{
+	_LIT8(KAnchorStart, "<a");
+
+	TPtr8 htmlPtr(aHtml->Des());
+
+	TInt pos(KErrNotFound);
+	while ((pos = htmlPtr.Find(KAnchorStart)) != KErrNotFound)
+		{
+		TPtrC8 ptrFromPos = htmlPtr.MidTPtr(pos);
+		TInt endBracketPos = ptrFromPos.Locate('>');
+		if (endBracketPos == KErrNotFound)
+			{
+			break; // HTML not well-formed, just stop
+			}
+		htmlPtr.Delete(pos, endBracketPos + 1);
+		}
+
+	_LIT8(KAnchorEnd, "</a>");
+	while ((pos = htmlPtr.Find(KAnchorEnd)) != KErrNotFound)
+		{
+		htmlPtr.Delete(pos, KAnchorEnd().Length());
+		}
+
+	_LIT8(KBandMemberTag, "[bandmember]");
+	while ((pos = htmlPtr.Find(KBandMemberTag)) != KErrNotFound)
+		{
+		TPtrC8 ptrFromPos = htmlPtr.MidTPtr(pos);
+		TInt endBracketPos = ptrFromPos.Locate(']');
+		if (endBracketPos == KErrNotFound)
+			{
+			break; // Tag not well-formed, just stop
+			}
+		htmlPtr.Delete(pos, endBracketPos + 1);
+		}
+
+	_LIT8(KBandMemberEndTag, "[/bandmember]");
+	while ((pos = htmlPtr.Find(KBandMemberEndTag)) != KErrNotFound)
+		{
+		htmlPtr.Delete(pos, KBandMemberEndTag().Length());
+		}
+
+	// It makes the tidying code easier to use <br /><br /> as paragraph
+	// breaks rather than <p>...</p>
+
+	// Calculate if the descriptor's maximum length is big
+	// enough to store the extra characters for the line breaks
+	// Finally, replace paragraph with newlines
+	_LIT8(KBrTag1, "<br /><br />");
+	_LIT8(KNewLine, "\x20\x0A");
+
+	// We don't want to keep growing the descriptor so do a quick
+	// scan of the HTML and see if there is enough space in the
+	// descriptor to store the extra <br />
+	// In most cases, we will have gained some space from stripping
+	// out anchors etc.
+	while ((pos = htmlPtr.Find(KNewLine)) != KErrNotFound)
+		{
+		htmlPtr.Delete(pos, KNewLine().Length());
+
+		if ((htmlPtr.Length() + KBrTag1().Length()) > htmlPtr.MaxLength())
+			{
+			CleanupStack::PushL(aHtml);
+			aHtml = aHtml->ReAllocL(htmlPtr.Length() + KBrTag1().Length() * 3); // 3 times so that we don't have to keep reallocating
+			CleanupStack::Pop();
+			htmlPtr.Set(aHtml->Des());
+			}
+		htmlPtr.Insert(pos, KBrTag1);
+		}
+	}
+
+CSenDomFragment* MobblerUtility::PrepareDomFragmentLC(CSenXmlReader& aXmlReader, const TDesC8& aXml)
+	{
+	// Create the DOM fragment and associate with the XML reader
+	CSenDomFragment* domFragment(CSenDomFragment::NewL());
+	CleanupStack::PushL(domFragment);
+	aXmlReader.SetContentHandler(*domFragment);
+	domFragment->SetReader(aXmlReader);
 	
-	DUMPDATA(aText, _L("lyrics2.txt"));
+	// Parse the XML into the DOM fragment
+	aXmlReader.ParseL(aXml);
+	
+	return domFragment;
 	}
 
 // End of file

@@ -26,6 +26,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <e32base.h>
 
+class CSenDomFragment;
+class CSenXmlReader;
+
 class MobblerUtility
 	{
 public:
@@ -39,6 +42,10 @@ public:
 
 	static void FixLyricsSpecialCharacters(TDes8& aText);
 	static void FixLyricsLineBreaks(TDes8& aText);
+	
+	static void StripUnwantedTagsFromHtmlL(HBufC8*& aHtml);
+
+	static CSenDomFragment* PrepareDomFragmentLC(CSenXmlReader& aXmlReader, const TDesC8& aXml);
 	};
 
 #endif // __MOBBLERUTILITY_H__
