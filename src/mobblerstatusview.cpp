@@ -139,7 +139,6 @@ void CMobblerStatusView::DynInitMenuPaneL(TInt aResourceId, CEikMenuPane* aMenuP
 		
 		// the plus menu commands
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_VISIT_LASTFM_MENU,	EMobblerCommandPlusVisitLastFm);
-		SetMenuItemTextL(aMenuPane, R_MOBBLER_BIOGRAPHY,			EMobblerCommandPlusArtistBiography);
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_SHARE,				EMobblerCommandPlusShare);
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_SIMILAR,				EMobblerCommandPlusSimilar);
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_TOP,					EMobblerCommandPlusTop);
@@ -147,7 +146,7 @@ void CMobblerStatusView::DynInitMenuPaneL(TInt aResourceId, CEikMenuPane* aMenuP
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_EVENTS,				EMobblerCommandPlusEvents);
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_ARTIST_SHOUTBOX,		EMobblerCommandPlusArtistShoutbox);
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_TAG,					EMobblerCommandPlusTag);
-		SetMenuItemTextL(aMenuPane, R_MOBBLER_LYRICS,				EMobblerCommandPlusLyrics);
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_LYRICS,				EMobblerCommandTrackLyrics);
 		}
 	else if(aResourceId == R_MOBBLER_PLUS_SHARE_SUBMENU_PANE)
 		{
@@ -264,9 +263,8 @@ void CMobblerStatusView::DynInitMenuPaneL(TInt aResourceId, CEikMenuPane* aMenuP
 			aMenuPane->SetItemDimmed(EMobblerCommandPlusEvents, ETrue);
 			aMenuPane->SetItemDimmed(EMobblerCommandPlusArtistShoutbox, ETrue);
 			aMenuPane->SetItemDimmed(EMobblerCommandPlusVisitLastFm, ETrue);
-			aMenuPane->SetItemDimmed(EMobblerCommandPlusArtistBiography, ETrue);
 			aMenuPane->SetItemDimmed(EMobblerCommandPlusTag, ETrue);
-			aMenuPane->SetItemDimmed(EMobblerCommandPlusLyrics, ETrue);
+			aMenuPane->SetItemDimmed(EMobblerCommandTrackLyrics, ETrue);
 			
 			if (static_cast<CMobblerAppUi*>(AppUi())->Mode() == CMobblerLastFmConnection::EOnline ||
 					static_cast<CMobblerAppUi*>(AppUi())->State() == CMobblerLastFmConnection::EConnecting ||
