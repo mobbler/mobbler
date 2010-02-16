@@ -2123,7 +2123,7 @@ void CMobblerAppUi::GoToMapL(const TDesC8& aName, const TDesC8& aLatitude, const
 		
 		CMobblerString* longitude(CMobblerString::NewLC(aLongitude));
 		CMobblerString* latitude(CMobblerString::NewLC(aLatitude));
-		CMobblerString* name(CMobblerString::NewLC(aName)); // TODO: should name be used?
+		//CMobblerString* name(CMobblerString::NewLC(aName)); // TODO: should name be used?
 		
 		HBufC* url(HBufC::NewLC(KMapURLFormat().Length() + longitude->String().Length() + latitude->String().Length()));
 		

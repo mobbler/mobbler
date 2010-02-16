@@ -2518,17 +2518,20 @@ CUri8* CMobblerLastFmConnection::SetUpWebServicesUriLC()
 	return uri;
 	}
 
-void CMobblerLastFmConnection::ScrobbleTrackL(const CMobblerTrackBase* aTrack)
+void CMobblerLastFmConnection::ScrobbleTrackL(const CMobblerTrackBase* aTrack, const TBool aSubmit)
 	{
 	delete iUniversalScrobbledTrack;
 	iUniversalScrobbledTrack = CMobblerTrackBase::NewL(*aTrack);
 	iObserver.HandleTrackQueuedL(*iUniversalScrobbledTrack);
 	iTrackQueue.AppendL(iUniversalScrobbledTrack);
 	
-	// Save the track queue and try to do a submission
-	SaveTrackQueueL();
-	DoSubmitL();
-
+	// Save the track queue and try a submission
+	if (aSubmit)
+		{
+		SaveTrackQueueL();
+		DoSubmitL();
+		}
+	
 	iUniversalScrobbledTrack = NULL;
 	}
 
