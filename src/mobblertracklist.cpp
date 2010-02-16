@@ -200,7 +200,7 @@ CMobblerListControl* CMobblerTrackList::HandleListCommandL(TInt aCommand)
 				scrobbleTime += (TTimeIntervalSeconds)KAverageTrackLength;
 				track->SetStartTimeUTC(scrobbleTime);
 				
-				iAppUi.LastFmConnection().ScrobbleTrackL(track);
+				iAppUi.LastFmConnection().ScrobbleTrackL(track, i+1 == KCount);
 				track->Release();
 				}
 			}

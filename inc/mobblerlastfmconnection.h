@@ -127,7 +127,7 @@ public:
 	TInt ScrobbleLogCount() const;
 	const CMobblerTrackBase& ScrobbleLogItem(TInt aIndex) const;
 	void RemoveScrobbleLogItemL(TInt aIndex);
-	void ScrobbleTrackL(const CMobblerTrackBase* aTrack);
+	void ScrobbleTrackL(const CMobblerTrackBase* aTrack, const TBool aSubmit = ETrue);
 	
 	// state observers
 	void AddStateChangeObserverL(MMobblerConnectionStateObserver* aObserver);
