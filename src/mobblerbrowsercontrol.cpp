@@ -227,13 +227,13 @@ void CMobblerBrowserControl::ConstructL(const TRect& aRect, TUid /*aCustomMessag
 	TRect applicationRect(iAppUi.ApplicationRect());
 	TInt artistImageWidth((TInt)((TReal)applicationRect.Width() * 0.40));
 
-	HBufC8* artistInfoHtml = HBufC8::NewLC(KArtistInfoHtmlTemplate().Length() +
+	HBufC8* artistInfoHtml(HBufC8::NewLC(KArtistInfoHtmlTemplate().Length() +
 			iAppUi.CurrentTrack()->Artist().String8().Length() +
 			tagsText->Length() +
 			similarArtistsText->Length() +
 			imageUrl->Length() +
 			3 +
-			artistInfo->Length());
+			artistInfo->Length()));
 
 	TPtr8 artistHtmlPtr(artistInfoHtml->Des());
 	artistHtmlPtr.AppendFormat(KArtistInfoHtmlTemplate,

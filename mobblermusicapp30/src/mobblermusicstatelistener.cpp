@@ -30,7 +30,7 @@ const TInt KStateKey(3);
 
 CMobblerMusicAppStateListener* CMobblerMusicAppStateListener::NewL(MMobblerMusicAppStateObserver& aObserver)
 	{
-	CMobblerMusicAppStateListener* self = new(ELeave) CMobblerMusicAppStateListener(aObserver);
+	CMobblerMusicAppStateListener* self(new(ELeave) CMobblerMusicAppStateListener(aObserver));
 	CleanupStack::PushL(self);
 	self->ConstructL();
 	CleanupStack::Pop(self);

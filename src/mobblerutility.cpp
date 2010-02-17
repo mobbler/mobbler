@@ -340,8 +340,8 @@ void MobblerUtility::StripUnwantedTagsFromHtmlL(HBufC8*& aHtml)
 	TInt pos(KErrNotFound);
 	while ((pos = htmlPtr.Find(KAnchorStart)) != KErrNotFound)
 		{
-		TPtrC8 ptrFromPos = htmlPtr.MidTPtr(pos);
-		TInt endBracketPos = ptrFromPos.Locate('>');
+		TPtrC8 ptrFromPos(htmlPtr.MidTPtr(pos));
+		TInt endBracketPos(ptrFromPos.Locate('>'));
 		if (endBracketPos == KErrNotFound)
 			{
 			break; // HTML not well-formed, just stop
@@ -358,7 +358,7 @@ void MobblerUtility::StripUnwantedTagsFromHtmlL(HBufC8*& aHtml)
 	_LIT8(KBandMemberTag, "[bandmember]");
 	while ((pos = htmlPtr.Find(KBandMemberTag)) != KErrNotFound)
 		{
-		TPtrC8 ptrFromPos = htmlPtr.MidTPtr(pos);
+		TPtrC8 ptrFromPos(htmlPtr.MidTPtr(pos));
 		TInt endBracketPos = ptrFromPos.Locate(']');
 		if (endBracketPos == KErrNotFound)
 			{
