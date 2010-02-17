@@ -755,14 +755,16 @@ void CMobblerParser::ParseFriendListL(const TDesC8& aXml, CMobblerFriendList& aO
 		HBufC8* description(NULL);
 		
 		if (items[i]->Element(KRecentTrack))
-			{	
-			HBufC8* title = SenXmlUtils::DecodeHttpCharactersLC(items[i]->Element(KRecentTrack)->Element(KName)->Content());
-			HBufC8* artist = SenXmlUtils::DecodeHttpCharactersLC(items[i]->Element(KRecentTrack)->Element(KArtist)->Element(KName)->Content());
+			{
+			HBufC8* title(SenXmlUtils::DecodeHttpCharactersLC(items[i]->Element(KRecentTrack)->Element(KName)->Content()));
+			HBufC8* artist(SenXmlUtils::DecodeHttpCharactersLC(items[i]->Element(KRecentTrack)->Element(KArtist)->Element(KName)->Content()));
 			
-			description = HBufC8::NewL(title->Length() + artist->Length() + 3);
-			description->Des().Append(*title);
-			description->Des().Append(_L(" - "));
-			description->Des().Append(*artist);
+			_LIT8(KEnDashFormat, "%S - %S");
+			description = HBufC8::NewL(title->Length() + artist->Length() + KEnDashFormat().Length());
+			
+			TPtrC8 titlePtr(title->Des());
+			TPtrC8 artistPtr(artist->Des());
+			description->Des().Format(KEnDashFormat, &titlePtr, &artistPtr);
 			
 			CleanupStack::PopAndDestroy(2, title);
 			CleanupStack::PushL(description);

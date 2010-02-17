@@ -34,23 +34,15 @@ class CMobblerTrack;
 
 class CMobblerWebServicesHelper : public CBase,	public MMobblerFlatDataObserverHelper, public MMobblerBitmapObserver
 	{
-private:
-	enum TShareSource
-		{
-		EShareCancelled,
-		EShareFromContacts,
-		EShareFromFriends
-		};
-	
 public:
 	static CMobblerWebServicesHelper* NewL(CMobblerAppUi& aAppUi);
 	~CMobblerWebServicesHelper();
 	
 	void TrackShareL(CMobblerTrack& aTrack);
 	void ArtistShareL(CMobblerTrack& aTrack);
-	void EventShareL(const TDesC8& aEventId);
-	
 	void PlaylistAddL(CMobblerTrack& aTrack);
+	
+	void EventShareL(const TDesC8& aEventId);
 	
 	void AddTagL(CMobblerTrack& aTrack, TInt aCommand);
 	
@@ -66,12 +58,8 @@ private:
 	void ConstructL();
 	CMobblerWebServicesHelper(CMobblerAppUi& aAppUi);
 	
-	HBufC* DisplayContactListL();
-	HBufC* DisplayEmailListL(const CDesCArray& aEmails);
-	
-	TShareSource ShareSourceL();
-	
-	void DoShareL(TInt aCommand, const TDesC8& aRecipient);
+	//HBufC* DisplayContactListL();
+	//HBufC* DisplayEmailListL(const CDesCArray& aEmails);
 
 private:
 	void DataL(CMobblerFlatDataObserverHelper* aObserver, const TDesC8& aData, CMobblerLastFmConnection::TTransactionError aTransactionError);
