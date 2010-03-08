@@ -69,7 +69,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "mobblerstatuscontrol.h"
 #include "mobblerstatusview.h"
 #include "mobblerstring.h"
-#include "mobblertracer.h"
 #include "mobblertrack.h"
 #include "mobblerutility.h"
 #include "mobblerwebserviceshelper.h"
@@ -95,7 +94,6 @@ _LIT(KSpace, " ");
 
 CMobblerGlobalQuery* CMobblerGlobalQuery::NewL(TInt aResourceId)
 	{
-    TRACER_AUTO;
 	CMobblerGlobalQuery* self(new(ELeave) CMobblerGlobalQuery());
 	CleanupStack::PushL(self);
 	self->ConstructL(aResourceId);
@@ -106,13 +104,11 @@ CMobblerGlobalQuery* CMobblerGlobalQuery::NewL(TInt aResourceId)
 CMobblerGlobalQuery::CMobblerGlobalQuery()
 	:CActive(CActive::EPriorityStandard)
 	{
-    TRACER_AUTO;
 	CActiveScheduler::Add(this);
 	}
 
 void CMobblerGlobalQuery::ConstructL(TInt aResourceId)
 	{
-    TRACER_AUTO;
 	TInt softkeys(aResourceId == R_MOBBLER_CLOSE_QUERY ? 
 								 R_AVKON_SOFTKEYS_YES_NO : 
 								 R_AVKON_SOFTKEYS_OK_EMPTY);
@@ -124,20 +120,17 @@ void CMobblerGlobalQuery::ConstructL(TInt aResourceId)
 
 CMobblerGlobalQuery::~CMobblerGlobalQuery()
 	{
-    TRACER_AUTO;
 	delete iGlobalConfirmationQuery;
 	delete iMessage;
 	}
 
 void CMobblerGlobalQuery::RunL()
 	{
-    TRACER_AUTO;
 	CActiveScheduler::Stop();
 	}
 
 void CMobblerGlobalQuery::DoCancel()
 	{
-    TRACER_AUTO;
 	iGlobalConfirmationQuery->CancelConfirmationQuery();
 	}
 
@@ -145,7 +138,6 @@ void CMobblerGlobalQuery::DoCancel()
 
 void CMobblerAppUi::ConstructL()
 	{
-    TRACER_AUTO;
 	iWebServicesHelper = CMobblerWebServicesHelper::NewL(*this);
 	
 	iResourceReader = CMobblerResourceReader::NewL();
@@ -218,12 +210,10 @@ void CMobblerAppUi::ConstructL()
 CMobblerAppUi::CMobblerAppUi()
 	: iSleepAfterTrackStopped(EFalse)
 	{
-    TRACER_AUTO;
 	}
 
 CMobblerAppUi::~CMobblerAppUi()
 	{
-    TRACER_AUTO;
 	if (iGesturePlugin)
 		{
 		delete iGesturePlugin;
@@ -278,13 +268,11 @@ CMobblerAppUi::~CMobblerAppUi()
 
 TBool CMobblerAppUi::AccelerometerGesturesAvailable() const
 	{
-    TRACER_AUTO;
 	return (iGesturePlugin != NULL);
 	}
 
 TInt CMobblerAppUi::VolumeUpCallBack(TAny *aSelf)
 	{
-    TRACER_AUTO;
 	CMobblerAppUi* self(static_cast<CMobblerAppUi*>(aSelf));
 	
 	self->iRadioPlayer->VolumeUp();
@@ -299,7 +287,6 @@ TInt CMobblerAppUi::VolumeUpCallBack(TAny *aSelf)
 
 TInt CMobblerAppUi::VolumeDownCallBack(TAny *aSelf)
 	{
-    TRACER_AUTO;
 	CMobblerAppUi* self(static_cast<CMobblerAppUi*>(aSelf));
 	
 	self->iRadioPlayer->VolumeDown();
@@ -314,7 +301,9 @@ TInt CMobblerAppUi::VolumeDownCallBack(TAny *aSelf)
 
 void CMobblerAppUi::MrccatoCommand(TRemConCoreApiOperationId aOperationId, TRemConCoreApiButtonAction aButtonAct)
 	{
-    TRACER_AUTO;
+	LOG2(_L8("Operation id"), aOperationId);
+	LOG2(_L8("Button action"), aButtonAct);
+	
 	// don't bother if there's a current music player track
 	if ((CurrentTrack() && 
 		(CurrentTrack()->RadioAuth().Compare(KNullDesC8) == 0)))
@@ -428,7 +417,6 @@ void CMobblerAppUi::MrccatoCommand(TRemConCoreApiOperationId aOperationId, TRemC
 
 void CMobblerAppUi::SetDetailsL(const TDesC& aUsername, const TDesC& aPassword, TBool aAndSaveToSettings)
 	{
-    TRACER_AUTO;
 	iLastFmConnection->SetDetailsL(aUsername, aPassword);
 	if (aAndSaveToSettings)
 		{
@@ -438,26 +426,22 @@ void CMobblerAppUi::SetDetailsL(const TDesC& aUsername, const TDesC& aPassword, 
 
 void CMobblerAppUi::SetIapIDL(TUint32 aIapId)
 	{
-    TRACER_AUTO;
 	iLastFmConnection->SetIapIdL(aIapId);
 	}
 
 void CMobblerAppUi::SetBufferSize(TTimeIntervalSeconds aBufferSize)
 	{
-    TRACER_AUTO;
 	iRadioPlayer->SetPreBufferSize(aBufferSize);
 	}
 
 void CMobblerAppUi::SetBitRateL(TInt aBitRate)
 	{
-    TRACER_AUTO;
 	iLastFmConnection->SetBitRate(aBitRate);
 	iRadioPlayer->SetBitRateL(aBitRate);
 	}
 
 void CMobblerAppUi::UpdateAccelerometerGesturesL()
 	{
-    TRACER_AUTO;
 	// If the radio is playing and the setting is on
 	if (iGesturePlugin && 
 		iRadioPlayer->CurrentTrack() && 
@@ -473,7 +457,6 @@ void CMobblerAppUi::UpdateAccelerometerGesturesL()
 
 const CMobblerTrack* CMobblerAppUi::CurrentTrack() const
 	{
-    TRACER_AUTO;
 	const CMobblerTrack* track(iRadioPlayer->CurrentTrack());
 	
 	if (!track)
@@ -486,7 +469,6 @@ const CMobblerTrack* CMobblerAppUi::CurrentTrack() const
 
 CMobblerTrack* CMobblerAppUi::CurrentTrack()
 	{
-    TRACER_AUTO;
 	CMobblerTrack* track(iRadioPlayer->CurrentTrack());
 	
 	if (!track)
@@ -499,55 +481,46 @@ CMobblerTrack* CMobblerAppUi::CurrentTrack()
 
 CMobblerLastFmConnection& CMobblerAppUi::LastFmConnection() const
 	{
-//	TRACER_AUTO;
 	return *iLastFmConnection;
 	}
 
 CMobblerRadioPlayer& CMobblerAppUi::RadioPlayer() const
 	{
-//	TRACER_AUTO;
 	return *iRadioPlayer;
 	}
 
 CMobblerMusicAppListener& CMobblerAppUi::MusicListener() const
 	{
-//	TRACER_AUTO;
 	return *iMusicListener;
 	}
 
 CMobblerSettingItemListView& CMobblerAppUi::SettingView() const
 	{
-//	TRACER_AUTO;
 	return *iSettingView;
 	}
 
 CMobblerDestinationsInterface* CMobblerAppUi::Destinations() const
 	{
-//	TRACER_AUTO;
 	return iDestinations;
 	}
 
 CMobblerContentListingInterface* CMobblerAppUi::ContentListing() const
 	{
-//	TRACER_AUTO;
 	return iContentListing;
 	}
 
 HBufC* CMobblerAppUi::MusicAppNameL() const
 	{
-//	TRACER_AUTO;
 	return iMusicListener->MusicAppNameL();
 	}
 
 void CMobblerAppUi::HandleInstallStartedL()
 	{
-    TRACER_AUTO;
 	RunAppShutter();
 	}
 
 void CMobblerAppUi::HandleCommandL(TInt aCommand)
 	{
-    TRACER_AUTO;
 	const CMobblerTrack* const currentTrack(CurrentTrack());
 	const CMobblerTrack* const currentRadioTrack(iRadioPlayer->CurrentTrack());
 	
@@ -1174,7 +1147,6 @@ void CMobblerAppUi::RadioStartL(TInt aRadioStation,
 								const CMobblerString* aRadioOption, 
 								TBool aSaveStations)
 	{
-    TRACER_AUTO;
 	iPreviousRadioStation = aRadioStation;
 	
 	// Turn on gesture plug-in
@@ -1249,7 +1221,6 @@ void CMobblerAppUi::RadioStartL(TInt aRadioStation,
 
 TBool CMobblerAppUi::RadioStartableL() const
 	{
-    TRACER_AUTO;
 	// Can start only if the music player isn't already playing.
 	if (iMusicListener->IsPlaying())
 		{
@@ -1267,7 +1238,6 @@ TBool CMobblerAppUi::RadioStartableL() const
 
 TBool CMobblerAppUi::RadioResumable() const
 	{
-    TRACER_AUTO;
 	// Can resume only if the radio is not playing now,
 	// and if the music player isn't currently playing (paused is ok),
 	// and if a previous radio station is known.
@@ -1285,30 +1255,25 @@ TBool CMobblerAppUi::RadioResumable() const
 
 CMobblerLastFmConnection::TMode CMobblerAppUi::Mode() const
 	{
-//	TRACER_AUTO;
 	return iLastFmConnection->Mode();
 	}
 
 CMobblerLastFmConnection::TState CMobblerAppUi::State() const
 	{
-//	TRACER_AUTO;
 	return iLastFmConnection->State();
 	}
 
 TBool CMobblerAppUi::ScrobblingOn() const
 	{
-//	TRACER_AUTO;
 	return iLastFmConnection->ScrobblingOn();
 	}
 
 void CMobblerAppUi::HandleStatusPaneSizeChange()
 	{
-//	TRACER_AUTO;
 	}
 
 void CMobblerAppUi::DataL(CMobblerFlatDataObserverHelper* aObserver, const TDesC8& aData, CMobblerLastFmConnection::TTransactionError aTransactionError)
 	{
-    TRACER_AUTO;
 	if (aTransactionError == CMobblerLastFmConnection::ETransactionErrorNone)
 		{
 		if ((aObserver == iAutoCheckForUpdatesObserver) ||
@@ -1449,7 +1414,6 @@ void CMobblerAppUi::DataL(CMobblerFlatDataObserverHelper* aObserver, const TDesC
 
 void CMobblerAppUi::HandleConnectCompleteL(TInt aError)
 	{
-    TRACER_AUTO;
 //	iStatusView->DrawDeferred();
 	
 	if (aError != KErrNone)
@@ -1485,7 +1449,6 @@ void CMobblerAppUi::HandleConnectCompleteL(TInt aError)
 
 void CMobblerAppUi::HandleLastFmErrorL(CMobblerLastFmError& aError)
 	{
-    TRACER_AUTO;
 	// iStatusView->DrawDeferred();
 	
 	CAknResourceNoteDialog *note(new (ELeave) CAknInformationNote(EFalse));
@@ -1494,7 +1457,6 @@ void CMobblerAppUi::HandleLastFmErrorL(CMobblerLastFmError& aError)
 
 void CMobblerAppUi::HandleCommsErrorL(TInt aStatusCode, const TDesC8& aStatus)
 	{
-    TRACER_AUTO;
 	// iStatusView->DrawDeferred();
 	
 	HBufC* noteText(HBufC::NewLC(KMaxMobblerTextSize));
@@ -1517,19 +1479,16 @@ void CMobblerAppUi::HandleCommsErrorL(TInt aStatusCode, const TDesC8& aStatus)
 
 TInt CMobblerAppUi::Scrobbled() const
 	{
-    TRACER_AUTO;
 	return iTracksSubmitted;
 	}
 
 TInt CMobblerAppUi::Queued() const
 	{
-    TRACER_AUTO;
 	return iTracksQueued;
 	}
 
 void CMobblerAppUi::HandleTrackNowPlayingL(const CMobblerTrackBase& /*aTrack*/)
 	{
-    TRACER_AUTO;
 	// Tell the status view that the track has changed
 //	iStatusView->DrawDeferred();
 
@@ -1541,7 +1500,6 @@ void CMobblerAppUi::HandleTrackNowPlayingL(const CMobblerTrackBase& /*aTrack*/)
 
 void CMobblerAppUi::HandleTrackSubmitted(const CMobblerTrackBase& /*aTrack*/)
 	{
-    TRACER_AUTO;
 	iStatusView->DrawDeferred();
 	++iTracksSubmitted;
 	--iTracksQueued;
@@ -1549,7 +1507,6 @@ void CMobblerAppUi::HandleTrackSubmitted(const CMobblerTrackBase& /*aTrack*/)
 
 void CMobblerAppUi::HandleTrackQueuedL(const CMobblerTrackBase& /*aTrack*/)
 	{
-    TRACER_AUTO;
 /*	if (iStatusView)
 		{
 		iStatusView->DrawDeferred();
@@ -1560,14 +1517,12 @@ void CMobblerAppUi::HandleTrackQueuedL(const CMobblerTrackBase& /*aTrack*/)
 
 void CMobblerAppUi::HandleTrackDequeued(const CMobblerTrackBase& /*aTrack*/)
 	{
-    TRACER_AUTO;
 //	iStatusView->DrawDeferred();
 	--iTracksQueued;
 	}
 
 TBool CMobblerAppUi::GoOnlineL()
 	{
-    TRACER_AUTO;
 	// Ask if they would like to go online
 	CAknQueryDialog* dlg(CAknQueryDialog::NewL());
 	TBool goOnline(dlg->ExecuteLD(R_MOBBLER_YES_NO_QUERY_DIALOG, iResourceReader->ResourceL(R_MOBBLER_ASK_GO_ONLINE)));
@@ -1582,7 +1537,6 @@ TBool CMobblerAppUi::GoOnlineL()
 
 void CMobblerAppUi::StatusDrawDeferred()
 	{
-//	TRACER_AUTO;
 	if (iStatusView)
 		{
 		iStatusView->DrawDeferred();
@@ -1591,7 +1545,6 @@ void CMobblerAppUi::StatusDrawDeferred()
 
 void CMobblerAppUi::StatusDrawNow()
 	{
-//	TRACER_AUTO;
 	if (iStatusView)
 		{
 		iStatusView->DrawNow();
@@ -1600,38 +1553,32 @@ void CMobblerAppUi::StatusDrawNow()
 
 void CMobblerAppUi::HandleForegroundEventL(TBool aForeground)
 	{
-//	TRACER_AUTO;
 	CAknAppUi::HandleForegroundEventL(aForeground);
 	iForeground = aForeground;
 	}
 
 TBool CMobblerAppUi::Foreground() const
 	{
-//	TRACER_AUTO;
 	return iForeground;
 	}
 
 TBool CMobblerAppUi::Backlight() const
 	{
-//	TRACER_AUTO;
 	return iSettingView->Backlight();
 	}
 
 TInt CMobblerAppUi::ScrobblePercent() const
 	{
-//	TRACER_AUTO;
 	return iSettingView->ScrobblePercent();
 	}
 
 TInt CMobblerAppUi::DownloadAlbumArt() const
 	{
-//	TRACER_AUTO;
 	return iSettingView->DownloadAlbumArt();
 	}
 
 void CMobblerAppUi::TrackStoppedL()
 	{
-    TRACER_AUTO;
 	iSettingView->SetVolumeL(RadioPlayer().Volume());
 	
 	if (iSleepAfterTrackStopped)
@@ -1643,7 +1590,6 @@ void CMobblerAppUi::TrackStoppedL()
 
 void CMobblerAppUi::LoadRadioStationsL()
 	{
-    TRACER_AUTO;
 	RFile file;
 	CleanupClosePushL(file);
 	TInt openError(file.Open(CCoeEnv::Static()->FsSession(), KRadioFile, EFileRead));
@@ -1700,7 +1646,6 @@ void CMobblerAppUi::LoadRadioStationsL()
 
 void CMobblerAppUi::SaveRadioStationsL()
 	{
-    TRACER_AUTO;
 	CCoeEnv::Static()->FsSession().MkDirAll(KRadioFile);
 	
 	RFile file;
@@ -1762,7 +1707,6 @@ void CMobblerAppUi::SaveRadioStationsL()
 
 void CMobblerAppUi::LoadSearchTermsL()
 	{
-    TRACER_AUTO;
 	RFile file;
 	CleanupClosePushL(file);
 	TInt openError(file.Open(CCoeEnv::Static()->FsSession(), KSearchFile, EFileRead));
@@ -1806,7 +1750,6 @@ void CMobblerAppUi::LoadSearchTermsL()
 
 void CMobblerAppUi::SaveSearchTermsL()
 	{
-    TRACER_AUTO;
 	CCoeEnv::Static()->FsSession().MkDirAll(KSearchFile);
 	
 	RFile file;
@@ -1866,19 +1809,16 @@ void CMobblerAppUi::SaveSearchTermsL()
 
 CMobblerResourceReader& CMobblerAppUi::ResourceReader() const
 	{
-//	TRACER_AUTO;
 	return *iResourceReader;
 	}
 
 CMobblerBitmapCollection& CMobblerAppUi::BitmapCollection() const
 	{
-//	TRACER_AUTO;
 	return *iBitmapCollection;
 	}
 
 void CMobblerAppUi::SetSleepTimerL(const TInt aMinutes)
 	{
-    TRACER_AUTO;
 	LOG(_L8("CMobblerAppUi::SetSleepTimerL"));
 	LOG(aMinutes);
 	
@@ -1926,7 +1866,6 @@ void CMobblerAppUi::SetSleepTimerL(const TInt aMinutes)
 
 void CMobblerAppUi::SetAlarmTimerL(const TTime aTime)
 	{
-    TRACER_AUTO;
 	TDateTime alarmDateTime(aTime.DateTime());
 	TTime now;
 	now.HomeTime();
@@ -1980,7 +1919,6 @@ void CMobblerAppUi::SetAlarmTimerL(const TTime aTime)
 
 void CMobblerAppUi::TimerExpiredL(TAny* aTimer, TInt aError)
 	{
-    TRACER_AUTO;
 #ifdef _DEBUG
 	CEikonEnv::Static()->InfoMsg(_L("Timer expired!"));
 	LOG(_L8("CMobblerAppUi::TimerExpiredL"));
@@ -2063,7 +2001,6 @@ void CMobblerAppUi::TimerExpiredL(TAny* aTimer, TInt aError)
 
 void CMobblerAppUi::SleepL()
 	{
-    TRACER_AUTO;
 	LOG(_L8("CMobblerAppUi::SleepL()"));
 	// Do this for all actions, it gives Mobbler a chance to scrobble
 	// the newly stopped song to Last.fm whilst displaying the dialog
@@ -2093,7 +2030,6 @@ void CMobblerAppUi::SleepL()
 
 void CMobblerAppUi::RemoveSleepTimerL()
 	{
-    TRACER_AUTO;
 	if (iSleepTimer && iSleepTimer->IsActive())
 		{
 		iSleepTimer->Cancel();
@@ -2104,7 +2040,6 @@ void CMobblerAppUi::RemoveSleepTimerL()
 
 void CMobblerAppUi::RemoveAlarmL()
 	{
-    TRACER_AUTO;
 	if (iAlarmTimer && iAlarmTimer->IsActive())
 		{
 		iAlarmTimer->Cancel();
@@ -2117,7 +2052,6 @@ void CMobblerAppUi::RemoveAlarmL()
 // Gesture plug-in functions
 void CMobblerAppUi::LoadGesturesPluginL()
 	{
-    TRACER_AUTO;
 	// Finding implementations of the gesture plug-in interface.
 	// Preferably, we should load the 5th edition plug-in, as it provides
 	// extra functionality.
@@ -2177,7 +2111,6 @@ void CMobblerAppUi::LoadGesturesPluginL()
 
 void CMobblerAppUi::HandleSingleShakeL(TMobblerShakeGestureDirection aDirection)
 	{
-    TRACER_AUTO;
 	switch(aDirection)
 		{
 		case EShakeRight:
@@ -2195,7 +2128,6 @@ void CMobblerAppUi::HandleSingleShakeL(TMobblerShakeGestureDirection aDirection)
 
 TInt CMobblerAppUi::LaunchFileL(const TDesC& aFilename)
 	{
-    TRACER_AUTO;
 	if (!iDocHandler)
 		{
 		iDocHandler = CDocumentHandler::NewL(CEikonEnv::Static()->Process());
@@ -2208,7 +2140,6 @@ TInt CMobblerAppUi::LaunchFileL(const TDesC& aFilename)
 
 void CMobblerAppUi::GoToLastFmL(TInt aCommand, const TDesC8& aEventId)
 	{
-    TRACER_AUTO;
 	CMobblerTrack* currentTrack(CurrentTrack());
 	TBuf<KMaxMobblerTextSize> url(MobblerUtility::LocalLastFmDomainL());
 
@@ -2267,7 +2198,6 @@ void CMobblerAppUi::GoToLastFmL(TInt aCommand, const TDesC8& aEventId)
 
 void CMobblerAppUi::GoToMapL(const TDesC8& aName, const TDesC8& aLatitude, const TDesC8& aLongitude)
 	{
-    TRACER_AUTO;
 	CCoeEnv::Static()->FsSession().MkDirAll(KMapKmlFilename);
 	
 	_LIT8(KMapKmlFormat,	"<kml xmlns=\"http://earth.google.com/kml/2.0\">\r\n"
@@ -2314,7 +2244,6 @@ void CMobblerAppUi::GoToMapL(const TDesC8& aName, const TDesC8& aLatitude, const
 
 void CMobblerAppUi::HandleLocationCompleteL(const TDesC8& /*aAccuracy*/, const TDesC8& aLatitude, const TDesC8& aLongitude, const TDesC8& /*aName*/)
 	{
-    TRACER_AUTO;
 	delete iLocalEventsObserver;
 	iLocalEventsObserver = CMobblerFlatDataObserverHelper::NewL(*iLastFmConnection, *this, ETrue);
 	iLastFmConnection->GeoGetEventsL(aLatitude, aLongitude, *iLocalEventsObserver);
@@ -2322,7 +2251,6 @@ void CMobblerAppUi::HandleLocationCompleteL(const TDesC8& /*aAccuracy*/, const T
 
 void CMobblerAppUi::OpenWebBrowserL(const TDesC& aUrl)
 	{
-    TRACER_AUTO;
 	TBuf<KMaxMobblerTextSize> url(aUrl);
 	
 	// Convert to UTF-8
@@ -2373,7 +2301,6 @@ void CMobblerAppUi::OpenWebBrowserL(const TDesC& aUrl)
 
 void CMobblerAppUi::HandleSystemEventL(const TWsEvent& aEvent)
 	{
-    TRACER_AUTO;
 	switch (*(TApaSystemEvent*)(aEvent.EventData()))
 		{
 		case EApaSystemEventShutdown:
@@ -2407,7 +2334,6 @@ void CMobblerAppUi::HandleSystemEventL(const TWsEvent& aEvent)
 
 void CMobblerAppUi::HandleWsEventL(const TWsEvent &aEvent, CCoeControl *aDestination)
 	{
-    TRACER_AUTO;
 	if (aEvent.Type() == KAknUidValueEndKeyCloseEvent)
 		{
 		// Do nothing for the red end key, 
@@ -2422,7 +2348,6 @@ void CMobblerAppUi::HandleWsEventL(const TWsEvent &aEvent, CCoeControl *aDestina
 #ifdef __SYMBIAN_SIGNED__
 TInt CMobblerAppUi::SetAlbumArtAsWallpaper(TBool aAutomatically)
 	{
-    TRACER_AUTO;
 	TInt error(KErrUnknown);
 	_LIT(KWallpaperFile, "C:\\System\\Data\\Mobbler\\wallpaperimage.mbm");
 	
@@ -2454,7 +2379,6 @@ TInt CMobblerAppUi::SetAlbumArtAsWallpaper(TBool aAutomatically)
 
 TBool CMobblerAppUi::DetailsNeeded()
 	{
-    TRACER_AUTO;
 	if ((iSettingView->Username().Compare(iResourceReader->ResourceL(R_MOBBLER_USERNAME)) == 0) &&
 		(iSettingView->Password().Compare(_L("password")) == 0))
 		{
@@ -2465,7 +2389,6 @@ TBool CMobblerAppUi::DetailsNeeded()
 
 void CMobblerAppUi::ShowLyricsL(const TDesC8& aData)
 	{
-    TRACER_AUTO;
 	DUMPDATA(aData, _L("lyrics.xml"));
 	_LIT(KLyricsFilename, "C:\\System\\Data\\Mobbler\\Lyrics.txt");
 	_LIT8(KSg, "sg"); // song
@@ -2583,7 +2506,6 @@ void CMobblerAppUi::ShowLyricsL(const TDesC8& aData)
 
 void CMobblerAppUi::WarnOldScrobblesL()
 	{
-    TRACER_AUTO;
 	if (!iOldScrobbleGlobalQuery)
 		{
 		iOldScrobbleGlobalQuery = CMobblerGlobalQuery::NewL(R_MOBBLER_OLD_SCROBBLES_WARNING);
