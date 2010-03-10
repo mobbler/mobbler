@@ -1,6 +1,4 @@
 /*
-mobblerutility.cpp
-
 Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
 Copyright (C) 2008, 2009, 2010  Michael Coffey
 Copyright (C) 2009, 2010  Hugo van Kemenade
@@ -8,19 +6,20 @@ Copyright (C) 2010  gw11zz
 
 http://code.google.com/p/mobbler
 
-This program is free software; you can redistribute it and/or
+This file is part of Mobbler.
+
+Mobbler is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful,
+Mobbler is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+along with Mobbler.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include <bautils.h>
@@ -46,18 +45,32 @@ _LIT8(KSpanishLangCode, "es");
 _LIT8(KSwedishLangCode, "sv");
 _LIT8(KTurkishLangCode, "tu");
 
-// _LIT(KChineseUrl,		"http://cn.last.fm/"); /// No known Chinese mobile site
-_LIT(KEnglishUrl,		"http://m.last.fm/");
-_LIT(KFrenchUrl,		"http://m.lastfm.fr/");
-_LIT(KGermanUrl,		"http://m.lastfm.de/");
-_LIT(KItalianUrl,		"http://m.lastfm.it/");
-_LIT(KJapaneseUrl, 		"http://m.lastfm.jp/");
-_LIT(KPolishUrl,		"http://m.lastfm.pl/");
-_LIT(KPortugueseUrl,	"http://m.lastfm.com.br/");
-_LIT(KRussianUrl,		"http://m.lastfm.ru/");
-_LIT(KSpanishUrl,		"http://m.lastfm.es/");
-_LIT(KSwedishUrl,		"http://m.lastfm.se/");
-_LIT(KTurkishUrl,		"http://m.lastfm.com.tr/");
+_LIT(KEnglishMobileUrl,		"http://m.last.fm/");
+//_LIT(KChineseMobileUrl,	"http://cn.last.fm/"); // No known Chinese mobile site
+_LIT(KFrenchMobileUrl,		"http://m.lastfm.fr/");
+_LIT(KGermanMobileUrl,		"http://m.lastfm.de/");
+_LIT(KItalianMobileUrl,		"http://m.lastfm.it/");
+_LIT(KJapaneseMobileUrl,	"http://m.lastfm.jp/");
+_LIT(KPolishMobileUrl,		"http://m.lastfm.pl/");
+_LIT(KPortugueseMobileUrl,	"http://m.lastfm.com.br/");
+_LIT(KRussianMobileUrl,		"http://m.lastfm.ru/");
+_LIT(KSpanishMobileUrl,		"http://m.lastfm.es/");
+_LIT(KSwedishMobileUrl,		"http://m.lastfm.se/");
+_LIT(KTurkishMobileUrl,		"http://m.lastfm.com.tr/");
+
+_LIT(KEnglishUrl,			"http://www.last.fm/");
+_LIT(KChineseUrl,			"http://cn.last.fm/");
+_LIT(KFrenchUrl,			"http://www.lastfm.fr/");
+_LIT(KGermanUrl,			"http://www.lastfm.de/");
+_LIT(KItalianUrl,			"http://www.lastfm.it/");
+_LIT(KJapaneseUrl,			"http://www.lastfm.jp/");
+_LIT(KPolishUrl,			"http://www.lastfm.pl/");
+_LIT(KPortugueseUrl,		"http://www.lastfm.com.br/");
+_LIT(KRussianUrl,			"http://www.lastfm.ru/");
+_LIT(KSpanishUrl,			"http://www.lastfm.es/");
+_LIT(KSwedishUrl,			"http://www.lastfm.se/");
+_LIT(KTurkishUrl,			"http://www.lastfm.com.tr/");
+
 
 _LIT8(KFormat1, "%02x");
 _LIT8(KFormat2, "%%%2x");
@@ -69,7 +82,7 @@ const TInt KNokiaE72MachineUid(0x20014DD0);
 
 TBool MobblerUtility::EqualizerSupported()
 	{
-    TRACER_AUTO;
+	TRACER_AUTO;
 	TInt machineUid(0);
 	TInt error(HAL::Get(HALData::EMachineUid, machineUid));
 	return (error == KErrNone) && !(machineUid == KNokia6710NavigatorMachineUid ||
@@ -80,7 +93,7 @@ TBool MobblerUtility::EqualizerSupported()
 
 HBufC8* MobblerUtility::MD5LC(const TDesC8& aSource)
 	{
-    TRACER_AUTO;
+	TRACER_AUTO;
 	CMD5* md5(CMD5::NewL());
 	CleanupStack::PushL(md5);
 	
@@ -100,7 +113,7 @@ HBufC8* MobblerUtility::MD5LC(const TDesC8& aSource)
 
 HBufC8* MobblerUtility::URLEncodeLC(const TDesC8& aString)
 	{
-    TRACER_AUTO;
+	TRACER_AUTO;
 	HBufC8* urlEncoded(HBufC8::NewLC(aString.Length() * 3));
 	// sanitise the input string
 	const TInt KCharCount(aString.Length());
@@ -114,7 +127,7 @@ HBufC8* MobblerUtility::URLEncodeLC(const TDesC8& aString)
 
 TBuf8<2> MobblerUtility::LanguageL()
 	{
-    TRACER_AUTO;
+	TRACER_AUTO;
 	TBuf8<2> language;
 	language.Copy(KEnglishLangCode); // default to English
 	
@@ -179,11 +192,11 @@ TBuf8<2> MobblerUtility::LanguageL()
 	return language;
 	}
 
-TBuf<30> MobblerUtility::LocalLastFmDomainL()
+TBuf<30> MobblerUtility::LocalLastFmDomainL(const TInt aMobile)
 	{
-    TRACER_AUTO;
+	TRACER_AUTO;
 	TBuf<30> url;
-	url.Copy(KEnglishUrl); // default to English
+	url.Copy(KEnglishMobileUrl); // default to mobile English
 	
 	RArray<TLanguage> downgradePath;
 	CleanupClosePushL(downgradePath);
@@ -199,41 +212,67 @@ TBuf<30> MobblerUtility::LocalLastFmDomainL()
 		switch (downgradePath[i])
 			{
 			case ELangEnglish:
-				url.Copy(KEnglishUrl);
+				aMobile?
+					url.Copy(KEnglishMobileUrl):
+					url.Copy(KEnglishUrl);
 				break;
 			case ELangFrench:
-				url.Copy(KFrenchUrl);
+				aMobile?
+					url.Copy(KFrenchMobileUrl):
+					url.Copy(KFrenchUrl);
 				break;
 			case ELangGerman: 
-				url.Copy(KGermanUrl);
+				aMobile?
+					url.Copy(KGermanMobileUrl):
+					url.Copy(KGermanUrl);
 				break;
 			case ELangSpanish: 
-				url.Copy(KSpanishUrl);
+				aMobile?
+					url.Copy(KSpanishMobileUrl):
+					url.Copy(KSpanishUrl);
 				break;
 			case ELangItalian: 
-				url.Copy(KItalianUrl);
+				aMobile?
+					url.Copy(KItalianMobileUrl):
+					url.Copy(KItalianUrl);
 				break;
 			case ELangSwedish: 
-				url.Copy(KSwedishUrl);
+				aMobile?
+					url.Copy(KSwedishMobileUrl):
+					url.Copy(KSwedishUrl);
 				break;
 			case ELangPortuguese: 
-				url.Copy(KPortugueseUrl);
+				aMobile?
+					url.Copy(KPortugueseMobileUrl):
+					url.Copy(KPortugueseUrl);
 				break;
 			case ELangRussian: 
-				url.Copy(KRussianUrl);
+				aMobile?
+					url.Copy(KRussianMobileUrl):
+					url.Copy(KRussianUrl);
 				break;
 			case ELangPolish:
-				url.Copy(KPolishUrl);
+				aMobile?
+					url.Copy(KPolishMobileUrl):
+					url.Copy(KPolishUrl);
 				break;
-/*			case ELangPrcChinese: 
-				url.Copy(KChineseUrl); // No known Chinese mobile site
-				break;*/
 			case ELangJapanese: 
-				url.Copy(KJapaneseUrl);
+				aMobile?
+					url.Copy(KJapaneseMobileUrl):
+					url.Copy(KJapaneseUrl);
 				break;
 			case ELangTurkish:
-				url.Copy(KTurkishUrl);
+				aMobile?
+					url.Copy(KTurkishMobileUrl):
+					url.Copy(KTurkishUrl);
 				break;
+			case ELangPrcChinese:
+				if (!aMobile)
+					{
+					url.Copy(KChineseUrl);
+					break;
+					}
+				// No known Chinese mobile site, intentional fall-through
 			default:
 				// carry on iterating through the downgrade path
 				languageFound = EFalse;
@@ -248,7 +287,7 @@ TBuf<30> MobblerUtility::LocalLastFmDomainL()
 
 void MobblerUtility::FixLyricsSpecialCharacters(TDes8& aText)
 	{
-    TRACER_AUTO;
+	TRACER_AUTO;
 	// Lyricsfly: "Because our database varies with many html format encodings 
 	// including international characters, we recommend that you replace all 
 	// quotes, ampersands and all other special and international characters 
@@ -312,7 +351,7 @@ void MobblerUtility::FixLyricsSpecialCharacters(TDes8& aText)
 
 void MobblerUtility::FixLyricsLineBreaks(TDes8& aText)
 	{
-    TRACER_AUTO;
+	TRACER_AUTO;
 	// First, remove all Windows newlines
 	_LIT8(KCRLF,"\x0D\x0A");
 
@@ -345,7 +384,7 @@ void MobblerUtility::FixLyricsLineBreaks(TDes8& aText)
 
 void MobblerUtility::StripUnwantedTagsFromHtmlL(HBufC8*& aHtml)
 	{
-    TRACER_AUTO;
+	TRACER_AUTO;
 	_LIT8(KAnchorStart, "<a");
 
 	TPtr8 htmlPtr(aHtml->Des());
@@ -417,7 +456,7 @@ void MobblerUtility::StripUnwantedTagsFromHtmlL(HBufC8*& aHtml)
 
 CSenDomFragment* MobblerUtility::PrepareDomFragmentLC(CSenXmlReader& aXmlReader, const TDesC8& aXml)
 	{
-    TRACER_AUTO;
+	TRACER_AUTO;
 	// Create the DOM fragment and associate with the XML reader
 	CSenDomFragment* domFragment(CSenDomFragment::NewL());
 	CleanupStack::PushL(domFragment);
