@@ -82,7 +82,7 @@ void CMobblerLocation::DoCancel()
 	iTelephony->CancelAsync(CTelephony::EGetCurrentNetworkInfoCancel);
 	}
 
-void CMobblerLocation::DataL(const TDesC8& aData, TInt aTransactionError)
+void CMobblerLocation::DataL(const TDesC8& aData, CMobblerLastFmConnection::TTransactionError aTransactionError)
 	{
 	TRACER_AUTO;
 	if (aTransactionError == CMobblerLastFmConnection::ETransactionErrorNone)

@@ -24,7 +24,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <chttpformencoder.h> 
 #include <http/rhttpheaders.h>
 #include <httpstringconstants.h>
-#include <IMCVCODC.H> 
+#include <imcvcodc.h> 
 
 #include "mobblertracer.h"
 #include "mobblertransaction.h"
@@ -111,7 +111,7 @@ RHTTPTransaction& CMobblerTransaction::Transaction()
 	return iTransaction;
 	}
 
-void CMobblerTransaction::ForcePostL()
+void CMobblerTransaction::SetTwitterDetailsL(const TDesC8& aUsername, const TDesC8& aPassword)
 	{
 	// open the transaction
 	RStringF string;
@@ -124,7 +124,28 @@ void CMobblerTransaction::ForcePostL()
 	
 	iTransaction.Request().SetBody(*iForm);
 	
-	iForcePost = ETrue;
+	HBufC8* plainDetails(HBufC8::NewLC(aUsername.Length() + aPassword.Length() + 1));
+	plainDetails->Des().Append(aUsername);
+	_LIT8(KColon, ":");
+	plainDetails->Des().Append(KColon);
+	plainDetails->Des().Append(aPassword);
+	
+	delete iTwitterDetails;
+	iTwitterDetails = HBufC8::NewL(plainDetails->Length() * 3);
+	
+	TImCodecB64 b64enc;
+	b64enc.Initialise();
+	TPtr8 results(iTwitterDetails->Des());
+	b64enc.Encode(*plainDetails, results);
+	
+	RStringF detailsF(iConnection.iHTTPSession.StringPool().OpenFStringL(*iTwitterDetails));
+
+	iTransaction.Request().GetHeaderCollection().SetFieldL(iConnection.iHTTPSession.StringPool().StringF(HTTP::EAuthorization, RHTTPSession::GetTable()),
+			iConnection.iHTTPSession.StringPool().StringF(HTTP::EBasic, RHTTPSession::GetTable()));
+	iTransaction.Request().GetHeaderCollection().SetFieldL(iConnection.iHTTPSession.StringPool().StringF(HTTP::EAuthorization, RHTTPSession::GetTable()),
+			detailsF);
+	
+	CleanupStack::PopAndDestroy(plainDetails);
 	}
 
 void CMobblerTransaction::SubmitL()
@@ -133,7 +154,7 @@ void CMobblerTransaction::SubmitL()
 	delete iBuffer;
 	iBuffer = CBufFlat::NewL(KBufferGranularity);
 	
-	if (iURI && !iForcePost)
+	if (iURI && !iTwitterDetails)
 		{
 		if (iQuery)
 			{
@@ -179,6 +200,7 @@ CMobblerTransaction::~CMobblerTransaction()
 	delete iForm;
 	delete iURI;
 	delete iQuery;
+	delete iTwitterDetails;
 	}
 
 void CMobblerTransaction::Cancel()
@@ -199,16 +221,15 @@ void CMobblerTransaction::MHFRunL(RHTTPTransaction aTransaction, const THTTPEven
 			{
 			RHTTPHeaders headers(aTransaction.Response().GetHeaderCollection());
 			 
-			THTTPHdrVal locationValue;			
+			THTTPHdrVal locationValue;
 			if( headers.GetField(iConnection.iHTTPSession.StringPool().StringF(HTTP::ELocation, RHTTPSession::GetTable()), 0, locationValue) == KErrNone )
 				{
-    TRACER_AUTO;
 				// This is a redirect so ask for the new location
 				
 				const TDesC8& urides(locationValue.StrF().DesC());
 				TUriParser8 uri;
 				uri.Parse(urides);
-				aTransaction.Cancel();						
+				aTransaction.Cancel();
 				iTransaction.Request().SetURIL(uri);
 				iTransaction.SubmitL();
 				}

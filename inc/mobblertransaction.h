@@ -46,7 +46,7 @@ public:
 	
 	TBool RequiresAuthentication() const;
 	
-	void ForcePostL();
+	void SetTwitterDetailsL(const TDesC8& aUsername, const TDesC8& aPassword);
 	
 	void SubmitL();
 	void Cancel();
@@ -80,7 +80,7 @@ private:
 	
 	TBool iRequiresAuthentication;
 	
-	TBool iForcePost;
+	HBufC8* iTwitterDetails;
 	};
 
 #endif // __MOBBLERTRANSACTION_H__

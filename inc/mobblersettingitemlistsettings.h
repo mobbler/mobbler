@@ -57,86 +57,80 @@ public:
 	
 public:
 	TDes& Username() { return iUsername; }
-	void SetUsername(const TDesC& aUsername) { iUsername.Copy(aUsername); SaveSettingValuesL(); }
+	void SetUsername(const TDesC& aUsername) { iUsername.Copy(aUsername); }
 	
 	TDes& Password() { return iPassword; }
-	void SetPassword(const TDesC& aPassword) { iPassword.Copy(aPassword); SaveSettingValuesL(); }
+	void SetPassword(const TDesC& aPassword) { iPassword.Copy(aPassword); }
 	
 	TBool& Backlight() { return iBacklight; }
-	void SetBacklight(TBool aBacklight) { iBacklight = aBacklight; SaveSettingValuesL(); }
+	void SetBacklight(TBool aBacklight) { iBacklight = aBacklight; }
 	
 	TBool& CheckForUpdates() { return iCheckForUpdates; }
-	void SetCheckForUpdates(TBool aCheckForUpdates) { iCheckForUpdates = aCheckForUpdates; SaveSettingValuesL(); }
+	void SetCheckForUpdates(TBool aCheckForUpdates) { iCheckForUpdates = aCheckForUpdates; }
 	
 	TInt& IapId() { return iIapId; }
-	void SetIapId(TInt aIapId) { iIapId = aIapId; SaveSettingValuesL(); }
+	void SetIapId(TInt aIapId) { iIapId = aIapId; }
 	
 	TInt& BufferSize() { return iBufferSize; }
-	void SetBufferSize(TInt aBufferSize) { iBufferSize = aBufferSize; SaveSettingValuesL(); }
+	void SetBufferSize(TInt aBufferSize) { iBufferSize = aBufferSize; }
 	
 	TInt& EqualizerIndex() { return iEqualizerIndex; }
-	void SetEqualizerIndex(TInt aIndex) { iEqualizerIndex = aIndex; SaveSettingValuesL(); }
+	void SetEqualizerIndex(TInt aIndex) { iEqualizerIndex = aIndex; }
 	
 	TInt& ScrobblePercent() { return iScrobblePercent; }
-	void SetScrobblePercent(TInt aPercent) { iScrobblePercent = aPercent; SaveSettingValuesL(); }
+	void SetScrobblePercent(TInt aPercent) { iScrobblePercent = aPercent; }
 	
 	TInt& Volume() { return iVolume; }
-	void SetVolume(TInt aVolume) { iVolume = aVolume; SaveSettingValuesL(); }
+	void SetVolume(TInt aVolume) { iVolume = aVolume; }
 	
 	TInt& SleepTimerMinutes() { return iSleepTimerMinutes; }
-	void SetSleepTimerMinutes(TInt aSleepTimerMinutes) { iSleepTimerMinutes = aSleepTimerMinutes; SaveSettingValuesL(); }
+	void SetSleepTimerMinutes(TInt aSleepTimerMinutes) { iSleepTimerMinutes = aSleepTimerMinutes; }
 	
 	TTime& NextUpdateCheck() { return iNextUpdateCheck; }
-	void SetNextUpdateCheck(TTime aNextUpdateCheck) { iNextUpdateCheck = aNextUpdateCheck; SaveSettingValuesL(); }
+	void SetNextUpdateCheck(TTime aNextUpdateCheck) { iNextUpdateCheck = aNextUpdateCheck; }
 	
 	CMobblerLastFmConnection::TMode Mode() { return iMode; }
-	void SetMode(CMobblerLastFmConnection::TMode aMode) { iMode = aMode; SaveSettingValuesL(); }
+	void SetMode(CMobblerLastFmConnection::TMode aMode) { iMode = aMode; }
 
 	TInt& DownloadAlbumArt() { return iDownloadAlbumArt; }
-	void SetDownloadAlbumArt(TInt aDownloadAlbumArt) { iDownloadAlbumArt = aDownloadAlbumArt; SaveSettingValuesL(); }
+	void SetDownloadAlbumArt(TInt aDownloadAlbumArt) { iDownloadAlbumArt = aDownloadAlbumArt; }
 
 	TBool& AccelerometerGestures() { return iAccelerometerGestures; }
-	void SetAccelerometerGestures(TBool aAccelerometerGestures) { iAccelerometerGestures = aAccelerometerGestures; SaveSettingValuesL(); }
+	void SetAccelerometerGestures(TBool aAccelerometerGestures) { iAccelerometerGestures = aAccelerometerGestures; }
 	
 	TInt& SleepTimerAction() { return iSleepTimerAction; }
-	void SetSleepTimerAction(TInt aSleepTimerAction) { iSleepTimerAction = aSleepTimerAction; SaveSettingValuesL(); }
+	void SetSleepTimerAction(TInt aSleepTimerAction) { iSleepTimerAction = aSleepTimerAction; }
 	
-	TInt& SleepTimerImmediacy() { return iSleepTimerImmediacy; SaveSettingValuesL(); }
-	void SetSleepTimerImmediacy(TInt aSleepTimerImmediacy) { iSleepTimerImmediacy = aSleepTimerImmediacy; SaveSettingValuesL(); }
+	TInt& SleepTimerImmediacy() { return iSleepTimerImmediacy; }
+	void SetSleepTimerImmediacy(TInt aSleepTimerImmediacy) { iSleepTimerImmediacy = aSleepTimerImmediacy; }
 	
 	TBool& AlarmOn() { return iAlarmOn; }
-	void SetAlarmOn(TBool aAlarmOn) { iAlarmOn = aAlarmOn; SaveSettingValuesL(); };
+	void SetAlarmOn(TBool aAlarmOn) { iAlarmOn = aAlarmOn; };
 	
 	TTime& AlarmTime() { return iAlarmTime; }
-	void SetAlarmTime(TTime aAlarmTime) { iAlarmTime = aAlarmTime; SaveSettingValuesL(); }
+	void SetAlarmTime(TTime aAlarmTime) { iAlarmTime = aAlarmTime; }
 
 	TInt& AlarmIapId() { return iAlarmIapId; }
-	void SetAlarmIapId(TInt aAlarmIapId) { iAlarmIapId = aAlarmIapId; SaveSettingValuesL(); }
+	void SetAlarmIapId(TInt aAlarmIapId) { iAlarmIapId = aAlarmIapId; }
 	
 	TInt& BitRate() { return iBitRate; }
-	void SetBitRate(TInt aBitRate) { iBitRate = aBitRate; SaveSettingValuesL(); }
+	void SetBitRate(TInt aBitRate) { iBitRate = aBitRate; }
 	
 	TInt& AlarmVolume() { return iAlarmVolume; }
-	void SetAlarmVolume(TInt aAlarmVolume) { iAlarmVolume = aAlarmVolume; SaveSettingValuesL(); }
+	void SetAlarmVolume(TInt aAlarmVolume) { iAlarmVolume = aAlarmVolume; }
 	
 	TInt& AlarmStation() { return iAlarmStation; }
-	void SetAlarmStation(TInt aAlarmStation) { iAlarmStation = aAlarmStation; SaveSettingValuesL(); }
+	void SetAlarmStation(TInt aAlarmStation) { iAlarmStation = aAlarmStation; }
 	
 	TDes& AlarmOption() { return iAlarmOption; }
-	void SetAlarmOption(const TDesC& aAlarmOption) { iAlarmOption.Copy(aAlarmOption); SaveSettingValuesL(); }
+	void SetAlarmOption(const TDesC& aAlarmOption) { iAlarmOption.Copy(aAlarmOption); }
 	
 	TBool& AutomaticWallpaper() { return iAutomaticWallpaper; }
-	void SetAutomaticWallpaper(TBool aAutomaticWallpaper) { iAutomaticWallpaper = aAutomaticWallpaper; SaveSettingValuesL(); }
-	
-	TDesC8& TwitterAuthToken() { return iTwitterAuthToken; }
-	void SetTwitterAuthToken(const TDesC8& aTwitterAuthToken) { iTwitterAuthToken.Copy(aTwitterAuthToken); SaveSettingValuesL(); }
-	
-	TDesC8& TwitterAuthTokenSecret() { return iTwitterAuthTokenSecret; }
-	void SetTwitterAuthTokenSecret(const TDesC8& aTwitterAuthTokenSecret) { iTwitterAuthTokenSecret.Copy(aTwitterAuthTokenSecret); SaveSettingValuesL(); }
+	void SetAutomaticWallpaper(TBool aAutomaticWallpaper) { iAutomaticWallpaper = aAutomaticWallpaper; }
 
 protected:
-	TBuf<KMaxMobblerTextSize> iUsername;
-	TBuf<KMaxMobblerTextSize> iPassword;
+	TBuf<30> iUsername;
+	TBuf<30> iPassword;
 	TBool iBacklight;
 	TBool iCheckForUpdates;
 	TInt iIapId;
@@ -159,8 +153,6 @@ protected:
 	TInt iAlarmStation;
 	TBuf<KMaxMobblerTextSize> iAlarmOption;
 	TBool iAutomaticWallpaper;
-	TBuf8<KMaxMobblerTextSize> iTwitterAuthToken;
-	TBuf8<KMaxMobblerTextSize> iTwitterAuthTokenSecret;
 	};
 
 #endif // __MOBBLERSETTINGITEMLISTSETTINGS_H__

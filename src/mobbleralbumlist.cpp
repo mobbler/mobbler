@@ -113,7 +113,7 @@ void CMobblerAlbumList::SupportedCommandsL(RArray<TInt>& aCommands)
 	aCommands.AppendL(EMobblerCommandAlbumRemoveTag);
 	}
 
-void CMobblerAlbumList::DataL(CMobblerFlatDataObserverHelper* /*aObserver*/, const TDesC8& /*aData*/, TInt /*aError*/)
+void CMobblerAlbumList::DataL(CMobblerFlatDataObserverHelper* /*aObserver*/, const TDesC8& /*aData*/, CMobblerLastFmConnection::TTransactionError /*aError*/)
 	{
     TRACER_AUTO;
 	}

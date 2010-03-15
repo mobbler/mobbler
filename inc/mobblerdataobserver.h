@@ -26,9 +26,29 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <aknprogressdialog.h>
 
-#include "mobblerflatdataobserver.h"
+#include "mobblerlastfmconnection.h"
 
 class CAknWaitDialog;
+class CMobblerFlatDataObserverHelper;
+
+class MMobblerSegDataObserver
+	{
+public:
+	virtual void DataPart(const TDesC8& aData, TInt aTotalSize) = 0;
+	virtual void DataCompleteL(CMobblerLastFmConnection::TTransactionError aTransactionError, TInt aHTTPStatusCode, const TDesC8& aStatusText) = 0;
+	};
+
+class MMobblerFlatDataObserver
+	{
+public:
+	virtual void DataL(const TDesC8& aData, CMobblerLastFmConnection::TTransactionError aTransactionError) = 0;
+	};
+
+class MMobblerFlatDataObserverHelper
+	{
+public:
+	virtual void DataL(CMobblerFlatDataObserverHelper* aObserver, const TDesC8& aData, CMobblerLastFmConnection::TTransactionError aTransactionError) = 0;
+	};
 
 class CMobblerFlatDataObserverHelper : public CBase, public MMobblerFlatDataObserver, public MProgressDialogCallback
 	{
@@ -42,7 +62,7 @@ private:
 	CMobblerFlatDataObserverHelper(CMobblerLastFmConnection& aConnection, MMobblerFlatDataObserverHelper& aObserver);
 	void ConstructL(TBool aShowWaitDialog);
 	
-	void DataL(const TDesC8& aData, TInt aTransactionError);
+	void DataL(const TDesC8& aData, CMobblerLastFmConnection::TTransactionError aTransactionError);
 	
 	void DialogDismissedL(TInt aButtonId);
 	

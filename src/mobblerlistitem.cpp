@@ -142,7 +142,7 @@ TBool CMobblerListItem::ImageRequested() const
 	return iImageRequested;
 	}
 
-void CMobblerListItem::DataL(const TDesC8& aData, TInt aTransactionError)
+void CMobblerListItem::DataL(const TDesC8& aData, CMobblerLastFmConnection::TTransactionError aTransactionError)
 	{
     TRACER_AUTO;
 	if (aTransactionError == CMobblerLastFmConnection::ETransactionErrorNone)

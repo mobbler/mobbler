@@ -111,10 +111,10 @@ private:
 	void BitmapResizedL(const CMobblerBitmap* aMobblerBitmap);
 	
 private: // MMobblerFlatDataObserver
-	void DataL(const TDesC8& aData, TInt aTransactionError);
+	void DataL(const TDesC8& aData, CMobblerLastFmConnection::TTransactionError aTransactionError);
 	
 private: // from MMobblerFlatDataObserverHelper
-	void DataL(CMobblerFlatDataObserverHelper* aObserver, const TDesC8& aData, TInt aTransactionError);
+	void DataL(CMobblerFlatDataObserverHelper* aObserver, const TDesC8& aData, CMobblerLastFmConnection::TTransactionError aTransactionError);
 	
 private: // from MMobblerContentListingObserver
 	void HandleFindLocalTrackCompleteL(TInt aTrackNumber, const TDesC& aAlbum, const TDesC& aLocalFile);
