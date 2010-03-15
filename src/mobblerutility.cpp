@@ -130,7 +130,7 @@ HBufC8* MobblerUtility::URLEncodeLC(const TDesC8& aString, TBool aEncodeAll)
     // Parse a the chars in the url
     for (TInt i(0) ; i < aString.Length() ; ++i)
     	{
-		TChar cToFind = aString[i];
+		const TUint8& cToFind(aString[i]);
 		if ( aEncodeAll || (KErrNotFound == KDontEncode().Locate(cToFind)) )
 			{
 			// Char not found encode it.

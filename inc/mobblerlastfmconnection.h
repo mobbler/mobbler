@@ -221,7 +221,8 @@ public:
 	
 	void ShortenL(const TDesC8& aUrl, MMobblerFlatDataObserver& aObserver);
 	void TweetL(const TDesC8& aTweet, MMobblerFlatDataObserver& aObserver);
-	void TwitterAccessTokenL(const TDesC &aUsername, const TDesC &aPassword, MMobblerFlatDataObserver& aObserver);
+	void TwitterAccessTokenL(MMobblerFlatDataObserver& aObserver);
+	void TwitterFollowMobblerL(MMobblerFlatDataObserver& aObserver);
 	
 private:
 	void RunL();

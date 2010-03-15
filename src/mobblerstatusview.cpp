@@ -34,6 +34,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "mobblerappui.h"
 #include "mobblerradioplayer.h"
 #include "mobblerresourcereader.h"
+#include "mobblersettingitemlistsettings.h"
+#include "mobblersettingitemlistview.h"
 #include "mobblerstatuscontrol.h"
 #include "mobblerstatusview.h"
 #include "mobblertracer.h"
@@ -144,6 +146,7 @@ void CMobblerStatusView::DynInitMenuPaneL(TInt aResourceId, CEikMenuPane* aMenuP
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_EQUALIZER,		EMobblerCommandEqualizer);
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_TOOLS_SUBMENU,	EMobblerCommandTools);
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_SETTINGS,			EMobblerCommandEditSettings);
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_TWITTER,			EMobblerCommandTwitter);
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_ABOUT,			EMobblerCommandAbout);
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_EXIT,				EAknSoftkeyExit);
 		
@@ -158,6 +161,12 @@ void CMobblerStatusView::DynInitMenuPaneL(TInt aResourceId, CEikMenuPane* aMenuP
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_ARTIST_SHOUTBOX,		EMobblerCommandPlusArtistShoutbox);
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_TAG,					EMobblerCommandPlusTag);
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_LYRICS,				EMobblerCommandTrackLyrics);
+		}
+	else if(aResourceId == R_MOBBLER_TWITTER_SUBMENU_PANE)
+		{
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_TWITTER_AUTH,			EMobblerCommandTwitterAuth);
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_TWITTER_SWITCH,		EMobblerCommandTwitterSwitch);
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_TWITTER_REMOVE,		EMobblerCommandTwitterRemove);
 		}
 	else if(aResourceId == R_MOBBLER_PLUS_SHARE_SUBMENU_PANE)
 		{
@@ -262,6 +271,7 @@ void CMobblerStatusView::DynInitMenuPaneL(TInt aResourceId, CEikMenuPane* aMenuP
 			aMenuPane->SetItemDimmed(EMobblerCommandEqualizer, ETrue);
 			aMenuPane->SetItemDimmed(EMobblerCommandTools, ETrue);
 			aMenuPane->SetItemDimmed(EMobblerCommandEditSettings, ETrue);
+			aMenuPane->SetItemDimmed(EMobblerCommandTwitter, ETrue);
 			aMenuPane->SetItemDimmed(EMobblerCommandAbout, ETrue);
 			aMenuPane->SetItemDimmed(EAknSoftkeyExit, ETrue);
 			}
@@ -364,6 +374,21 @@ void CMobblerStatusView::DynInitMenuPaneL(TInt aResourceId, CEikMenuPane* aMenuP
 		aMenuPane->SetItemDimmed(EMobblerCommandArtistTopTags, ETrue);
 		
 		aMenuPane->SetItemDimmed(EMobblerCommandEventWebPage, ETrue);
+		}
+	else if (aResourceId == R_MOBBLER_TWITTER_SUBMENU_PANE)
+		{
+		if (static_cast<CMobblerAppUi*>(AppUi())->SettingView().Settings().TwitterAuthToken().Length() == 0
+				|| static_cast<CMobblerAppUi*>(AppUi())->SettingView().Settings().TwitterAuthTokenSecret().Length() == 0)
+			{
+			// The user hasn't authenticated with twitter so hide the switch and remove options 
+			aMenuPane->SetItemDimmed(EMobblerCommandTwitterSwitch, ETrue);
+			aMenuPane->SetItemDimmed(EMobblerCommandTwitterRemove, ETrue);
+			}
+		else
+			{
+			// the user has authenticated so hide the authenticate options
+			aMenuPane->SetItemDimmed(EMobblerCommandTwitterAuth, ETrue);
+			}
 		}
 	
 	// Third edition only due to an S60 5th edition bug (issue 364)

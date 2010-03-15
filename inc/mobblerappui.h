@@ -314,6 +314,8 @@ private:
 	CMobblerFlatDataObserverHelper* iManualCheckForUpdatesObserver;
 	CMobblerFlatDataObserverHelper* iLyricsObserver;
 	CMobblerFlatDataObserverHelper* iLocalEventsObserver;
+	CMobblerFlatDataObserverHelper* iTwitterAuthObserver;
+	CMobblerFlatDataObserverHelper* iTwitterFollowObserver;
 
 	CMobblerDestinationsInterface* iDestinations;
 	TUid iDestinationsDtorUid;

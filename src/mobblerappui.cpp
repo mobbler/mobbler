@@ -268,6 +268,8 @@ CMobblerAppUi::~CMobblerAppUi()
 	delete iWebServicesHelper;
 	delete iLocation;
 	delete iLocalEventsObserver;
+	delete iTwitterAuthObserver;
+	delete iTwitterFollowObserver;
 	
 	if (iContentListing)
 		{
@@ -718,6 +720,16 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 			ActivateLocalViewL(iSettingView->Id(), 
 								TUid::Uid(CMobblerSettingItemListView::ENormalSettings), 
 								KNullDesC8);
+			break;
+		case EMobblerCommandTwitterAuth:
+		case EMobblerCommandTwitterSwitch:
+			delete iTwitterAuthObserver;
+			iTwitterAuthObserver = CMobblerFlatDataObserverHelper::NewL(*iLastFmConnection, *this, ETrue);
+			iLastFmConnection->TwitterAccessTokenL(*iTwitterAuthObserver);
+			break;
+		case EMobblerCommandTwitterRemove:
+			SettingView().Settings().SetTwitterAuthToken(KNullDesC8);
+			SettingView().Settings().SetTwitterAuthTokenSecret(KNullDesC8);
 			break;
 		case EMobblerCommandAbout:
 			{
@@ -1444,6 +1456,44 @@ void CMobblerAppUi::DataL(CMobblerFlatDataObserverHelper* aObserver, const TDesC
 			CleanupStack::PopAndDestroy(&file);
 			
 			LaunchFileL(KMapKmlFilename);
+			}
+		else if (aObserver == iTwitterAuthObserver)
+			{
+			HBufC8* error = CMobblerParser::ParseTwitterAuthL(aData);
+			
+			if (!error)
+				{
+				CAknQueryDialog* dlg(CAknQueryDialog::NewL());
+				TBool followMobbler(dlg->ExecuteLD(R_MOBBLER_YES_NO_QUERY_DIALOG, iResourceReader->ResourceL(R_MOBBLER_TWITTER_FOLLOW)));
+				
+				if (followMobbler)
+					{
+					delete iTwitterFollowObserver;
+					iTwitterFollowObserver = CMobblerFlatDataObserverHelper::NewL(*iLastFmConnection, *this, ETrue);
+					iLastFmConnection->TwitterFollowMobblerL(*iTwitterFollowObserver);
+					}
+				else
+					{
+					CAknResourceNoteDialog *note(new (ELeave) CAknInformationNote(EFalse));
+					note->ExecuteLD(iResourceReader->ResourceL(R_MOBBLER_DONE));
+					}
+				}
+			else
+				{
+				CleanupStack::PushL(error);
+				CMobblerString* message(CMobblerString::NewL(*error));
+				CleanupStack::PopAndDestroy(error);
+				CleanupStack::PushL(message);
+				// Tell the user that there was an error connecting
+				CAknResourceNoteDialog *note(new (ELeave) CAknInformationNote(EFalse));
+				note->ExecuteLD(message->String());
+				CleanupStack::PopAndDestroy(message);
+				}
+			}
+		else if (aObserver == iTwitterAuthObserver)
+			{
+			CAknResourceNoteDialog *note(new (ELeave) CAknInformationNote(EFalse));
+			note->ExecuteLD(iResourceReader->ResourceL(R_MOBBLER_DONE));
 			}
 		} // 	if (aTransactionError == CMobblerLastFmConnection::ETransactionErrorNone)
 	}
