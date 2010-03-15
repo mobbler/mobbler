@@ -70,12 +70,15 @@ private:
 	HBufC* DisplayContactListL();
 	HBufC* DisplayEmailListL(const CDesCArray& aEmails);
 	
+	void DoShareTrackTwitterL();
+	void DoShareArtistTwitterL();
+	
 	TShareWith ShareSourceL();
 	
 	void DoShareL(TInt aCommand, const TDesC8& aRecipient);
 
 private:
-	void DataL(CMobblerFlatDataObserverHelper* aObserver, const TDesC8& aData, CMobblerLastFmConnection::TTransactionError aTransactionError);
+	void DataL(CMobblerFlatDataObserverHelper* aObserver, const TDesC8& aData, TInt aTransactionError);
 	
 private:
 	CMobblerAppUi& iAppUi;
@@ -83,7 +86,7 @@ private:
 	CMobblerTrack* iTrack;
 	HBufC8* iEventId;
 	
-	HBufC8* iShareMessage;
+	HBufC* iShareMessage;
 	
 	CMobblerFlatDataObserverHelper* iTagAddHelper;
 	CMobblerFlatDataObserverHelper* iTagRemoveHelper;
@@ -92,8 +95,13 @@ private:
 	CMobblerFlatDataObserverHelper* iAlbumTagRemoveTagsHelper;
 	CMobblerFlatDataObserverHelper* iArtistTagRemoveTagsHelper;
 	
+	CMobblerFlatDataObserverHelper* iTwitterAuthObserverTrack;
+	CMobblerFlatDataObserverHelper* iTwitterAuthObserverArtist;
+	
+	CMobblerFlatDataObserverHelper* iTwitterFollowObserverTrack;
+	CMobblerFlatDataObserverHelper* iTwitterFollowObserverArtist;
+	
 	CMobblerFlatDataObserverHelper* iShortenObserverHelperTrack;
-	CMobblerFlatDataObserverHelper* iShortenObserverHelperAlbum;
 	CMobblerFlatDataObserverHelper* iShortenObserverHelperArtist;
 	CMobblerFlatDataObserverHelper* iTweetObserverHelper;
 	

@@ -80,35 +80,15 @@ const TInt KNokiaE52MachineUid(0x20014DCC);
 const TInt KNokiaE55MachineUid(0x20014DCF);
 const TInt KNokiaE72MachineUid(0x20014DD0);
 
-TBool MobblerUtility::iEqualizerSupported = ETrue;
-
 TBool MobblerUtility::EqualizerSupported()
 	{
 	TRACER_AUTO;
-	if (!iEqualizerSupported)
-		{
-		return iEqualizerSupported;
-		}
-
 	TInt machineUid(0);
 	TInt error(HAL::Get(HALData::EMachineUid, machineUid));
-	if (error == KErrNone)
-		{
-		iEqualizerSupported = !(machineUid == KNokia6710NavigatorMachineUid ||
-								machineUid == KNokiaE52MachineUid || 
-								machineUid == KNokiaE55MachineUid || 
-								machineUid == KNokiaE72MachineUid);
-		return iEqualizerSupported;
-		}
-	else
-		{
-		return EFalse;
-		}
-	}
-
-void MobblerUtility::SetEqualizerNotSupported()
-	{
-	iEqualizerSupported = EFalse;
+	return (error == KErrNone) && !(machineUid == KNokia6710NavigatorMachineUid ||
+									machineUid == KNokiaE52MachineUid || 
+									machineUid == KNokiaE55MachineUid || 
+									machineUid == KNokiaE72MachineUid);
 	}
 
 HBufC8* MobblerUtility::MD5LC(const TDesC8& aSource)
@@ -131,18 +111,39 @@ HBufC8* MobblerUtility::MD5LC(const TDesC8& aSource)
 	return hashResult;
 	}
 
-HBufC8* MobblerUtility::URLEncodeLC(const TDesC8& aString)
+HBufC8* MobblerUtility::URLEncodeLC(const TDesC8& aString, TBool aEncodeAll)
 	{
 	TRACER_AUTO;
-	HBufC8* urlEncoded(HBufC8::NewLC(aString.Length() * 3));
-	// sanitise the input string
-	const TInt KCharCount(aString.Length());
-	for (TInt i(0); i < KCharCount; ++i)
-		{
-		urlEncoded->Des().AppendFormat(KFormat2, aString[i]);
-		}
-	
-	return urlEncoded;
+    
+    _LIT8(KFormatCode, "%%%02X");
+    
+    if (aString.Length() == 0)
+    	{
+		return NULL;
+    	}
+
+    _LIT8(KDontEncode, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._~");
+
+    // Alloc to the maximum size of URL if every char are encoded
+    HBufC8* encoded = HBufC8::NewLC(aString.Length() * 3);
+
+    // Parse a the chars in the url
+    for (TInt i(0) ; i < aString.Length() ; ++i)
+    	{
+		const TUint8& cToFind(aString[i]);
+		if ( aEncodeAll || (KErrNotFound == KDontEncode().Locate(cToFind)) )
+			{
+			// Char not found encode it.
+			encoded->Des().AppendFormat(KFormatCode, cToFind);
+			}
+		else
+			{
+			// char found just copy it
+			encoded->Des().Append(cToFind);
+			}
+    	}
+
+    return encoded;
 	}
 
 TBuf8<2> MobblerUtility::LanguageL()

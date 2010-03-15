@@ -1,25 +1,24 @@
 /*
+mobbleraudiocontrol.h
+
 Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
-Copyright (C) 2008, 2009  Steve Punter
-Copyright (C) 2009  Michael Coffey
-Copyright (C) 2009, 2010  Hugo van Kemenade
+Copyright (C) 2008  Michael Coffey
 
 http://code.google.com/p/mobbler
 
-This file is part of Mobbler.
-
-Mobbler is free software; you can redistribute it and/or
+This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
-Mobbler is distributed in the hope that it will be useful,
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with Mobbler.  If not, see <http://www.gnu.org/licenses/>.
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
 #ifndef __MOBBLERAUDIOCONTROL_H__
@@ -27,7 +26,7 @@ along with Mobbler.  If not, see <http://www.gnu.org/licenses/>.
 
 // INCLUDES
 #include <E32Base.h>
-#include "mobblerdataobserver.h"
+#include "mobblersegdataobserver.h"
 #include "mobblerlastfmconnection.h"
 #include "mobblershareddata.h"
 
@@ -37,8 +36,7 @@ class MMobblerAudioControlObserver
 	{
 public:
 	virtual void HandleAudioPositionChangeL() = 0;
-	virtual void HandleAudioFinishedL(CMobblerAudioControl* aAudioControl, 
-										TBool aAbnormalTermination) = 0;
+	virtual void HandleAudioFinishedL(CMobblerAudioControl* aAudioControl) = 0;
 	};
 
 class CMobblerAudioControl : public CActive, public MMobblerSegDataObserver
@@ -77,7 +75,7 @@ private: // from CActive
 	
 private: // from 
 	void DataPart(const TDesC8& aData, TInt aTotalSize);
-	void DataCompleteL(CMobblerLastFmConnection::TTransactionError aTransactionError, TInt aHTTPStatusCode, const TDesC8& aStatusText);
+	void DataCompleteL(TInt aTransactionError, TInt aHTTPStatusCode, const TDesC8& aStatusText);
 	
 private:
 	TMobblerSharedData iShared;

@@ -347,6 +347,11 @@ RESOURCE MENU_PANE r_mobbler_status_menu_pane
 			},
 		MENU_ITEM
 			{
+			command = EMobblerCommandTwitter;
+			cascade = r_mobbler_twitter_submenu_pane;
+			},
+		MENU_ITEM
+			{
 			command = EMobblerCommandAbout;
 			},
 		// The plus option menu commands
@@ -623,6 +628,25 @@ RESOURCE MENU_PANE r_mobbler_equalizer_submenu_pane
 			{
 			command = EMobblerCommandEqualizerDefault;
 			flags = EEikMenuItemRadioStart;
+			}
+		};
+	}
+	
+RESOURCE MENU_PANE r_mobbler_twitter_submenu_pane
+	{
+	items =
+		{
+		MENU_ITEM
+			{
+			command = EMobblerCommandTwitterAuth;
+			},
+		MENU_ITEM
+			{
+			command = EMobblerCommandTwitterSwitch;
+			},
+		MENU_ITEM
+			{
+			command = EMobblerCommandTwitterRemove;
 			}
 		};
 	}

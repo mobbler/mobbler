@@ -39,6 +39,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "mobblerplaylistlist.h"
 #include "mobblerradioplaylist.h"
 #include "mobblerresourcereader.h"
+#include "mobblersettingitemlistsettings.h"
+#include "mobblersettingitemlistview.h"
 #include "mobblershoutbox.h"
 #include "mobblerstring.h"
 #include "mobblertaglist.h"
@@ -528,6 +530,58 @@ CMobblerLastFmError* CMobblerParser::ParseRadioPlaylistL(const TDesC8& aXml, CMo
 		}
 
 	return error;
+	}
+
+
+HBufC8* CMobblerParser::ParseTwitterAuthL(const TDesC8& aData)
+	{
+	// Get the token and token secret out of the response
+	// example:
+	// oauth_token=XXX&oauth_token_secret=XXX&user_id=12345678&screen_name=<username>&x_auth_expires=0
+
+	TPtrC8 data(aData);
+	
+	while ( data.Length() != 0 ) 
+		{
+		TInt ampPos(data.Find(_L8("&")));
+		if (ampPos == KErrNotFound)
+			{
+			ampPos = data.Length();
+			}
+			
+		TPtrC8 pair(data.Left(ampPos));
+		TInt eqlPos(pair.Find(_L8("=")));
+		
+		if (eqlPos != KErrNotFound)
+			{
+			TPtrC8 key(pair.Left(eqlPos));
+			TPtrC8 value(pair.Right(pair.Length() - (eqlPos + 1)));
+			
+			if (key.Compare(_L8("oauth_token")) == 0)
+				{
+				static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->SettingView().Settings().SetTwitterAuthToken(value);
+				}
+			else if (key.Compare(_L8("oauth_token_secret")) == 0)
+				{
+				static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->SettingView().Settings().SetTwitterAuthTokenSecret(value);
+				}
+			
+			// Move to the rest of the data
+			if (ampPos == data.Length())
+				{
+				data.Set(KNullDesC8);
+				}
+			else
+				{
+				data.Set(data.Right(data.Length() - (ampPos + 1)));
+				}
+			}
+		else
+			{
+			// There was an error!
+			return aData.AllocL();
+			}
+		}
 	}
 
 CMobblerLastFmError* CMobblerParser::ParseWebServicesHandshakeL(const TDesC8& aWebServicesHandshakeResponse, HBufC8*& aWebServicesSessionKey, CMobblerLastFmConnection::TLastFmMemberType& aMemberType)
