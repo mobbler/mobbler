@@ -2,7 +2,7 @@
 Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
 Copyright (C) 2008, 2009, 2010  Michael Coffey
 Copyright (C) 2009, 2010  Hugo van Kemenade
-Copyright (C) 2009, 2010  gw111zz
+Copyright (C) 2009, 2010  gw11zz
 
 http://code.google.com/p/mobbler
 
@@ -34,6 +34,7 @@ class MobblerUtility
 	{
 public:
 	static TBool EqualizerSupported();
+	static void SetEqualizerNotSupported();
 	
 	static HBufC8* MD5LC(const TDesC8& aSource);
 	static HBufC8* URLEncodeLC(const TDesC8& aString, TBool aEncodeAll = ETrue);
@@ -47,6 +48,9 @@ public:
 	static void StripUnwantedTagsFromHtmlL(HBufC8*& aHtml);
 
 	static CSenDomFragment* PrepareDomFragmentLC(CSenXmlReader& aXmlReader, const TDesC8& aXml);
+
+private:
+	static TBool iEqualizerSupported;
 	};
 
 #endif // __MOBBLERUTILITY_H__

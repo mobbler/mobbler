@@ -34,9 +34,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 _LIT(KLogPath, "C:\\Mobbler\\");
 _LIT(KLogFilename, "mobbler.log");
-_LIT8(KCommaSpace, ", ");
-_LIT8(KNewline, "\n");
-_LIT8(KNull, "NULL");
 const TInt KMaxLoggingTextSize(255);
 
 void CMobblerLogging::DumpDataL(const TDesC8& aData, const TDesC& aLogFile)
@@ -66,7 +63,7 @@ void CMobblerLogging::LogL(const TInt aFirstNumber, const TInt aSecondNumber)
 //	TRACER_AUTO;
 	TBuf8<KMaxLoggingTextSize> text8;
 	text8.AppendNum(aFirstNumber);
-	text8.Append(KCommaSpace);
+	text8.Append(_L8(", "));
 	text8.AppendNum(aSecondNumber);
 	LogL(text8);
 	}
@@ -85,7 +82,7 @@ void CMobblerLogging::LogL(const TDesC8& aText, const TInt aNumber)
 //	TRACER_AUTO;
 	TBuf8<KMaxLoggingTextSize> text8;
 	text8.Append(aText);
-	text8.Append(KCommaSpace);
+	text8.Append(_L8(", "));
 	text8.AppendNum(aNumber);
 	LogL(text8);
 	}
@@ -95,7 +92,7 @@ void CMobblerLogging::LogL(const TDesC8& aFirstText, const TDesC8& aSecondText)
 //	TRACER_AUTO;
 	TBuf8<KMaxLoggingTextSize> text8;
 	text8.Append(aFirstText);
-	text8.Append(KCommaSpace);
+	text8.Append(_L8(", "));
 	text8.Append(aSecondText);
 	LogL(text8);
 	}
@@ -105,7 +102,7 @@ void CMobblerLogging::LogL(const TDesC8& aFirstText, const TDesC& aSecondText)
 //	TRACER_AUTO;
 	TBuf8<KMaxLoggingTextSize> text8;
 	text8.Append(aFirstText);
-	text8.Append(KCommaSpace);
+	text8.Append(_L8(", "));
 	text8.Append(aSecondText);
 	LogL(text8);
 	}
@@ -120,7 +117,7 @@ void CMobblerLogging::LogL(const CMobblerString* aMobblerString)
 		}
 	else
 		{
-		text8.Append(KNull);
+		text8.Append(_L8("NULL"));
 		}
 	LogL(text8);
 	}
@@ -150,7 +147,7 @@ void CMobblerLogging::LogL(const TDesC8& aText)
 	TInt position(0);
 	file.Seek(ESeekEnd, position);
 	User::LeaveIfError(file.Write(aText));
-	User::LeaveIfError(file.Write(KNewline));
+	User::LeaveIfError(file.Write(_L8("\n")));
 	CleanupStack::PopAndDestroy(&file);
 	}
 
