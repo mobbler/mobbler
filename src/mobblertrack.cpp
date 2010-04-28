@@ -3,7 +3,6 @@ mobblertrack.cpp
 
 Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
 Copyright (C) 2008  Michael Coffey
-Copyright (C) 2010  gw111zz
 
 http://code.google.com/p/mobbler
 
@@ -588,8 +587,7 @@ TBool CMobblerTrack::OkToDownloadAlbumArt() const
 	TInt downloadAlbumArt(static_cast<CMobblerAppUi*>(CEikonEnv::Static()->AppUi())->DownloadAlbumArt());
 
 	TBool okToDownloadAlbumArt((downloadAlbumArt == CMobblerAppUi::EOnlyRadio && !IsMusicPlayerTrack())
-								|| ((downloadAlbumArt == CMobblerAppUi::EAlwaysAndKeep) ||
-									(downloadAlbumArt == CMobblerAppUi::EAlwaysAndDitch)));
+								|| (downloadAlbumArt == CMobblerAppUi::EAlwaysWhenOnline));
 
 	return (okToDownloadAlbumArt &&
 		static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->LastFmConnection().Mode() == CMobblerLastFmConnection::EOnline);
@@ -704,14 +702,12 @@ TBool CMobblerTrack::FetchImageL(CMobblerFlatDataObserverHelper* aObserver, cons
 void CMobblerTrack::SaveAlbumArtL(const TDesC8& aData)
 	{
     TRACER_AUTO;
-	if (((iLocalFile && iLocalFile->Length() > 0) ||
-		(iImageType == EMobblerImageTypeArtistRemote && IsMusicPlayerTrack())) &&
-		(static_cast<CMobblerAppUi*>(CEikonEnv::Static()->AppUi())->DownloadAlbumArt() ==
-				CMobblerAppUi::EAlwaysAndKeep)
-		)
+	if ((iLocalFile && iLocalFile->Length() > 0)
+			||
+		(iImageType == EMobblerImageTypeArtistRemote && IsMusicPlayerTrack()))
 		{
-		// Try to save the album art in the album folder
-		LOG(_L8("SaveAlbumArtL() saving album art"));
+		// try to save the album art in the album folder
+		LOG(_L8("SaveAlbumArtL()"));
 
 		TFileName albumArtFileName;
 		if (iLocalFile && iLocalFile->Length() > 0)

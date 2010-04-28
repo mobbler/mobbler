@@ -3,7 +3,6 @@ mobblersettingitemlistview.cpp
 
 Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
 Copyright (C) 2008  Michael Coffey
-Copyright (C) 2010  gw111zz
 
 http://code.google.com/p/mobbler
 
@@ -237,8 +236,7 @@ void CMobblerSettingItemListView::LoadListL()
 		CleanupClosePushL(downloadAlbumArtArray);
 		downloadAlbumArtArray.AppendL(R_MOBBLER_DOWNLOAD_ALBUM_ART_NEVER);
 		downloadAlbumArtArray.AppendL(R_MOBBLER_DOWNLOAD_ALBUM_ART_RADIO_ONLY);
-		downloadAlbumArtArray.AppendL(R_MOBBLER_DOWNLOAD_ALBUM_ART_ALWAYS_AND_KEEP);
-		downloadAlbumArtArray.AppendL(R_MOBBLER_DOWNLOAD_ALBUM_ART_ALWAYS_AND_DITCH);
+		downloadAlbumArtArray.AppendL(R_MOBBLER_DOWNLOAD_ALBUM_ART_ALWAYS_WHEN_ONLINE);
 		CreateEnumItemL(iSettings->DownloadAlbumArt(),
 						R_MOBBLER_DOWNLOAD_ALBUM_ART,
 						R_MOBBLER_SETTING_PAGE_ENUM,

@@ -89,7 +89,7 @@ RESOURCE STRING r_mobbler_backlight_system_default		{ text = STR_mobbler_backlig
 RESOURCE STRING r_mobbler_download_album_art			{ text = STR_mobbler_download_album_art; }
 RESOURCE STRING r_mobbler_download_album_art_never		{ text = STR_mobbler_download_album_art_never; }
 RESOURCE STRING r_mobbler_download_album_art_radio_only	{ text = STR_mobbler_download_album_art_radio_only; }
-RESOURCE STRING r_mobbler_download_album_art_always_and_keep	{ text = STR_mobbler_download_album_art_always_and_keep; }
+RESOURCE STRING r_mobbler_download_album_art_always_when_online	{ text = STR_mobbler_download_album_art_always_when_online; }
 RESOURCE STRING r_mobbler_accelerometer_gestures		{ text = STR_mobbler_accelerometer_gestures; }
 RESOURCE STRING r_mobbler_accelerometer_gestures_on		{ text = STR_mobbler_accelerometer_gestures_on; }
 RESOURCE STRING r_mobbler_accelerometer_gestures_off	{ text = STR_mobbler_accelerometer_gestures_off; }
@@ -381,8 +381,7 @@ RESOURCE STRING r_mobbler_local_events			{ text = STR_mobbler_local_events; }
 RESOURCE STRING r_mobbler_old_scrobbles_warning	{ text = STR_mobbler_old_scrobbles_warning; }
 
 RESOURCE STRING r_mobbler_twitter				{ text = STR_mobbler_twitter; }
-RESOURCE STRING r_mobbler_twitter_auth			{ text = STR_mobbler_twitter_auth; }
-RESOURCE STRING r_mobbler_twitter_switch		{ text = STR_mobbler_twitter_switch; }
+RESOURCE STRING r_mobbler_twitter_change		{ text = STR_mobbler_twitter_change; }
 RESOURCE STRING r_mobbler_twitter_remove		{ text = STR_mobbler_twitter_remove; }
 RESOURCE STRING r_mobbler_twitter_follow		{ text = STR_mobbler_twitter_follow; }
 
@@ -399,7 +398,5 @@ RESOURCE STRING r_mobbler_twitter_share_album_format		{ text = STR_mobbler_twitt
 
 RESOURCE STRING r_mobbler_twitter_now_playing_artist_format	{ text = STR_mobbler_twitter_now_playing_artist_format; }
 RESOURCE STRING r_mobbler_twitter_share_artist_format		{ text = STR_mobbler_twitter_share_artist_format; }
-
-RESOURCE STRING r_mobbler_download_album_art_always_and_ditch	{ text = STR_mobbler_download_album_art_always_and_ditch; }
 
 // End of file
