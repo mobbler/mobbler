@@ -720,8 +720,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 								TUid::Uid(CMobblerSettingItemListView::ENormalSettings), 
 								KNullDesC8);
 			break;
-		case EMobblerCommandTwitterAuth:
-		case EMobblerCommandTwitterSwitch:
+		case EMobblerCommandTwitterChange:
 			delete iTwitterAuthObserver;
 			iTwitterAuthObserver = CMobblerFlatDataObserverHelper::NewL(*iLastFmConnection, *this, ETrue);
 			iLastFmConnection->QueryTwitterL(CMobblerLastFmConnection::EAccessToken, *iTwitterAuthObserver);
