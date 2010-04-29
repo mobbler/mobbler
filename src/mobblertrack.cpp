@@ -2,23 +2,26 @@
 mobblertrack.cpp
 
 Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
-Copyright (C) 2008  Michael Coffey
+Copyright (C) 2008, 2009, 2010  Michael Coffey
+Copyright (C) 2008, 2009, 2010  Hugo van Kemenade
+Copyright (C) 2009, 2010  gw111zz
 
 http://code.google.com/p/mobbler
 
-This program is free software; you can redistribute it and/or
+This file is part of Mobbler.
+
+Mobbler is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful,
+Mobbler is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+along with Mobbler.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include <bautils.h>
@@ -587,7 +590,8 @@ TBool CMobblerTrack::OkToDownloadAlbumArt() const
 	TInt downloadAlbumArt(static_cast<CMobblerAppUi*>(CEikonEnv::Static()->AppUi())->DownloadAlbumArt());
 
 	TBool okToDownloadAlbumArt((downloadAlbumArt == CMobblerAppUi::EOnlyRadio && !IsMusicPlayerTrack())
-								|| (downloadAlbumArt == CMobblerAppUi::EAlwaysWhenOnline));
+								|| ((downloadAlbumArt == CMobblerAppUi::EAlwaysAndKeep) ||
+									(downloadAlbumArt == CMobblerAppUi::EAlwaysAndDitch)));
 
 	return (okToDownloadAlbumArt &&
 		static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->LastFmConnection().Mode() == CMobblerLastFmConnection::EOnline);
@@ -702,12 +706,14 @@ TBool CMobblerTrack::FetchImageL(CMobblerFlatDataObserverHelper* aObserver, cons
 void CMobblerTrack::SaveAlbumArtL(const TDesC8& aData)
 	{
     TRACER_AUTO;
-	if ((iLocalFile && iLocalFile->Length() > 0)
-			||
-		(iImageType == EMobblerImageTypeArtistRemote && IsMusicPlayerTrack()))
+	if (((iLocalFile && iLocalFile->Length() > 0) ||
+		(iImageType == EMobblerImageTypeArtistRemote && IsMusicPlayerTrack())) &&
+		(static_cast<CMobblerAppUi*>(CEikonEnv::Static()->AppUi())->DownloadAlbumArt() ==
+				CMobblerAppUi::EAlwaysAndKeep)
+		)
 		{
-		// try to save the album art in the album folder
-		LOG(_L8("SaveAlbumArtL()"));
+		// Try to save the album art in the album folder
+		LOG(_L8("SaveAlbumArtL() saving album art"));
 
 		TFileName albumArtFileName;
 		if (iLocalFile && iLocalFile->Length() > 0)
