@@ -1,24 +1,24 @@
 /*
+mobblerlastfmconnection.cpp
+
 Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
-Copyright (C) 2008, 2009, 2010  Michael Coffey
-Copyright (C) 2008, 2009, 2010  Hugo van Kemenade
+Copyright (C) 2008  Michael Coffey
 
 http://code.google.com/p/mobbler
 
-This file is part of Mobbler.
-
-Mobbler is free software; you can redistribute it and/or
+This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
-Mobbler is distributed in the hope that it will be useful,
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with Mobbler.  If not, see <http://www.gnu.org/licenses/>.
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
 #include <aknnotewrappers.h> 
@@ -85,11 +85,14 @@ _LIT8(KLogFileFieldSeperator, "\t");
 
 _LIT(KIapId, "IAP\\Id");
 
+_LIT8(KEmail, "email");
 _LIT8(KHttp, "http");
 _LIT8(KLimit, "limit");
 _LIT8(KMessage, "message");
+_LIT8(KPassword, "password");
 _LIT8(KPlaylistUrl, "playlistURL");
 _LIT8(KUsername, "username");
+
 _LIT8(KQueryPlaylistFetch, "playlist.fetch");
 
 // Last.fm can accept up to this many track in one submission
@@ -101,7 +104,7 @@ CMobblerLastFmConnection* CMobblerLastFmConnection::NewL(MMobblerLastFmConnectio
 															TUint32 aIapId, 
 															TInt aBitRate)
 	{
-	TRACER_AUTO;
+    TRACER_AUTO;
 	CMobblerLastFmConnection* self(new(ELeave) CMobblerLastFmConnection(aObserver, aIapId, aBitRate));
 	CleanupStack::PushL(self);
 	self->ConstructL(aRecipient, aPassword);
@@ -117,7 +120,7 @@ CMobblerLastFmConnection::CMobblerLastFmConnection(MMobblerLastFmConnectionObser
 	iScrobblingOn(ETrue)
 #endif
 	{
-	TRACER_AUTO;
+    TRACER_AUTO;
 	CActiveScheduler::Add(this);
 	
 	TTime now;
@@ -127,7 +130,7 @@ CMobblerLastFmConnection::CMobblerLastFmConnection(MMobblerLastFmConnectionObser
 
 CMobblerLastFmConnection::~CMobblerLastFmConnection()
 	{
-	TRACER_AUTO;
+    TRACER_AUTO;
 	Cancel();
 	
 	delete iCurrentTrack;
@@ -145,10 +148,6 @@ CMobblerLastFmConnection::~CMobblerLastFmConnection()
 	delete iUsername;
 	delete iPassword;
 	
-	delete iScrobbleSessionId;
-	delete iNowPlayingUrl;
-	delete iSubmitUrl;
-	
 	delete iWebServicesSessionKey;
 	
 	iHTTPSession.Close();
@@ -158,7 +157,7 @@ CMobblerLastFmConnection::~CMobblerLastFmConnection()
 
 void CMobblerLastFmConnection::ConstructL(const TDesC& aRecipient, const TDesC& aPassword)
 	{
-	TRACER_AUTO;
+    TRACER_AUTO;
 	SetDetailsL(aRecipient, aPassword);
 	LoadTrackQueueL();
 	
@@ -167,7 +166,7 @@ void CMobblerLastFmConnection::ConstructL(const TDesC& aRecipient, const TDesC& 
 
 void CMobblerLastFmConnection::DoSetModeL(TMode aMode)
 	{
-	TRACER_AUTO;
+    TRACER_AUTO;
 	iMode = aMode;
 	
 	// notify the state change observers when we change mode too
@@ -180,7 +179,7 @@ void CMobblerLastFmConnection::DoSetModeL(TMode aMode)
 
 void CMobblerLastFmConnection::SetIapIdL(TUint32 aIapId)
 	{
-	TRACER_AUTO;
+    TRACER_AUTO;
 	if (aIapId != iIapId)
 		{
 		iIapId = aIapId;
@@ -210,7 +209,7 @@ TUint32 CMobblerLastFmConnection::IapId() const
 
 void CMobblerLastFmConnection::SetDetailsL(const TDesC& aUsername, const TDesC& aPassword)
 	{
-	TRACER_AUTO;
+    TRACER_AUTO;
 	if (!iUsername
 			|| iUsername && iUsername->String().CompareF(aUsername) != 0
 			|| !iPassword
@@ -256,7 +255,7 @@ void CMobblerLastFmConnection::SetDetailsL(const TDesC& aUsername, const TDesC& 
 
 void CMobblerLastFmConnection::SetModeL(TMode aMode)
 	{
-	TRACER_AUTO;
+    TRACER_AUTO;
 	if (aMode == EOnline)
 		{
 		// We are being asked to switch to online mode
@@ -292,7 +291,7 @@ CMobblerLastFmConnection::TState CMobblerLastFmConnection::State() const
 
 void CMobblerLastFmConnection::ChangeStateL(TState aState)
 	{
-	TRACER_AUTO;
+    TRACER_AUTO;
 	if (iState != aState)
 		{
 		iState = aState;
@@ -308,13 +307,13 @@ void CMobblerLastFmConnection::ChangeStateL(TState aState)
 
 void CMobblerLastFmConnection::AddStateChangeObserverL(MMobblerConnectionStateObserver* aObserver)
 	{
-	TRACER_AUTO;
+    TRACER_AUTO;
 	iStateChangeObservers.InsertInAddressOrderL(aObserver);
 	}
 
 void CMobblerLastFmConnection::RemoveStateChangeObserver(MMobblerConnectionStateObserver* aObserver)
 	{
-	TRACER_AUTO;
+    TRACER_AUTO;
 	TInt pos(iStateChangeObservers.FindInAddressOrder(aObserver));
 	if (pos != KErrNotFound)
 		{
@@ -324,14 +323,14 @@ void CMobblerLastFmConnection::RemoveStateChangeObserver(MMobblerConnectionState
 
 void CMobblerLastFmConnection::PreferredCarrierAvailable()
 	{
-	TRACER_AUTO;
+    TRACER_AUTO;
 	CloseTransactionsL(EFalse);
 	iHTTPSession.Close();
 	}
 
 void CMobblerLastFmConnection::NewCarrierActive()
 	{
-	TRACER_AUTO;
+    TRACER_AUTO;
 	User::LeaveIfError(iConnection.GetIntSetting(KIapId, iCurrentIapId));
 	
 	iHTTPSession.OpenL();
@@ -363,7 +362,7 @@ void CMobblerLastFmConnection::NewCarrierActive()
 
 void CMobblerLastFmConnection::RunL()
 	{
-	TRACER_AUTO;
+    TRACER_AUTO;
 	if (iStatus.Int() == KErrNone)
 		{
 		CMobblerDestinationsInterface* destinations(static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->Destinations());
@@ -430,7 +429,7 @@ CMobblerLastFmConnection::TLastFmMemberType CMobblerLastFmConnection::MemberType
 
 void CMobblerLastFmConnection::DoCancel()
 	{
-	TRACER_AUTO;
+    TRACER_AUTO;
 	iConnection.Close();
 	}
 
@@ -451,7 +450,7 @@ TBool CMobblerLastFmConnection::Connected()
 
 void CMobblerLastFmConnection::ConnectL()
 	{
-	TRACER_AUTO;
+    TRACER_AUTO;
 	Cancel();
 	Disconnect();
 	ChangeStateL(EConnecting);
@@ -505,61 +504,20 @@ void CMobblerLastFmConnection::ConnectL()
 
 void CMobblerLastFmConnection::AuthenticateL()
 	{
-	TRACER_AUTO;
+    TRACER_AUTO;
 	iAuthenticated = EFalse;
 	
 	// Handshake with Last.fm
 	ChangeStateL(EHandshaking);
-	ScrobbleHandshakeL();
 	WebServicesHandshakeL();
-#ifdef FULL_BETA_BUILD
+#ifdef BETA_BUILD
 	BetaHandshakeL();
 #endif
 	}
 
-void CMobblerLastFmConnection::OldRadioHandshakeL()
-	{
-	TRACER_AUTO;
-	// start the radio handshake transaction
-	
-	delete iOldRadioSessionId;
-	iOldRadioSessionId = NULL;
-	delete iOldRadioBaseUrl;
-	iOldRadioBaseUrl = NULL;
-	delete iOldRadioBasePath;
-	iOldRadioBasePath = NULL;
-	
-	HBufC8* passwordHash(MobblerUtility::MD5LC(iPassword->String8()));
-	TPtr8 passwordHashPtr(passwordHash->Des());
-	
-	HBufC8* path(HBufC8::NewLC(KMaxMobblerTextSize));
-	
-	// get the phone language code
-	TBuf8<2> language(MobblerUtility::LanguageL());
-	
-	_LIT8(KRadioQuery, "version=1.5.1&platform=symbian&username=%S&passwordmd5=%S&language=%S&player=mobbler");
-	path->Des().AppendFormat(KRadioQuery, &iUsername->String8(), &passwordHashPtr, &language);
-	
-	CUri8* uri(CUri8::NewLC());
-	
-	uri->SetComponentL(KHttp, EUriScheme);
-	_LIT8(KRadioHost, "ws.audioscrobbler.com");
-	uri->SetComponentL(KRadioHost, EUriHost);
-	_LIT8(KRadioPath, "/radio/handshake.php");
-	uri->SetComponentL(KRadioPath, EUriPath);
-	uri->SetComponentL(*path, EUriQuery);
-	
-	delete iOldRadioHandshakeTransaction;
-	iOldRadioHandshakeTransaction = CMobblerTransaction::NewL(*this, uri);
-	iOldRadioHandshakeTransaction->SubmitL();
-	
-	CleanupStack::Pop(uri);
-	CleanupStack::PopAndDestroy(2, passwordHash);
-	}
-
 void CMobblerLastFmConnection::WebServicesHandshakeL()
 	{
-	TRACER_AUTO;
+    TRACER_AUTO;
 	// start the web services authentications
 	iMemberType = EMemberTypeUnknown;
 	
@@ -590,10 +548,10 @@ void CMobblerLastFmConnection::WebServicesHandshakeL()
 	CleanupStack::PopAndDestroy(5, passwordHash);
 	}
 
-#ifdef FULL_BETA_BUILD
+#ifdef BETA_BUILD
 void CMobblerLastFmConnection::BetaHandshakeL()
 	{
-	TRACER_AUTO;
+    TRACER_AUTO;
 	// Start the web services authentications
 	TUriParser8 uriParser;
 	uriParser.Parse(KBetaTestersFileLocation);
@@ -608,7 +566,7 @@ void CMobblerLastFmConnection::BetaHandshakeL()
 
 void CMobblerLastFmConnection::CheckForUpdateL(MMobblerFlatDataObserver& aObserver)
 	{
-	TRACER_AUTO;
+    TRACER_AUTO;
 	TUriParser8 uriParser;
 	uriParser.Parse(KLatesverFileLocation);
 	CUri8* uri(CUri8::NewLC(uriParser));
@@ -618,9 +576,52 @@ void CMobblerLastFmConnection::CheckForUpdateL(MMobblerFlatDataObserver& aObserv
 	AppendAndSubmitTransactionL(transaction);
 	}
 
-void CMobblerLastFmConnection::PlaylistCreateL(const TDesC& aTitle, const TDesC& aDescription, MMobblerFlatDataObserver& aObserver)
+void CMobblerLastFmConnection::TermsL(MMobblerFlatDataObserver& aObserver)
 	{
 	TRACER_AUTO;
+	CUri8* uri(SetUpWebServicesUriLC());
+	
+	_LIT8(KQueryTerms, "user.terms");
+	CMobblerWebServicesQuery* query(CMobblerWebServicesQuery::NewLC(KQueryTerms));
+	
+	query->AddFieldL(_L8("lang"), MobblerUtility::LanguageL());
+	
+	uri->SetComponentL(*query->GetQueryAuthLC(), EUriQuery);
+	CleanupStack::PopAndDestroy(1); // query->GetQueryLC()
+	
+	CMobblerTransaction* transaction(CMobblerTransaction::NewL(*this, ETrue, uri, query));
+	transaction->SetFlatDataObserver(&aObserver);
+	
+	CleanupStack::Pop(query);
+	CleanupStack::Pop(uri);
+	
+	AppendAndSubmitTransactionL(transaction);
+	}
+
+void CMobblerLastFmConnection::SignUpL(const TDesC8& aUsername, const TDesC8& aPassword, const TDesC8& aEmail, MMobblerFlatDataObserver& aObserver)
+	{
+	TRACER_AUTO;
+	CUri8* uri(SetUpWebServicesUriLC());
+	
+	_LIT8(KQuerySignup, "user.signup");
+	CMobblerWebServicesQuery* query(CMobblerWebServicesQuery::NewLC(KQuerySignup));
+	
+	query->AddFieldL(KUsername, aUsername);
+	query->AddFieldL(KPassword, aPassword);
+	query->AddFieldL(KEmail, aEmail);
+	
+	CMobblerTransaction* transaction(CMobblerTransaction::NewL(*this, ETrue, uri, query));
+	transaction->SetFlatDataObserver(&aObserver);
+	
+	CleanupStack::Pop(query);
+	CleanupStack::Pop(uri);
+	
+	AppendAndSubmitTransactionL(transaction);
+	}
+
+void CMobblerLastFmConnection::PlaylistCreateL(const TDesC& aTitle, const TDesC& aDescription, MMobblerFlatDataObserver& aObserver)
+	{
+    TRACER_AUTO;
 	CUri8* uri(SetUpWebServicesUriLC());
 	
 	_LIT8(KQueryPlaylistCreate, "playlist.create");
@@ -645,7 +646,7 @@ void CMobblerLastFmConnection::PlaylistCreateL(const TDesC& aTitle, const TDesC&
 
 void CMobblerLastFmConnection::PlaylistFetchUserL(const TDesC8& aPlaylistId, MMobblerFlatDataObserver& aObserver)
 	{
-	TRACER_AUTO;
+    TRACER_AUTO;
 	_LIT8(KUserPlaylistFormat, "lastfm://playlist/%S");
 	
 	CUri8* uri(SetUpWebServicesUriLC());
@@ -671,7 +672,7 @@ void CMobblerLastFmConnection::PlaylistFetchUserL(const TDesC8& aPlaylistId, MMo
 
 void CMobblerLastFmConnection::PlaylistFetchAlbumL(const TDesC8& aAlbumId, MMobblerFlatDataObserver& aObserver)
 	{
-	TRACER_AUTO;
+    TRACER_AUTO;
 	_LIT8(KUserPlaylistFormat, "lastfm://playlist/album/%S");
 	
 	CUri8* uri(SetUpWebServicesUriLC());
@@ -697,7 +698,7 @@ void CMobblerLastFmConnection::PlaylistFetchAlbumL(const TDesC8& aAlbumId, MMobb
 
 void CMobblerLastFmConnection::PlaylistAddTrackL(const TDesC8& aPlaylistId, const TDesC8& aArtist, const TDesC8& aTrack, MMobblerFlatDataObserver& aObserver)
 	{
-	TRACER_AUTO;
+    TRACER_AUTO;
 	CUri8* uri(SetUpWebServicesUriLC());
 	
 	_LIT8(KQueryPlaylistAddTrack, "playlist.addtrack");
@@ -718,7 +719,7 @@ void CMobblerLastFmConnection::PlaylistAddTrackL(const TDesC8& aPlaylistId, cons
 
 void CMobblerLastFmConnection::ShoutL(const TDesC8& aClass, const TDesC8& aArgument, const TDesC8& aMessage)
 	{
-	TRACER_AUTO;
+    TRACER_AUTO;
 	CUri8* uri(SetUpWebServicesUriLC());
 	
 	TBuf8<KMaxMobblerTextSize> signature;
@@ -739,7 +740,7 @@ void CMobblerLastFmConnection::ShoutL(const TDesC8& aClass, const TDesC8& aArgum
 
 void CMobblerLastFmConnection::RecommendedEventsL(MMobblerFlatDataObserver& aObserver)
 	{
-	TRACER_AUTO;
+    TRACER_AUTO;
 	CUri8* uri(SetUpWebServicesUriLC());
 	
 	_LIT8(KQueryUserGetRecommendedEvents, "user.getrecommendedevents");
@@ -756,7 +757,7 @@ void CMobblerLastFmConnection::RecommendedEventsL(MMobblerFlatDataObserver& aObs
 
 void CMobblerLastFmConnection::TrackBanL(const TDesC8& aArtist, const TDesC8& aTrack)
 	{
-	TRACER_AUTO;
+    TRACER_AUTO;
 	CUri8* uri(SetUpWebServicesUriLC());
 	
 	_LIT8(KQueryTrackBan, "track.ban");
@@ -774,7 +775,7 @@ void CMobblerLastFmConnection::TrackBanL(const TDesC8& aArtist, const TDesC8& aT
 
 void CMobblerLastFmConnection::SimilarL(const TInt aCommand, const TDesC8& aArtist, const TDesC8& aTrack, MMobblerFlatDataObserver& aObserver)
 	{
-	TRACER_AUTO;
+    TRACER_AUTO;
 	CUri8* uri(SetUpWebServicesUriLC());
 	
 	CMobblerWebServicesQuery* query(NULL);
@@ -812,7 +813,7 @@ void CMobblerLastFmConnection::SimilarL(const TInt aCommand, const TDesC8& aArti
 
 void CMobblerLastFmConnection::FoursquareL(const TDesC8& aLongitude, const TDesC8& aLatitude, MMobblerFlatDataObserver& aObserver)
 	{
-	TRACER_AUTO;
+    TRACER_AUTO;
 	_LIT8(KFoursquareTipsFormat, "http://api.foursquare.com/v1/tips?geolat=%S&geolong=%S");
 	
 	HBufC8* uriBuf(HBufC8::NewLC(KFoursquareTipsFormat().Length() + aLongitude.Length() + aLatitude.Length()));
@@ -837,8 +838,8 @@ void CMobblerLastFmConnection::FetchLyricsL(const TDesC8& aArtist,
 											const TDesC8& aTitle, 
 											MMobblerFlatDataObserver& aObserver)
 	{
-	TRACER_AUTO;
-	LOGTEXT("CMobblerLastFmConnection::FetchLyricsL");
+    TRACER_AUTO;
+	LOG(_L8("CMobblerLastFmConnection::FetchLyricsL"));
 	LOG2(aArtist, aTitle);
 	
 	// 1. replace special characters with %
@@ -885,7 +886,7 @@ void CMobblerLastFmConnection::FetchLyricsL(const TDesC8& aArtist,
 
 void CMobblerLastFmConnection::RecentTracksL(const TDesC8& aUser, MMobblerFlatDataObserver& aObserver)
 	{
-	TRACER_AUTO;
+    TRACER_AUTO;
 	CUri8* uri(SetUpWebServicesUriLC());
 	
 	_LIT8(KQueryUserGetRecentTracks, "user.getrecenttracks");
@@ -907,7 +908,7 @@ void CMobblerLastFmConnection::RecentTracksL(const TDesC8& aUser, MMobblerFlatDa
 
 void CMobblerLastFmConnection::ArtistGetImageL(const TDesC8& aArtist, MMobblerFlatDataObserver& aObserver)
 	{
-	TRACER_AUTO;
+    TRACER_AUTO;
 	CUri8* uri(SetUpWebServicesUriLC());
 	
 	_LIT8(KQueryArtistGetImages, "artist.getimages");
@@ -930,7 +931,7 @@ void CMobblerLastFmConnection::ArtistGetImageL(const TDesC8& aArtist, MMobblerFl
 
 /*void CMobblerLastFmConnection::ArtistGetTopTagsL(const TDesC8& aArtist, MMobblerFlatDataObserver& aObserver)
 	{
-	TRACER_AUTO;
+    TRACER_AUTO;
 	CUri8* uri(SetUpWebServicesUriLC());
 	
 	_LIT8(KQueryArtistGetTopTags, "artist.gettoptags");
@@ -952,7 +953,7 @@ void CMobblerLastFmConnection::ArtistGetImageL(const TDesC8& aArtist, MMobblerFl
 
 /*void CMobblerLastFmConnection::TrackGetTopTagsL(const TDesC8& aTrack, const TDesC8& aArtist, MMobblerFlatDataObserver& aObserver)
 	{
-	TRACER_AUTO;
+    TRACER_AUTO;
 	CUri8* uri(SetUpWebServicesUriLC());
 	
 	_LIT8(KQueryTrackGetTopTags, "track.gettoptags");
@@ -981,7 +982,7 @@ void CMobblerLastFmConnection::QueryLastFmL(const TInt aCommand,
 											const TDesC8& aTag, 
 											MMobblerFlatDataObserver& aObserver)
 	{
-	TRACER_AUTO;
+    TRACER_AUTO;
 	CUri8* uri(SetUpWebServicesUriLC());
 	
 	_LIT8(KQueryArtistGetEvents, "artist.getEvents");
@@ -1082,7 +1083,7 @@ void CMobblerLastFmConnection::QueryLastFmL(const TInt aCommand,
 
 void CMobblerLastFmConnection::GetInfoL(const TInt aCommand, const TDesC8& aArtist, const TDesC8& aAlbum, const TDesC8& aTrack, const TDesC8& aMbId, MMobblerFlatDataObserver& aObserver)
 	{
-	TRACER_AUTO;
+    TRACER_AUTO;
 	CUri8* uri(SetUpWebServicesUriLC());
 	
 	CMobblerWebServicesQuery* query(NULL);
@@ -1135,9 +1136,9 @@ void CMobblerLastFmConnection::GetInfoL(const TInt aCommand, const TDesC8& aArti
 	AppendAndSubmitTransactionL(transaction);
 	}
 
-void CMobblerLastFmConnection::WebServicesCallL(const TDesC8& aClass, const TDesC8& aMethod, const TDesC8& aText, MMobblerFlatDataObserver& aObserver)
+void CMobblerLastFmConnection::WebServicesCallL(const TDesC8& aClass, const TDesC8& aMethod, const TDesC8& aText, MMobblerFlatDataObserver& aObserver, TInt aPage, TInt aPerPage)
 	{
-	TRACER_AUTO;
+    TRACER_AUTO;
 	CUri8* uri(SetUpWebServicesUriLC());
 	
 	_LIT8(KApiSignature, "%S.%S");
@@ -1169,6 +1170,20 @@ void CMobblerLastFmConnection::WebServicesCallL(const TDesC8& aClass, const TDes
 		CleanupStack::PopAndDestroy(); // URLEncodeLC
 		}
 	
+	if (aPage != KErrNotFound)
+		{
+		TBuf8<3> page;
+		page.AppendNum(aPage);
+		query->AddFieldL(_L8("page"), page);
+		}
+	
+	if (aPerPage != KErrNotFound)
+		{
+		TBuf8<3> perPage;
+		perPage.AppendNum(aPerPage);
+		query->AddFieldL(_L8("limit"), perPage);
+		}
+	
 	uri->SetComponentL(*query->GetQueryLC(), EUriQuery);
 	CleanupStack::PopAndDestroy(); // GetQueryLC
 	
@@ -1181,9 +1196,9 @@ void CMobblerLastFmConnection::WebServicesCallL(const TDesC8& aClass, const TDes
 	AppendAndSubmitTransactionL(transaction);
 	}
 
-void CMobblerLastFmConnection::ShareL(const TInt aCommand, const TDesC8& aRecipient, const TDesC8& aArtist, const TDesC8& aTrack, const TDesC8& aEventId, const TDesC8& aMessage, MMobblerFlatDataObserver& aObserver)
+void CMobblerLastFmConnection::ShareL(const TInt aCommand, const TDesC8& aRecipient, const TDesC8& aArtist, const TDesC8& aAlbum, const TDesC8& aTrack, const TDesC8& aEventId, const TDesC8& aMessage, MMobblerFlatDataObserver& aObserver)
 	{
-	TRACER_AUTO;
+    TRACER_AUTO;
 	CUri8* uri(SetUpWebServicesUriLC());
 	
 	CMobblerWebServicesQuery* query(NULL);
@@ -1194,6 +1209,12 @@ void CMobblerLastFmConnection::ShareL(const TInt aCommand, const TDesC8& aRecipi
 			query = CMobblerWebServicesQuery::NewLC(KQueryTrackShare);
 			query->AddFieldL(KArtist, aArtist);
 			query->AddFieldL(KTrack, aTrack);
+			break;
+		case EMobblerCommandAlbumShare:
+			_LIT8(KQueryAlbumShare, "album.share");
+			query = CMobblerWebServicesQuery::NewLC(KQueryAlbumShare);
+			query->AddFieldL(KArtist, aArtist);
+			query->AddFieldL(KAlbum, aAlbum);
 			break;
 		case EMobblerCommandArtistShare:
 			_LIT8(KQueryArtistShare, "artist.share");
@@ -1231,7 +1252,7 @@ void CMobblerLastFmConnection::ShareL(const TInt aCommand, const TDesC8& aRecipi
 
 void CMobblerLastFmConnection::EventAttendL(const TDesC8& aEventId, TEventStatus aEventStatus, MMobblerFlatDataObserver& aObserver)
 	{
-	TRACER_AUTO;
+    TRACER_AUTO;
 	CUri8* uri(SetUpWebServicesUriLC());
 	
 	_LIT8(KQueryEventAttend, "event.attend");
@@ -1263,7 +1284,7 @@ void CMobblerLastFmConnection::EventAttendL(const TDesC8& aEventId, TEventStatus
 
 void CMobblerLastFmConnection::RadioStop()
 	{
-	TRACER_AUTO;
+    TRACER_AUTO;
 	if (iTrackDownloadObserver)
 		{
 		TRAP_IGNORE(iTrackDownloadObserver->DataCompleteL(CMobblerLastFmConnection::ETransactionErrorCancel, KErrNone, KNullDesC8));
@@ -1275,7 +1296,7 @@ void CMobblerLastFmConnection::RadioStop()
 
 void CMobblerLastFmConnection::SelectStationL(MMobblerFlatDataObserver* aObserver, TRadioStation aRadioStation, const TDesC8& aRadioText)
 	{
-	TRACER_AUTO;
+    TRACER_AUTO;
 	// Set up the Last.fm formatted station URI
 	HBufC8* radioUrl(HBufC8::NewLC(KMaxMobblerTextSize));
 	HBufC8* text(NULL);
@@ -1301,7 +1322,6 @@ void CMobblerLastFmConnection::SelectStationL(MMobblerFlatDataObserver* aObserve
 	_LIT8(KRadioStationTag, "lastfm://globaltags/%S");
 	_LIT8(KRadioStationNeighbours, "lastfm://user/%S/neighbours");
 	_LIT8(KRadioStationRecommended, "lastfm://user/%S/recommended");
-	_LIT8(KRadioStationGroup, "lastfm://group/%S");
 	switch (aRadioStation)
 		{
 		case EPersonal: radioUrl->Des().AppendFormat(KRadioStationPersonal, &textPtr); break;
@@ -1311,69 +1331,22 @@ void CMobblerLastFmConnection::SelectStationL(MMobblerFlatDataObserver* aObserve
 		case ELovedTracks: radioUrl->Des().AppendFormat(KRadioStationLoved, &textPtr); break;
 		case EArtist: radioUrl->Des().AppendFormat(KRadioStationArtist, &textPtr); break;
 		case ETag: radioUrl->Des().AppendFormat(KRadioStationTag, &textPtr); break;
-		case EGroup: radioUrl->Des().AppendFormat(KRadioStationGroup, &textPtr); break;
-		case ECustom: radioUrl->Des().Copy(*text); break;
 		default: break;
 		}
 	
-	LOG2(_L8("radioUrl"), *radioUrl);
-	CMobblerTransaction* transaction(NULL);
+	CUri8* uri(SetUpWebServicesUriLC());
 	
-	if (iMemberType == ESubscriber || iMemberType == EMemberTypeUnknown)
-		{
-		CUri8* uri(SetUpWebServicesUriLC());
-		
-		_LIT8(KQueryRadioTune, "radio.tune");
-		CMobblerWebServicesQuery* query(CMobblerWebServicesQuery::NewLC(KQueryRadioTune));
-		_LIT8(KLang, "lang");
-		query->AddFieldL(KLang, MobblerUtility::LanguageL());
-		query->AddFieldL(KStation, *radioUrl);
-		
-		transaction = CMobblerTransaction::NewL(*this, ETrue, uri, query);
-		transaction->SetFlatDataObserver(aObserver);
-		
-		CleanupStack::Pop(query);
-		CleanupStack::Pop(uri);
-		}
-	else if (iMemberType == EMember)
-		{
-		// This is a non-subscriber so use the old API
-		
-		if (iOldRadioSessionId)
-			{
-			// setup the path
-			HBufC8* path(HBufC8::NewLC(KMaxMobblerTextSize));
-			TPtr8 pathPtr(path->Des());
-			pathPtr.Copy(*iOldRadioBasePath);
-			_LIT8(KAdjustPhp, "/adjust.php");
-			pathPtr.Append(KAdjustPhp);
-			
-			TBuf8<2> language(MobblerUtility::LanguageL());
-			
-			HBufC8* query(HBufC8::NewLC(KMaxMobblerTextSize));
-			
-			// setup the 
-			TPtr8 radioSessionIdPtr(iOldRadioSessionId->Des());
-			TPtr8 radioUrlPtr(radioUrl->Des());
-			
-			_LIT8(KRadioStationQuery, "session=%S&url=%S&lang=%S");
-			query->Des().AppendFormat(KRadioStationQuery, &radioSessionIdPtr, &radioUrlPtr, &language);
-			
-			CUri8* uri(CUri8::NewLC());
-			
-			uri->SetComponentL(KHttp, EUriScheme);
-			uri->SetComponentL(*iOldRadioBaseUrl, EUriHost);
-			uri->SetComponentL(pathPtr, EUriPath);
-			uri->SetComponentL(*query, EUriQuery);
-			
-			transaction = CMobblerTransaction::NewL(*this, uri);
-			transaction->SetFlatDataObserver(aObserver);
-			
-			CleanupStack::Pop(uri);
-			CleanupStack::PopAndDestroy(2, path);
-			}
-		}
+	_LIT8(KQueryRadioTune, "radio.tune");
+	CMobblerWebServicesQuery* query(CMobblerWebServicesQuery::NewLC(KQueryRadioTune));
+	_LIT8(KLang, "lang");
+	query->AddFieldL(KLang, MobblerUtility::LanguageL());
+	query->AddFieldL(KStation, *radioUrl);
 	
+	CMobblerTransaction* transaction(CMobblerTransaction::NewL(*this, ETrue, uri, query));
+	transaction->SetFlatDataObserver(aObserver);
+	
+	CleanupStack::Pop(query);
+	CleanupStack::Pop(uri);
 	CleanupStack::PopAndDestroy(text);
 	CleanupStack::PopAndDestroy(radioUrl);
 	
@@ -1382,93 +1355,48 @@ void CMobblerLastFmConnection::SelectStationL(MMobblerFlatDataObserver* aObserve
 
 void CMobblerLastFmConnection::RequestPlaylistL(MMobblerFlatDataObserver* aObserver)
 	{
-	TRACER_AUTO;
-	CMobblerTransaction* transaction(NULL);
+    TRACER_AUTO;
+	CUri8* uri(SetUpWebServicesUriLC());
 	
-	if (iMemberType == ESubscriber || iMemberType == EMemberTypeUnknown)
+	_LIT8(KQueryRadioGetPlaylist, "radio.getPlaylist");
+	CMobblerWebServicesQuery* query(CMobblerWebServicesQuery::NewLC(KQueryRadioGetPlaylist));
+	
+	//query->AddFieldL(_L8("rtp"), _L8("?"));
+	
+	// Always ask for the mp3 to be downloaded at twice the speed that it plays at.
+	// Should improve battery life by downloading for less time.
+	_LIT8(KSpeedMultiplier, "speed_multiplier");
+	_LIT8(KTwoDotZero, "2.0");
+	query->AddFieldL(KSpeedMultiplier, KTwoDotZero);
+	
+	_LIT8(KBitRate, "bitrate");
+	switch (iBitRate)
 		{
-		CUri8* uri(SetUpWebServicesUriLC());
-		
-		_LIT8(KQueryRadioGetPlaylist, "radio.getPlaylist");
-		CMobblerWebServicesQuery* query(CMobblerWebServicesQuery::NewLC(KQueryRadioGetPlaylist));
-		
-		//query->AddFieldL(_L8("rtp"), _L8("?"));
-		
-		// Always ask for the mp3 to be downloaded at twice the speed that it plays at.
-		// Should improve battery life by downloading for less time.
-		_LIT8(KSpeedMultiplier, "speed_multiplier");
-		_LIT8(KTwoDotZero, "2.0");
-		query->AddFieldL(KSpeedMultiplier, KTwoDotZero);
-		
-		_LIT8(KBitRate, "bitrate");
-		switch (iBitRate)
-			{
-			case 0:
-				_LIT8(K64, "64"); 
-				query->AddFieldL(KBitRate, K64);
-				break;
-			case 1:
-				_LIT8(K128, "128");
-				query->AddFieldL(KBitRate, K128);
-				break;
-			default:
-				// TODO: should panic
-				break;
-			}
-		
-		transaction = CMobblerTransaction::NewL(*this, ETrue, uri, query);
-		transaction->SetFlatDataObserver(aObserver);
-		
-		CleanupStack::Pop(query);
-		CleanupStack::Pop(uri);
+		case 0:
+			_LIT8(K64, "64"); 
+			query->AddFieldL(KBitRate, K64);
+			break;
+		case 1:
+			_LIT8(K128, "128");
+			query->AddFieldL(KBitRate, K128);
+			break;
+		default:
+			// TODO: should panic
+			break;
 		}
-	else if (iMemberType == EMember)
-		{
-		if (iOldRadioSessionId)
-			{
-			if (iBitRate == 0 && !i64KbpsWarningShown)
-				{
-				// Show a warning (only the first time whilst Mobbler is running)
-				
-				CAknInformationNote* note(new (ELeave) CAknInformationNote(EFalse));
-				note->ExecuteLD(static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->ResourceReader().ResourceL(R_MOBBLER_64_KBPS_WARNING));
-				
-				i64KbpsWarningShown = ETrue;
-				}
-			
-			HBufC8* path(HBufC8::NewLC(KMaxMobblerTextSize));
-			TPtr8 pathPtr(path->Des());
-			pathPtr.Copy(*iOldRadioBasePath);
-			_LIT8(KXspfDotPhp, "/xspf.php");
-			pathPtr.Append(KXspfDotPhp);
-			
-			TPtr8 radioSessionIdPtr(iOldRadioSessionId->Des());
-			
-			HBufC8* query(HBufC8::NewLC(KMaxMobblerTextSize));
-			_LIT8(KRadioPlaylistQuery, "sk=%S&discovery=0&desktop=1.5.1");
-			query->Des().AppendFormat(KRadioPlaylistQuery, &radioSessionIdPtr);
-			
-			CUri8* uri(CUri8::NewLC());
-			
-			uri->SetComponentL(KHttp, EUriScheme);
-			uri->SetComponentL(*iOldRadioBaseUrl, EUriHost);
-			uri->SetComponentL(pathPtr, EUriPath);
-			uri->SetComponentL(*query, EUriQuery);
-			
-			transaction = CMobblerTransaction::NewL(*this, uri);
-			transaction->SetFlatDataObserver(aObserver);
-			
-			CleanupStack::Pop(uri);
-			CleanupStack::PopAndDestroy(2, path);
-			}
-		}
+	
+	CMobblerTransaction* transaction(CMobblerTransaction::NewL(*this, ETrue, uri, query));
+	transaction->SetFlatDataObserver(aObserver);
+	
+	CleanupStack::Pop(query);
+	CleanupStack::Pop(uri);
 	
 	AppendAndSubmitTransactionL(transaction);
 	}
 
 void CMobblerLastFmConnection::RequestMp3L(MMobblerSegDataObserver& aObserver, const TDesC8& aMp3Location)
 	{
-	TRACER_AUTO;
+    TRACER_AUTO;
 	if (iMode == EOnline)
 		{
 		iTrackDownloadObserver = &aObserver;
@@ -1499,7 +1427,7 @@ void CMobblerLastFmConnection::RequestMp3L(MMobblerSegDataObserver& aObserver, c
 
 void CMobblerLastFmConnection::RequestImageL(MMobblerFlatDataObserver* aObserver, const TDesC8& aImageLocation)
 	{
-	TRACER_AUTO;
+    TRACER_AUTO;
 	if (aImageLocation.Compare(KNullDesC8) != 0 && Connected())
 		{
 		// Request the album art data
@@ -1515,7 +1443,7 @@ void CMobblerLastFmConnection::RequestImageL(MMobblerFlatDataObserver* aObserver
 
 void CMobblerLastFmConnection::GetLocationL(const CTelephony::TNetworkInfoV1& aNetworkInfo, MMobblerFlatDataObserver& aObserver)
 	{
-	TRACER_AUTO;
+    TRACER_AUTO;
 	LOG2(_L8("Cell ID"), aNetworkInfo.iCellId);
 	LOG2(_L8("LAC"), aNetworkInfo.iLocationAreaCode);
 	
@@ -1594,14 +1522,14 @@ void CMobblerLastFmConnection::DataL(CMobblerFlatDataObserverHelper* aObserver, 
 		}
 	}
 
-void CMobblerLastFmConnection::QueryTwitterL(const TInt aCommand, 
+TBool CMobblerLastFmConnection::QueryTwitterL(const TInt aCommand, 
 											 MMobblerFlatDataObserver& aObserver, 
 											 const TDesC8& aTweet)
 	{
 	TBuf<KMobblerMaxUsernameLength> usernameInput;
 	TBuf<KMobblerMaxPasswordLength> passwordInput;
-	CMobblerString* username(NULL);
-	CMobblerString* password(NULL);
+	CMobblerString* username;
+	CMobblerString* password;
 	if (aCommand == EAccessToken)
 		{
 		// Query username and password
@@ -1612,7 +1540,7 @@ void CMobblerLastFmConnection::QueryTwitterL(const TInt aCommand,
 		
 		if (!dlg->ExecuteLD(R_MOBBLER_USERNAME_PASSWORD_QUERY_DIALOG))
 			{
-			return;
+			return EFalse;
 			}
 		}
 
@@ -1750,13 +1678,13 @@ void CMobblerLastFmConnection::QueryTwitterL(const TInt aCommand,
 	
 	if (aCommand == ETweet || aCommand == EFollowMobbler)
 		{
-		// create the OAuth header
+		// create the oAuth header
 		HBufC8* oauth(HBufC8::NewLC(1024));
 		oauth->Des().Copy(_L8("OAuth"));
 		
 		RStringF oauthHeader(iHTTPSession.StringPool().OpenFStringL(*oauth));
 		
-		// Add the OAuth
+		// Add the oauth
 		RHTTPHeaders headers(transaction->Transaction().Request().GetHeaderCollection());
 		headers.SetFieldL(iHTTPSession.StringPool().StringF(HTTP::EAuthorization, RHTTPSession::GetTable()), oauthHeader);
 		
@@ -1775,7 +1703,7 @@ void CMobblerLastFmConnection::QueryTwitterL(const TInt aCommand,
 		
 		RStringF oauthHeaderValue(iHTTPSession.StringPool().OpenFStringL(*oauth));
 		
-		// Add the OAuth header value
+		// Add the oauth header value
 		headers.SetFieldL(iHTTPSession.StringPool().StringF(HTTP::EAuthorization, RHTTPSession::GetTable()), oauthHeaderValue);
 		
 		CleanupStack::PopAndDestroy(oauth);
@@ -1785,11 +1713,13 @@ void CMobblerLastFmConnection::QueryTwitterL(const TInt aCommand,
 	
 	transaction->SetFlatDataObserver(&aObserver);
 	AppendAndSubmitTransactionL(transaction);
+	
+	return ETrue;
 	}
 
 void CMobblerLastFmConnection::GeoGetEventsL(const TDesC8& aLatitude, const TDesC8& aLongitude, MMobblerFlatDataObserver& aObserver)
 	{
-	TRACER_AUTO;
+    TRACER_AUTO;
 	CUri8* uri(SetUpWebServicesUriLC());
 	
 	_LIT8(KQueryGeoGetEvents, "geo.getevents");
@@ -1814,7 +1744,7 @@ void CMobblerLastFmConnection::GeoGetEventsL(const TDesC8& aLatitude, const TDes
 
 void CMobblerLastFmConnection::CancelTransaction(MMobblerFlatDataObserver* aObserver)
 	{
-	TRACER_AUTO;
+    TRACER_AUTO;
 	// cancel all image downloads associated the observer
 	for (TInt i(iTransactions.Count() - 1) ; i >= 0 ; --i)
 		{
@@ -1828,20 +1758,12 @@ void CMobblerLastFmConnection::CancelTransaction(MMobblerFlatDataObserver* aObse
 
 void CMobblerLastFmConnection::Disconnect()
 	{
-	TRACER_AUTO;
+    TRACER_AUTO;
 	Cancel();
 	
 	ChangeStateL(ENone);
 	
 	CloseTransactionsL(EFalse);
-	
-	// delete strings for URLs etc
-	delete iScrobbleSessionId;
-	iScrobbleSessionId = NULL;
-	delete iNowPlayingUrl;
-	iNowPlayingUrl = NULL;
-	delete iSubmitUrl;
-	iSubmitUrl = NULL;
 	
 	iAuthenticated = EFalse;
 	
@@ -1851,7 +1773,7 @@ void CMobblerLastFmConnection::Disconnect()
 
 void CMobblerLastFmConnection::DoNowPlayingL()
 	{
-	TRACER_AUTO;
+    TRACER_AUTO;
 	if (iCurrentTrack)
 		{
 		iObserver.HandleTrackNowPlayingL(*iCurrentTrack);
@@ -1860,54 +1782,32 @@ void CMobblerLastFmConnection::DoNowPlayingL()
 			{
 			// We must be in online mode and have recieved the now playing URL and session ID from Last.fm
 			// before we try to submit and tracks
+			CMobblerWebServicesQuery* nowPlayingQuery(CMobblerWebServicesQuery::NewLC(_L8("track.updateNowPlaying")));
+			nowPlayingQuery->AddFieldL(KArtist, iCurrentTrack->Artist().String8());
+			nowPlayingQuery->AddFieldL(KTrack, iCurrentTrack->Title().String8());
+						
+			if (iCurrentTrack->Album().String8().Length() != 0)
+				{
+				nowPlayingQuery->AddFieldL(KAlbum, iCurrentTrack->Album().String8());
+				}
 			
-			// create the from that will be sent to Last.fm
-			CHTTPFormEncoder* nowPlayingForm(CHTTPFormEncoder::NewL());
-			CleanupStack::PushL(nowPlayingForm);
-			
-			_LIT8(KLowerA8, "a");
-			_LIT8(KLowerB8, "b");
-			_LIT8(KLowerL8, "l");
-			_LIT8(KLowerM8, "m");
-			_LIT8(KLowerN8, "n");
-			_LIT8(KLowerS8, "s");
-			_LIT8(KLowerT8, "t");
-			
-			nowPlayingForm->AddFieldL(KLowerS8, *iScrobbleSessionId);
-			nowPlayingForm->AddFieldL(KLowerA8, iCurrentTrack->Artist().String8());
-			nowPlayingForm->AddFieldL(KLowerT8, iCurrentTrack->Title().String8());
-			nowPlayingForm->AddFieldL(KLowerB8, iCurrentTrack->Album().String8());
 			TBuf8<10> trackLength;
 			trackLength.AppendNum(iCurrentTrack->TrackLength().Int());
-			nowPlayingForm->AddFieldL(KLowerL8, trackLength);
-			if (iCurrentTrack->TrackNumber() != KErrUnknown)
-				{
-				TBuf8<10> trackNumber;
-				trackNumber.AppendNum(iCurrentTrack->TrackNumber());
-				nowPlayingForm->AddFieldL(KLowerN8, trackNumber);
-				}
-			else
-				{
-				nowPlayingForm->AddFieldL(KLowerN8, KNullDesC8);
-				}
-			nowPlayingForm->AddFieldL(KLowerM8, KNullDesC8);
+			nowPlayingQuery->AddFieldL(_L8("duration"), trackLength);
 			
-			// get the URI
-			TUriParser8 uriParser;
-			uriParser.Parse(*iNowPlayingUrl);
-			CUri8* uri(CUri8::NewLC(uriParser));
+			CUri8* uri(SetUpWebServicesUriLC());
 			
 			delete iNowPlayingTransaction;
-			iNowPlayingTransaction = CMobblerTransaction::NewL(*this, ETrue, uri, nowPlayingForm);
+			iNowPlayingTransaction = CMobblerTransaction::NewL(*this, ETrue, uri, nowPlayingQuery);
 			iNowPlayingTransaction->SubmitL();
-			CleanupStack::Pop(2, nowPlayingForm);
+			CleanupStack::Pop(2, nowPlayingQuery);
 			}
 		}
 	}
 
 void CMobblerLastFmConnection::TrackStartedL(CMobblerTrack* aTrack)
 	{
-	TRACER_AUTO;
+    TRACER_AUTO;
 	delete iCurrentTrack;
 	iCurrentTrack = CMobblerTrackBase::NewL(*aTrack);
 	
@@ -1916,7 +1816,7 @@ void CMobblerLastFmConnection::TrackStartedL(CMobblerTrack* aTrack)
 	
 void CMobblerLastFmConnection::TrackStoppedL(const CMobblerTrackBase* aTrack)
 	{
-	TRACER_AUTO;
+    TRACER_AUTO;
 	// Make sure that we haven't already tried to scrobble this track
 	if (iCurrentTrack && !iCurrentTrack->Scrobbled())
 		{
@@ -1976,7 +1876,7 @@ void CMobblerLastFmConnection::TrackStoppedL(const CMobblerTrackBase* aTrack)
 
 TBool CMobblerLastFmConnection::DoSubmitL()
 	{
-	TRACER_AUTO;
+    TRACER_AUTO;
 	TBool submitting(EFalse);
 	
 	if (iMode == EOnline && iAuthenticated && !iSubmitTransaction)
@@ -1988,108 +1888,58 @@ TBool CMobblerLastFmConnection::DoSubmitL()
 		
 		if (KSubmitTracksCount > 0)
 			{
-			CHTTPFormEncoder* submitForm(CHTTPFormEncoder::NewL());
-			CleanupStack::PushL(submitForm);
-			
-			_LIT8(KS, "s");
-			submitForm->AddFieldL(KS, *iScrobbleSessionId);
+			CMobblerWebServicesQuery* submitQuery(CMobblerWebServicesQuery::NewLC(_L8("track.scrobble")));
 			
 			for (TInt ii(0); ii < KSubmitTracksCount && ii < KMaxSubmitTracks; ++ii)
 				{
-				_LIT8(KA, "a[%d]");
-				_LIT8(KT, "t[%d]");
-				_LIT8(KI, "i[%d]");
-				_LIT8(KO, "o[%d]");
-				_LIT8(KR, "r[%d]");
-				_LIT8(KL, "l[%d]");
-				_LIT8(KB, "b[%d]");
-				_LIT8(KN, "n[%d]");
-				_LIT8(KM, "m[%d]");
+				_LIT8(KArtistFormat, "artist[%d]");
+				_LIT8(KAlbumFormat, "album[%d]");
+				_LIT8(KTrackFormat, "track[%d]");
+				_LIT8(KTimestampFormat, "timestamp[%d]");
+				_LIT8(KDurationFormat, "duration[%d]");
+			
+				TBuf8<16> artist;
+				TBuf8<16> album;
+				TBuf8<16> track;
+				TBuf8<16> timestamp;
+				TBuf8<16> duration;
+				artist.AppendFormat(KArtistFormat, ii);
+				album.AppendFormat(KAlbumFormat, ii);
+				track.AppendFormat(KTrackFormat, ii);
+				timestamp.AppendFormat(KTimestampFormat, ii);
+				duration.AppendFormat(KDurationFormat, ii);
 				
-				TBuf8<6> a;
-				a.AppendFormat(KA, ii);
-				TBuf8<6> t;
-				t.AppendFormat(KT, ii);
-				TBuf8<6> i;
-				i.AppendFormat(KI, ii);
-				TBuf8<6> o;
-				o.AppendFormat(KO, ii);
-				TBuf8<6> r;
-				r.AppendFormat(KR, ii);
-				TBuf8<6> l;
-				l.AppendFormat(KL, ii);
-				TBuf8<6> b;
-				b.AppendFormat(KB, ii);
-				TBuf8<6> n;
-				n.AppendFormat(KN, ii);
-				TBuf8<6> m;
-				m.AppendFormat(KM, ii);
+				submitQuery->AddFieldL(artist, iTrackQueue[ii]->Artist().String8());
+				submitQuery->AddFieldL(track, iTrackQueue[ii]->Title().String8());
 				
-				submitForm->AddFieldL(a, iTrackQueue[ii]->Artist().String8());
-				submitForm->AddFieldL(t, iTrackQueue[ii]->Title().String8());
-				submitForm->AddFieldL(b, iTrackQueue[ii]->Album().String8());
+				if (iTrackQueue[ii]->Album().String8().Length() != 0)
+					{
+					submitQuery->AddFieldL(album, iTrackQueue[ii]->Album().String8());
+					}
 				
 				TTimeIntervalSeconds unixTimeStamp;
 				TTime epoch(TDateTime(1970, EJanuary, 0, 0, 0, 0, 0));
 				User::LeaveIfError(iTrackQueue[ii]->StartTimeUTC().SecondsFrom(epoch, unixTimeStamp));
 				TBuf8<20> startTimeBuf;
 				startTimeBuf.AppendNum(unixTimeStamp.Int());
-				submitForm->AddFieldL(i, startTimeBuf);
+				submitQuery->AddFieldL(timestamp, startTimeBuf);
 				
-				_LIT8(KUpperL8, "L");
-				if (iTrackQueue[ii]->IsMusicPlayerTrack())
-					{
-					_LIT8(KUpperP8, "P");
-					submitForm->AddFieldL(o, KUpperP8);
-					}
-				else
-					{
-					// this track was played by the radio player
-					HBufC8* sourceValue(HBufC8::NewLC(iTrackQueue[ii]->RadioAuth().Length() + 1));
-					sourceValue->Des().Append(KUpperL8);
-					sourceValue->Des().Append(iTrackQueue[ii]->RadioAuth());
-					submitForm->AddFieldL(o, *sourceValue);
-					CleanupStack::PopAndDestroy(sourceValue);
-					}
-				
-				HBufC8* love(HBufC8::NewLC(1));
 				if (iTrackQueue[ii]->Love() != CMobblerTrack::ENoLove)
 					{
-					// The track has been loved so set this in the scrobble submission
-					love->Des().Append(KUpperL8);
-					
 					// Make sure we also tell Last.fm in a web service call
 					iTrackQueue[ii]->LoveTrackL();
 					}
-				
-				submitForm->AddFieldL(r, *love);
-				CleanupStack::PopAndDestroy(love);
-				
 				TBuf8<10> trackLength;
 				trackLength.AppendNum(iTrackQueue[ii]->TrackLength().Int());
-				submitForm->AddFieldL(l, trackLength);
-				
-				if (iTrackQueue[ii]->TrackNumber() != KErrUnknown)
-					{
-					TBuf8<10> trackNumber;
-					trackNumber.AppendNum(iTrackQueue[ii]->TrackNumber());
-					submitForm->AddFieldL(n, trackNumber);
-					}
-				else
-					{
-					submitForm->AddFieldL(n, KNullDesC8);
-					}
-				submitForm->AddFieldL(m, KNullDesC8);
+				submitQuery->AddFieldL(duration, trackLength);
 				}
 			
-			// get the URI
-			TUriParser8 uriParser;
-			uriParser.Parse(*iSubmitUrl);
-			CUri8* uri(CUri8::NewLC(uriParser));
+			CUri8* uri(SetUpWebServicesUriLC());
+			
 			delete iSubmitTransaction;
-			iSubmitTransaction = CMobblerTransaction::NewL(*this, ETrue, uri, submitForm);
+			iSubmitTransaction = CMobblerTransaction::NewL(*this, ETrue, uri, submitQuery);
 			iSubmitTransaction->SubmitL();
-			CleanupStack::Pop(2, submitForm);
+			CleanupStack::Pop(2, submitQuery);
 			
 			submitting = ETrue;
 			}
@@ -2100,46 +1950,37 @@ TBool CMobblerLastFmConnection::DoSubmitL()
 
 void CMobblerLastFmConnection::HandleHandshakeErrorL(CMobblerLastFmError* aError)
 	{
-	TRACER_AUTO;
+    TRACER_AUTO;
 	if (!aError)
 		{
 		// The handshake was ok
 		
-		if (iScrobbleSessionId && iWebServicesSessionKey
-#ifdef FULL_BETA_BUILD
+		if (iWebServicesSessionKey
+#ifdef BETA_BUILD
 				&& iIsBetaTester
 #endif
 				)
 			{
-			if (iMemberType == EMember && !iOldRadioSessionId)
+			iAuthenticated = ETrue;
+			
+			// only notify the UI when we are fully connected
+			iObserver.HandleConnectCompleteL(KErrNone);
+			ChangeStateL(ENone);
+			
+			DoSubmitL();
+			
+			const TInt KTransactionCount(iTransactions.Count());
+			for (TInt i(0); i < KTransactionCount; ++i)
 				{
-				// This person is not a subscriber and we don't have the
-				//  radio seesion id so try to use the old radio API
-				OldRadioHandshakeL();
+				iTransactions[i]->SubmitL();
 				}
-			else
+			
+			if (iTrackDownloadObserver)
 				{
-				iAuthenticated = ETrue;
-				
-				// only notify the UI when we are fully connected
-				iObserver.HandleConnectCompleteL(KErrNone);
-				ChangeStateL(ENone);
-				
-				DoSubmitL();
-				
-				const TInt KTransactionCount(iTransactions.Count());
-				for (TInt i(0); i < KTransactionCount; ++i)
-					{
-					iTransactions[i]->SubmitL();
-					}
-				
-				if (iTrackDownloadObserver)
-					{
-					// There is a track observer so this must be because
-					// we failed to start downloading a track, but have now reconnected
-					iTrackDownloadObserver->DataCompleteL(ETransactionErrorHandshake, KErrNone, KNullDesC8);
-					iTrackDownloadObserver = NULL;
-					}
+				// There is a track observer so this must be because
+				// we failed to start downloading a track, but have now reconnected
+				iTrackDownloadObserver->DataCompleteL(ETransactionErrorHandshake, KErrNone, KNullDesC8);
+				iTrackDownloadObserver = NULL;
 				}
 			}
 		}
@@ -2149,7 +1990,6 @@ void CMobblerLastFmConnection::HandleHandshakeErrorL(CMobblerLastFmError* aError
 		iObserver.HandleLastFmErrorL(*aError);
 		ChangeStateL(ENone);
 		iWebServicesHandshakeTransaction->Cancel();
-		iHandshakeTransaction->Cancel();
 		
 		// close all transactions that require authentication
 		// but let other ones carry on
@@ -2166,7 +2006,7 @@ void CMobblerLastFmConnection::HandleHandshakeErrorL(CMobblerLastFmError* aError
 
 void CMobblerLastFmConnection::AppendAndSubmitTransactionL(CMobblerTransaction* aTransaction)
 	{
-	TRACER_AUTO;
+    TRACER_AUTO;
 	if (aTransaction)
 		{
 		iTransactions.AppendL(aTransaction);
@@ -2210,19 +2050,17 @@ void CMobblerLastFmConnection::AppendAndSubmitTransactionL(CMobblerTransaction* 
 
 void CMobblerLastFmConnection::CloseTransactionsL(TBool aCloseTransactionArray)
 	{
-	TRACER_AUTO;
+    TRACER_AUTO;
 	// close any ongoing transactions
-	delete iHandshakeTransaction;
-	iHandshakeTransaction = NULL;
 	delete iNowPlayingTransaction;
 	iNowPlayingTransaction = NULL;
 	delete iSubmitTransaction;
 	iSubmitTransaction = NULL;
 	delete iWebServicesHandshakeTransaction;
 	iWebServicesHandshakeTransaction = NULL;
-#ifdef FULL_BETA_BUILD
+#ifdef BETA_BUILD
 	delete iBetaTestersTransaction;
-	iBetaTestersTransaction = NULL;
+	iBetaTestersTransaction = NULL;	
 #endif
 	
 	iRadioAudioTransaction.Close();
@@ -2253,29 +2091,15 @@ void CMobblerLastFmConnection::CloseTransactionsL(TBool aCloseTransactionArray)
 
 void CMobblerLastFmConnection::TransactionResponseL(CMobblerTransaction* aTransaction, const TDesC8& aResponse)
 	{
-	TRACER_AUTO;
-	if (aTransaction == iHandshakeTransaction)
-		{
-		CMobblerLastFmError* error(CMobblerParser::ParseHandshakeL(aResponse, iScrobbleSessionId, iNowPlayingUrl, iSubmitUrl));
-		CleanupStack::PushL(error);
-		HandleHandshakeErrorL(error);
-		CleanupStack::PopAndDestroy(error);
-		}
-	else if (aTransaction == iWebServicesHandshakeTransaction)
+    TRACER_AUTO;
+	if (aTransaction == iWebServicesHandshakeTransaction)
 		{
 		CMobblerLastFmError* error(CMobblerParser::ParseWebServicesHandshakeL(aResponse, iWebServicesSessionKey, iMemberType));
 		CleanupStack::PushL(error);
 		HandleHandshakeErrorL(error);
 		CleanupStack::PopAndDestroy(error);
 		}
-	else if (aTransaction == iOldRadioHandshakeTransaction)
-		{
-		CMobblerLastFmError* error(CMobblerParser::ParseOldRadioHandshakeL(aResponse, iOldRadioSessionId, iOldRadioBaseUrl, iOldRadioBasePath));
-		CleanupStack::PushL(error);
-		HandleHandshakeErrorL(error);
-		CleanupStack::PopAndDestroy(error);
-		}
-#ifdef FULL_BETA_BUILD
+#ifdef BETA_BUILD
 	else if (aTransaction == iBetaTestersTransaction)
 		{
 		CMobblerLastFmError* error(CMobblerParser::ParseBetaTestersHandshakeL(aResponse, iUsername->String8(), iIsBetaTester));
@@ -2288,32 +2112,22 @@ void CMobblerLastFmConnection::TransactionResponseL(CMobblerTransaction* aTransa
 		{
 		CMobblerLastFmError* error(CMobblerParser::ParseScrobbleResponseL(aResponse));
 		
-		if (!error)
+		// We have done a submission so remove up to the
+		// first KMaxSubmitTracks from the queued tracks array
+		const TInt KCount(iTrackQueue.Count());
+		for (TInt i(Min(KCount - 1, KMaxSubmitTracks - 1)) ; i >= 0 ; --i)
 			{
-			// We have done a submission so remove up to the
-			// first KMaxSubmitTracks from the queued tracks array
-			const TInt KCount(iTrackQueue.Count());
-			for (TInt i(Min(KCount - 1, KMaxSubmitTracks - 1)) ; i >= 0 ; --i)
-				{
-				iObserver.HandleTrackSubmitted(*iTrackQueue[i]);
-				delete iTrackQueue[i];
-				iTrackQueue.Remove(i);
-				}
-			
-			SaveTrackQueueL();
+			iObserver.HandleTrackSubmitted(*iTrackQueue[i]);
+			delete iTrackQueue[i];
+			iTrackQueue.Remove(i);
 			}
-		else
+			
+		SaveTrackQueueL();
+			
+		if (error)
 			{
 			CleanupStack::PushL(error);
-			if (error->LastFmErrorCode() == CMobblerLastFmError::EBadSession)
-				{
-				// The session has become invalid so handshake again
-				AuthenticateL();
-				}
-			else
-				{
-				iObserver.HandleLastFmErrorL(*error);
-				}
+			iObserver.HandleLastFmErrorL(*error);
 			CleanupStack::PopAndDestroy(error);
 			}
 		}
@@ -2324,15 +2138,7 @@ void CMobblerLastFmConnection::TransactionResponseL(CMobblerTransaction* aTransa
 		if (error)
 			{
 			CleanupStack::PushL(error);
-			if (error->LastFmErrorCode() == CMobblerLastFmError::EBadSession)
-				{
-				// The session has become invalid so handshake again
-				AuthenticateL();
-				}
-			else
-				{
-				iObserver.HandleLastFmErrorL(*error);
-				}
+			iObserver.HandleLastFmErrorL(*error);
 			CleanupStack::PopAndDestroy(error);
 			}
 		else
@@ -2360,7 +2166,7 @@ void CMobblerLastFmConnection::TransactionResponseL(CMobblerTransaction* aTransa
 
 void CMobblerLastFmConnection::TransactionCompleteL(CMobblerTransaction* aTransaction)
 	{
-	TRACER_AUTO;
+    TRACER_AUTO;
 	if (aTransaction == iSubmitTransaction)
 		{
 		// This pointer is used to tell if we are already submitting some tracks
@@ -2391,7 +2197,7 @@ void CMobblerLastFmConnection::TransactionCompleteL(CMobblerTransaction* aTransa
 
 void CMobblerLastFmConnection::TransactionFailedL(CMobblerTransaction* aTransaction, const TDesC8& aStatus, TInt aStatusCode)
 	{
-	TRACER_AUTO;
+    TRACER_AUTO;
 #ifdef _DEBUG
 	// Transaction log file 
 	_LIT(KTransactionLogFile, "C:\\Mobbler\\transaction.log");
@@ -2422,8 +2228,7 @@ void CMobblerLastFmConnection::TransactionFailedL(CMobblerTransaction* aTransact
 		
 		now.FormatL(logMessage, _L("%F%D/%M/%Y %H:%T:%S\t"));
 		
-		if (aTransaction == iHandshakeTransaction) logMessage.Append(_L("Handshake\t"));
-		else if (aTransaction == iWebServicesHandshakeTransaction) logMessage.Append(_L("WebServicesHandsake\t"));
+		if (aTransaction == iWebServicesHandshakeTransaction) logMessage.Append(_L("WebServicesHandsake\t"));
 		else if (aTransaction == iNowPlayingTransaction) logMessage.Append(_L("NowPlaying\t"));
 		else if (aTransaction == iSubmitTransaction) logMessage.Append(_L("Submit\t"));
 		
@@ -2462,10 +2267,8 @@ void CMobblerLastFmConnection::TransactionFailedL(CMobblerTransaction* aTransact
 		{
 		// If it was one of the handshake transactions then
 		// complain to the app UI so an error is displayed
-		if (aTransaction ==	iHandshakeTransaction
-				|| aTransaction == iWebServicesHandshakeTransaction
-				|| aTransaction == iOldRadioHandshakeTransaction
-#ifdef FULL_BETA_BUILD
+		if (aTransaction == iWebServicesHandshakeTransaction
+#ifdef BETA_BUILD
 				|| aTransaction == iBetaTestersTransaction
 #endif
 				)
@@ -2500,7 +2303,7 @@ void CMobblerLastFmConnection::TransactionFailedL(CMobblerTransaction* aTransact
 
 void CMobblerLastFmConnection::MHFRunL(RHTTPTransaction aTransaction, const THTTPEvent& aEvent)
 	{
-	TRACER_AUTO;
+    TRACER_AUTO;
 	// it must be a transaction event
 	TPtrC8 nextDataPartPtr;
 	
@@ -2550,14 +2353,14 @@ void CMobblerLastFmConnection::MHFRunL(RHTTPTransaction aTransaction, const THTT
 
 TInt CMobblerLastFmConnection::MHFRunError(TInt /*aError*/, RHTTPTransaction /*aTransaction*/, const THTTPEvent& /*aEvent*/)
 	{
-	TRACER_AUTO;
+    TRACER_AUTO;
 	// send KErrNone back so that it doesn't panic
 	return KErrNone;
 	}
 
 void CMobblerLastFmConnection::CreateAuthTokenL(TDes8& aHash, TTimeIntervalSeconds aUnixTimeStamp)
 	{
-	TRACER_AUTO;
+    TRACER_AUTO;
 	HBufC8* passwordHash(MobblerUtility::MD5LC(iPassword->String8()));
 	HBufC8* passwordHashAndTimeStamp(HBufC8::NewLC(passwordHash->Length() + 20));
 	passwordHashAndTimeStamp->Des().Append(*passwordHash);
@@ -2565,48 +2368,6 @@ void CMobblerLastFmConnection::CreateAuthTokenL(TDes8& aHash, TTimeIntervalSecon
 	HBufC8* authToken(MobblerUtility::MD5LC(*passwordHashAndTimeStamp));
 	aHash.Copy(*authToken);
 	CleanupStack::PopAndDestroy(3, passwordHash);
-	}
-
-void CMobblerLastFmConnection::ScrobbleHandshakeL()
-	{
-	TRACER_AUTO;
-	delete iSubmitUrl;
-	iSubmitUrl = NULL;
-	delete iNowPlayingUrl;
-	iNowPlayingUrl = NULL;
-	delete iScrobbleSessionId;
-	iScrobbleSessionId = NULL;
-	
-	iAuthenticated = EFalse;
-	
-	TTime now;
-	now.UniversalTime();
-	TTimeIntervalSeconds unixTimeStamp;
-	TTime epoch(TDateTime(1970, EJanuary, 0, 0, 0, 0, 0));
-	User::LeaveIfError(now.SecondsFrom(epoch, unixTimeStamp));
-	
-	HBufC8* authToken(HBufC8::NewLC(KMaxMobblerTextSize));
-	TPtr8 authTokenPtr(authToken->Des());
-	CreateAuthTokenL(authTokenPtr, unixTimeStamp);
-	
-	HBufC8* path(HBufC8::NewLC(KMaxMobblerTextSize));
-	// The format for the handshake URL:
-	_LIT8(KScrobbleQuery, "hs=true&p=1.2&c=mlr&v=0.1&u=%S&t=%d&a=%S");
-	path->Des().AppendFormat(KScrobbleQuery, &iUsername->String8(), unixTimeStamp.Int(), &authTokenPtr);
-	
-	CUri8* uri(CUri8::NewLC());
-	
-	uri->SetComponentL(KHttp, EUriScheme);
-	// The Last.fm URL to send the handshake to:
-	_LIT8(KScrobbleHost, "post.audioscrobbler.com");
-	uri->SetComponentL(KScrobbleHost, EUriHost);
-	uri->SetComponentL(*path, EUriQuery);
-	
-	delete iHandshakeTransaction;
-	iHandshakeTransaction = CMobblerTransaction::NewL(*this, uri);
-	CleanupStack::Pop(uri);
-	iHandshakeTransaction->SubmitL();
-	CleanupStack::PopAndDestroy(2, authToken);
 	}
 
 TInt CMobblerLastFmConnection::ScrobbleLogCount() const
@@ -2623,7 +2384,7 @@ const CMobblerTrackBase& CMobblerLastFmConnection::ScrobbleLogItem(TInt aIndex) 
 
 void CMobblerLastFmConnection::RemoveScrobbleLogItemL(TInt aIndex)
 	{
-	TRACER_AUTO;
+    TRACER_AUTO;
 	if (iTrackQueue.Count() > aIndex)
 		{
 		iObserver.HandleTrackDequeued(*iTrackQueue[aIndex]);
@@ -2638,7 +2399,7 @@ void CMobblerLastFmConnection::RemoveScrobbleLogItemL(TInt aIndex)
 
 void CMobblerLastFmConnection::LoadTrackQueueL()
 	{
-	TRACER_AUTO;
+    TRACER_AUTO;
 	iTrackQueue.ResetAndDestroy();
 	
 	RFile file;
@@ -2675,7 +2436,7 @@ void CMobblerLastFmConnection::LoadTrackQueueL()
 
 void CMobblerLastFmConnection::SaveTrackQueueL()
 	{
-	TRACER_AUTO;
+    TRACER_AUTO;
 	CCoeEnv::Static()->FsSession().MkDirAll(KTracksFile);
 	
 	RFile file;
@@ -2704,7 +2465,7 @@ void CMobblerLastFmConnection::SaveTrackQueueL()
 
 void CMobblerLastFmConnection::CheckQueueAgeL()
 	{
-	TRACER_AUTO;
+    TRACER_AUTO;
 	TTime now;
 	now.UniversalTime();
 	TInt dayNoInYear(now.DayNoInYear());
@@ -2732,7 +2493,7 @@ void CMobblerLastFmConnection::CheckQueueAgeL()
 
 TBool CMobblerLastFmConnection::ExportQueueToLogFileL()
 	{
-	TRACER_AUTO;
+    TRACER_AUTO;
 	// Format described here: http://www.audioscrobbler.net/wiki/Portable_Player_Logging
 	// Uploaders can be found here: http://www.rockbox.org/twiki/bin/view/Main/LastFmLog
 	
@@ -2847,7 +2608,7 @@ TBool CMobblerLastFmConnection::ExportQueueToLogFileL()
 
 void CMobblerLastFmConnection::StripOutTabs(TDes8& aString)
 	{
-	TRACER_AUTO;
+    TRACER_AUTO;
 	TInt position(aString.Find(KLogFileFieldSeperator));
 	 while (position != KErrNotFound)
 		{
@@ -2858,7 +2619,7 @@ void CMobblerLastFmConnection::StripOutTabs(TDes8& aString)
 
 void CMobblerLastFmConnection::ToggleScrobblingL()
 	{
-	TRACER_AUTO;
+    TRACER_AUTO;
 	iScrobblingOn = !iScrobblingOn;
 	
 	iScrobblingOn ?
@@ -2868,7 +2629,7 @@ void CMobblerLastFmConnection::ToggleScrobblingL()
 
 void CMobblerLastFmConnection::LoadCurrentTrackL()
 	{
-	TRACER_AUTO;
+    TRACER_AUTO;
 	RFile file;
 	CleanupClosePushL(file);
 	TInt openError(file.Open(CCoeEnv::Static()->FsSession(),
@@ -2894,7 +2655,7 @@ void CMobblerLastFmConnection::LoadCurrentTrackL()
 
 void CMobblerLastFmConnection::SaveCurrentTrackL()
 	{
-	TRACER_AUTO;
+    TRACER_AUTO;
 	if (!iCurrentTrackSaved &&
 		iScrobblingOn && 
 		iCurrentTrack)
@@ -2933,14 +2694,14 @@ void CMobblerLastFmConnection::SaveCurrentTrackL()
 
 void CMobblerLastFmConnection::DeleteCurrentTrackFile()
 	{
-	TRACER_AUTO;
+    TRACER_AUTO;
 	CCoeEnv::Static()->FsSession().Delete(KCurrentTrackFile);
 	iCurrentTrackSaved = EFalse;
 	}
 
 CUri8* CMobblerLastFmConnection::SetUpWebServicesUriLC()
 	{
-	TRACER_AUTO;
+    TRACER_AUTO;
 	CUri8* uri(CUri8::NewLC());
 	
 	_LIT8(KComponentTwoDotZero, "/2.0/");
@@ -2955,7 +2716,7 @@ CUri8* CMobblerLastFmConnection::SetUpWebServicesUriLC()
 
 void CMobblerLastFmConnection::ScrobbleTrackL(const CMobblerTrackBase* aTrack, const TBool aSubmit)
 	{
-	TRACER_AUTO;
+    TRACER_AUTO;
 	delete iUniversalScrobbledTrack;
 	iUniversalScrobbledTrack = CMobblerTrackBase::NewL(*aTrack);
 	iObserver.HandleTrackQueuedL(*iUniversalScrobbledTrack);

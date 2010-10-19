@@ -88,7 +88,7 @@ void CMobblerRadioPlayer::ConstructL()
 	iLastFmConnection.AddStateChangeObserverL(this);
 	
 	MMdaAudioOutputStreamCallback* dummyCallback(NULL);
-	CMdaAudioOutputStream* dummyOutputStream(CMdaAudioOutputStream::NewL(*dummyCallback));
+	CMdaAudioOutputStream* dummyOutputStream = CMdaAudioOutputStream::NewL(*dummyCallback);
 	iMaxVolume = dummyOutputStream->MaxVolume();
 	delete dummyOutputStream;
 	}
@@ -344,12 +344,6 @@ void CMobblerRadioPlayer::StartL(CMobblerLastFmConnection::TRadioStation aRadioS
 		case CMobblerLastFmConnection::ETag:
 			station.Format(static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->ResourceReader().ResourceL(R_MOBBLER_TAG_FORMAT), &text);
 			break;
-		case CMobblerLastFmConnection::EGroup:
-			station.Format(static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->ResourceReader().ResourceL(R_MOBBLER_GROUP_FORMAT), &text);
-			break;
-		case CMobblerLastFmConnection::ECustom:
-			station.Format(static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->ResourceReader().ResourceL(R_MOBBLER_CUSTOM_FORMAT), &text);
-			break;
 		case CMobblerLastFmConnection::EUnknown:
 		default:
 			break;
@@ -366,18 +360,9 @@ void CMobblerRadioPlayer::StartL(CMobblerLastFmConnection::TRadioStation aRadioS
 	// now ask for the radio to start again
 	if (aRadioText)
 		{
-		if (aRadioStation == CMobblerLastFmConnection::ECustom)
-			{
-			// Don't encode this
-			iLastFmConnection.SelectStationL(this, aRadioStation, 
-												aRadioText->String8());
-			}
-		else
-			{
-			HBufC8* urlEncoded(MobblerUtility::URLEncodeLC(aRadioText->String8()));
-			iLastFmConnection.SelectStationL(this, aRadioStation, *urlEncoded);
-			CleanupStack::PopAndDestroy(urlEncoded);
-			}
+		HBufC8* urlEncoded(MobblerUtility::URLEncodeLC(aRadioText->String8()));
+		iLastFmConnection.SelectStationL(this, aRadioStation, *urlEncoded);
+		CleanupStack::PopAndDestroy(urlEncoded);
 		}
 	else
 		{
@@ -397,17 +382,8 @@ void CMobblerRadioPlayer::DataL(const TDesC8& aData, TInt aTransactionError)
 			{
 			if (aTransactionError == CMobblerLastFmConnection::ETransactionErrorNone)
 				{
-				CMobblerLastFmError* radioError(NULL);
-				
-				if (iLastFmConnection.MemberType() == CMobblerLastFmConnection::EMember)
-					{
-					radioError = CMobblerParser::ParseOldRadioTuneL(aData);
-					}
-				else
-					{
-					delete iStation;
-					radioError = CMobblerParser::ParseRadioTuneL(aData, iStation);
-					}
+				delete iStation;
+				CMobblerLastFmError* radioError(CMobblerParser::ParseRadioTuneL(aData, iStation));
 				
 				if (!radioError)
 					{
@@ -440,16 +416,7 @@ void CMobblerRadioPlayer::DataL(const TDesC8& aData, TInt aTransactionError)
 				{
 				DoChangeTransactionStateL(ENone);
 		
-				CMobblerLastFmError* error(NULL);
-				
-				if (iLastFmConnection.MemberType() == CMobblerLastFmConnection::ESubscriber)
-					{
-					error = CMobblerParser::ParseRadioPlaylistL(aData, *iPlaylist);
-					}
-				else
-					{
-					error = CMobblerParser::ParseOldRadioPlaylistL(aData, *iPlaylist);
-					}
+				CMobblerLastFmError* error(CMobblerParser::ParseRadioPlaylistL(aData, *iPlaylist));
 				
 				if (!error)
 					{
