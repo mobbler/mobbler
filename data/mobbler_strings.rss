@@ -89,7 +89,7 @@ RESOURCE STRING r_mobbler_backlight_system_default		{ text = STR_mobbler_backlig
 RESOURCE STRING r_mobbler_download_album_art			{ text = STR_mobbler_download_album_art; }
 RESOURCE STRING r_mobbler_download_album_art_never		{ text = STR_mobbler_download_album_art_never; }
 RESOURCE STRING r_mobbler_download_album_art_radio_only	{ text = STR_mobbler_download_album_art_radio_only; }
-RESOURCE STRING r_mobbler_download_album_art_always_when_online	{ text = STR_mobbler_download_album_art_always_when_online; }
+RESOURCE STRING r_mobbler_download_album_art_always_and_keep	{ text = STR_mobbler_download_album_art_always_and_keep; }
 RESOURCE STRING r_mobbler_accelerometer_gestures		{ text = STR_mobbler_accelerometer_gestures; }
 RESOURCE STRING r_mobbler_accelerometer_gestures_on		{ text = STR_mobbler_accelerometer_gestures_on; }
 RESOURCE STRING r_mobbler_accelerometer_gestures_off	{ text = STR_mobbler_accelerometer_gestures_off; }
@@ -399,7 +399,7 @@ RESOURCE STRING r_mobbler_twitter_share_album_format		{ text = STR_mobbler_twitt
 RESOURCE STRING r_mobbler_twitter_now_playing_artist_format	{ text = STR_mobbler_twitter_now_playing_artist_format; }
 RESOURCE STRING r_mobbler_twitter_share_artist_format		{ text = STR_mobbler_twitter_share_artist_format; }
 
-RESOURCE STRING r_mobbler_share_album						{ text = STR_mobbler_share_album; }
+RESOURCE STRING r_mobbler_download_album_art_always_and_ditch	{ text = STR_mobbler_download_album_art_always_and_ditch; }
 
 RESOURCE STRING r_mobbler_radio_group				{ text = STR_mobbler_radio_group; }
 RESOURCE STRING r_mobbler_radio_enter_group			{ text = STR_mobbler_radio_enter_group;}
@@ -407,5 +407,8 @@ RESOURCE STRING r_mobbler_group_format				{ text = STR_mobbler_group_format; }
 RESOURCE STRING r_mobbler_radio_custom				{ text = STR_mobbler_radio_custom; }
 RESOURCE STRING r_mobbler_radio_enter_custom			{ text = STR_mobbler_radio_enter_custom;}
 RESOURCE STRING r_mobbler_custom_format				{ text = STR_mobbler_custom_format; }
+RESOURCE STRING r_mobbler_share_album				{ text = STR_mobbler_share_album; }
+
+RESOURCE STRING r_mobbler_lastfm_account		{ text = STR_mobbler_lastfm_account; }
 
 // End of file
