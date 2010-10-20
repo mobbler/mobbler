@@ -104,7 +104,6 @@ void CMobblerWebServicesView::DynInitMenuPaneL(TInt aResourceId, CEikMenuPane* a
 		{
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_OPEN,					EMobblerCommandOpen);
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_RADIO,				EMobblerCommandRadioStart);
-		SetMenuItemTextL(aMenuPane, R_MOBBLER_RADIO_START,			EMobblerCommandRadio);
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_SHARE,				EMobblerCommandShare);
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_ATTENDANCE,			EMobblerCommandAttendance);
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_VIEW,					EMobblerCommandView);
@@ -119,12 +118,6 @@ void CMobblerWebServicesView::DynInitMenuPaneL(TInt aResourceId, CEikMenuPane* a
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_SCROBBLE_LOG_REMOVE,	EMobblerCommandScrobbleLogRemove);
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_TAG,					EMobblerCommandTag);
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_LYRICS,				EMobblerCommandTrackLyrics);
-		}
-	else if (aResourceId == R_MOBBLER_WEBSERVICES_RADIO_SUBMENU_PANE)
-		{
-		SetMenuItemTextL(aMenuPane, R_MOBBLER_RADIO_PERSONAL,		EMobblerCommandRadioPersonal);
-		SetMenuItemTextL(aMenuPane, R_MOBBLER_RADIO_NEIGHBOURHOOD,	EMobblerCommandRadioNeighbourhood);
-		SetMenuItemTextL(aMenuPane, R_MOBBLER_RADIO_LOVED,			EMobblerCommandRadioLoved);
 		}
 	else if (aResourceId == R_MOBBLER_ATTENDANCE_SUBMENU_PANE)
 		{

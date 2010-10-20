@@ -1318,6 +1318,7 @@ void CMobblerLastFmConnection::SelectStationL(MMobblerFlatDataObserver* aObserve
 	TPtr8 textPtr(text->Des());
 	
 	_LIT8(KRadioStationPersonal, "lastfm://user/%S/library");
+	_LIT8(KRadioStationMix, "lastfm://user/%S/mix");
 	_LIT8(KRadioStationPlaylist, "lastfm://playlist/%S");
 	_LIT8(KRadioStationLoved, "lastfm://user/%S/loved");
 	_LIT8(KRadioStationArtist, "lastfm://artist/%S/similarartists");
@@ -1328,6 +1329,7 @@ void CMobblerLastFmConnection::SelectStationL(MMobblerFlatDataObserver* aObserve
 	switch (aRadioStation)
 		{
 		case EPersonal: radioUrl->Des().AppendFormat(KRadioStationPersonal, &textPtr); break;
+		case EMix: radioUrl->Des().AppendFormat(KRadioStationMix, &textPtr); break;
 		case EPlaylist: radioUrl->Des().AppendFormat(KRadioStationPlaylist, &textPtr); break;
 		case ERecommendations: radioUrl->Des().AppendFormat(KRadioStationRecommended, &textPtr); break;
 		case ENeighbourhood: radioUrl->Des().AppendFormat(KRadioStationNeighbours, &textPtr); break;

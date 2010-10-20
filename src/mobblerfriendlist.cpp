@@ -106,10 +106,8 @@ CMobblerListControl* CMobblerFriendList::HandleListCommandL(TInt aCommand)
 				}
 			}
 			break;
-		case EMobblerCommandRadioPersonal:			// intentional fall-through
-		case EMobblerCommandRadioLoved:				// intentional fall-through
-		case EMobblerCommandRadioNeighbourhood:		// intentional fall-through
-			iAppUi.RadioStartL(aCommand, iList[iListBox->CurrentItemIndex()]->Title());
+		case EMobblerCommandRadioStart:
+			iAppUi.RadioStartL(EMobblerCommandRadioUser, iList[iListBox->CurrentItemIndex()]->Title());
 			break;
 		case EMobblerCommandUserEvents:				// intentional fall-through
 		case EMobblerCommandPlaylists:				// intentional fall-through
@@ -145,10 +143,7 @@ void CMobblerFriendList::SupportedCommandsL(RArray<TInt>& aCommands)
 	aCommands.AppendL(EMobblerCommandAlbumShare);
 	aCommands.AppendL(EMobblerCommandArtistShare);
 	
-	aCommands.AppendL(EMobblerCommandRadio);
-	aCommands.AppendL(EMobblerCommandRadioPersonal);
-	aCommands.AppendL(EMobblerCommandRadioNeighbourhood);
-	aCommands.AppendL(EMobblerCommandRadioLoved);
+	aCommands.AppendL(EMobblerCommandRadioStart);
 	}
 
 void CMobblerFriendList::DataL(CMobblerFlatDataObserverHelper* /*aObserver*/, const TDesC8& /*aData*/, TInt /*aError*/)

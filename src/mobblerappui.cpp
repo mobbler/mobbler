@@ -797,6 +797,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 					case EMobblerCommandRadioRecommendations:	// intentional fall-through
 					case EMobblerCommandRadioPersonal:			// intentional fall-through
 					case EMobblerCommandRadioLoved:				// intentional fall-through
+					case EMobblerCommandRadioMix:				// intentional fall-through
 					case EMobblerCommandRadioNeighbourhood:		// intentional fall-through
 					default:
 						RadioStartL(iPreviousRadioStation, NULL, EFalse);
@@ -888,6 +889,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 			break;
 		case EMobblerCommandRadioRecommendations:	// intentional fall-through
 		case EMobblerCommandRadioPersonal:			// intentional fall-through
+		case EMobblerCommandRadioMix:				// intentional fall-through
 		case EMobblerCommandRadioLoved:				// intentional fall-through
 		case EMobblerCommandRadioNeighbourhood:		// intentional fall-through
 			RadioStartL(aCommand, NULL);
@@ -1263,6 +1265,9 @@ void CMobblerAppUi::RadioStartL(TInt aRadioStation,
 			break;
 		case EMobblerCommandRadioUser:
 			station = CMobblerLastFmConnection::EPersonal;
+			break;
+		case EMobblerCommandRadioMix:
+			station = CMobblerLastFmConnection::EMix;
 			break;
 		case EMobblerCommandRadioRecommendations:
 			station = CMobblerLastFmConnection::ERecommendations;
@@ -2206,6 +2211,7 @@ void CMobblerAppUi::TimerExpiredL(TAny* aTimer, TInt aError)
 				break;
 			case EMobblerCommandRadioRecommendations:	// intentional fall-through
 			case EMobblerCommandRadioPersonal:			// intentional fall-through
+			case EMobblerCommandRadioMix:				// intentional fall-through
 			case EMobblerCommandRadioLoved:				// intentional fall-through
 			case EMobblerCommandRadioNeighbourhood:		// intentional fall-through
 			default:
