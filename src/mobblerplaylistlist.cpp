@@ -72,13 +72,6 @@ CMobblerListControl* CMobblerPlaylistList::HandleListCommandL(TInt aCommand)
 	
 	switch (aCommand)
 		{
-		case EMobblerCommandRadioStart:
-			{
-			CMobblerString* playlistId(CMobblerString::NewLC(iList[iListBox->CurrentItemIndex()]->Id()));
-			iAppUi.RadioStartL(EMobblerCommandRadioPlaylist, playlistId);
-			CleanupStack::PopAndDestroy(playlistId);
-			}
-			break;
 		case EMobblerCommandOpen:
 			{
 			list = CMobblerListControl::CreateListL(iAppUi, iWebServicesControl, 
@@ -172,7 +165,6 @@ void CMobblerPlaylistList::SupportedCommandsL(RArray<TInt>& aCommands)
 		aCommands.AppendL(EMobblerCommandPlaylistAddTrack);
 		}
 	
-	aCommands.AppendL(EMobblerCommandRadioStart);
 	aCommands.AppendL(EMobblerCommandOpen);
 	aCommands.AppendL(EMobblerCommandPlaylistCreate);
 	}

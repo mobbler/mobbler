@@ -117,11 +117,6 @@ RESOURCE MENU_PANE r_mobbler_webservices_menu_pane
 			},
 		MENU_ITEM
 			{
-			command = EMobblerCommandRadio;
-			cascade = r_mobbler_webservices_radio_submenu_pane;
-			},
-		MENU_ITEM
-			{
 			command = EMobblerCommandTrackLove;
 			},
 		MENU_ITEM
@@ -228,25 +223,6 @@ RESOURCE MENU_PANE r_mobbler_shout_submenu_pane
 		MENU_ITEM
 			{
 			command = EMobblerCommandShoutUser;
-			}
-		};
-	}
-
-RESOURCE MENU_PANE r_mobbler_webservices_radio_submenu_pane
-	{
-	items =
-		{
-		MENU_ITEM
-			{
-			command = EMobblerCommandRadioPersonal;
-			},
-		MENU_ITEM
-			{
-			command = EMobblerCommandRadioNeighbourhood;
-			},
-		MENU_ITEM
-			{
-			command = EMobblerCommandRadioLoved;
 			}
 		};
 	}
@@ -594,6 +570,22 @@ RESOURCE MENU_PANE r_radio_submenu_pane
 		{
 		MENU_ITEM
 			{
+			command = EMobblerCommandRadioPersonal;
+			},
+		MENU_ITEM
+			{
+			command = EMobblerCommandRadioMix;
+			},
+		MENU_ITEM
+			{
+			command = EMobblerCommandRadioRecommendations;
+			},
+		MENU_ITEM
+			{
+			command = EMobblerCommandRadioNeighbourhood;
+			},
+		MENU_ITEM
+			{
 			command = EMobblerCommandRadioArtist;
 			},
 		MENU_ITEM
@@ -603,22 +595,6 @@ RESOURCE MENU_PANE r_radio_submenu_pane
 		MENU_ITEM
 			{
 			command = EMobblerCommandRadioUser;
-			},
-		MENU_ITEM
-			{
-			command = EMobblerCommandRadioPersonal;
-			},
-		MENU_ITEM
-			{
-			command = EMobblerCommandRadioRecommendations;
-			},
-		MENU_ITEM
-			{
-			command = EMobblerCommandRadioLoved;
-			},
-		MENU_ITEM
-			{
-			command = EMobblerCommandRadioNeighbourhood;
 			},
 		MENU_ITEM
 			{
