@@ -113,6 +113,17 @@ RHTTPTransaction& CMobblerTransaction::Transaction()
 
 void CMobblerTransaction::ForcePostL()
 	{
+	// open the transaction
+	RStringF string;
+	RStringPool stringPool(iConnection.iHTTPSession.StringPool());
+	string = stringPool.StringF(HTTP::EPOST, RHTTPSession::GetTable());
+	
+	iTransaction = iConnection.iHTTPSession.OpenTransactionL(iURI->Uri(), *this, string);
+	
+	iForm = CHTTPFormEncoder::NewL();
+	
+	iTransaction.Request().SetBody(*iForm);
+	
 	iForcePost = ETrue;
 	}
 
@@ -155,20 +166,6 @@ void CMobblerTransaction::SubmitL()
 			{
 			iTransaction = iConnection.iHTTPSession.OpenTransactionL(iURI->Uri(), *this);
 			}
-		}
-	
-	if (iForcePost)
-		{
-		// open the transaction
-		RStringF string;
-		RStringPool stringPool(iConnection.iHTTPSession.StringPool());
-		string = stringPool.StringF(HTTP::EPOST, RHTTPSession::GetTable());
-		
-		iTransaction = iConnection.iHTTPSession.OpenTransactionL(iURI->Uri(), *this, string);
-		
-		iForm = CHTTPFormEncoder::NewL();
-		
-		iTransaction.Request().SetBody(*iForm);
 		}
 	
 	iTransaction.SubmitL();

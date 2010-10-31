@@ -256,7 +256,6 @@ CMobblerAppUi::~CMobblerAppUi()
 	delete iPreviousRadioArtist;
 	delete iPreviousRadioCustom;
 	delete iPreviousRadioGroup;
-	delete iPreviousRadioPlaylistId;
 	delete iPreviousRadioTag;
 	delete iPreviousRadioUser;
 	delete iPreviousSearchTrack;
@@ -785,9 +784,6 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 					case EMobblerCommandRadioUser:
 						RadioStartL(iPreviousRadioStation, iPreviousRadioUser, EFalse);
 						break;
-					case EMobblerCommandRadioPlaylist:
-						RadioStartL(iPreviousRadioStation, iPreviousRadioPlaylistId, EFalse);
-						break;
 					case EMobblerCommandRadioGroup:
 						RadioStartL(iPreviousRadioStation, iPreviousRadioGroup, EFalse);
 						break;
@@ -1230,10 +1226,6 @@ void CMobblerAppUi::RadioStartL(TInt aRadioStation,
 				delete iPreviousRadioUser;
 				iPreviousRadioUser = CMobblerString::NewL(aRadioOption->String());
 				break;
-			case EMobblerCommandRadioPlaylist:
-				delete iPreviousRadioPlaylistId;
-				iPreviousRadioPlaylistId = CMobblerString::NewL(aRadioOption->String());
-				break;
 			case EMobblerCommandRadioGroup:
 				delete iPreviousRadioGroup;
 				iPreviousRadioGroup = CMobblerString::NewL(aRadioOption->String());
@@ -1281,17 +1273,14 @@ void CMobblerAppUi::RadioStartL(TInt aRadioStation,
 		case EMobblerCommandRadioNeighbourhood:
 			station = CMobblerLastFmConnection::ENeighbourhood;
 			break;
-		case EMobblerCommandRadioPlaylist:
-			station = CMobblerLastFmConnection::EPlaylist;
-			break;
-		default:
-			station = CMobblerLastFmConnection::EPersonal;
-			break;
 		case EMobblerCommandRadioGroup:
 			station = CMobblerLastFmConnection::EGroup;
 			break;
 		case EMobblerCommandRadioCustom:
 			station = CMobblerLastFmConnection::ECustom;
+			break;
+		default:
+			station = CMobblerLastFmConnection::EPersonal;
 			break;
 		}
 	
@@ -1806,8 +1795,8 @@ void CMobblerAppUi::LoadRadioStationsL()
 		if (loadIt)
 			{
 			readStream >> radio;
-			delete iPreviousRadioPlaylistId;
-			iPreviousRadioPlaylistId = CMobblerString::NewL(radio);
+			// Used to be iPreviousRadioPlaylistId, but playlist radio 
+			// has been discontinued by Last.fm so just ignore it.
 			}
 		loadIt = EFalse;
 		TRAP_IGNORE(loadIt = readStream.ReadInt8L());
@@ -1882,15 +1871,10 @@ void CMobblerAppUi::SaveRadioStationsL()
 			writeStream.WriteInt8L(EFalse);
 			}
 		
-		if (iPreviousRadioPlaylistId)
-			{
-			writeStream.WriteInt8L(ETrue);
-			writeStream << iPreviousRadioPlaylistId->String();
-			}
-		else
-			{
-			writeStream.WriteInt8L(EFalse);
-			}
+		// Used to be iPreviousRadioPlaylistId, but playlist radio 
+		// has been discontinued by Last.fm so just leave a gap
+		// to maintain file format compatibility.
+		writeStream.WriteInt8L(EFalse);
 		
 		if (iPreviousRadioGroup)
 			{

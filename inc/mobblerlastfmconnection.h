@@ -168,6 +168,9 @@ public:
 	void CancelTransaction(MMobblerFlatDataObserver* aObserver);
 
 	// Web services APIs
+	void TermsL(MMobblerFlatDataObserver& aObserver);
+	void SignUpL(const TDesC8& aUsername, const TDesC8& aPassword, const TDesC8& aEmail, MMobblerFlatDataObserver& aObserver);
+	
 	void WebServicesCallL(const TDesC8& aClass, const TDesC8& aMethod, const TDesC8& aText, MMobblerFlatDataObserver& aObserver, TInt aPage = KErrNotFound, TInt aPerPage = KErrNotFound);
 
 	void ShoutL(const TDesC8& aClass, const TDesC8& aArgument, const TDesC8& aMessage);
@@ -215,7 +218,6 @@ public:
 	void PlaylistFetchAlbumL(const TDesC8& aAlbumId, MMobblerFlatDataObserver& aObserver);
 	void PlaylistAddTrackL(const TDesC8& aPlaylistId, const TDesC8& aArtist, const TDesC8& aTrack, MMobblerFlatDataObserver& aObserver);
 	
-	void FoursquareL(const TDesC8& aLongitude, const TDesC8& aLatitude, MMobblerFlatDataObserver& aObserver);
 	void FetchLyricsL(const TDesC8& aArtist, const TDesC8& aTitle, MMobblerFlatDataObserver& aObserver);
 
 	TBool ExportQueueToLogFileL();

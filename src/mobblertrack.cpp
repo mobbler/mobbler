@@ -680,6 +680,9 @@ TBool CMobblerTrack::FetchImageL(CMobblerFlatDataObserverHelper* aObserver, cons
 			 imageArray[i]->AttrValue(KSize)->Compare(KLarge) == 0)
 				||
 			(aObserver == iArtistInfoHelper &&
+			 imageArray[i]->AttrValue(KName)->Compare(KExtraLarge) == 0)
+				||
+			(aObserver == iArtistInfoHelper &&
 			 imageArray[i]->AttrValue(KName)->Compare(KLarge) == 0))
 			{
 			if (imageArray[i]->Content().Length() > 0)

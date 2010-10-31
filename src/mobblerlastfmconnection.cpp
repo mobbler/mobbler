@@ -575,6 +575,50 @@ void CMobblerLastFmConnection::CheckForUpdateL(MMobblerFlatDataObserver& aObserv
 	AppendAndSubmitTransactionL(transaction);
 	}
 
+void CMobblerLastFmConnection::TermsL(MMobblerFlatDataObserver& aObserver)
+	{
+	TRACER_AUTO;
+	CUri8* uri(SetUpWebServicesUriLC());
+	
+	_LIT8(KQueryTerms, "user.terms");
+	CMobblerWebServicesQuery* query(CMobblerWebServicesQuery::NewLC(KQueryTerms));
+	
+	_LIT8(KLang, "lang");
+	query->AddFieldL(KLang, MobblerUtility::LanguageL());
+	
+	uri->SetComponentL(*query->GetQueryAuthLC(), EUriQuery);
+	CleanupStack::PopAndDestroy(1); // query->GetQueryLC()
+	
+	CMobblerTransaction* transaction(CMobblerTransaction::NewL(*this, ETrue, uri, query));
+	transaction->SetFlatDataObserver(&aObserver);
+	
+	CleanupStack::Pop(query);
+	CleanupStack::Pop(uri);
+	
+	AppendAndSubmitTransactionL(transaction);
+	}
+
+void CMobblerLastFmConnection::SignUpL(const TDesC8& aUsername, const TDesC8& aPassword, const TDesC8& aEmail, MMobblerFlatDataObserver& aObserver)
+	{
+	TRACER_AUTO;
+	CUri8* uri(SetUpWebServicesUriLC());
+	
+	_LIT8(KQuerySignup, "user.signup");
+	CMobblerWebServicesQuery* query(CMobblerWebServicesQuery::NewLC(KQuerySignup));
+	
+	query->AddFieldL(KUsername, aUsername);
+	query->AddFieldL(KPassword, aPassword);
+	query->AddFieldL(KEmail, aEmail);
+	
+	CMobblerTransaction* transaction(CMobblerTransaction::NewL(*this, ETrue, uri, query));
+	transaction->SetFlatDataObserver(&aObserver);
+	
+	CleanupStack::Pop(query);
+	CleanupStack::Pop(uri);
+	
+	AppendAndSubmitTransactionL(transaction);
+	}
+
 void CMobblerLastFmConnection::PlaylistCreateL(const TDesC& aTitle, const TDesC& aDescription, MMobblerFlatDataObserver& aObserver)
 	{
 	TRACER_AUTO;
@@ -763,29 +807,6 @@ void CMobblerLastFmConnection::SimilarL(const TInt aCommand, const TDesC8& aArti
 	transaction->SetFlatDataObserver(&aObserver);
 	
 	CleanupStack::Pop(uri);
-	
-	AppendAndSubmitTransactionL(transaction);
-	}
-
-void CMobblerLastFmConnection::FoursquareL(const TDesC8& aLongitude, const TDesC8& aLatitude, MMobblerFlatDataObserver& aObserver)
-	{
-	TRACER_AUTO;
-	_LIT8(KFoursquareTipsFormat, "http://api.foursquare.com/v1/tips?geolat=%S&geolong=%S");
-	
-	HBufC8* uriBuf(HBufC8::NewLC(KFoursquareTipsFormat().Length() + aLongitude.Length() + aLatitude.Length()));
-	
-	uriBuf->Des().Format(KFoursquareTipsFormat, &aLatitude, &aLongitude);
-	
-	TUriParser8 uriParser;
-	uriParser.Parse(*uriBuf);
-	
-	CUri8* uri(CUri8::NewLC(uriParser));
-	
-	CMobblerTransaction* transaction(CMobblerTransaction::NewL(*this, uri));
-	transaction->SetFlatDataObserver(&aObserver);
-	
-	CleanupStack::Pop(uri);
-	CleanupStack::PopAndDestroy(uriBuf);
 	
 	AppendAndSubmitTransactionL(transaction);
 	}
