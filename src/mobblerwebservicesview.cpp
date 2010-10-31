@@ -114,7 +114,7 @@ void CMobblerWebServicesView::DynInitMenuPaneL(TInt aResourceId, CEikMenuPane* a
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_SCROBBLE_ALBUM_OPTION,EMobblerCommandAlbumScrobble);
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_PLAYLIST_CREATE,		EMobblerCommandPlaylistCreate);
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_PLAYLIST_ADD_TRACK,	EMobblerCommandPlaylistAddTrack);
-		SetMenuItemTextL(aMenuPane, R_MOBBLER_MAP,					EMobblerCommandMaps);
+		SetMenuItemTextL(aMenuPane, R_MOBBLER_VISIT_MAP,			EMobblerCommandVisitMap);
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_SCROBBLE_LOG_REMOVE,	EMobblerCommandScrobbleLogRemove);
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_TAG,					EMobblerCommandTag);
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_LYRICS,				EMobblerCommandTrackLyrics);
@@ -152,11 +152,6 @@ void CMobblerWebServicesView::DynInitMenuPaneL(TInt aResourceId, CEikMenuPane* a
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_TOP_TRACKS,			EMobblerCommandArtistTopTracks);
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_TOP_TAGS,				EMobblerCommandArtistTopTags);
 		SetMenuItemTextL(aMenuPane, R_MOBBLER_VISIT_LASTFM_MENU,	EMobblerCommandEventWebPage);
-		}
-	else if (aResourceId == R_MOBBLER_MAP_SUBMENU_PANE)
-		{
-		SetMenuItemTextL(aMenuPane, R_MOBBLER_VISIT_MAP,			EMobblerCommandVisitMap);
-		SetMenuItemTextL(aMenuPane, R_MOBBLER_FOURSQUARE,			EMobblerCommandFoursquare);
 		}
 	else if (aResourceId == R_MOBBLER_TAG_SUBMENU_PANE)
 		{

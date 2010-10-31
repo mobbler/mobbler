@@ -811,29 +811,6 @@ void CMobblerLastFmConnection::SimilarL(const TInt aCommand, const TDesC8& aArti
 	AppendAndSubmitTransactionL(transaction);
 	}
 
-void CMobblerLastFmConnection::FoursquareL(const TDesC8& aLongitude, const TDesC8& aLatitude, MMobblerFlatDataObserver& aObserver)
-	{
-	TRACER_AUTO;
-	_LIT8(KFoursquareTipsFormat, "http://api.foursquare.com/v1/tips?geolat=%S&geolong=%S");
-	
-	HBufC8* uriBuf(HBufC8::NewLC(KFoursquareTipsFormat().Length() + aLongitude.Length() + aLatitude.Length()));
-	
-	uriBuf->Des().Format(KFoursquareTipsFormat, &aLatitude, &aLongitude);
-	
-	TUriParser8 uriParser;
-	uriParser.Parse(*uriBuf);
-	
-	CUri8* uri(CUri8::NewLC(uriParser));
-	
-	CMobblerTransaction* transaction(CMobblerTransaction::NewL(*this, uri));
-	transaction->SetFlatDataObserver(&aObserver);
-	
-	CleanupStack::Pop(uri);
-	CleanupStack::PopAndDestroy(uriBuf);
-	
-	AppendAndSubmitTransactionL(transaction);
-	}
-
 void CMobblerLastFmConnection::FetchLyricsL(const TDesC8& aArtist,
 											const TDesC8& aTitle, 
 											MMobblerFlatDataObserver& aObserver)

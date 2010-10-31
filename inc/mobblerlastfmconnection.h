@@ -218,7 +218,6 @@ public:
 	void PlaylistFetchAlbumL(const TDesC8& aAlbumId, MMobblerFlatDataObserver& aObserver);
 	void PlaylistAddTrackL(const TDesC8& aPlaylistId, const TDesC8& aArtist, const TDesC8& aTrack, MMobblerFlatDataObserver& aObserver);
 	
-	void FoursquareL(const TDesC8& aLongitude, const TDesC8& aLatitude, MMobblerFlatDataObserver& aObserver);
 	void FetchLyricsL(const TDesC8& aArtist, const TDesC8& aTitle, MMobblerFlatDataObserver& aObserver);
 
 	TBool ExportQueueToLogFileL();

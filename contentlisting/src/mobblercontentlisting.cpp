@@ -1,24 +1,24 @@
 /*
-mobblercontentlisting.cpp
-
 Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
-Copyright (C) 2009  Michael Coffey
+Copyright (C) 2009, 2010  Hugo van Kemenade
+Copyright (C) 2009, 2010  Michael Coffey
 
 http://code.google.com/p/mobbler
 
-This program is free software; you can redistribute it and/or
+This file is part of Mobbler.
+
+Mobbler is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful,
+Mobbler is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+along with Mobbler.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include <ContentListingFactory.h>
@@ -29,6 +29,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <MCLFSortingStyle.h>
 
 #include "mobblercontentlisting.h"
+
+_LIT(KMobblerClf, "Mobbler CLF");
 
 #ifdef __SYMBIAN_SIGNED__
 const TInt KImplementationUid = {0x2002661E};
@@ -95,8 +97,8 @@ void DoContentListingRefreshL(CMobblerContentListing::TSharedData* aSharedData)
 	do
 		{
 		// Create Content Listing Engine and a list model
-		MCLFContentListingEngine* clfEngine = ContentListingFactory::NewContentListingEngineLC();
-		MCLFItemListModel* clfModel = clfEngine->CreateListModelLC(*aSharedData->iObserver);
+		MCLFContentListingEngine* clfEngine(ContentListingFactory::NewContentListingEngineLC());
+		MCLFItemListModel* clfModel(clfEngine->CreateListModelLC(*aSharedData->iObserver));
 		
 		// Create an array for the desired media types
 		RArray<TInt> array;
@@ -112,7 +114,7 @@ void DoContentListingRefreshL(CMobblerContentListing::TSharedData* aSharedData)
 		
 		// The clf has refreshed so get all the data out of it and sort it
 		const TInt KClfItemCount(clfModel->ItemCount());
-		for (TInt i(0) ; i < KClfItemCount ; ++i)
+		for (TInt i(0); i < KClfItemCount; ++i)
 			{
 			const MCLFItem& clfItem(clfModel->Item(i));
 			
@@ -139,7 +141,7 @@ void DoContentListingRefreshL(CMobblerContentListing::TSharedData* aSharedData)
 		
 		aSharedData->iClfItems.ResetAndDestroy();
 		}
-		while (aSharedData->iState == CMobblerContentListing::EMobblerClfModelRefreshing);
+	while (aSharedData->iState == CMobblerContentListing::EMobblerClfModelRefreshing);
 	}
 
 TInt ThreadFunction(TAny* aRef)
@@ -182,7 +184,7 @@ void CMobblerContentListing::RefreshL()
 	if (!iThreadCreated)
 		{
 		iThreadCreated = ETrue;
-		User::LeaveIfError(iThread.Create(_L("Mobbler CLF"), ThreadFunction, KDefaultStackSize, NULL, &iSharedData));
+		User::LeaveIfError(iThread.Create(KMobblerClf, ThreadFunction, KDefaultStackSize, NULL, &iSharedData));
 		}
 
 	iSharedData.iState = EMobblerClfModelRefreshing;
@@ -253,7 +255,7 @@ void CMobblerContentListing::FindLocalTrackL(const TDesC& aArtist, const TDesC& 
 void CMobblerContentListing::CancelFindLocalTrack(MMobblerContentListingObserver* aObserver)
 	{
 	const TInt KOperationCount(iOperations.Count());
-	for (TInt i(0) ; i < KOperationCount ; ++i)
+	for (TInt i(0); i < KOperationCount; ++i)
 		{
 		if (iOperations[i]->iObserver == aObserver)
 			{

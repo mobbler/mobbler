@@ -1,27 +1,27 @@
 /*
-mobblereventlist.cpp
-
 Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
-Copyright (C) 2009  Michael Coffey
+Copyright (C) 2009, 2010  Michael Coffey
+Copyright (C) 2009, 2010  Hugo van Kemenade
 
 http://code.google.com/p/mobbler
 
-This program is free software; you can redistribute it and/or
+This file is part of Mobbler.
+
+Mobbler is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful,
+Mobbler is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+along with Mobbler.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <apgcli.h>  
+#include <apgcli.h>
 #include <documenthandler.h>
 #include <s32file.h>
 #include <sendomfragment.h>
@@ -32,6 +32,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "mobblerlastfmconnection.h"
 #include "mobblerlistitem.h"
 #include "mobblerliterals.h"
+#include "mobblerlogging.h"
 #include "mobblerparser.h"
 #include "mobblersettingitemlistview.h"
 #include "mobblerstring.h"
@@ -78,7 +79,6 @@ CMobblerEventList::~CMobblerEventList()
 	delete iAttendanceHelper;
 	delete iAttendanceHelperNo;
 	delete iWebServicesHelper;
-	delete iFoursquareHelper;
 	}
 
 CMobblerListControl* CMobblerEventList::HandleListCommandL(TInt aCommand)
@@ -122,13 +122,6 @@ CMobblerListControl* CMobblerEventList::HandleListCommandL(TInt aCommand)
 								iList[iListBox->CurrentItemIndex()]->Latitude(),
 								iList[iListBox->CurrentItemIndex()]->Longitude());
 			break;
-		case EMobblerCommandFoursquare:
-			delete iFoursquareHelper;
-			iFoursquareHelper = CMobblerFlatDataObserverHelper::NewL(iAppUi.LastFmConnection(), *this, ETrue);
-			iAppUi.LastFmConnection().FoursquareL(	iList[iListBox->CurrentItemIndex()]->Longitude(),
-													iList[iListBox->CurrentItemIndex()]->Latitude(),
-													*iFoursquareHelper);
-			break;
 		default:
 			break;
 		}
@@ -153,9 +146,7 @@ void CMobblerEventList::SupportedCommandsL(RArray<TInt>& aCommands)
 		{
 		// Google Maps is installed
 		
-		aCommands.AppendL(EMobblerCommandMaps);
 		aCommands.AppendL(EMobblerCommandVisitMap);
-		//aCommands.AppendL(EMobblerCommandFoursquare);
 		}
 	
 	CleanupStack::PopAndDestroy(&lsSession);
@@ -177,6 +168,7 @@ void CMobblerEventList::DataL(CMobblerFlatDataObserverHelper* aObserver, const T
 		if (aObserver == iAttendanceHelperNo &&
 				iType == EMobblerCommandUserEvents)
 			{
+			DUMPDATA(aData, _L("attendance.xml"));
 			// We have removed an event from the person's Last.fm events. 
 			// If the person is the user, remove it from the list.
 			// Don't remove it from friends' lists.
@@ -215,63 +207,6 @@ void CMobblerEventList::DataL(CMobblerFlatDataObserverHelper* aObserver, const T
 				
 				CleanupStack::PopAndDestroy(2);
 				}
-			}
-		else if (aObserver == iFoursquareHelper)
-			{
-			CCoeEnv::Static()->FsSession().MkDirAll(KMapKmlFilename);
-			
-			_LIT8(KMapKmlStartFormat,		"<kml xmlns=\"http://earth.google.com/kml/2.0\">\r\n");	
-			
-			_LIT8(KMapKmlPlacemarkFormat,	"\t<Placemark>\r\n"
-											"\t\t<name>%S</name>\r\n"
-											"\t\t<description>%S said \"%S\"</description>\r\n" 
-											"\t\t<Point>\r\n"
-											"\t\t\t<coordinates>%S,%S</coordinates>\r\n"
-											"\t\t</Point>\r\n"
-											"\t</Placemark>\r\n");
-			
-			_LIT8(KMapKmlEndFormat,			"</kml>\r\n");
-			_LIT8(KFirstName, 				"firstname");
-			_LIT8(KGeoLat, 					"geolat");
-			_LIT8(KGeoLong, 				"geolong");
-			_LIT8(KGroup, 					"group");
-			_LIT8(KText, 					"text");
-
-			RFileWriteStream file;
-			CleanupClosePushL(file);
-			file.Replace(CCoeEnv::Static()->FsSession(), KMapKmlFilename, EFileWrite);
-			
-			file.WriteL(KMapKmlStartFormat);
-			
-			// Parse the XML
-			CSenXmlReader* xmlReader(CSenXmlReader::NewLC());
-			CSenDomFragment* domFragment(MobblerUtility::PrepareDomFragmentLC(*xmlReader, aData));
-			
-			RPointerArray<CSenElement>& tips(domFragment->AsElement().Element(KGroup)->ElementsL());
-			
-			const TInt KTipCount(tips.Count());
-			for (TInt i(0); i < KTipCount; ++i)
-				{
-				TPtrC8 title(tips[i]->Element(KVenue)->Element(KName)->Content());
-				TPtrC8 firstname(tips[i]->Element(KUser)->Element(KFirstName)->Content());
-				TPtrC8 description(tips[i]->Element(KText)->Content());
-				
-				TPtrC8 longitude(tips[i]->Element(KVenue)->Element(KGeoLong)->Content());
-				TPtrC8 latitude(tips[i]->Element(KVenue)->Element(KGeoLat)->Content());
-				
-				// Add this tip to the KML file
-				HBufC8* placemark(HBufC8::NewLC(KMapKmlPlacemarkFormat().Length() + title.Length() + firstname.Length() + description.Length() + longitude.Length() + latitude.Length()));
-				placemark->Des().Format(KMapKmlPlacemarkFormat, &title, &firstname, &description, &longitude, &latitude);
-				file.WriteL(*placemark);
-				CleanupStack::PopAndDestroy(placemark);
-				}
-			
-			CleanupStack::PopAndDestroy(2);
-			
-			file.WriteL(KMapKmlEndFormat);
-			CleanupStack::PopAndDestroy(&file);
-			
-			iAppUi.LaunchFileL(KMapKmlFilename);
 			}
 		}
 	}

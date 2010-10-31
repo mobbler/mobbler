@@ -109,9 +109,7 @@ enum TMobblerSettingItemListViewCommands
 	EMobblerCommandShoutOwner,
 	EMobblerCommandShoutUser,
 	
-	EMobblerCommandMaps,
 	EMobblerCommandVisitMap,
-	EMobblerCommandFoursquare,
 	
 	EMobblerCommandSearch,
 	EMobblerCommandSearchArtist,
@@ -185,7 +183,6 @@ enum TMobblerSettingItemListViewCommands
 	EMobblerCommandRadioPersonal,
 	EMobblerCommandRadioLoved,
 	EMobblerCommandRadioNeighbourhood,
-	EMobblerCommandRadioPlaylist,
 	EMobblerCommandRadioListTracks,
 	EMobblerCommandRadioGroup,
 	EMobblerCommandRadioCustom,
