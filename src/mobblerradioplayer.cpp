@@ -433,7 +433,7 @@ void CMobblerRadioPlayer::DataL(const TDesC8& aData, TInt aTransactionError)
 				DoChangeStateL(EIdle);
 				
 				CAknInformationNote* note(new (ELeave) CAknInformationNote(EFalse));
-				note->ExecuteLD(static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->ResourceReader().ResourceL(R_MOBBLER_NOTE_BAD_STATION));
+				note->ExecuteLD(static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->ResourceReader().ResourceL(R_MOBBLER_NOTE_COMMS_ERROR));
 				}
 			}
 			break;
@@ -475,7 +475,7 @@ void CMobblerRadioPlayer::DataL(const TDesC8& aData, TInt aTransactionError)
 				if (iState == EStarting)
 					{
 					CAknInformationNote* note(new (ELeave) CAknInformationNote(EFalse));
-					note->ExecuteLD(static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->ResourceReader().ResourceL(R_MOBBLER_NOTE_BAD_STATION));
+					note->ExecuteLD(static_cast<CMobblerAppUi*>(CCoeEnv::Static()->AppUi())->ResourceReader().ResourceL(R_MOBBLER_NOTE_COMMS_ERROR));
 					
 					// Go back to the idle state
 					DoChangeStateL(EIdle);
