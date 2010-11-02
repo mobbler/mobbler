@@ -49,6 +49,7 @@ _LIT(KPngScrobble, "\\resource\\apps\\mobbler_0x2002655A\\scrobble.png");
 _LIT(KPngTrackIcon, "\\resource\\apps\\mobbler_0x2002655A\\icon_track.png");
 _LIT(KPngAlarmIcon, "\\resource\\apps\\mobbler_0x2002655A\\icon_alarm.png");
 _LIT(KPngLastFm, "\\resource\\apps\\mobbler_0x2002655A\\lastfm.png");
+_LIT(KPngSubscriberIcon, "\\resource\\apps\\mobbler_0x2002655A\\icon_subscriber.png");
 
 _LIT(KDefaultAlbumImage, "\\resource\\apps\\mobbler_0x2002655A\\default_album.gif");
 _LIT(KDefaultArtistImage, "\\resource\\apps\\mobbler_0x2002655A\\default_artist.png");
@@ -62,6 +63,7 @@ _LIT(KPngScrobble, "\\resource\\apps\\mobbler\\scrobble.png");
 _LIT(KPngTrackIcon, "\\resource\\apps\\mobbler\\icon_track.png");
 _LIT(KPngAlarmIcon, "\\resource\\apps\\mobbler\\icon_alarm.png");
 _LIT(KPngLastFm, "\\resource\\apps\\mobbler\\lastfm.png");
+_LIT(KPngSubscriberIcon, "\\resource\\apps\\mobbler\\icon_subscriber.png");
 
 _LIT(KDefaultAlbumImage, "\\resource\\apps\\mobbler\\default_album.gif");
 _LIT(KDefaultArtistImage, "\\resource\\apps\\mobbler\\default_artist.png");
@@ -172,6 +174,9 @@ CMobblerBitmap* CMobblerBitmapCollection::BitmapL(MMobblerBitmapObserver& aObser
 				break;
 			case EBitmapAlarmIcon:
 				bitmap = CMobblerBitmap::NewL(aObserver, KPngAlarmIcon, KImageTypePNGUid);
+				break;
+			case EBitmapSubscriberIcon:
+				bitmap = CMobblerBitmap::NewL(aObserver, KPngSubscriberIcon, KImageTypePNGUid);
 				break;
 			case EBitmapHarddiskIcon:
 #ifdef __SYMBIAN_SIGNED__
