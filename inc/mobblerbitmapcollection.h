@@ -37,6 +37,7 @@ public:
 		EBitmapScrobble,
 		EBitmapTrackIcon,
 		EBitmapAlarmIcon,
+		EBitmapSubscriberIcon,
 		EBitmapHarddiskIcon,
 		EBitmapOnTour,
 		EBitmapMore,

@@ -84,6 +84,7 @@
 "$(EPOCROOT)epoc32\data\z\resource\apps\mobbler\scrobble.png"-			"!:\resource\apps\mobbler_0x2002655A\scrobble.png"
 "$(EPOCROOT)epoc32\data\z\resource\apps\mobbler\icon_alarm.png"-		"!:\resource\apps\mobbler_0x2002655A\icon_alarm.png"
 "$(EPOCROOT)epoc32\data\z\resource\apps\mobbler\icon_track.png"-		"!:\resource\apps\mobbler_0x2002655A\icon_track.png"
+"$(EPOCROOT)epoc32\data\z\resource\apps\mobbler\icon_subscriber.png"-	"!:\resource\apps\mobbler_0x2002655A\icon_subscriber.png"
 "$(EPOCROOT)epoc32\data\z\resource\apps\mobbler\lastfm.png"-			"!:\resource\apps\mobbler_0x2002655A\lastfm.png"
 "$(EPOCROOT)epoc32\data\z\resource\apps\mobbler\default_album.gif"-		"!:\resource\apps\mobbler_0x2002655A\default_album.gif"
 "$(EPOCROOT)epoc32\data\z\resource\apps\mobbler\default_artist.png"-	"!:\resource\apps\mobbler_0x2002655A\default_artist.png"

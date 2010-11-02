@@ -259,6 +259,7 @@ void CMobblerStatusControl::LoadGraphicsL()
 	iMobblerBitmapScrobble = iAppUi.BitmapCollection().BitmapL(*this, CMobblerBitmapCollection::EBitmapScrobble);
 	iMobblerBitmapTrackIcon = iAppUi.BitmapCollection().BitmapL(*this, CMobblerBitmapCollection::EBitmapTrackIcon);
 	iMobblerBitmapAlarmIcon = iAppUi.BitmapCollection().BitmapL(*this, CMobblerBitmapCollection::EBitmapAlarmIcon);
+	iMobblerBitmapSubscriberIcon = iAppUi.BitmapCollection().BitmapL(*this, CMobblerBitmapCollection::EBitmapSubscriberIcon);
 	iMobblerBitmapHarddiskIcon = iAppUi.BitmapCollection().BitmapL(*this, CMobblerBitmapCollection::EBitmapHarddiskIcon);
 	iMobblerBitmapOnTour = iAppUi.BitmapCollection().BitmapL(*this, CMobblerBitmapCollection::EBitmapOnTour);
 	iMobblerBitmapMore = iAppUi.BitmapCollection().BitmapL(*this, CMobblerBitmapCollection::EBitmapMore);
@@ -445,6 +446,10 @@ void CMobblerStatusControl::SetPositions()
 	
 	iPointOnTour = TPoint(iRectAlbumArt.iBr.iX - iMobblerBitmapOnTour->SizeInPixels().iWidth, 
 						  iRectAlbumArt.iTl.iY);
+
+	TInt x(iRectAlbumArt.iTl.iX - (iMobblerBitmapSubscriberIcon->SizeInPixels().iWidth / 2));
+	TInt y(iRectAlbumArt.iTl.iY - (iMobblerBitmapSubscriberIcon->SizeInPixels().iHeight / 2));
+	iPointSubscriber = TPoint(Max(0, x), Max(0, y));
 	}
 
 void CMobblerStatusControl::HandleResourceChange(TInt aType)
@@ -595,6 +600,7 @@ CMobblerStatusControl::~CMobblerStatusControl()
 	iAppUi.BitmapCollection().Cancel(iMobblerBitmapScrobble);
 	iAppUi.BitmapCollection().Cancel(iMobblerBitmapTrackIcon);
 	iAppUi.BitmapCollection().Cancel(iMobblerBitmapAlarmIcon);
+	iAppUi.BitmapCollection().Cancel(iMobblerBitmapSubscriberIcon);
 	iAppUi.BitmapCollection().Cancel(iMobblerBitmapHarddiskIcon);
 	iAppUi.BitmapCollection().Cancel(iMobblerBitmapOnTour);
 	iAppUi.BitmapCollection().Cancel(iMobblerBitmapMore);
@@ -956,6 +962,13 @@ void CMobblerStatusControl::Draw(const TRect& /*aRect*/) const
 	BitBltMobblerBitmapL(iMobblerBitmapTrackIcon, 
 			TPoint(iRectTitleText.iTl.iX -  iMobblerBitmapTrackIcon->SizeInPixels().iWidth, iRectTitleText.iTl.iY + 3),
 			TRect(TPoint(0, 0), iMobblerBitmapTrackIcon->SizeInPixels()));
+
+	if (iAppUi.LastFmConnection().MemberType() == CMobblerLastFmConnection::ESubscriber)
+		{
+		BitBltMobblerBitmapL(iMobblerBitmapSubscriberIcon, iPointSubscriber, 
+							 TRect(TPoint(0, 0), iMobblerBitmapSubscriberIcon->SizeInPixels()));
+		}
+
 	if (iAppUi.AlarmActive())
 		{
 		BitBltMobblerBitmapL(iMobblerBitmapAlarmIcon, TPoint(1, 1), TRect(TPoint(0, 0), iMobblerBitmapAlarmIcon->SizeInPixels()));
