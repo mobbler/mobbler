@@ -116,7 +116,7 @@ void CMobblerBitmap::Close() const
 void CMobblerBitmap::RemoveObserver(MMobblerBitmapObserver* aObserver)
 	{
     TRACER_AUTO;
-	TInt pos(iObservers.FindInAddressOrder(aObserver));
+	TInt pos = iObservers.FindInAddressOrder(aObserver);
 	if (pos != KErrNotFound)
 		{
 		iObservers.Remove(pos);
@@ -342,9 +342,9 @@ void CMobblerBitmap::RunL()
 				delete iMifFileName;
 				iMifFileName = NULL;
 				}
-			
+		
 			iBitmapLoaded = ETrue;
-			for (TInt i(0); i < iObservers.Count(); ++i)
+			for ( TInt i(0) ; i < iObservers.Count() ; ++i )
 				{
 				iObservers[i]->BitmapLoadedL(this);
 				}
@@ -367,7 +367,7 @@ void CMobblerBitmap::RunL()
 			iScaledBitmap = NULL;
 			iScaleStatus = EMobblerScaleNone;
 
-			for (TInt i(0); i < iObservers.Count(); ++i)
+			for ( TInt i(0) ; i < iObservers.Count() ; ++i )
 				{
 				iObservers[i]->BitmapResizedL(this);
 				}
