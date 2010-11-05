@@ -1408,6 +1408,7 @@ void CMobblerLastFmConnection::GetLocationL(const CTelephony::TNetworkInfoV1& aN
 
 void CMobblerLastFmConnection::ShortenL(const TDesC8& aUrl, MMobblerFlatDataObserver& aObserver)
 	{
+	TRACER_AUTO;
 	_LIT8(KShortenUrlFormat, "http://api.bit.ly/shorten?version=2.0.1&format=xml&longUrl=%S&login=mobbler&apiKey=R_2a7f2548867a7aa2d7c2990248646e7c");
 	
 	HBufC8* url(HBufC8::NewLC(KShortenUrlFormat().Length() + aUrl.Length()));
@@ -1428,6 +1429,7 @@ void CMobblerLastFmConnection::ShortenL(const TDesC8& aUrl, MMobblerFlatDataObse
 
 void CMobblerLastFmConnection::DataL(CMobblerFlatDataObserverHelper* aObserver, const TDesC8& aData, TInt aTransactionError)
 	{
+	TRACER_AUTO;
 	if (aObserver == iTwitterTokenHelper)
 		{
 		if (aTransactionError == ETransactionErrorNone)
@@ -1465,6 +1467,7 @@ TBool CMobblerLastFmConnection::QueryTwitterL(const TInt aCommand,
 											 MMobblerFlatDataObserver& aObserver, 
 											 const TDesC8& aTweet)
 	{
+	TRACER_AUTO;
 	TBuf<KMobblerMaxUsernameLength> usernameInput;
 	TBuf<KMobblerMaxPasswordLength> passwordInput;
 	CMobblerString* username(NULL);
@@ -1876,7 +1879,7 @@ TBool CMobblerLastFmConnection::DoSubmitL()
 				
 				if (iTrackQueue[ii]->StreamId().Length() != 0)
 					{
-					// This is a  radio track so submit the stream id
+					// This is a radio track so submit the stream ID
 					submitQuery->AddFieldL(streamId, iTrackQueue[ii]->StreamId());
 					}
 				

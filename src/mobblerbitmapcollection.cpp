@@ -149,7 +149,7 @@ CMobblerBitmapCollection::~CMobblerBitmapCollection()
 	{
     TRACER_AUTO;
     
-    for ( TInt i(0) ; i < iBitmaps.Count() ; ++i)
+    for (TInt i(0); i < iBitmaps.Count(); ++i)
     	{
 		iBitmaps[i]->Bitmap()->RemoveObserver(this);
     	}
