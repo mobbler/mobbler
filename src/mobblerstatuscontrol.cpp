@@ -1,7 +1,7 @@
 /*
 Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
 Copyright (C) 2008, 2009, 2010  Michael Coffey
-Copyright (C) 2008, 2009, 2010, 2011  Hugo van Kemenade
+Copyright (C) 2008, 2009, 2010  Hugo van Kemenade
 
 http://code.google.com/p/mobbler
 
@@ -268,6 +268,7 @@ void CMobblerStatusControl::LoadGraphicsL()
 	iMobblerBitmapPlay = iAppUi.BitmapCollection().BitmapL(*this, CMobblerBitmapCollection::EBitmapPlay);
 	iMobblerBitmapNext = iAppUi.BitmapCollection().BitmapL(*this, CMobblerBitmapCollection::EBitmapNext);
 	iMobblerBitmapStop = iAppUi.BitmapCollection().BitmapL(*this, CMobblerBitmapCollection::EBitmapStop);
+	iMobblerBitmapPause = iAppUi.BitmapCollection().BitmapL(*this, CMobblerBitmapCollection::EBitmapPause);
 	iMobblerBitmapSpeakerHigh = iAppUi.BitmapCollection().BitmapL(*this, CMobblerBitmapCollection::EBitmapSpeakerHigh);
 	iMobblerBitmapSpeakerLow = iAppUi.BitmapCollection().BitmapL(*this, CMobblerBitmapCollection::EBitmapSpeakerLow);
     
@@ -439,6 +440,7 @@ void CMobblerStatusControl::SetPositions()
 	iMobblerBitmapPlay->SetSize(iControlSize);
 	iMobblerBitmapNext->SetSize(iControlSize);
 	iMobblerBitmapStop->SetSize(iControlSize);
+	iMobblerBitmapPause->SetSize(iControlSize);
 	
 	TSize speakerSize(KTextRectHeight, KTextRectHeight);
 	iMobblerBitmapSpeakerLow->SetSize(speakerSize);
@@ -609,6 +611,7 @@ CMobblerStatusControl::~CMobblerStatusControl()
 	iAppUi.BitmapCollection().Cancel(iMobblerBitmapPlay);
 	iAppUi.BitmapCollection().Cancel(iMobblerBitmapNext);
 	iAppUi.BitmapCollection().Cancel(iMobblerBitmapStop);
+	iAppUi.BitmapCollection().Cancel(iMobblerBitmapPause);
 	iAppUi.BitmapCollection().Cancel(iMobblerBitmapSpeakerHigh);
 	iAppUi.BitmapCollection().Cancel(iMobblerBitmapSpeakerLow);
 	iAppUi.BitmapCollection().Cancel(iMobblerBitmapMusicAppIcon);
@@ -920,16 +923,25 @@ void CMobblerStatusControl::Draw(const TRect& /*aRect*/) const
 	BitBltMobblerBitmapL(iMobblerBitmapNext, iPointSkip, TRect(TPoint(0, 0), iMobblerBitmapNext->SizeInPixels()), skipDisabled);
 	
 	// Draw either play or stop depending on if the radio playing
-	if (iAppUi.RadioPlayer().State() == CMobblerRadioPlayer::EIdle
-			&& !(iAppUi.MusicListener().ControlsSupported() && iAppUi.MusicListener().CurrentTrack()) )
+	if ( iAppUi.RadioPlayer().State() == CMobblerRadioPlayer::EIdle
+			&& !(iAppUi.MusicListener().ControlsSupported() && iAppUi.MusicListener().CurrentTrack())
+			|| iAppUi.RadioPlayer().State() == CMobblerRadioPlayer::EPaused)
 		{
-		// The radio is idle so display the play button
+		// The radio is idle and we're not controlling the music player
+		// or the radio is paused
 		BitBltMobblerBitmapL(iMobblerBitmapPlay, iPointPlayStop, TRect(TPoint(0, 0), iMobblerBitmapPlay->SizeInPixels()), playStopDisabled);
 		}
 	else
 		{
 		// The radio is either starting or playing
-		BitBltMobblerBitmapL(iMobblerBitmapStop, iPointPlayStop, TRect(TPoint(0, 0), iMobblerBitmapStop->SizeInPixels()), playStopDisabled);
+		if (iAppUi.CurrentTrack() && iAppUi.CurrentTrack()->IsMusicPlayerTrack())
+			{
+			BitBltMobblerBitmapL(iMobblerBitmapStop, iPointPlayStop, TRect(TPoint(0, 0), iMobblerBitmapPlay->SizeInPixels()), playStopDisabled);
+			}
+		else
+			{
+			BitBltMobblerBitmapL(iMobblerBitmapPause, iPointPlayStop, TRect(TPoint(0, 0), iMobblerBitmapStop->SizeInPixels()), playStopDisabled);
+			}
 		}
 	
 	// Draw the Last.fm graphic
@@ -1104,7 +1116,7 @@ TKeyResponse CMobblerStatusControl::OfferKeyEventL(const TKeyEvent& aKeyEvent, T
 		case EKeyDevice3: // play or stop
 			if (iAppUi.RadioPlayer().State() != CMobblerRadioPlayer::EIdle)
 				{
-				iAppUi.RadioPlayer().StopL();
+				iAppUi.RadioPlayer().PauseL();
 				}
 			else
 				{
@@ -1160,12 +1172,10 @@ TKeyResponse CMobblerStatusControl::OfferKeyEventL(const TKeyEvent& aKeyEvent, T
 			break;
 #endif
 #ifdef _DEBUG
-#ifdef LYRICS
 		case '7':
 			const_cast<CMobblerAppUi&>(iAppUi).HandleCommandL(EMobblerCommandTrackLyrics);
 			response = EKeyWasConsumed;
 			break;
-#endif
 #endif
 		case '8':
 			const_cast<CMobblerAppUi&>(iAppUi).HandleCommandL(EMobblerCommandEditSettings);

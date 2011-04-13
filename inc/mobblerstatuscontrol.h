@@ -107,6 +107,7 @@ private:
 	CMobblerBitmap* iMobblerBitmapMore;
 	CMobblerBitmap* iMobblerBitmapLove;
 	CMobblerBitmap* iMobblerBitmapPlay;
+	CMobblerBitmap* iMobblerBitmapPause;
 	CMobblerBitmap* iMobblerBitmapNext;
 	CMobblerBitmap* iMobblerBitmapStop;
 	CMobblerBitmap* iMobblerBitmapLastFm;

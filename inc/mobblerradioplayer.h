@@ -50,7 +50,8 @@ public:
 		{
 		EIdle,
 		EStarting,
-		EPlaying
+		EPlaying,
+		EPaused
 		};
 	
 	enum TTransactionState
@@ -81,6 +82,7 @@ public:
 
 	void SkipTrackL();
 	void StopL();
+	void PauseL();
 	
 	void VolumeUp();
 	void VolumeDown();

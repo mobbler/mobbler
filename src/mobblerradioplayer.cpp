@@ -796,6 +796,27 @@ void CMobblerRadioPlayer::DoStopL(TBool aFullStop)
 //	static_cast<CMobblerAppUi*>(CEikonEnv::Static()->AppUi())->StatusDrawDeferred();
 	}
 
+void CMobblerRadioPlayer::PauseL()
+	{
+	if (iCurrentAudioControl)
+		{
+		iCurrentAudioControl->Pause();
+		
+		if (iCurrentAudioControl->Paused())
+			{
+			DoChangeStateL(EPaused);
+			}
+		else
+			{
+			DoChangeStateL(EPlaying);
+			}
+		}
+	else
+		{
+		NextTrack();
+		}
+	}
+
 CMobblerTrack* CMobblerRadioPlayer::CurrentTrack()
 	{
 //	TRACER_AUTO;

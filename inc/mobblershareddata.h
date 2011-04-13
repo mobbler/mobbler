@@ -37,7 +37,8 @@ enum TMobblerAudioCmd
 	ECmdSetVolume,
 	ECmdSetEqualizer,
 	ECmdWriteData,
-	ECmdSetCurrent
+	ECmdSetCurrent,
+	ECmdPause
 	};
 
 class TMobblerSharedData
@@ -53,6 +54,7 @@ public:
 	TTimeIntervalSeconds iPreBufferSize;
 	TBool iCurrent;
 	TMdaAudioDataSettings iAudioDataSettings;
+	TBool iPaused;
 	
 	// data that is sent for ECmdServiceBuffer
 	TInt iTotalDataSize;
