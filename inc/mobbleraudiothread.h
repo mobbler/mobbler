@@ -88,6 +88,8 @@ private:
 	RPointerArray<HBufC8> iBuffer;
 	TTimeIntervalSeconds iPreBufferOffset;
 	
+	TInt64 iSavedPosition;
+	
 	TBool iActiveSchedulerStopped;
 	
 	TBool iOpen;

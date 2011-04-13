@@ -56,10 +56,13 @@ public:
 	void SetEqualizerIndex(TInt aIndex);
 	void SetPreBufferSize(TTimeIntervalSeconds aPreBufferSize);
 	void SetCurrent();
+	
+	void Pause();
 
 	TInt Volume() const;
 	TInt MaxVolume() const;
 	TBool Playing() const;
+	TBool Paused() const;
 	TBool DownloadComplete() const;
 	TTimeIntervalSeconds PreBufferSize() const;
 	

@@ -199,6 +199,12 @@ void CMobblerAudioControl::DataCompleteL(TInt aTransactionError, TInt aHTTPStatu
 		}
 	}
 
+void CMobblerAudioControl::Pause()
+	{
+	TRACER_AUTO;
+	SendCmd(ECmdPause);
+	}
+
 void CMobblerAudioControl::SetVolume(TInt aVolume)
 	{
     TRACER_AUTO;
@@ -261,6 +267,11 @@ TInt CMobblerAudioControl::MaxVolume() const
 	{
 //	TRACER_AUTO;
 	return iShared.iMaxVolume;
+	}
+
+TBool CMobblerAudioControl::Paused() const
+	{
+	return iShared.iPaused;
 	}
 
 TBool CMobblerAudioControl::Playing() const

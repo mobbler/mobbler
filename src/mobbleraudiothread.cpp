@@ -78,7 +78,9 @@ CMobblerAudioThread::CMobblerAudioThread(TAny* aData)
 	CActiveScheduler::Add(this);
 	
 	iShared.iPlaying = EFalse;
+	iShared.iPaused = EFalse;
 	iPreBufferOffset = 0;
+	iSavedPosition = 0;
 	}
 
 void CMobblerAudioThread::ConstructL()
@@ -133,6 +135,37 @@ void CMobblerAudioThread::RunL()
 			SetEqualizerIndexL();
 			break;
 			}
+		case ECmdPause:
+			{
+			if (iStream)
+				{
+				iShared.iPaused = !iShared.iPaused;
+				
+				if (iShared.iPaused)
+					{
+					iStream->Stop();
+					}
+				else if (iBuffer.Count() > 0)
+					{
+					iStream->WriteL(*iBuffer[0]);
+					}
+				}
+			
+			if (iPlayer)
+				{
+				if (iShared.iPaused)
+					{
+					iPlayer->Play();
+					}
+				else
+					{
+					User::LeaveIfError(iPlayer->Pause());
+					}
+				
+				iShared.iPaused = !iShared.iPaused;
+				}
+			}
+			break;
 		case ECmdWriteData:
 			{
 			iShared.iTrack->SetDataSize(iShared.iTotalDataSize);
@@ -276,7 +309,7 @@ void CMobblerAudioThread::FillBufferL(TBool aDataAdded)
 			{
 			// we are already playing so add the last
 			// piece of the buffer to the stream
-			iStream->WriteL(*iBuffer[iBuffer.Count() - 1]);
+			//iStream->WriteL(*iBuffer[iBuffer.Count() - 1]);
 			}
 		}
 	else if (!iShared.iPlaying && iOpen && iShared.iCurrent && PreBufferFilled())
@@ -285,10 +318,12 @@ void CMobblerAudioThread::FillBufferL(TBool aDataAdded)
 		iShared.iPlaying = ETrue;
 		
 		// write all the data we have to the audio output stream
-		const TInt KBufferCount(iBuffer.Count());
-		for (TInt i(0); i < KBufferCount; ++i)
+		if (iBuffer.Count() > 0)
 			{
-			iStream->WriteL(*iBuffer[i]);
+			if (!iShared.iPaused)
+				{
+				iStream->WriteL(*iBuffer[0]);
+				}
 			}
 		}
 	}
@@ -300,7 +335,12 @@ void CMobblerAudioThread::MaoscBufferCopied(TInt /*aError*/, const TDesC8& /*aBu
 	iBuffer.Remove(0);
 	
 	const TInt KMicrosecondsInOneSecond(1000000);
-	iShared.iTrack->SetPlaybackPosition(iStream->Position().Int64() / KMicrosecondsInOneSecond);
+	iShared.iTrack->SetPlaybackPosition( (iSavedPosition + iStream->Position().Int64()) / KMicrosecondsInOneSecond);
+	
+	if (iShared.iPaused)
+		{
+		iSavedPosition += iStream->Position().Int64();
+		}
 	
 	if (iBuffer.Count() == 0)
 		{
@@ -320,6 +360,14 @@ void CMobblerAudioThread::MaoscBufferCopied(TInt /*aError*/, const TDesC8& /*aBu
 			// There is more data on its way so start buffering again
 			iShared.iPlaying = EFalse;
 			iPreBufferOffset = iShared.iTrack->Buffered();
+			}
+		}
+	else
+		{
+		//  There are still things in the buffer
+		if (!iShared.iPaused)
+			{
+			iStream->WriteL(*iBuffer[0]);
 			}
 		}
 	}

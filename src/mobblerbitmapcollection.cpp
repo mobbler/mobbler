@@ -226,6 +226,13 @@ CMobblerBitmap* CMobblerBitmapCollection::BitmapL(MMobblerBitmapObserver& aObser
 				bitmap = CMobblerBitmap::NewL(aObserver, KMobblerMifFile, EMbmSsmobblerPlay, EMbmSsmobblerPlay_mask);
 #endif
 				break;
+			case EBitmapPause:
+#ifdef __SYMBIAN_SIGNED__
+				bitmap = CMobblerBitmap::NewL(aObserver, KMobblerMifFile, EMbmMobblerPause, EMbmMobblerPause_mask);
+#else
+				bitmap = CMobblerBitmap::NewL(aObserver, KMobblerMifFile, EMbmSsmobblerPause, EMbmSsmobblerPause_mask);
+#endif
+				break;
 			case EBitmapNext:
 #ifdef __SYMBIAN_SIGNED__
 				bitmap = CMobblerBitmap::NewL(aObserver, KMobblerMifFile, EMbmMobblerNext, EMbmMobblerNext_mask);

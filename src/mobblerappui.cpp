@@ -775,10 +775,12 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 			if (iRadioPlayer->HasPlaylist() && 
 				iLastFmConnection->Mode() == CMobblerLastFmConnection::EOnline)
 				{
-				iRadioPlayer->SkipTrackL();
+				// The radio has been paused and this should resume it
+				iRadioPlayer->PauseL();
 				}
 			else
 				{
+				// The radio has never been started to try to play the last one we knew about
 				switch (iPreviousRadioStation)
 					{
 					case EMobblerCommandRadioArtist:
@@ -799,7 +801,7 @@ void CMobblerAppUi::HandleCommandL(TInt aCommand)
 					case EMobblerCommandRadioRecommendations:	// intentional fall-through
 					case EMobblerCommandRadioPersonal:			// intentional fall-through
 					case EMobblerCommandRadioMix:				// intentional fall-through
-					case EMobblerCommandRadioFriends:				// intentional fall-through
+					case EMobblerCommandRadioFriends:			// intentional fall-through
 					case EMobblerCommandRadioNeighbourhood:		// intentional fall-through
 					default:
 						RadioStartL(iPreviousRadioStation, NULL, EFalse);

@@ -46,6 +46,7 @@ public:
 		EBitmapPlay,
 		EBitmapNext,
 		EBitmapStop,
+		EBitmapPause,
 		EBitmapSpeakerHigh,
 		EBitmapSpeakerLow,
 		EBitmapMusicApp,
