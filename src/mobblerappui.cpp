@@ -1,6 +1,6 @@
 /*
 Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
-Copyright (C) 2008, 2009, 2010  Michael Coffey
+Copyright (C) 2008, 2009, 2010, 2011  Michael Coffey
 Copyright (C) 2008, 2009, 2010, 2011  Hugo van Kemenade
 Copyright (C) 2008, 2009  Steve Punter
 Copyright (C) 2009  James Aley
@@ -2482,9 +2482,28 @@ void CMobblerAppUi::OpenWebBrowserL(const TDesC& aUrl)
 	CleanupStack::PushL(encode);
 	
 #ifdef __SYMBIAN_SIGNED__
-	const TUid KBrowserUid = {0x10008D39};
+	// Find the default browser, on S^1/S^3 it may be a 3rd party browser
+	RApaLsSession lsSession;
+	User::LeaveIfError(lsSession.Connect());
+	CleanupClosePushL(lsSession); 
+	_LIT8(KMimeDataType, "application/x-web-browse");
+	TDataType mimeDataType(KMimeDataType);
+	TUid handlerUid;
+	// Get the default application UID for "application/x-web-browse"
+	lsSession.AppForDataType(mimeDataType, handlerUid);
+	LOG(_L8("handlerUid:"));
+	LOG(handlerUid);
+	
+	if (handlerUid.iUid == 0)
+		{
+		// For S60 3.x
+		LOGTEXT("handlerUid == 0");
+		const TUid KBrowserUid = {0x10008D39};
+		handlerUid = KBrowserUid;
+		}
+	
 	TApaTaskList taskList(CEikonEnv::Static()->WsSession());
-	TApaTask task(taskList.FindApp(KBrowserUid));
+	TApaTask task(taskList.FindApp(handlerUid));
 	if(task.Exists())
 		{
 		task.BringToForeground();
@@ -2495,16 +2514,10 @@ void CMobblerAppUi::OpenWebBrowserL(const TDesC& aUrl)
 		}
 	else
 		{
-		RApaLsSession apaLsSession;
-		CleanupClosePushL(apaLsSession);
-		if(!apaLsSession.Handle())
-			{
-			User::LeaveIfError(apaLsSession.Connect());
-			}
 		TThreadId thread;
-		User::LeaveIfError(apaLsSession.StartDocument(*encode, KBrowserUid, thread));
-		CleanupStack::PopAndDestroy(&apaLsSession);
+		User::LeaveIfError(lsSession.StartDocument(*encode, handlerUid, thread));
 		}
+	CleanupStack::PopAndDestroy(&lsSession);
 #else // !__SYMBIAN_SIGNED__
 #ifndef __WINS__
 	if (!iBrowserLauncher)

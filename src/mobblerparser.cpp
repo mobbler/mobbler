@@ -1,6 +1,6 @@
 /*
 Mobbler, a Last.fm mobile scrobbler for Symbian smartphones.
-Copyright (C) 2008, 2009, 2010  Michael Coffey
+Copyright (C) 2008, 2009, 2010, 2011  Michael Coffey
 Copyright (C) 2008, 2009, 2010  Hugo van Kemenade
 Copyright (C) 2009, 2010  gw111zz
 
@@ -208,7 +208,7 @@ CMobblerLastFmError* CMobblerParser::ParseRadioPlaylistL(const TDesC8& aXml, CMo
 
 		CSenElement* playlistElement(domElement.Child(0));
 		
-		TTime expiryTime = Time::NullTTime();
+		TTime expiryTime(Time::NullTTime());
 
 		if (playlistElement)
 			{
