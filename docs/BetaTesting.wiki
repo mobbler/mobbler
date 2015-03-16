@@ -1,6 +1,0 @@
-#summary Beta testing for Mobbler
-#labels Featured
-
-No beta at the moment, keep an eye on [http://twitter.com/mobbler @Mobbler] for updates.
-
-Thank you for all the help beta testing past releases!
