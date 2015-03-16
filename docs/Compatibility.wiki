@@ -1,0 +1,11 @@
+#summary A list of Symbian devices that Mobbler should be compatible with.
+#labels Featured,Phase-Deploy
+
+Mobbler should be compatible with all S60 3rd edition, S60 5th edition, Symbian^3, Symbian Anna and Nokia Belle smartphones. Here is an *incomplete* table of devices.
+
+|| *Version* || *Phones* ||
+|| [http://www.forum.nokia.com/Devices/Device_specifications/?filter1=symbian&filter2=s60_3ed_fp0 S60 3rd Edition] || *Nokia* 3250, 5500 Sport, E60, E61, E61i, E62, E65, E70, N71, N73, N75, N77, N80, N91, N92, N93, N93i ||
+|| [http://www.forum.nokia.com/Devices/Device_specifications/?filter1=symbian&filter2=s60_3ed_fp1 S60 3rd Edition FP1] || *Nokia* 5700, 6110 Navigator, 6120, 6121, 6290, E51, E63, E66, E71, E90, N76, N81, N81 8GB, N82, N95, N95 8GB. *Samsung* SGH-G810, SGH-i400, SGH-i450, SGH-i520, SGH-i550, SGH-i550w. *LG* KT610, KS10 ||
+|| [http://www.forum.nokia.com/Devices/Device_specifications/?filter1=symbian&filter2=s60_3ed_fp2 S60 3rd Edition FP2] || *Nokia* 5320 !XpressMusic, 5630 !XpressMusic, 6210 Navigator, 6220, 6650, 6710 Navigator, 6730 classic, E52, E72, E75, N78, N79, N85, N96. *Samsung* I7110, INNOV8, SGH-L870 ||
+|| [http://www.forum.nokia.com/Devices/Device_specifications/?filter1=symbian&filter2=s60_5ed S60 5th edition aka Symbian^1] || *Nokia* 5230, 5235 Ovi Music Unlimited, 5800 !XpressMusic, 5800 Navigation Edition, 5530 !XpressMusic, C6, N97, N97 mini, X6. *Samsung* i8910 Omnia HD. *Sony Ericsson* Satio ||
+|| [http://www.forum.nokia.com/Devices/Device_specifications/?filter1=symbian&filter2=symbian3 Symbian^3, Anna, Belle] || *Nokia* 500, 603, 700, 701, 702T, 801T, 808 PureView, C6-01, C7-00, C7 Astound, E6-00, E7-00, N8-00, Oro, T7-00, X7-00 ||
