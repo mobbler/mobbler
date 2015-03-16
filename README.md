@@ -1,6 +1,6 @@
 # Mobbler
 
-Mobbler is a http://www.last.fm/favicon.ico#dummy.jpg [Last.fm](http://www.last.fm/) radio player and scrobbler for Symbian smartphones. It allows you to listen to your [Last.fm](http://www.last.fm/) radio stations and to scrobble tracks played using the standard music player.
+Mobbler is a [Last.fm](http://www.last.fm/) radio player and scrobbler for Symbian smartphones. It allows you to listen to your [Last.fm](http://www.last.fm/) radio stations and to scrobble tracks played using the standard music player.
 
 **Warning: Please note that the radio player functionality of Mobbler will use a lot of data. The makers of Mobbler cannot be held responsible for your phone bill.**
 
