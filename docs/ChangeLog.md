@@ -71,7 +71,7 @@ Symbian-Signed versions have major version 1 and a solid red logo.  Self-signed 
   * More options in the web services list views to do with sharing tracks, artist, and events, plus viewing the tracks of an album etc.
   * Some bug fixes (Now works on the N97!)
 
-0.5.1 - Same as 0.5.2, but had [Issue 444](https://code.google.com/p/mobbler/issues/detail?id=444).
+0.5.1 - Same as 0.5.2, but had [Issue 444](https://github.com/mobbler/mobbler/issues/444).
 
 0.5.0 - beta
 
