@@ -11,9 +11,9 @@ You can see some variations and download Mobbler wallpaper for your PC from his 
 <br>
 The logo is released under a Creative Commons <a href='http://creativecommons.org/licenses/by-sa/2.0/deed.en_GB'>Attribution-Share Alike licence</a>. You can download it in SVG format here (could be useful if you want to make a customised app icon for an S60 theme (and if you do, use both UIDs (0xA0007648 and 0x2002655A) for the self-signed and Symbian signed releases)):<br>
 <br>
-<ul><li><a href='http://code.google.com/p/mobbler/source/browse/gfx/mobbler.svg'>Mobbler app icon SVG</a>
-</li><li><a href='http://code.google.com/p/mobbler/source/browse/images/mobbler_logo.svg?repo=wiki'>Mobbler logo SVG</a>
-</li><li><a href='http://code.google.com/p/mobbler/source/browse/images/mobbler_text.svg?repo=wiki'>Mobbler logo text SVG</a>
+<ul><li><a href='https://github.com/mobbler/mobbler/blob/master/gfx/mobbler.svg'>Mobbler app icon SVG</a>
+</li><li><a href='https://github.com/mobbler/mobbler/blob/master/docs/images/mobbler_logo.svg'>Mobbler logo SVG</a>
+</li><li><a href='https://github.com/mobbler/mobbler/blob/master/docs/images/mobbler_text.svg'>Mobbler logo text SVG</a>
 </td></tr></table></li></ul>
 
 
@@ -21,17 +21,17 @@ The logo is released under a Creative Commons <a href='http://creativecommons.or
 
 Mobbler uses the following icons from version 0.8.1 of the [Tango Icon Library](http://tango.freedesktop.org/), which have been modified for use on S60. Tango generously released these under a Creative Commons [Attribution-Share Alike licence](http://creativecommons.org/licenses/by-sa/2.5/), and so these modified icons are also released under the same licence:
 
-  * [ban.svg](http://code.google.com/p/mobbler/source/browse/gfx/ban.svg)
-  * [love.svg](http://code.google.com/p/mobbler/source/browse/gfx/love.svg)
-  * [more.svg](http://code.google.com/p/mobbler/source/browse/gfx/more.svg)
-  * [next.svg](http://code.google.com/p/mobbler/source/browse/gfx/next.svg)
-  * [play.svg](http://code.google.com/p/mobbler/source/browse/gfx/play.svg)
-  * [speaker\_high.svg](http://code.google.com/p/mobbler/source/browse/gfx/speaker_high.svg)
-  * [speaker\_low.svg](http://code.google.com/p/mobbler/source/browse/gfx/speaker_low.svg)
-  * [stop.svg](http://code.google.com/p/mobbler/source/browse/gfx/stop.svg)
+  * [ban.svg](https://github.com/mobbler/mobbler/blob/master/gfx/icons5th/ban.svg)
+  * [love.svg](https://github.com/mobbler/mobbler/blob/master/gfx/icons5th/love.svg)
+  * [more.svg](https://github.com/mobbler/mobbler/blob/master/gfx/icons5th/more.svg)
+  * [next.svg](https://github.com/mobbler/mobbler/blob/master/gfx/icons5th/next.svg)
+  * [play.svg](https://github.com/mobbler/mobbler/blob/master/gfx/icons5th/play.svg)
+  * [speaker\_high.svg](https://github.com/mobbler/mobbler/blob/master/gfx/speaker_high.svg)
+  * [speaker\_low.svg](https://github.com/mobbler/mobbler/blob/master/gfx/speaker_low.svg)
+  * [stop.svg](https://github.com/mobbler/mobbler/blob/master/gfx/icons5th/stop.svg)
 
 Mobbler also uses the following icons from version 0.8.90 of the [Tango Icon Library](http://tango.freedesktop.org/), which Tango has even more generously released to the public domain:
 
-  * [audio-x-generic.png](http://code.google.com/p/mobbler/source/browse/gfx/audio-x-generic.png)
-  * [office-calendar.png](http://code.google.com/p/mobbler/source/browse/gfx/office-calendar.png)
-  * [preferences-desktop-multimedia.png](http://code.google.com/p/mobbler/source/browse/gfx/preferences-desktop-multimedia.png)
+  * [audio-x-generic.png](https://github.com/mobbler/mobbler/blob/master/gfx/audio-x-generic.png)
+  * [office-calendar.png](https://github.com/mobbler/mobbler/blob/master/gfx/office-calendar.png)
+  * [preferences-desktop-multimedia.png](https://github.com/mobbler/mobbler/blob/master/gfx/preferences-desktop-multimedia.png)
