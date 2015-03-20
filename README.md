@@ -13,3 +13,14 @@ If you'd like to know more about the history of Mobbler you can read this [artic
 If you would like to use Mobbler in another language then please visit the download page for Afrikaans, Arabic, Belarusian, Bulgarian, Catalan, Chinese, Czech, Danish, Dutch, English UK, English US, Finnish, French, German, Greek, Hebrew, Hungarian, Indonesian, Italian, Japanese, Korean, Latvian, Lithuanian, Norwegain, Polish, Brazilian Portuguese, Portuguese, Romanian, Russian, Serbian, Slovak, Spanish, Swedish, Turkish, Ukrainian, Klingon, 1337, or Pirate. If your language is not available or you would like to update the current version, please see our [Language](https://code.google.com/p/mobbler/wiki/Language) wiki page. Your contributions are greatly appreciated!
 
 If you enjoy using Mobbler and would like to help us, please [![Donate](https://www.paypal.com/en_GB/i/btn/btn_donate_SM.gif "Donate")](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=eartle%40gmail%2ecom&item_name=Mobbler&no_shipping=0&no_note=1&tax=0&currency_code=GBP&lc=GB&bn=PP%2dDonationsBF&charset=UTF%2d8) to the project using PayPal. Thank you very much in advance!
+
+More info:
+
+ * [Beta testing for Mobbler](docs/BetaTesting.md)
+ * [A summary of changes to Mobbler](docs/ChangeLog.md)
+ * [A list of Symbian devices that Mobbler should be compatible with](docs/Compatibility.md)
+ * [Mobbler would like to thank...](docs/Credits.md)
+ * [How to build Mobbler and make contributions](docs/Development.md)
+ * [Frequently asked questions](docs/FAQ.md)
+ * [Instructions on signing up for Last.fm and installing Mobbler in your phone](docs/GettingStarted.md)
+ * [How to use Mobbler](docs/Instructions.md)
